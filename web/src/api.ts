@@ -1,0 +1,206 @@
+import type {
+  AsOfMode,
+  CompanyDetail,
+  CompanySummary,
+  EventsResponse,
+  FilingsResponse,
+  FinancialHistory,
+  IndicatorConfig,
+  IndicatorResult,
+  MarketOverview,
+  MarketResponse,
+  MetricsResponse,
+  Mode,
+  PeersResponse,
+  PriceView,
+  RevisionsResponse,
+  ScreenerMetric,
+  ScreenerResponse,
+  StatementsResponse,
+  ValidationResponse,
+  Watchlist,
+  Workspace,
+  WorkspaceDocument,
+  XrayResponse,
+} from './types'
+
+const BASE = import.meta.env.VITE_API_BASE ?? ''
+
+export class ApiError extends Error {
+  status: number
+  code: string
+  context: unknown
+
+  constructor(status: number, code: string, message: string, context: unknown = {}) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+    this.code = code
+    this.context = context
+  }
+}
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(`${BASE}${path}`, {
+    ...init,
+    headers: { 'content-type': 'application/json', ...(init?.headers ?? {}) },
+  })
+  if (response.status === 204) return undefined as T
+  const text = await response.text()
+  let body: unknown = null
+  try {
+    body = text ? JSON.parse(text) : null
+  } catch {
+    body = null
+  }
+  if (!response.ok) {
+    const error = (body as { error?: { code?: string; message?: string; context?: unknown } } | null)?.error
+    throw new ApiError(
+      response.status,
+      error?.code ?? 'http_error',
+      error?.message ?? `Request failed (${response.status})`,
+      error?.context ?? {},
+    )
+  }
+  return body as T
+}
+
+const qs = (params: Record<string, string | number | boolean | null | undefined>) => {
+  const search = new URLSearchParams()
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null && value !== '') search.set(key, String(value))
+  }
+  const text = search.toString()
+  return text ? `?${text}` : ''
+}
+
+const enc = encodeURIComponent
+
+export const api = {
+  health: () => request<Record<string, unknown>>('/api/health'),
+  schema: () => request<Record<string, unknown>>('/api/schema'),
+  companies: (q?: string) => request<{ items: CompanySummary[]; count: number }>(`/api/companies${qs({ q })}`),
+  company: (identifier: string) => request<CompanyDetail>(`/api/companies/${enc(identifier)}`),
+  search: (q: string) =>
+    request<{ items: Array<{ type: string; issuer_id: string; label: string; cik: string | null; tickers: string[]; security_id: string | null }> }>(
+      `/api/search${qs({ q })}`,
+    ),
+  statements: (
+    identifier: string,
+    options: { statement: string; period: 'FY' | 'Q'; asOf?: string | null; mode: AsOfMode; limit?: number },
+  ) =>
+    request<StatementsResponse>(
+      `/api/companies/${enc(identifier)}/statements${qs({
+        statement: options.statement,
+        period: options.period,
+        as_of: options.asOf,
+        mode: options.mode,
+        limit: options.limit,
+      })}`,
+    ),
+  metrics: (identifier: string, options: { asOf?: string | null; mode: AsOfMode }) =>
+    request<MetricsResponse>(`/api/companies/${enc(identifier)}/metrics${qs({ as_of: options.asOf, mode: options.mode })}`),
+  filings: (identifier: string, options: { limit?: number; offset?: number; forms?: string[] } = {}) =>
+    request<FilingsResponse>(
+      `/api/companies/${enc(identifier)}/filings${qs({
+        limit: options.limit,
+        offset: options.offset,
+        forms: options.forms?.join(','),
+      })}`,
+    ),
+  events: (identifier: string, limit = 40) =>
+    request<EventsResponse>(`/api/companies/${enc(identifier)}/events${qs({ limit })}`),
+  markets: () => request<MarketOverview>('/api/markets/overview'),
+  market: (
+    securityId: string,
+    options: {
+      range: string
+      view: PriceView
+      indicators: IndicatorConfig[]
+      asOf?: string | null
+      chartType?: string
+    },
+  ) =>
+    request<MarketResponse>(`/api/securities/${enc(securityId)}/market`, {
+      method: 'POST',
+      body: JSON.stringify({
+        range: options.range,
+        view: options.view,
+        indicators: options.indicators,
+        as_of: options.asOf ?? null,
+      }),
+    }),
+  history: (identifier: string, options: { asOf?: string | null; mode: AsOfMode; limit?: number; concepts?: string[] }) =>
+    request<FinancialHistory>(
+      `/api/companies/${enc(identifier)}/history${qs({
+        as_of: options.asOf,
+        mode: options.mode,
+        limit: options.limit,
+        concepts: options.concepts?.join(','),
+      })}`,
+    ),
+  peers: (identifier: string, options: { asOf?: string | null; mode: AsOfMode }) =>
+    request<PeersResponse>(`/api/companies/${enc(identifier)}/peers${qs({ as_of: options.asOf, mode: options.mode })}`),
+  revisions: (identifier: string, limit = 50) =>
+    request<RevisionsResponse>(`/api/companies/${enc(identifier)}/revisions${qs({ limit })}`),
+  validate: (identifier: string, options: { asOf?: string | null; mode: AsOfMode }) =>
+    request<ValidationResponse>(`/api/research/validation/${enc(identifier)}${qs({ as_of: options.asOf, mode: options.mode })}`),
+  xray: (evidenceId: string) => request<XrayResponse>(`/api/evidence/${enc(evidenceId)}`),
+  indicators: () => request<{ items: Array<Record<string, unknown>> }>('/api/indicators'),
+  screenerMetrics: () => request<{ items: ScreenerMetric[] }>('/api/screeners/metrics'),
+  screen: (body: {
+    filters: Array<{ metric: string; op: string; value: number; value2?: number }>
+    match: 'AND' | 'OR'
+    sort?: { metric: string; direction: 'asc' | 'desc' } | null
+    limit?: number
+    as_of?: string | null
+    mode?: AsOfMode
+  }) => request<ScreenerResponse>('/api/screeners/run', { method: 'POST', body: JSON.stringify(body) }),
+  watchlists: () => request<{ items: Watchlist[] }>('/api/watchlists'),
+  createWatchlist: (body: { name: string; notes?: string | null; security_ids?: string[] }) =>
+    request<Watchlist>('/api/watchlists', { method: 'POST', body: JSON.stringify(body) }),
+  renameWatchlist: (id: string, body: { name?: string; notes?: string | null }) =>
+    request<Watchlist>(`/api/watchlists/${enc(id)}`, { method: 'PATCH', body: JSON.stringify(body) }),
+  deleteWatchlist: (id: string) => request<void>(`/api/watchlists/${enc(id)}`, { method: 'DELETE' }),
+  addWatchlistItem: (id: string, securityId: string) =>
+    request<Watchlist>(`/api/watchlists/${enc(id)}/items`, {
+      method: 'POST',
+      body: JSON.stringify({ security_id: securityId }),
+    }),
+  removeWatchlistItem: (id: string, securityId: string) =>
+    request<Watchlist>(`/api/watchlists/${enc(id)}/items/${enc(securityId)}`, { method: 'DELETE' }),
+  reorderWatchlist: (id: string, securityIds: string[]) =>
+    request<Watchlist>(`/api/watchlists/${enc(id)}/order`, {
+      method: 'PUT',
+      body: JSON.stringify({ security_ids: securityIds }),
+    }),
+  presets: (issuerId?: string, securityId?: string) =>
+    request<{ items: WorkspaceDocument[]; resolved: boolean; placeholders: string[] }>(
+      `/api/workspaces/presets${qs({ issuer: issuerId, security: securityId })}`,
+    ),
+  workspaces: () => request<{ items: Workspace[] }>('/api/workspaces'),
+  workspace: (id: string) => request<Workspace>(`/api/workspaces/${enc(id)}`),
+  createWorkspace: (document: WorkspaceDocument) =>
+    request<Workspace>('/api/workspaces', { method: 'POST', body: JSON.stringify(document) }),
+  updateWorkspace: (id: string, document: WorkspaceDocument) =>
+    request<Workspace>(`/api/workspaces/${enc(id)}`, { method: 'PUT', body: JSON.stringify(document) }),
+  deleteWorkspace: (id: string) => request<void>(`/api/workspaces/${enc(id)}`, { method: 'DELETE' }),
+  settings: () => request<{ values: Record<string, unknown> }>('/api/settings'),
+  setSetting: (key: string, value: unknown) =>
+    request<{ values: Record<string, unknown> }>('/api/settings', {
+      method: 'PUT',
+      body: JSON.stringify({ key, value }),
+    }),
+  previewIndicator: (body: {
+    security_id: string
+    range: string
+    view: PriceView
+    indicators: IndicatorConfig[]
+  }) =>
+    request<{ indicators: IndicatorResult[]; signature: string; bars: number }>('/api/indicators/preview', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+} satisfies Record<string, unknown>
+
+export type { Mode }

@@ -1,0 +1,71 @@
+{
+  "phase": "2.1",
+  "measured_at": "2026-11-04T19:54:00Z",
+  "environment": {
+    "platform": "Linux container",
+    "cpu": "2 vCPU",
+    "memory": "3.8 GB",
+    "python": "3.12.3",
+    "sqlite": "WAL, synchronous=FULL"
+  },
+  "database": {
+    "issuers": 5,
+    "securities": 8,
+    "bars": 17363,
+    "evidence": 23583,
+    "schema_version": 4,
+    "real_market": {
+      "issuer": "IBM",
+      "source_id": "alphavantage",
+      "bars": 6793,
+      "actions": 114,
+      "first_session": "1999-11-01",
+      "last_session": "2026-11-03"
+    }
+  },
+  "phase2_baseline_ms": {
+    "companies": 1341,
+    "screener": 3285,
+    "statements": 206,
+    "market_1y_synthetic": 28
+  },
+  "phase21_ms": {
+    "companies_cold": 48.3,
+    "companies_cached": 8.7,
+    "screener": 1603.8,
+    "ibm_market_5y_1255_bars": 387.4,
+    "ibm_validation_233_checks": 1200.3
+  },
+  "improvement": {
+    "companies_cold_percent": -96.4,
+    "screener_percent": -51.2
+  },
+  "caching": {
+    "generation": "evidence ingest_seq + bar/filing/action counts + user timestamps + database identity",
+    "screen_ttl_seconds": 60,
+    "peers_ttl_seconds": 120,
+    "notes": "Explicit as-of screens are generation-keyed without a TTL. Database identity prevents cross-database cache reuse."
+  },
+  "validation": {
+    "issuer": "IBM",
+    "checks": 233,
+    "passed": 233,
+    "status": "verified",
+    "tolerances": {
+      "decimal": "0",
+      "adjusted_price": "0.011",
+      "ratio": "1e-9"
+    },
+    "market_window": "5Y (below the 2000-point browser downsample threshold)"
+  },
+  "scale": {
+    "script": "scripts/benchmark_scale.py",
+    "caveat": "In-memory synthetic universes with no financial facts; measures read-model/kernel overhead, not evidence selection.",
+    "results": [
+      {"issuers": 5, "securities": 5, "bars": 640, "companies_cold_ms": 1.1, "companies_cached_ms": 0.1, "screener_ms": 1.5, "market_ms": 4.9},
+      {"issuers": 25, "securities": 25, "bars": 3200, "companies_cold_ms": 2.5, "companies_cached_ms": 0.1, "screener_ms": 4.6, "market_ms": 3.7},
+      {"issuers": 100, "securities": 100, "bars": 12800, "companies_cold_ms": 9.6, "companies_cached_ms": 0.1, "screener_ms": 19.7, "market_ms": 3.6},
+      {"issuers": 300, "securities": 300, "bars": 38400, "companies_cold_ms": 30.5, "companies_cached_ms": 0.2, "screener_ms": 84.6, "market_ms": 3.5}
+    ]
+  }
+}

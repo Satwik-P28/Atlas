@@ -1,0 +1,36 @@
+{
+  "retrieved_at": "2026-11-04T19:32:56Z",
+  "user_agent": "AtlasQuant/0.2 research@example.com",
+  "documents": [
+    {
+      "path": "fixtures/sec_ibm/submissions_CIK0000051143.json",
+      "url": "https://data.sec.gov/submissions/CIK0000051143.json",
+      "bytes": 165683,
+      "sha256": "dea6fa640957da78060fce67323e6ff9b567a6deeedcc1e0dc12f13b1ba727e2"
+    },
+    {
+      "path": "fixtures/sec_ibm/companyfacts_CIK0000051143.json",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000051143.json",
+      "bytes": 5719403,
+      "sha256": "10fa1fafa25440b2159e2054dfe47628ba4ed353a258f526704cf9beda432bb8"
+    },
+    {
+      "path": "fixtures/market/ibm_daily_alphavantage.json",
+      "url": "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&outputsize=full&apikey=demo",
+      "bytes": 1421320,
+      "sha256": "0ef21bcd5ecd45750bca961b66e1f40f4cd69961e44108b67ef2a4b9ffb0afbc"
+    },
+    {
+      "path": "fixtures/market/ibm_dividends_alphavantage.json",
+      "url": "https://www.alphavantage.co/query?function=DIVIDENDS&symbol=IBM&apikey=demo",
+      "bytes": 23645,
+      "sha256": "80d757b7a00fd118339caebe2edf39c387cd1c13b613228ef0503a1930b5a92f"
+    },
+    {
+      "path": "fixtures/market/ibm_splits_alphavantage.json",
+      "url": "https://www.alphavantage.co/query?function=SPLITS&symbol=IBM&apikey=demo",
+      "bytes": 247,
+      "sha256": "e2c0de31a1b0c5ceab7ea037c0dd7d5292bbc502184519373777cd2f1652d2dd"
+    }
+  ]
+}

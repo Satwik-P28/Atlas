@@ -1,0 +1,24 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.hypothesis/
+.mypy_cache/
+.ruff_cache/
+
+# Generated databases and logs (rebuildable with scripts/build_terminal_db.py)
+var/
+.pwlibs/
+
+# Frontend
+web/node_modules/
+web/dist/
+web/test-results/
+web/playwright-report/
+web/.vite/
+web/*.tsbuildinfo
+
+# Local environment / secrets
+.env
+.dev.vars
+*.local
