@@ -244,6 +244,8 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ document }),
     }),
+  researchObject: (objectId: string) =>
+    request<Record<string, any>>(`/api/research/objects/${enc(objectId)}`),
   forkResearchObject: (objectId: string, name: string, version = '1.0.0') =>
     request<Record<string, any>>(`/api/research/objects/${enc(objectId)}/fork`, {
       method: 'POST',

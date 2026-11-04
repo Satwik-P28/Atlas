@@ -165,6 +165,10 @@ def test_share_count_is_never_silently_assumed():
 
     with pytest.raises(MissingDataError):
         defaults_from_metrics({"metrics": {"revenue": {"value": 100.0}}})
+    incomplete = _assumptions()
+    incomplete.pop("shares")
+    with pytest.raises(ValidationError, match="share count"):
+        build_dcf_spec(incomplete)
     derived = defaults_from_metrics({"metrics": {
         "revenue": {"value": 100.0},
         "net_income": {"value": 10.0, "evidence_ids": ["EV-NI"], "period_end": "2024-12-31"},

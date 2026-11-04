@@ -21,14 +21,18 @@ equation grammar cannot call `terminal_value`, while the graph/SDK paths can.
 - Explicit assumptions for growth, tax, D&A, working capital, WACC, terminal growth.
 - DCF outputs, FCFF series, trace, audit and evidence links.
 - Base/bull/bear scenarios, WACC × growth sensitivity and reverse DCF.
-- Save model + application as research objects; fork and export from the saved list.
+- Save model + application as research objects; reopen with exact issuer, assumptions
+  and information cutoff; fork, compare and export from the saved list.
+- Historical information cutoff and public-available/Atlas-ingested mode controls flow
+  through defaults and model execution, not merely the display.
 - Default the company selector to the issuer with the deepest evidence coverage, so a
   company without revenue does not masquerade as a valuation-ready model.
 
 ## UI status
 
-The React production build passes. The Studio browser journey verifies a live DCF run,
-scenario/sensitivity rendering, equation execution, visual-graph validation and the
-390 px responsive layout with no page or console errors. Screenshots are stored in
-`artifacts/13-studio-valuation.png` through `artifacts/17-studio-mobile.png`. The
-journey is not an exhaustive A–N automated suite.
+The React production build passes. The Studio browser journey verifies historical and
+current DCF runs, scenarios/sensitivity, reverse DCF, save/reopen, fork/compare, export,
+invalid-equation diagnostics, equation execution, visual-graph validation and the 390 px
+responsive layout. Screenshots are stored in `artifacts/13-studio-valuation.png` through
+`artifacts/21-studio-error.png`. The journey is not an exhaustive separate automation of
+every A–N item; incremental recomputation remains a unit/API test.

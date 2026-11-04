@@ -28,6 +28,7 @@ const FIELD_HELP: Record<string, string> = {
 
 function numberFields(defaults: Record<string, any>) {
   return {
+    revenue: Number(defaults.revenue ?? 0),
     operating_margin: Number(defaults.operating_margin ?? 0.18),
     tax_rate: Number(defaults.tax_rate ?? 0.21),
     da_pct_revenue: Number(defaults.da_pct_revenue ?? 0.04),
@@ -37,7 +38,7 @@ function numberFields(defaults: Record<string, any>) {
     terminal_growth: Number(defaults.terminal_growth ?? 0.025),
     cash: Number(defaults.cash ?? 0),
     debt: Number(defaults.debt ?? 0),
-    shares: Number(defaults.shares ?? 1),
+    shares: Number(defaults.shares ?? 0),
   }
 }
 
@@ -45,6 +46,8 @@ export default function Studio() {
   const [tab, setTab] = useState<Tab>('valuation')
   const [companies, setCompanies] = useState<CompanySummary[]>([])
   const [issuer, setIssuer] = useState('')
+  const [asOfDate, setAsOfDate] = useState('')
+  const [asOfMode, setAsOfMode] = useState<'public_available' | 'atlas_ingested'>('public_available')
   const [defaults, setDefaults] = useState<Record<string, any> | null>(null)
   const [assumptions, setAssumptions] = useState<Record<string, number>>({})
   const [growth, setGrowth] = useState('5, 5, 5, 4, 4')
@@ -54,6 +57,10 @@ export default function Studio() {
   const [reverseTarget, setReverseTarget] = useState('')
   const [reverse, setReverse] = useState<Record<string, any> | null>(null)
   const [saved, setSaved] = useState<Array<Record<string, any>>>([])
+  const [opened, setOpened] = useState<Record<string, any> | null>(null)
+  const [compareLeft, setCompareLeft] = useState('')
+  const [compareRight, setCompareRight] = useState('')
+  const [comparison, setComparison] = useState<Record<string, any> | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
@@ -70,6 +77,8 @@ export default function Studio() {
   const [newOperator, setNewOperator] = useState('mul')
   const [drag, setDrag] = useState<{ id: string; dx: number; dy: number } | null>(null)
   const canvasRef = useRef<HTMLDivElement>(null)
+  const restoreRef = useRef<Record<string, any> | null>(null)
+  const asOf = asOfDate ? `${asOfDate}T23:59:59Z` : null
 
   useEffect(() => {
     api.companies().then((result) => {
@@ -85,20 +94,26 @@ export default function Studio() {
     refreshSaved()
   }, [])
 
+  const applyAssumptions = (values: Record<string, any>) => {
+    setAssumptions(numberFields(values))
+    const rates = values.revenue_growth as number[] | undefined
+    if (rates?.length) setGrowth(rates.map((value) => (value * 100).toFixed(2)).join(', '))
+  }
+
   useEffect(() => {
     if (!issuer) return
     setBusy(true)
-    api.valuationDefaults(issuer)
+    api.valuationDefaults(issuer, asOf, asOfMode)
       .then((payload) => {
         setDefaults(payload.defaults)
-        setAssumptions(numberFields(payload.defaults))
-        const rates = payload.defaults.revenue_growth as number[] | undefined
-        if (rates?.length) setGrowth(rates.map((value) => (value * 100).toFixed(2)).join(', '))
+        const restored = restoreRef.current
+        applyAssumptions(restored ?? payload.defaults)
+        restoreRef.current = null
         setError(null)
       })
       .catch((err: Error) => setError(err.message))
       .finally(() => setBusy(false))
-  }, [issuer])
+  }, [issuer, asOf, asOfMode])
 
   const refreshSaved = () => {
     api.researchObjects().then((payload) => setSaved(payload.items)).catch(() => undefined)
@@ -108,9 +123,11 @@ export default function Studio() {
     const horizon = growth.split(',').map((value) => Number(value.trim()) / 100).filter((value) => Number.isFinite(value))
     return {
       issuer,
+      as_of: asOf ?? undefined,
+      mode: asOfMode,
       assumptions: {
         ...assumptions,
-        revenue: defaults?.revenue,
+        revenue: assumptions.revenue || defaults?.revenue,
         revenue_growth: horizon.length ? horizon : [0.05],
         horizon: horizon.length || 5,
       },
@@ -178,8 +195,8 @@ export default function Studio() {
       ],
       equations: [{ name: 'output', expr: eq }],
       outputs: ['output'],
-      as_of: new Date().toISOString(),
-      mode: 'public_available',
+      as_of: asOf ?? new Date().toISOString(),
+      mode: asOfMode,
     }, inputs)
     setEqResult(result)
     setNotice('Equation compiled to the same typed IR used by the DCF and graph editor.')
@@ -197,8 +214,8 @@ export default function Studio() {
       id: node.id, op: node.op, inputs: node.inputs, params: node.params,
     })),
     outputs: { value: graphOutput },
-    as_of: new Date().toISOString(),
-    mode: 'public_available',
+    as_of: asOf ?? new Date().toISOString(),
+    mode: asOfMode,
   })
 
   const runGraph = () => run(async () => {
@@ -226,15 +243,16 @@ export default function Studio() {
     const evidenceIds = (dcf.audit?.evidence_ids ?? []) as string[]
     if (!evidenceIds.length) throw new Error('This run has no evidence-linked inputs to cite')
     const now = new Date().toISOString()
+    const stamp = now.slice(0, 19).replaceAll(':', '').replace('T', '-')
     const modelObject = await api.createResearchObject({
       schema_version: 'atlas.research_object.v1',
       kind: 'model',
-      name: `DCF · ${dcf.issuer?.legal_name ?? issuer}`,
+      name: `DCF · ${dcf.issuer?.legal_name ?? issuer} · ${stamp}`,
       version: '1.0.0',
       status: 'validated',
       description: 'Compiler-backed unlevered DCF with explicit forecasting assumptions.',
-      as_of: now,
-      mode: 'public_available',
+      as_of: dcf.audit?.as_of ?? now,
+      mode: asOfMode,
       evidence_ids: evidenceIds,
       spec: {
         inputs: dcf.model?.inputs ?? {},
@@ -242,6 +260,8 @@ export default function Studio() {
         method: 'atlas.model.v1',
         assumptions: dcf.assumptions,
         validation: 'compiled; independent reference arithmetic verified',
+        issuer_id: dcf.issuer?.issuer_id,
+        as_of: dcf.audit?.as_of,
         model_spec: dcf.model_spec,
         run_id: dcf.run_id,
         fingerprint: dcf.fingerprint,
@@ -250,12 +270,12 @@ export default function Studio() {
     const application = await api.createResearchObject({
       schema_version: 'atlas.research_object.v1',
       kind: 'application',
-      name: `Valuation application · ${dcf.issuer?.legal_name ?? issuer}`,
+      name: `Valuation application · ${dcf.issuer?.legal_name ?? issuer} · ${stamp}`,
       version: '1.0.0',
       status: 'validated',
       description: 'A saved valuation workspace referencing an immutable model object.',
-      as_of: now,
-      mode: 'public_available',
+      as_of: dcf.audit?.as_of ?? now,
+      mode: asOfMode,
       evidence_ids: [],
       object_ids: [modelObject.object_id],
       spec: {
@@ -263,10 +283,48 @@ export default function Studio() {
         views: ['historical', 'forecast', 'dcf', 'scenario', 'sensitivity', 'audit'],
         model_object_id: modelObject.object_id,
         model_fingerprint: dcf.fingerprint,
+        issuer_id: dcf.issuer?.issuer_id,
+        as_of: dcf.audit?.as_of,
       },
     })
     setNotice(`Saved model ${modelObject.object_id} and application ${application.object_id}.`)
     refreshSaved()
+  })
+
+  const openObject = (objectId: string) => run(async () => {
+    const root = await api.researchObject(objectId)
+    const rootSpec = root.document?.spec ?? {}
+    const modelId = root.kind === 'application'
+      ? (rootSpec.model_object_id ?? root.document?.object_ids?.[0])
+      : objectId
+    const model = modelId && modelId !== objectId ? await api.researchObject(modelId) : root
+    const modelSpec = model.document?.spec ?? {}
+    const storedAssumptions = modelSpec.assumptions ?? rootSpec.assumptions
+    if (!storedAssumptions || typeof storedAssumptions !== 'object') {
+      throw new Error('This research object does not contain saved DCF assumptions')
+    }
+    const targetIssuer = modelSpec.issuer_id ?? rootSpec.issuer_id ?? issuer
+    const savedAsOf = modelSpec.as_of ?? rootSpec.as_of
+    const targetDate = typeof savedAsOf === 'string' ? savedAsOf.slice(0, 10) : ''
+    const needsEvidenceRefresh = targetIssuer !== issuer || targetDate !== asOfDate
+    if (needsEvidenceRefresh) {
+      restoreRef.current = storedAssumptions
+      setBusy(true)
+      if (targetIssuer) setIssuer(targetIssuer)
+      setAsOfDate(targetDate)
+    } else {
+      applyAssumptions(storedAssumptions)
+    }
+    setOpened({ application: root.kind === 'application' ? root : null, model })
+    setTab('valuation')
+    setComparison(null)
+    setNotice(`Opened ${root.name}. Run the DCF to reproduce its saved assumptions.`)
+  })
+
+  const compareObjects = () => run(async () => {
+    if (!compareLeft || !compareRight) throw new Error('Choose two saved applications to compare')
+    setComparison(await api.compareResearchObjects(compareLeft, compareRight))
+    setNotice('Compared the two immutable research-object versions.')
   })
 
   const fork = (objectId: string) => run(async () => {
@@ -290,6 +348,7 @@ export default function Studio() {
 
   const auditEvidence = (dcf?.audit?.evidence_ids ?? []) as string[]
   const fieldEntries = useMemo(() => Object.entries(assumptions).filter(([key]) => FIELD_HELP[key]), [assumptions])
+  const applications = useMemo(() => saved.filter((item) => item.kind === 'application'), [saved])
 
   return (
     <div className="studio-page" style={{ padding: '28px 30px', maxWidth: 1280, margin: '0 auto' }}>
@@ -297,7 +356,9 @@ export default function Studio() {
         @media (max-width: 760px) {
           .studio-page { padding: 16px !important; }
           .studio-split { grid-template-columns: minmax(0, 1fr) !important; }
-          .studio-split > * { min-width: 0; }
+          .studio-split, .studio-split > *, .studio-split > * > * { min-width: 0; }
+          .studio-page input, .studio-page select { max-width: 100%; }
+          .studio-split .mono, .studio-split .small { overflow-wrap: anywhere; word-break: break-word; }
         }
       `}</style>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap', alignItems: 'flex-end' }}>
@@ -321,17 +382,36 @@ export default function Studio() {
       </div>
 
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 20, flexWrap: 'wrap' }}>
-        <label className="small muted">Company</label>
-        <select value={issuer} onChange={(event) => setIssuer(event.target.value)}
-          style={{ minWidth: 280, padding: 8, background: 'var(--bg-input)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 6 }}>
+        <label className="small muted" htmlFor="studio-issuer">Company</label>
+        <select id="studio-issuer" value={issuer} onChange={(event) => { if (event.target.value !== issuer) setBusy(true); setIssuer(event.target.value) }}
+          style={{ minWidth: 240, padding: 8, background: 'var(--bg-input)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 6 }}>
           {companies.map((company) => (
             <option key={company.issuer_id} value={company.issuer_id}>{company.legal_name}</option>
           ))}
         </select>
+        <label className="small muted" htmlFor="studio-as-of">Information cutoff</label>
+        <input id="studio-as-of" aria-label="Information cutoff" type="date" value={asOfDate}
+          onChange={(event) => {
+            if (event.target.value !== asOfDate) setBusy(true)
+            setAsOfDate(event.target.value)
+            setComparison(null)
+          }}
+          style={{ padding: 8, background: 'var(--bg-input)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 6 }} />
+        <select aria-label="As-of mode" value={asOfMode}
+          onChange={(event) => {
+            if (event.target.value !== asOfMode) setBusy(true)
+            setAsOfMode(event.target.value as 'public_available' | 'atlas_ingested')
+          }}
+          style={{ padding: 8, background: 'var(--bg-input)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 6 }}>
+          <option value="public_available">Public available</option>
+          <option value="atlas_ingested">Atlas ingested</option>
+        </select>
+        {asOfDate && <button onClick={() => { setBusy(true); setAsOfDate('') }} style={tinyStyle}>Use current</button>}
+        <span className="small muted">{asOf ? `reconstructing at ${asOf.slice(0, 10)}` : 'current evidence cutoff'}</span>
         {busy && <span className="small muted">compiling…</span>}
-        {notice && <span className="small positive">{notice}</span>}
       </div>
-      {error && <div style={{ marginTop: 14, padding: 12, border: '1px solid var(--negative)', borderRadius: 6, color: 'var(--negative)', whiteSpace: 'pre-wrap' }}>{error}</div>}
+      {notice && <div className="small positive" style={{ marginTop: 8 }}>{notice}</div>}
+      {error && <div data-testid="studio-error" style={{ marginTop: 14, padding: 12, border: '1px solid var(--negative)', borderRadius: 6, color: 'var(--negative)', whiteSpace: 'pre-wrap' }}>{error}</div>}
 
       {tab === 'valuation' && (
         <div className="studio-split" style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 380px) 1fr', gap: 18, marginTop: 20 }}>
@@ -385,7 +465,8 @@ export default function Studio() {
                       ['PV explicit', `$${money(dcf.outputs.pv_explicit)}`],
                       ['PV terminal', `$${money(dcf.outputs.pv_terminal)}`],
                     ].map(([label, value]) => (
-                      <div key={label} style={{ border: '1px solid var(--border)', borderRadius: 6, padding: 10 }}>
+                      <div key={label} data-testid={label === 'Value / share' ? 'value-per-share' : undefined}
+                        style={{ border: '1px solid var(--border)', borderRadius: 6, padding: 10 }}>
                         <div className="small muted">{label}</div>
                         <div className="mono" style={{ fontSize: 18, marginTop: 3 }}>{value}</div>
                       </div>
@@ -453,6 +534,52 @@ export default function Studio() {
                 </div>
               </div>
             )}
+
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, padding: 16 }}>
+              <h3>Research applications</h3>
+              <p className="small muted" style={{ marginTop: 4 }}>
+                Saved applications reference immutable model versions, evidence and a reproducible run record.
+              </p>
+              {opened && (
+                <div className="small positive" style={{ marginTop: 8 }}>
+                  Reopened {opened.model?.name ?? opened.application?.name}
+                  {opened.application ? ` through ${opened.application.name}` : ''}
+                </div>
+              )}
+              {!applications.length && <p className="small muted" style={{ marginTop: 8 }}>Run and save a DCF to create the first application.</p>}
+              {applications.map((item) => (
+                <div key={item.object_id} style={{ borderTop: '1px solid var(--border)', padding: '9px 0' }}>
+                  <div className="small">{item.name} <span className="muted">v{item.version}</span></div>
+                  <div className="small muted mono" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.object_id}</div>
+                  <div style={{ display: 'flex', gap: 6, marginTop: 5, flexWrap: 'wrap' }}>
+                    <button onClick={() => openObject(item.object_id)} className="small" style={tinyStyle}>Open</button>
+                    <button onClick={() => fork(item.object_id)} className="small" style={tinyStyle}>Fork</button>
+                    <button onClick={() => exportObject(item.object_id)} className="small" style={tinyStyle}>Export</button>
+                  </div>
+                </div>
+              ))}
+              {applications.length >= 2 && (
+                <div style={{ marginTop: 12, borderTop: '1px solid var(--border)', paddingTop: 12 }}>
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                    <select aria-label="Compare left" value={compareLeft} onChange={(event) => setCompareLeft(event.target.value)} style={selectStyle}>
+                      <option value="">Left version…</option>
+                      {applications.map((item) => <option key={item.object_id} value={item.object_id}>{item.name} v{item.version}</option>)}
+                    </select>
+                    <select aria-label="Compare right" value={compareRight} onChange={(event) => setCompareRight(event.target.value)} style={selectStyle}>
+                      <option value="">Right version…</option>
+                      {applications.map((item) => <option key={item.object_id} value={item.object_id}>{item.name} v{item.version}</option>)}
+                    </select>
+                    <button onClick={compareObjects} disabled={busy} style={tinyStyle}>Compare versions</button>
+                  </div>
+                  {comparison && (
+                    <div style={{ marginTop: 8 }}>
+                      <div className="small muted">{comparison.equal ? 'The two documents are identical.' : `${comparison.changes.length} document change(s).`}</div>
+                      <pre className="mono small" style={preStyle}>{JSON.stringify(comparison.changes, null, 2)}</pre>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </section>
         </div>
       )}
@@ -534,18 +661,9 @@ export default function Studio() {
             <h3>Execution</h3>
             <p className="small muted">Sample bindings: price=100, shares=2.5.</p>
             {graphResult && <pre className="mono small" style={preStyle}>{JSON.stringify(graphResult, null, 2)}</pre>}
-            <h4 style={{ marginTop: 20 }}>Saved applications</h4>
-            {!saved.length && <p className="small muted">No saved research objects yet.</p>}
-            {saved.map((item) => (
-              <div key={item.object_id} style={{ borderTop: '1px solid var(--border)', padding: '8px 0' }}>
-                <div className="small">{item.name} <span className="muted">v{item.version}</span></div>
-                <div className="small muted mono">{item.object_id}</div>
-                <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
-                  <button onClick={() => fork(item.object_id)} className="small" style={tinyStyle}>Fork</button>
-                  <button onClick={() => exportObject(item.object_id)} className="small" style={tinyStyle}>Export</button>
-                </div>
-              </div>
-            ))}
+            <p className="small muted" style={{ marginTop: 16 }}>
+              Saved applications, reopening and version comparison live in the Valuation lab.
+            </p>
           </section>
         </div>
       )}
@@ -559,7 +677,7 @@ const inputStyle: React.CSSProperties = {
 }
 const selectStyle: React.CSSProperties = {
   padding: '6px 8px', background: 'var(--bg-input)', color: 'var(--text)',
-  border: '1px solid var(--border)', borderRadius: 5,
+  border: '1px solid var(--border)', borderRadius: 5, maxWidth: '100%', minWidth: 0,
 }
 const buttonStyle: React.CSSProperties = {
   padding: '8px 14px', border: '1px solid var(--accent)', borderRadius: 5,

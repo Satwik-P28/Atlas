@@ -1,6 +1,6 @@
 # Phase 3 implementation — Universal Financial Runtime
 
-Status: **implemented vertical slice, verified locally**. Last verified against schema 5.
+Status: **implemented vertical slice, independently validated and browser-verified**. Last verified against schema 5 at commit after `d094904`.
 
 ## What is implemented
 
@@ -13,10 +13,10 @@ Status: **implemented vertical slice, verified locally**. Last verified against 
 | Deterministic runtime + node cache | Implemented and verified | `runtime.py`; cache key includes input values and operator version |
 | Incremental recomputation | Implemented and verified | independent subgraph cache-hit test |
 | Python SDK | Implemented and verified | `sdk.py`; equivalence test |
-| DCF / reverse DCF / scenarios / sensitivity | Implemented and verified arithmetic | `valuation.py`; independent reference test and API tests |
-| Research object lifecycle | Implemented and verified | fork/compare/export/execute tests |
-| Studio UI | Implemented and browser-verified | `/studio`, valuation/equations/visual graph tabs |
-| Browser journeys | Verified in this environment | 12 Phase 2.1 regression journeys + focused Studio DCF/scenarios/equations/graph/mobile journey; 0 page/console errors |
+| DCF / reverse DCF / scenarios / sensitivity | Implemented and independently validated | `valuation.py`; `test_phase3_validation.py` recomputes every path with separate arithmetic |
+| Research object lifecycle | Implemented and browser-verified | fork/compare/export/execute; Studio Open/Fork/Compare/Export; run snapshot in manifest |
+| Studio UI | Implemented and browser-verified | `/studio`, valuation/equations/visual graph tabs, historical cutoff |
+| Browser journeys | Verified in this environment | 12 Phase 2.1 regression journeys + 11 Studio checks; 0 unexpected page/console errors |
 
 ## Preserved contracts
 
@@ -27,12 +27,13 @@ new kind without changing existing documents.
 
 ## Verification summary
 
-- Backend: **328 passed** with `.venv/bin/python -m pytest -q -p no:warnings`.
+- Backend: **333 passed** with `.venv/bin/python -m pytest -q -p no:warnings`.
 - Frontend: production build passes; **4** Vitest tests pass.
-- Browser: existing 12 journeys pass with 0 problems; Studio journey passes DCF,
-  scenarios/sensitivities, equation execution, visual-graph validation and 390 px layout.
+- Browser: existing 12 journeys pass with 0 problems; Studio passes historical cutoff,
+  current DCF, scenarios/sensitivity, reverse DCF, save/reopen, fork/compare, export,
+  invalid-model diagnostics, equation execution, graph validation and 390 px layout.
 - Screenshots: `artifacts/13-studio-valuation.png` through
-  `artifacts/17-studio-mobile.png`.
+  `artifacts/21-studio-error.png`.
 
 ## Honest limitations
 
@@ -42,9 +43,13 @@ new kind without changing existing documents.
   reported value exists. They are never presented as observed facts.
 - Where a reported share count is absent, Studio derives implied weighted diluted shares
   from net income / diluted EPS and labels that derivation; it never assumes one share.
+  The final valuation normalisation has no implicit one-share default.
 - The visual editor is a functional drag/connect canvas, not a mature graph IDE.
-- The Phase 3 browser script covers the primary Studio path, not every A–N journey as a
-  separate automated assertion. The existing terminal journeys cover regression paths.
+- The browser journey covers the complete primary Studio path and the existing terminal
+  journeys, but it is not an exhaustive separate automation of every A–N item. Incremental
+  recomputation is verified at unit/API level, not through a browser interaction.
+- Export manifests now include the persisted run inputs, outputs and trace, but Atlas does
+  not archive source-evidence bytes for indefinite reproduction after source withdrawal.
 - `ATLAS_MASTER_SPEC.md` was absent from the repository; work followed
   `docs/PHASE3_CONTRACT.md` and the Phase 3 prompt.
 

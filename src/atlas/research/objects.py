@@ -313,6 +313,31 @@ class ResearchObjectStore:
         from ..fec.compiler import COMPILER_VERSION
         from ..fec.operators import operator_versions
 
+        run = None
+        run_id = (document.get("spec") or {}).get("run_id")
+        if isinstance(run_id, str) and run_id:
+            row = self.db.query_one(
+                "SELECT run_id, model_name, model_version, fingerprint, as_of, mode, "
+                "inputs_json, result_json, trace_json, status, duration_ms, created_at "
+                "FROM model_run WHERE run_id = ?",
+                (run_id,),
+            )
+            if row:
+                result = json.loads(row["result_json"])
+                run = {
+                    "run_id": row["run_id"],
+                    "model_name": row["model_name"],
+                    "model_version": row["model_version"],
+                    "fingerprint": row["fingerprint"],
+                    "as_of": row["as_of"],
+                    "mode": row["mode"],
+                    "status": row["status"],
+                    "duration_ms": row["duration_ms"],
+                    "created_at": row["created_at"],
+                    "inputs": json.loads(row["inputs_json"]),
+                    "outputs": result.get("outputs"),
+                    "trace": json.loads(row["trace_json"]),
+                }
         dependencies = []
         for dependency in document.get("object_ids", []):
             row = self.db.query_one(
@@ -333,6 +358,7 @@ class ResearchObjectStore:
             "document": document,
             "evidence": stored["evidence"],
             "dependency_objects": dependencies,
+            "run": run,
             "compiler_version": COMPILER_VERSION,
             "operator_versions": operator_versions(),
             "reproduction": {

@@ -35,7 +35,9 @@ DCF_DEFAULTS = {
     "convention": "end_year",
     "cash": 0.0,
     "debt": 0.0,
-    "shares": 1.0,
+    # Deliberately zero: a missing share count must fail validation instead of
+    # producing a per-share value from an invented single share.
+    "shares": 0.0,
 }
 ASSUMPTION_KEYS = set(DCF_DEFAULTS)
 

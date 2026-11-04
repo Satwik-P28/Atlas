@@ -13,7 +13,8 @@ added. Objects are immutable versions: creating a changed model requires a new v
   `spec.forked_from`; the source object is untouched.
 - **compare** returns structural changes and both content hashes.
 - **export** writes a reproducibility manifest with the document, evidence links,
-  dependency object hashes, compiler and operator versions.
+  dependency object hashes, compiler and operator versions, and — when the object cites
+  a `run_id` — the persisted run inputs, outputs and execution trace.
 
 Applications reference model/dataset object ids rather than embedding untracked results.
 
@@ -27,4 +28,6 @@ No execution result is written as evidence. `model_run` stores execution records
 
 Strategy and simulation execution boundaries are reserved but not implemented. Model
 versions are immutable, but automatic semver selection and provenance-preserving schema
-upgrades are not yet implemented.
+upgrades are not yet implemented. Export records run snapshots but does not archive the
+source-evidence bytes themselves, so long-term reproduction is not guaranteed if a
+source withdraws an observation.
