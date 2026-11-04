@@ -52,7 +52,7 @@ def _issuer(db):
 
 
 def test_schema_v5_and_snapshot_roundtrip(db):
-    assert LATEST_VERSION == 5
+    assert LATEST_VERSION == 6
     issuer = _issuer(db)
     kernel = EvidenceKernel(db)
     _fact(kernel, "revenue", "100", end=date(2023, 12, 31),

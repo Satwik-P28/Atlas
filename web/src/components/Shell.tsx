@@ -14,7 +14,7 @@ interface SearchHit {
 const NAV = [
   { section: 'Market', items: [{ to: '/', label: 'Markets' }, { to: '/companies', label: 'Companies' }] },
   { section: 'Research', items: [{ to: '/research', label: 'Time machine' }, { to: '/screeners', label: 'Screeners' }] },
-  { section: 'Studio', items: [{ to: '/studio', label: 'Model studio' }] },
+  { section: 'Studio', items: [{ to: '/studio', label: 'Model studio' }, { to: '/lab', label: 'Quant lab' }] },
   { section: 'Saved', items: [{ to: '/watchlists', label: 'Watchlists' }] },
 ]
 

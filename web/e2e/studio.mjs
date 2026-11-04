@@ -40,14 +40,19 @@ try {
   await page.getByRole('button', { name: 'Use current' }).click()
   await page.getByText(/current evidence cutoff/).waitFor()
   await page.getByRole('button', { name: 'Run DCF' }).click()
+  const numeric = (text) => Number(text.replace(/[^\d.-]/g, ''))
+  const historicalNumber = numeric(historicalValue)
+  // Wait for the numeric result, not textContent: innerText separates the label
+  // and value with a newline, so a raw string comparison can pass before rerender.
   await page.waitForFunction((oldValue) => {
     const card = document.querySelector('[data-testid="value-per-share"]')
-    return card && card.textContent !== oldValue
-  }, historicalValue.replace(/^Value \/ share/, '').trim(), { timeout: 20000 })
+    if (!card) return false
+    const value = Number(card.textContent.replace(/[^\d.-]/g, ''))
+    return Number.isFinite(value) && value !== oldValue
+  }, historicalNumber, { timeout: 20000 })
   const valueText = await page.getByTestId('value-per-share').innerText()
   assert(/\$[\d,.]+/.test(valueText), `DCF did not render a value: ${valueText}`)
-  const numeric = (text) => Number(text.replace(/[^\d.-]/g, ''))
-  assert(numeric(valueText) !== numeric(historicalValue),
+  assert(numeric(valueText) !== historicalNumber,
     'current DCF reused assumptions loaded for the historical cutoff')
   await page.evaluate(() => window.scrollTo(0, 0))
   await page.screenshot({ path: path.join(OUT, '13-studio-valuation.png') })

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import heapq
 import json
 from dataclasses import dataclass, field
 from typing import Any, Iterable
@@ -74,30 +75,43 @@ def fingerprint(spec: dict[str, Any], compiler_version: str, operators: dict[str
 
 
 def topological_order(nodes: dict[str, Node], outputs: Iterable[str]) -> list[str]:
-    """Deterministic Kahn topological ordering, including every output ancestor."""
+    """Deterministic Kahn ordering in O(V + E).
+
+    The previous implementation scanned every needed node for each emitted node and
+    re-sorted the ready set, which made compilation quadratic on wide graphs. Build the
+    reverse adjacency once and use a heap so the order remains lexicographically stable.
+    """
     needed: set[str] = set()
-    stack = [outputs_id for outputs_id in outputs]
+    stack = list(outputs)
     while stack:
         node_id = stack.pop()
         if node_id in needed:
             continue
+        if node_id not in nodes:
+            raise ValidationError("model dependency graph references an undefined node", node=node_id)
         needed.add(node_id)
         stack.extend(nodes[node_id].inputs)
-    indegree = {
-        node_id: len({dep for dep in nodes[node_id].inputs if dep in needed})
-        for node_id in needed
+
+    dependencies = {
+        node_id: set(nodes[node_id].inputs) & needed for node_id in needed
     }
-    ready = sorted(node_id for node_id, degree in indegree.items() if degree == 0)
+    indegree = {node_id: len(deps) for node_id, deps in dependencies.items()}
+    dependents: dict[str, list[str]] = {node_id: [] for node_id in needed}
+    for node_id, deps in dependencies.items():
+        for dependency in deps:
+            dependents[dependency].append(node_id)
+    for children in dependents.values():
+        children.sort()
+    ready = [node_id for node_id, degree in indegree.items() if degree == 0]
+    heapq.heapify(ready)
     order: list[str] = []
     while ready:
-        node_id = ready.pop(0)
+        node_id = heapq.heappop(ready)
         order.append(node_id)
-        for other in sorted(needed):
-            if node_id in set(nodes[other].inputs):
-                indegree[other] -= 1
-                if indegree[other] == 0:
-                    ready.append(other)
-        ready.sort()
+        for dependent in dependents[node_id]:
+            indegree[dependent] -= 1
+            if indegree[dependent] == 0:
+                heapq.heappush(ready, dependent)
     if len(order) != len(needed):
         remaining = sorted(needed - set(order))
         raise ValidationError("model dependency graph contains a cycle", nodes=remaining)

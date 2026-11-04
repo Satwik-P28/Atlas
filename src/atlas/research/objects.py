@@ -112,9 +112,14 @@ def validate_document(document: dict[str, Any]) -> dict[str, Any]:
         value = document.get(field, [])
         if not isinstance(value, list) or any(not isinstance(item, str) or not item for item in value):
             raise ValidationError(f"{field} must be a list of ids", field=field)
-    if document["kind"] != "application" and not document["evidence_ids"]:
+    # Market-only strategies and their experiments cite provider sources rather than
+    # financial-statement evidence. Applications may cite objects instead. Everything
+    # else must still point at at least one evidence record.
+    if (document["kind"] != "application" and not document["evidence_ids"]
+            and not document.get("source_ids")):
         raise ValidationError(
-            "research objects must cite at least one evidence id; applications may instead cite object_ids",
+            "research objects must cite at least one evidence id or source id; "
+            "applications may instead cite object_ids",
             kind=document["kind"],
         )
     spec = document.get("spec")
@@ -346,6 +351,14 @@ class ResearchObjectStore:
             )
             if row:
                 dependencies.append(dict(row))
+        from .archive import SourceArchiveStore
+
+        archive_status = SourceArchiveStore(self.db).status_for_evidence(
+            [item["evidence_id"] for item in stored["evidence"]]
+        )
+        source_status = SourceArchiveStore(self.db).status_for_sources(
+            list(document.get("source_ids", []))
+        )
         return {
             "schema": "atlas.reproducibility.v1",
             "exported_at": iso(utcnow()),
@@ -359,6 +372,8 @@ class ResearchObjectStore:
             "evidence": stored["evidence"],
             "dependency_objects": dependencies,
             "run": run,
+            "source_archive": source_status,
+            "evidence_archive": archive_status,
             "compiler_version": COMPILER_VERSION,
             "operator_versions": operator_versions(),
             "reproduction": {

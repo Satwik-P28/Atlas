@@ -541,9 +541,19 @@ export default function Studio() {
                 Saved applications reference immutable model versions, evidence and a reproducible run record.
               </p>
               {opened && (
-                <div className="small positive" style={{ marginTop: 8 }}>
-                  Reopened {opened.model?.name ?? opened.application?.name}
-                  {opened.application ? ` through ${opened.application.name}` : ''}
+                <div className="small positive" style={{ marginTop: 8, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <span>
+                    Reopened {opened.model?.name ?? opened.application?.name}
+                    {opened.application ? ` through ${opened.application.name}` : ''}
+                  </span>
+                  <button
+                    onClick={() => { setOpened(null); setNotice('Closed the opened application. The saved version remains immutable.') }}
+                    className="small"
+                    style={tinyStyle}
+                    aria-label="Close opened application"
+                  >
+                    Close
+                  </button>
                 </div>
               )}
               {!applications.length && <p className="small muted" style={{ marginTop: 8 }}>Run and save a DCF to create the first application.</p>}

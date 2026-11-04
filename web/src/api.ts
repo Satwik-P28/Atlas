@@ -260,6 +260,21 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ inputs, persist: true }),
     }),
+  quantCatalog: () => request<Record<string, any>>('/api/quant/catalog'),
+  quantStrategies: () => request<{ items: Array<Record<string, any>>; count: number }>('/api/quant/strategies'),
+  quantFeatures: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/quant/features', { method: 'POST', body: JSON.stringify(body) }),
+  quantBacktest: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/quant/backtest', { method: 'POST', body: JSON.stringify(body) }),
+  quantRuns: () => request<{ items: Array<Record<string, any>>; schema: string }>('/api/quant/runs'),
+  quantRun: (runId: string) => request<Record<string, any>>(`/api/quant/runs/${enc(runId)}`),
+  quantCapsule: (runId: string) =>
+    request<Record<string, any>>(`/api/quant/runs/${enc(runId)}/capsule`),
+  quantReplay: (runId: string) =>
+    request<Record<string, any>>(`/api/quant/runs/${enc(runId)}/replay`, { method: 'POST' }),
+  quantExperiments: () => request<{ items: Array<Record<string, any>>; count: number }>('/api/quant/experiments'),
+  archiveSource: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/research/archive', { method: 'POST', body: JSON.stringify(body) }),
 } satisfies Record<string, unknown>
 
 export type { Mode }

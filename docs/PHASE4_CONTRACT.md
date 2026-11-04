@@ -1,28 +1,28 @@
-# Phase 4 contract (proposed, not implemented)
+# Phase 4 contract — implemented status
 
-Phase 3 deliberately stops before strategies, backtests, simulations and institutional
-pricing.
+Phase 4 is implemented on schema 6. The former “proposed” list is retained here only as a
+compatibility record; see [PHASE4_IMPLEMENTATION.md](PHASE4_IMPLEMENTATION.md) for verified
+capabilities and [PHASE5_CONTRACT.md](PHASE5_CONTRACT.md) for the next boundary.
 
-## Required before Phase 4
+## Implemented interfaces
 
-- An execution boundary type distinct from stateless financial arithmetic:
-  `Strategy`, `Simulation`, `Workflow`, `Monitor`, `Thesis`.
-- Declared state, time-step semantics, data partitions, transaction costs and fills.
-- Reproducible experiment manifests including universe snapshots and code versions.
-- Vectorised/SQL execution adapters behind the existing `OperatorSpec` capability
-  interface, with explicit precision and backend identity in cache keys.
-- Portfolio and risk types (`Weight`, `Return`, `Covariance`, `Exposure`) with the same
-  dimensional discipline as `Money`/`Price`/`Shares`.
-- Sandboxed third-party operator loading; untrusted Python execution remains disabled.
+* `atlas.strategy.v1` — versioned, single-instrument, long-only strategy object.
+* `atlas.feature.v1` — typed price/volume features with historical cutoff.
+* `atlas.quant.reference.v1` — chronological next-open simulator with an independent ledger.
+* `atlas.quant.vectorized.v1` — explicitly non-fill close-to-close preview.
+* `atlas.quant.run.v1` — persisted run, reconciliation, metrics and fingerprint.
+* `atlas.time_capsule.v1` — strategy/config/source/archive/replay context.
+* `atlas.quant.experiment.v1` — experiment document stored as a research object.
+* `atlas.research.archive.v1` — content-addressed source archive with rights metadata.
 
-## Non-goals for Phase 4 foundation
+## Preserved
 
-Do not implement QuantLib, GPU training, Monte Carlo at scale or an economic digital
-twin merely to increase feature count. Establish typed boundaries and reproducibility
-first.
+`atlas.model.v1`, `atlas.fec.ir.v1`, `atlas.research_object.v1`, evidence selection,
+historical cutoff semantics and all Phase 1–3 APIs remain authoritative. Migration 006 is
+additive.
 
-## Compatibility
+## Not yet implemented
 
-`atlas.model.v1`, `atlas.fec.ir.v1`, `atlas.research_object.v1` and the evidence kernel
-remain authoritative. New execution kinds require additive schemas/migrations and
-independent validation.
+Multi-instrument universes, shorting, intraday/auction fills, external engine adapters,
+out-of-sample/walk-forward validation, statement-derived features and a bitemporal vendor
+price store. These are not represented as working features.

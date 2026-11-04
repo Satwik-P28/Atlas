@@ -50,6 +50,11 @@ from ..storage.db import Database
 from ..storage.migrations import LATEST_VERSION
 from ..research import objects as research_objects
 from ..research import validation as research_validation
+from ..research.archive import SourceArchiveStore
+from ..quant.features import FeatureEngine
+from ..quant.lab import LAB_SCHEMA, QuantLab, template_spec, universe as quant_universe
+from ..quant.simulator import SIMULATOR_VERSION, SimulationConfig
+from ..quant.vectorized import VectorizedConfig, run_preview
 from ..fec import compile_model
 from ..fec import valuation as fec_valuation
 from ..fec.operators import REGISTRY, operator_versions
@@ -203,6 +208,67 @@ class SettingBody(BaseModel):
     value: Any
 
 
+class FeatureRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    security_id: str
+    mic: str | None = None
+    features: list[dict[str, Any]]
+    start: str | None = None
+    end: str | None = None
+    as_of: str | None = None
+    missing: Literal["skip", "error"] = "skip"
+    persist: bool = False
+
+
+class StrategyCreateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    spec: dict[str, Any]
+    as_of: str | None = None
+    mode: Literal["public_available", "atlas_ingested"] = "atlas_ingested"
+
+
+class PreviewRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    strategy_id: str | None = None
+    spec: dict[str, Any] | None = None
+    as_of: str | None = None
+    start: str | None = None
+    end: str | None = None
+    initial_capital: float | None = Field(default=None, gt=0, le=1_000_000_000)
+    commission_bps: float | None = Field(default=None, ge=0, le=500)
+    slippage_bps: float | None = Field(default=None, ge=0, le=500)
+
+
+class BacktestRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    strategy_id: str | None = None
+    spec: dict[str, Any] | None = None
+    as_of: str | None = None
+    start: str | None = None
+    end: str | None = None
+    initial_capital: float | None = Field(default=None, gt=0, le=1_000_000_000)
+    commission_bps: float | None = Field(default=None, ge=0, le=500)
+    slippage_bps: float | None = Field(default=None, ge=0, le=500)
+    hypothesis: str | None = Field(default=None, max_length=1000)
+    experiment_name: str | None = Field(default=None, max_length=120)
+    persist: bool = True
+
+
+class SourceArchiveRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    source_id: str
+    resource_id: str = Field(min_length=1, max_length=240)
+    content: str = Field(min_length=1, max_length=2_000_000)
+    media_type: str = Field(default="application/octet-stream", max_length=120)
+    published_at: str | None = None
+    retrieved_at: str | None = None
+    rights: str | None = Field(default=None, max_length=80)
+    retention_policy: str = Field(default="local_only", max_length=80)
+    schema_version: str | None = Field(default=None, max_length=80)
+    parser_version: str | None = Field(default=None, max_length=80)
+    evidence_ids: list[str] = Field(default_factory=list, max_length=100)
+
+
 # ------------------------------------------------------------------ app wiring
 def _open(path: str | Path) -> Database:
     return Database(path, create=False)
@@ -325,6 +391,9 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
             "selection_policy": SELECTION_POLICY,
             "as_of_modes": [{"value": m.value, "description": m.description} for m in AsOfMode],
             "indicator_versions": {key: spec.version for key, spec in indicators.REGISTRY.items()},
+            "quant_lab_schema": LAB_SCHEMA,
+            "strategy_schema": "atlas.strategy.v1",
+            "simulator_version": SIMULATOR_VERSION,
             "panel_types": sorted(workspaces.PANEL_TYPES),
             "error_codes": [
                 "unknown_entity",
@@ -594,6 +663,122 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
     @app.get("/api/research/objects/{object_id}/export", tags=["research"])
     def research_object_export(object_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
         return research_objects.ResearchObjectStore(db).export_manifest(object_id)
+
+    @app.post("/api/research/archive", tags=["research"], status_code=201)
+    def source_archive_create(
+        body: SourceArchiveRequest, db: Database = Depends(get_db)
+    ) -> dict[str, Any]:
+        return SourceArchiveStore(db).archive(
+            source_id=body.source_id, resource_id=body.resource_id, content=body.content,
+            media_type=body.media_type, published_at=body.published_at,
+            retrieved_at=body.retrieved_at, rights=body.rights,
+            retention_policy=body.retention_policy, schema_version=body.schema_version,
+            parser_version=body.parser_version, evidence_ids=body.evidence_ids,
+        )
+
+    @app.get("/api/research/archive/{archive_id}", tags=["research"])
+    def source_archive_get(archive_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return SourceArchiveStore(db).get(archive_id)
+
+    @app.get("/api/research/archive-status", tags=["research"])
+    def source_archive_status(source_ids: str = "", db: Database = Depends(get_db)) -> dict[str, Any]:
+        requested = [item.strip() for item in source_ids.split(",") if item.strip()]
+        return SourceArchiveStore(db).status_for_sources(requested)
+
+    @app.get("/api/quant/catalog", tags=["quant"])
+    def quant_catalog(db: Database = Depends(get_db)) -> dict[str, Any]:
+        lab = QuantLab(db)
+        return {
+            "schema": LAB_SCHEMA,
+            "strategy_schema": "atlas.strategy.v1",
+            "simulator_version": SIMULATOR_VERSION,
+            "templates": lab.builtin_templates(),
+            "universe": quant_universe(db),
+            "timing": {"signal": "session close", "fill": "next session open"},
+            "limitations": ["single instrument", "long only", "no live trading"],
+        }
+
+    @app.get("/api/quant/strategies", tags=["quant"])
+    def quant_strategies(limit: int = Query(default=100, ge=1, le=500),
+                         db: Database = Depends(get_db)) -> dict[str, Any]:
+        items = QuantLab(db).list_strategies(limit=limit)
+        return {"items": items, "count": len(items), "schema": "atlas.strategy.v1"}
+
+    @app.post("/api/quant/strategies", tags=["quant"], status_code=201)
+    def quant_strategy_create(body: StrategyCreateRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return QuantLab(db).ensure_strategy(body.spec, as_of=body.as_of, mode=body.mode)
+
+    @app.post("/api/quant/features", tags=["quant"])
+    def quant_features(body: FeatureRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        mic = body.mic
+        if not mic:
+            row = db.query_one(
+                "SELECT mic FROM listing WHERE security_id = ? ORDER BY is_primary DESC, valid_from LIMIT 1",
+                (body.security_id,),
+            )
+            if row is None:
+                raise ValidationError("unknown security", security_id=body.security_id)
+            mic = row["mic"]
+        result = FeatureEngine(db).compute(
+            body.security_id, mic, body.features, start=body.start, end=body.end,
+            as_of=body.as_of, missing=body.missing, persist=body.persist,
+        )
+        return result.to_dict()
+
+    @app.post("/api/quant/preview", tags=["quant"])
+    def quant_preview(body: PreviewRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        if body.strategy_id:
+            stored = research_objects.ResearchObjectStore(db).get(body.strategy_id)
+            if stored["kind"] != "strategy":
+                raise ValidationError("preview requires a strategy object", kind=stored["kind"])
+            spec = stored["document"]["spec"]
+        elif body.spec:
+            spec = body.spec
+        else:
+            raise ValidationError("provide strategy_id or a strategy spec")
+        return run_preview(db, spec, VectorizedConfig(
+            as_of=body.as_of, start=body.start, end=body.end,
+            initial_capital=body.initial_capital,
+            commission_bps=body.commission_bps, slippage_bps=body.slippage_bps,
+        ))
+
+    @app.post("/api/quant/backtest", tags=["quant"])
+    def quant_backtest(body: BacktestRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        if not body.strategy_id and not body.spec:
+            raise ValidationError("provide strategy_id or a strategy spec")
+        config = SimulationConfig(
+            as_of=body.as_of, start=body.start, end=body.end,
+            initial_capital=body.initial_capital, commission_bps=body.commission_bps,
+            slippage_bps=body.slippage_bps,
+        )
+        return QuantLab(db).run(
+            strategy_id=body.strategy_id, spec=body.spec, config=config,
+            persist=body.persist, hypothesis=body.hypothesis,
+            experiment_name=body.experiment_name,
+        )
+
+    @app.get("/api/quant/runs", tags=["quant"])
+    def quant_runs(limit: int = Query(default=50, ge=1, le=200),
+                   db: Database = Depends(get_db)) -> dict[str, Any]:
+        return {"items": QuantLab(db).list_runs(limit=limit), "schema": LAB_SCHEMA}
+
+    @app.get("/api/quant/runs/{run_id}", tags=["quant"])
+    def quant_run_get(run_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return QuantLab(db).get_run(run_id)
+
+    @app.get("/api/quant/runs/{run_id}/capsule", tags=["quant"])
+    def quant_run_capsule(run_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return QuantLab(db).capsule(run_id)
+
+    @app.post("/api/quant/runs/{run_id}/replay", tags=["quant"])
+    def quant_run_replay(run_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return QuantLab(db).replay(run_id)
+
+    @app.get("/api/quant/experiments", tags=["quant"])
+    def quant_experiments(limit: int = Query(default=100, ge=1, le=500),
+                          db: Database = Depends(get_db)) -> dict[str, Any]:
+        items = QuantLab(db).list_experiments(limit=limit)
+        return {"items": items, "count": len(items), "schema": "atlas.research_object.v1"}
 
     @app.post("/api/research/objects/{object_id}/execute", tags=["research"])
     def research_object_execute(

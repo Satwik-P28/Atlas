@@ -1,20 +1,21 @@
-# Atlas Quant — Phase 2.1
+# Atlas Quant — Phase 4
 
-**A local-first financial research terminal built on a point-in-time evidence platform.**
+**A local-first financial research terminal and quantitative research lab built on a
+point-in-time evidence platform.**
 
 Phase 1 built the trustworthy layer: immutable evidence, exact availability, stable
 security identity, adjustment mathematics and a reverse dependency index. Phase 2 added the
-terminal on top of it — companies, statements, charts, indicators, a screener, watchlists,
-filings, Financial X-Ray, a historical time machine, saved workspaces and an HTTP API —
-**without rebuilding or bypassing the evidence layer**. Phase 2.1 adds a real IBM market
-series with explicit provenance, independent validation, peer/history/revision views,
-batched and invalidated read models, and versioned Universal Research Object contracts.
-Read [docs/PHASE2_1_READINESS.md](docs/PHASE2_1_READINESS.md) for the measured readiness report.
+terminal. Phase 3 added the compiled financial model runtime, Model Forge, DCF and research
+applications. **Phase 4 adds Quant Lab:** point-in-time features, versioned strategies,
+next-open chronological backtests, an independently reconciled portfolio ledger, IBM
+real-data experiments, Model Forge signals, persistent experiments and Time Capsules.
+See [docs/PHASE4_IMPLEMENTATION.md](docs/PHASE4_IMPLEMENTATION.md).
 
 ```
 5 issuers · 8 securities · 14,977 filings · 23,583 evidence records · 17,363 bars
-6,793 real IBM vendor bars · 114 real IBM actions
-313 backend tests · 4 frontend tests · 12 browser journeys · schema v4
+6,793 real IBM vendor bars · 114 real IBM actions · schema v6
+333 baseline backend tests + 11 Phase 4 tests · 4 frontend tests
+12 legacy browser journeys + 11 Studio checks + Phase 4 historical/Lab journey
 Real SEC fundamentals for all issuers · IBM prices REAL (Alpha Vantage demo, reported)
 Apple/Microsoft/Walmart/Alphabet prices and actions clearly labelled SYNTHETIC
 ```
@@ -53,6 +54,26 @@ Apple/Microsoft/Walmart/Alphabet prices and actions clearly labelled SYNTHETIC
 | Watchlists | `/watchlists` | stable security ids, persisted in SQLite |
 | Workspaces | `/workspaces` (Advanced) | validated JSON documents, 3 presets, resize/reorder/save/restore |
 | HTTP API + OpenAPI | `/api/*` | typed validation, error envelope, pagination, source metadata |
+
+### Phase 4 Quant Lab
+
+| Capability | Where | Notes |
+|---|---|---|
+| Point-in-time features | `/lab`, `/api/quant/features` | price, return, SMA, momentum, volatility, volume z-score; cutoff enforced |
+| Strategy objects | `/api/quant/strategies` | `atlas.strategy.v1` in the research-object registry |
+| Event-driven backtests | `/lab`, `/api/quant/backtest` | close decision, next-open fill, costs, splits, dividends |
+| Independent accounting | Lab reconciliation panel | cash/trade/commission/dividend/realized/unrealized identity |
+| Buy-and-hold benchmark | every run | same bars and costs |
+| Model Forge signal | Lab custom strategy | shared compiler and operator registry |
+| Vectorized preview | `/api/quant/preview` | close-to-close triage, explicitly not a fill simulation |
+| Experiments and Time Capsule | Lab history/capsule | save, reopen, fork, compare, replay, export |
+| Source archives | `/api/research/archive` | SHA-256 bytes plus rights/retention metadata |
+
+Real IBM demonstration, 2,977 sessions (2015-01-02 → 2026-11-03), $100,000,
+2 bps commission + 5 bps slippage: buy-and-hold **108.60%**, 20/100 trend **-39.49%**,
+60-session momentum **16.12%**, Model Forge signal **24.17%**. Every ledger reconciled.
+These are in-sample research results, not alpha claims. Full measurements:
+[docs/PHASE4_BENCHMARKS.md](docs/PHASE4_BENCHMARKS.md).
 
 ### Phase 2.1 hardening and research
 
@@ -108,10 +129,14 @@ asserts they are identical.
 ## 4. Data honesty
 
 * Fundamentals are real, public-domain SEC EDGAR data archived in `fixtures/sec`.
-* **Market prices are synthetic.** They are generated deterministically for demonstration,
-  registered as source `synthetic-demo` (kind `synthetic`), marked `data_status:
-  "synthetic"` by the API, badged in every table and chart, and announced by a page-level
-  banner. They are never described as exchange data.
+* **IBM market prices are real vendor observations** from the Alpha Vantage demo source,
+  registered as `reported`, with retrieval provenance and 114 corporate actions. They are
+  raw observations, not proof of the vendor's 2015 display vintage; the Time Capsule reports
+  `external_provider_only` because exact source bytes are not archived.
+* **Other market prices are synthetic.** Apple, Microsoft, Walmart and Alphabet series are
+  generated deterministically, registered as source `synthetic-demo` (kind `synthetic`),
+  marked `data_status: "synthetic"` by the API, badged in every table and chart, and
+  announced by a page-level banner. They are never described as exchange data.
 * Apple's real 4:1 split (2020-08-28) and cash dividends are stored so raw, split-adjusted
   and total-return views can be verified against hand calculations.
 * **Total return is an index (base 1.0), not a price.** Every response says so.
@@ -170,16 +195,15 @@ and caveats: [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 ## 7. Verification
 
 ```bash
-.venv/bin/python -m pytest -q          # 299 passed
+.venv/bin/python -m pytest -q          # 344 passed (333 baseline + 11 Phase 4)
 cd web && npm test -- --run            # 4 passed
-cd web && npm run build                # tsc + vite, 67 modules
+cd web && npm run build                # tsc + vite
 ```
 
-Browser journeys (`web/e2e/journeys.mjs`, Chromium 156, 1440×960 and 390×844) cover:
-markets load, search Apple, statements, X-Ray, as-of 2023, chart + RSI, watchlist
-persistence across reload, advanced workspace save/restore, screener, standard/advanced
-value invariance, API-failure degradation, and mobile layout. Screenshots are in
-`artifacts/`.
+Browser journeys (`web/e2e/journeys.mjs`) cover the legacy terminal journeys;
+`web/e2e/studio.mjs` covers 11 Phase 3 checks; `web/e2e/phase4.mjs` covers historical
+reopen, buy-and-hold/trend/custom-model runs, accounting, Time Capsule replay, comparison,
+JSON export and a 390px mobile viewport. Screenshots are in `artifacts/`.
 
 ---
 
@@ -188,14 +212,16 @@ value invariance, API-failure degradation, and mobile layout. Screenshots are in
 ```
 src/atlas/
   core/        ids, units, temporal semantics, concept registry, typed errors
-  storage/     SQLite engine, versioned migrations (schema v3), source registry
+  storage/     SQLite engine, versioned migrations (schema v6), source registry
   evidence/    temporal evidence kernel, selection, provenance
   entities/    issuer / security / listing / ticker master and resolution
   market/      calendars, immutable bars, corporate actions, adjustments
   ingestion/   SEC client + parsers, CSV/Parquet import
   terminal/    read models, indicators, screener, user stores, workspaces, FastAPI app
+  quant/       features, strategy contracts, portfolio ledger, simulator, Quant Lab
+  research/    research objects and content-addressed source archives
   cli.py       command line interface (incl. `serve`)
-tests/         299 tests (Phase 1 + terminal indicators, API, workspaces)
+tests/         344 tests (Phase 1–4 plus terminal API/workspaces)
 web/           React 19 + TypeScript + Vite terminal; Vitest and Playwright journeys
 benchmarks/    Phase 1 benchmarks + terminal_bench.py
 fixtures/      real SEC payloads and labelled synthetic fixtures
@@ -210,8 +236,10 @@ never the reverse. The kernel does not know HTTP exists.
 
 ## 9. Known limitations
 
-* Market prices are synthetic (no licensed feed). Real bars can be imported and would be
-  labelled `reported` through the same read models.
+* IBM prices are real vendor demo observations; the other four issuers are synthetic. No
+  licensed feed or survivorship-free universe is present.
+* Quant Lab supports one instrument, long-only, raw daily bars and next-open fills. It does
+  not model shorting, partial fills, market impact, intraday auctions or an order book.
 * No news, transcripts, estimates or analyst data; events are filings and actions only.
 * Screening covers 4 issuers, not a market.
 * X-Ray is reachable from statement cells, metrics and workspace evidence panels; chart
@@ -230,6 +258,12 @@ never the reverse. The kernel does not know HTTP exists.
 | Document | Contents |
 |---|---|
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | module contracts, schema, ingest/selection algorithms |
+| [docs/PHASE4_IMPLEMENTATION.md](docs/PHASE4_IMPLEMENTATION.md) | what Phase 4 built, real-data results, verification and limits |
+| [docs/QUANT_LAB_ARCHITECTURE.md](docs/QUANT_LAB_ARCHITECTURE.md) | Quant Lab modules, event ordering and boundaries |
+| [docs/STRATEGY_CONTRACT.md](docs/STRATEGY_CONTRACT.md) | strategy schema, supported signals and rejection rules |
+| [docs/FEATURE_ENGINE.md](docs/FEATURE_ENGINE.md) | features, cutoffs and anti-leakage behavior |
+| [docs/PORTFOLIO_ACCOUNTING.md](docs/PORTFOLIO_ACCOUNTING.md) | ledger identities, costs, splits, dividends |
+| [docs/PHASE4_VALIDATION.md](docs/PHASE4_VALIDATION.md) | acceptance matrix and test evidence |
 | [docs/PHASE2_IMPLEMENTATION.md](docs/PHASE2_IMPLEMENTATION.md) | what Phase 2 built, verification ledger, measurements, defects fixed |
 | [docs/PHASE3_CONTRACT.md](docs/PHASE3_CONTRACT.md) | stable API/JSON contracts and extension points for Phase 3 |
 | [docs/PHASE2_CONTRACT.md](docs/PHASE2_CONTRACT.md) | Phase 1 → Phase 2 read/write interfaces |

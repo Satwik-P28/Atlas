@@ -556,12 +556,85 @@ CREATE INDEX idx_model_node_cache_fingerprint ON model_node_cache (fingerprint, 
 """
 
 
+_MIGRATION_006 = """
+-- ===========================================================================
+-- Phase 4: source archives, feature snapshots and quantitative runs
+-- ===========================================================================
+
+-- A source archive stores the exact bytes Atlas retrieved so a numerical result can
+-- later be checked against source content even if a provider withdraws it. Rights are
+-- part of the archive: the presence of bytes does not imply permission to redistribute.
+CREATE TABLE source_archive (
+    archive_id       TEXT PRIMARY KEY,
+    source_id        TEXT NOT NULL REFERENCES source(source_id),
+    resource_id      TEXT NOT NULL,
+    sha256           TEXT NOT NULL UNIQUE,
+    content          BLOB NOT NULL,
+    media_type       TEXT NOT NULL,
+    retrieved_at     TEXT NOT NULL,
+    published_at     TEXT,
+    rights           TEXT NOT NULL,
+    retention_policy TEXT NOT NULL,
+    schema_version   TEXT,
+    parser_version   TEXT,
+    created_at       TEXT NOT NULL
+);
+CREATE INDEX idx_source_archive_resource ON source_archive (source_id, resource_id);
+
+CREATE TABLE source_archive_link (
+    archive_id  TEXT NOT NULL REFERENCES source_archive(archive_id) ON DELETE CASCADE,
+    evidence_id TEXT NOT NULL REFERENCES evidence(evidence_id),
+    PRIMARY KEY (archive_id, evidence_id)
+);
+CREATE INDEX idx_source_archive_link_evidence ON source_archive_link (evidence_id);
+
+-- Cached point-in-time feature series. Generation is supplied by the caller and must
+-- incorporate the bar/evidence revisions that influenced the values.
+CREATE TABLE feature_snapshot (
+    feature_key   TEXT NOT NULL,
+    security_id   TEXT NOT NULL REFERENCES security(security_id),
+    as_of         TEXT NOT NULL,
+    generation    TEXT NOT NULL,
+    values_json   TEXT NOT NULL,
+    metadata_json TEXT NOT NULL,
+    created_at    TEXT NOT NULL,
+    updated_at    TEXT NOT NULL,
+    PRIMARY KEY (feature_key, security_id, as_of)
+);
+CREATE INDEX idx_feature_snapshot_security ON feature_snapshot (security_id, as_of);
+
+-- A quantitative run is the durable Time Capsule record. It references the strategy
+-- object and, when persisted, the experiment object that describes the research intent.
+CREATE TABLE quant_run (
+    run_id               TEXT PRIMARY KEY,
+    strategy_object_id   TEXT REFERENCES research_object(object_id),
+    strategy_fingerprint TEXT NOT NULL,
+    experiment_object_id TEXT REFERENCES research_object(object_id),
+    as_of                TEXT NOT NULL,
+    mode                 TEXT NOT NULL,
+    start_date           TEXT,
+    end_date             TEXT,
+    universe_json        TEXT NOT NULL,
+    config_json          TEXT NOT NULL,
+    result_json          TEXT NOT NULL,
+    reconciliation_json  TEXT NOT NULL,
+    metrics_json         TEXT NOT NULL,
+    status               TEXT NOT NULL,
+    duration_ms          REAL NOT NULL,
+    created_at           TEXT NOT NULL
+);
+CREATE INDEX idx_quant_run_strategy ON quant_run (strategy_object_id, created_at);
+CREATE INDEX idx_quant_run_fingerprint ON quant_run (strategy_fingerprint, created_at);
+"""
+
+
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=1, name="phase1_foundation", sql=_MIGRATION_001),
     Migration(version=2, name="phase1_1_history_and_dependencies", sql=_MIGRATION_002),
     Migration(version=3, name="phase2_terminal_user_data", sql=_MIGRATION_003),
     Migration(version=4, name="phase2_1_indexes_and_research_objects", sql=_MIGRATION_004),
     Migration(version=5, name="phase3_metrics_and_model_runtime", sql=_MIGRATION_005),
+    Migration(version=6, name="phase4_source_archive_and_quant_lab", sql=_MIGRATION_006),
 )
 
 LATEST_VERSION = max(m.version for m in MIGRATIONS)
