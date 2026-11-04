@@ -12,6 +12,7 @@ the validator rejects unknown top-level keys so a typo cannot silently change me
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import re
@@ -25,7 +26,7 @@ from ..dependencies import DependencyIndex
 from ..storage.db import Database
 
 SCHEMA_VERSION = "atlas.research_object.v1"
-KINDS = ("dataset", "model", "experiment", "strategy", "application")
+KINDS = ("dataset", "financial_metric", "model", "experiment", "strategy", "application")
 STATUSES = ("draft", "validated", "deprecated")
 REQUIRED_FIELDS = (
     "schema_version",
@@ -43,6 +44,7 @@ OPTIONAL_FIELDS = ("source_ids", "object_ids", "assumptions", "limitations", "ow
 ALLOWED_FIELDS = set(REQUIRED_FIELDS) | set(OPTIONAL_FIELDS)
 SPEC_FIELDS = {
     "dataset": ("universe", "fields", "frequency", "adjustment"),
+    "financial_metric": ("formula", "period", "unit", "inputs"),
     "model": ("inputs", "outputs", "method", "assumptions", "validation"),
     "experiment": ("hypothesis", "method", "metrics"),
     "strategy": ("signal", "universe", "rebalance", "constraints"),
@@ -267,6 +269,77 @@ class ResearchObjectStore:
             params,
         )
         return [dict(row) for row in rows]
+
+    def fork(self, object_id: str, *, name: str, version: str) -> dict[str, Any]:
+        """Create a new immutable version; the source object is never modified."""
+        source = self.get(object_id)
+        document = copy.deepcopy(source["document"])
+        document["name"] = name
+        document["version"] = version
+        document["status"] = "draft"
+        spec = document.get("spec")
+        if isinstance(spec, dict):
+            spec["forked_from"] = object_id
+        return self.create(document)
+
+    def compare(self, left_id: str, right_id: str) -> dict[str, Any]:
+        left, right = self.get(left_id), self.get(right_id)
+        changes: list[dict[str, Any]] = []
+
+        def walk(a: Any, b: Any, path: str) -> None:
+            if isinstance(a, dict) and isinstance(b, dict):
+                for key in sorted(set(a) | set(b)):
+                    walk(a.get(key), b.get(key), f"{path}.{key}" if path else key)
+            elif isinstance(a, list) and isinstance(b, list):
+                if a != b:
+                    changes.append({"path": path, "left": a, "right": b})
+            elif a != b:
+                changes.append({"path": path, "left": a, "right": b})
+
+        walk(left["document"], right["document"], "")
+        return {
+            "left": {"object_id": left_id, "name": left["name"], "version": left["version"],
+                     "content_hash": left["content_hash"]},
+            "right": {"object_id": right_id, "name": right["name"], "version": right["version"],
+                      "content_hash": right["content_hash"]},
+            "equal": left["content_hash"] == right["content_hash"],
+            "changes": changes,
+            "schema": SCHEMA_VERSION,
+        }
+
+    def export_manifest(self, object_id: str) -> dict[str, Any]:
+        stored = self.get(object_id)
+        document = stored["document"]
+        from ..fec.compiler import COMPILER_VERSION
+        from ..fec.operators import operator_versions
+
+        dependencies = []
+        for dependency in document.get("object_ids", []):
+            row = self.db.query_one(
+                "SELECT object_id, name, version, content_hash FROM research_object WHERE object_id = ?",
+                (dependency,),
+            )
+            if row:
+                dependencies.append(dict(row))
+        return {
+            "schema": "atlas.reproducibility.v1",
+            "exported_at": iso(utcnow()),
+            "object": {
+                "object_id": stored["object_id"], "kind": stored["kind"],
+                "name": stored["name"], "version": stored["version"],
+                "status": stored["status"], "content_hash": stored["content_hash"],
+                "schema_version": stored["schema_version"],
+            },
+            "document": document,
+            "evidence": stored["evidence"],
+            "dependency_objects": dependencies,
+            "compiler_version": COMPILER_VERSION,
+            "operator_versions": operator_versions(),
+            "reproduction": {
+                "command": f"atlas model export {stored['object_id']}",
+                "note": "Archive the document and cited evidence snapshots before relying on future reproduction.",
+            },
+        }
 
     def evidence_impact(self, evidence_id: str) -> dict[str, Any]:
         rows = self.db.query(

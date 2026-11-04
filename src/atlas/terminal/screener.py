@@ -17,7 +17,8 @@ from typing import Any, Sequence
 from ..core.errors import ValidationError
 from ..core.temporal import AsOfMode, iso, utcnow
 from ..storage.db import Database
-from .read_models import DERIVED_FORMULAS, issuer_metrics, list_companies
+from . import metric_store
+from .read_models import DERIVED_FORMULAS, list_companies
 
 OPS = {
     "gt": lambda a, b: a > b,
@@ -135,7 +136,12 @@ def run_screener(
     excluded_missing = 0
     skipped: list[dict[str, Any]] = []
     for company in companies:
-        detail = issuer_metrics(db, company["issuer_id"], as_of=instant, mode=resolved_mode)
+        # Pass the caller's cutoff, not the freshly generated display instant. A None
+        # cutoff is an implicit "now" and the materializer normalizes it to end-of-day;
+        # an explicit historical cutoff is preserved exactly.
+        detail = metric_store.get_issuer_metrics(
+            db, company["issuer_id"], as_of=as_of, mode=resolved_mode
+        )
         metrics = detail["metrics"]
         primary = company["securities"][0] if company["securities"] else None
         row = {

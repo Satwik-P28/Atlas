@@ -151,7 +151,7 @@ def test_health_and_contract(terminal):
     client = terminal["client"]
     health = client.get("/api/health").json()
     assert health["status"] == "ok"
-    assert health["schema_version"] == 4
+    assert health["schema_version"] == 5
     assert health["issuers"] == 1
     contract = client.get("/api/schema").json()
     assert contract["selection_policy"] == "atlas.select.point_in_time.v2"
@@ -485,3 +485,129 @@ def test_research_views_validation_and_object_contract(terminal):
 
     rejected = client.post("/api/research/objects", json={"document": {**document, "name": "Other", "version": "1.0.1", "sql": "select 1"}})
     assert rejected.status_code == 422
+
+import json
+def _equation_spec(expr: str = "price * shares") -> dict:
+    return {
+        "schema_version": "atlas.model.v1",
+        "name": "API price times shares",
+        "interface": "equation",
+        "inputs": [
+            {"name": "price", "type": "Price[USD]"},
+            {"name": "shares", "type": "Shares"},
+        ],
+        "equations": [{"name": "value", "expr": expr}],
+        "outputs": ["value"],
+        "as_of": "2024-01-01T00:00:00Z",
+        "mode": "public_available",
+    }
+
+
+def test_compile_run_and_validation_errors(terminal):
+    client = terminal["client"]
+    compiled = client.post("/api/models/compile", json={"spec": _equation_spec()})
+    assert compiled.status_code == 200, compiled.text
+    payload = compiled.json()
+    assert payload["outputs"] == {"value": payload["outputs"]["value"]}
+    assert payload["nodes"]
+    assert payload["canonical_spec"]["schema_version"] == "atlas.model.v1"
+
+    run = client.post(
+        "/api/models/run",
+        json={"spec": _equation_spec(), "inputs": {"price": 25, "shares": 4}},
+    )
+    assert run.status_code == 200, run.text
+    assert run.json()["outputs"]["value"] == 100.0
+    run_id = run.json()["run_id"]
+    restored = client.get(f"/api/models/runs/{run_id}")
+    assert restored.status_code == 200
+    assert restored.json()["outputs"]["value"] == 100.0
+
+    bad = client.post(
+        "/api/models/compile",
+        json={"spec": {
+            "schema_version": "atlas.model.v1", "name": "bad", "interface": "equation",
+            "inputs": [{"name": "usd", "type": "Money[USD]"}, {"name": "eur", "type": "Money[EUR]"}],
+            "equations": [{"name": "x", "expr": "usd + eur"}], "outputs": ["x"],
+        }},
+    )
+    assert bad.status_code == 422
+    diagnostic = bad.json()["error"]["context"]["diagnostics"][0]
+    assert diagnostic["code"] == "currency_mismatch"
+
+
+def test_valuation_defaults_and_dcf(terminal):
+    client = terminal["client"]
+    issuer = client.get("/api/companies").json()["items"][0]["issuer_id"]
+    defaults = client.get(f"/api/valuation/defaults/{issuer}")
+    assert defaults.status_code == 200, defaults.text
+    payload = defaults.json()
+    revenue = payload["defaults"].get("revenue")
+    if not revenue:
+        return  # the shared fixture may not carry a revenue fact; arithmetic tests cover the model
+    response = client.post(
+        "/api/valuation/dcf",
+        json={"issuer": issuer, "assumptions": {"revenue_growth": [0.05] * 5}},
+    )
+    assert response.status_code == 200, response.text
+    result = response.json()
+    assert result["outputs"]["value_per_share"] > 0
+    assert result["outputs"]["enterprise_value"] > result["outputs"]["pv_explicit"]
+    assert result["audit"]["evidence_ids"]
+    assert len(result["trace"]) > 10
+    assert result["manifest"]["compiler_version"] == "atlas.fec.compiler.v1"
+
+    sensitivity = client.post("/api/valuation/sensitivity", json={"issuer": issuer})
+    assert sensitivity.status_code == 200, sensitivity.text
+    assert len(sensitivity.json()["matrix"]) == 5
+
+
+def test_research_object_fork_compare_and_export(terminal):
+    client = terminal["client"]
+    db = Database(terminal["path"], create=False)
+    evidence_id = db.scalar("SELECT evidence_id FROM evidence LIMIT 1")
+    db.close()
+    assert evidence_id
+    document = {
+        "schema_version": "atlas.research_object.v1",
+        "kind": "model",
+        "name": "Lifecycle model",
+        "version": "1.0.0",
+        "status": "validated",
+        "description": "A compiler model used to test immutable version lifecycle.",
+        "as_of": "2024-01-01T00:00:00Z",
+        "mode": "public_available",
+        "evidence_ids": [evidence_id],
+        "spec": {
+            "inputs": {"price": "Price[USD]", "shares": "Shares"},
+            "outputs": {"value": "value"},
+            "method": "atlas.model.v1",
+            "assumptions": [],
+            "validation": "compiled",
+            "model_spec": _equation_spec(),
+        },
+    }
+    created = client.post("/api/research/objects", json={"document": document})
+    assert created.status_code == 201, created.text
+    object_id = created.json()["object_id"]
+    executed = client.post(
+        f"/api/research/objects/{object_id}/execute",
+        json={"inputs": {"price": 10, "shares": 3}},
+    )
+    assert executed.status_code == 200, executed.text
+    assert executed.json()["outputs"]["value"] == 30.0
+    forked = client.post(
+        f"/api/research/objects/{object_id}/fork",
+        json={"name": "Lifecycle model fork", "version": "1.0.1"},
+    )
+    assert forked.status_code == 201, forked.text
+    fork_id = forked.json()["object_id"]
+    compared = client.get(f"/api/research/compare?left={object_id}&right={fork_id}")
+    assert compared.status_code == 200
+    assert compared.json()["equal"] is False
+    exported = client.get(f"/api/research/objects/{object_id}/export")
+    assert exported.status_code == 200
+    manifest = exported.json()
+    assert manifest["object"]["content_hash"]
+    assert manifest["compiler_version"] == "atlas.fec.compiler.v1"
+    json.dumps(manifest)

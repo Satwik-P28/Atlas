@@ -201,6 +201,63 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(body),
     }),
+  modelCompile: (spec: unknown) =>
+    request<Record<string, unknown>>('/api/models/compile', {
+      method: 'POST',
+      body: JSON.stringify({ spec }),
+    }),
+  modelRun: (spec: unknown, inputs: Record<string, unknown>, persist = true) =>
+    request<Record<string, any>>('/api/models/run', {
+      method: 'POST',
+      body: JSON.stringify({ spec, inputs, persist }),
+    }),
+  valuationDefaults: (identifier: string, asOf?: string | null, mode?: AsOfMode) =>
+    request<Record<string, any>>(
+      `/api/valuation/defaults/${enc(identifier)}${qs({ as_of: asOf, mode })}`,
+    ),
+  valuationDcf: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/valuation/dcf', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  valuationReverse: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/valuation/reverse', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  valuationScenarios: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/valuation/scenarios', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  valuationSensitivity: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/valuation/sensitivity', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  researchObjects: (kind?: string) =>
+    request<{ items: Array<Record<string, any>>; kinds: string[] }>(
+      `/api/research/objects${qs({ kind, limit: 50 })}`,
+    ),
+  createResearchObject: (document: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/research/objects', {
+      method: 'POST',
+      body: JSON.stringify({ document }),
+    }),
+  forkResearchObject: (objectId: string, name: string, version = '1.0.0') =>
+    request<Record<string, any>>(`/api/research/objects/${enc(objectId)}/fork`, {
+      method: 'POST',
+      body: JSON.stringify({ name, version }),
+    }),
+  compareResearchObjects: (left: string, right: string) =>
+    request<Record<string, any>>(`/api/research/compare${qs({ left, right })}`),
+  exportResearchObject: (objectId: string) =>
+    request<Record<string, any>>(`/api/research/objects/${enc(objectId)}/export`),
+  executeResearchObject: (objectId: string, inputs: Record<string, unknown>) =>
+    request<Record<string, any>>(`/api/research/objects/${enc(objectId)}/execute`, {
+      method: 'POST',
+      body: JSON.stringify({ inputs, persist: true }),
+    }),
 } satisfies Record<string, unknown>
 
 export type { Mode }

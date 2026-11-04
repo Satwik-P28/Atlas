@@ -22,6 +22,8 @@ Operational choices:
 
 from __future__ import annotations
 
+import copy
+import json
 import os
 from pathlib import Path
 from typing import Any, Literal
@@ -48,6 +50,10 @@ from ..storage.db import Database
 from ..storage.migrations import LATEST_VERSION
 from ..research import objects as research_objects
 from ..research import validation as research_validation
+from ..fec import compile_model
+from ..fec import valuation as fec_valuation
+from ..fec.operators import REGISTRY, operator_versions
+from ..fec.runtime import ExecutionEngine
 from . import indicators, read_models, screener, workspaces
 from .store import SettingsStore, WatchlistStore, WorkspaceStore
 
@@ -70,6 +76,53 @@ STATUS_BY_ERROR: tuple[tuple[type[BaseException], int], ...] = (
 class ResearchObjectCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
     document: dict[str, Any]
+
+
+class ModelCompileRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    spec: dict[str, Any]
+
+
+class ModelRunRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    spec: dict[str, Any]
+    inputs: dict[str, Any] = Field(default_factory=dict)
+    persist: bool = True
+
+
+class DcfRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    issuer: str
+    assumptions: dict[str, Any] = Field(default_factory=dict)
+    as_of: str | None = None
+    mode: Literal["public_available", "atlas_ingested"] | None = None
+
+
+class ReverseDcfRequest(DcfRequest):
+    target_price: float
+    variable: Literal["terminal_growth", "operating_margin", "revenue_growth", "wacc"] = "terminal_growth"
+    bounds: list[float] | None = None
+
+
+class SensitivityRequest(DcfRequest):
+    wacc_values: list[float] | None = None
+    growth_values: list[float] | None = None
+
+
+class ScenarioRequest(DcfRequest):
+    custom: dict[str, dict[str, Any]] | None = None
+
+
+class ForkRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    name: str = Field(min_length=1, max_length=120)
+    version: str = Field(default="1.0.0", pattern=r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
+
+
+class ObjectExecuteRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    inputs: dict[str, Any] = Field(default_factory=dict)
+    persist: bool = True
 
 
 class WatchlistCreate(BaseModel):
@@ -339,7 +392,10 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
     @app.get("/api/companies/{identifier}/metrics", tags=["companies"])
     def metrics(identifier: str, as_of: str | None = None, mode: str | None = None,
                 db: Database = Depends(get_db)) -> dict[str, Any]:
-        return read_models.issuer_metrics(db, identifier, as_of=as_of, mode=mode)
+        issuer = read_models.resolve_company(db, identifier)
+        from .metric_store import get_issuer_metrics
+
+        return get_issuer_metrics(db, issuer["issuer_id"], as_of=as_of, mode=mode)
 
     @app.get("/api/companies/{identifier}/filings", tags=["companies"])
     def filings(
@@ -520,6 +576,131 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
     @app.get("/api/research/objects/{object_id}", tags=["research"])
     def research_object_get(object_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
         return research_objects.ResearchObjectStore(db).get(object_id)
+
+    @app.post("/api/research/objects/{object_id}/fork", tags=["research"], status_code=201)
+    def research_object_fork(
+        object_id: str, body: ForkRequest, db: Database = Depends(get_db)
+    ) -> dict[str, Any]:
+        return research_objects.ResearchObjectStore(db).fork(
+            object_id, name=body.name, version=body.version
+        )
+
+    @app.get("/api/research/compare", tags=["research"])
+    def research_object_compare(
+        left: str, right: str, db: Database = Depends(get_db)
+    ) -> dict[str, Any]:
+        return research_objects.ResearchObjectStore(db).compare(left, right)
+
+    @app.get("/api/research/objects/{object_id}/export", tags=["research"])
+    def research_object_export(object_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return research_objects.ResearchObjectStore(db).export_manifest(object_id)
+
+    @app.post("/api/research/objects/{object_id}/execute", tags=["research"])
+    def research_object_execute(
+        object_id: str, body: ObjectExecuteRequest, db: Database = Depends(get_db)
+    ) -> dict[str, Any]:
+        stored = research_objects.ResearchObjectStore(db).get(object_id)
+        if stored["kind"] != "model":
+            raise ValidationError("only model research objects are executable", kind=stored["kind"])
+        spec = (stored["document"].get("spec") or {}).get("model_spec")
+        if not isinstance(spec, dict):
+            raise ValidationError("model object does not contain an atlas.model.v1 spec")
+        model = compile_model(spec)
+        result = ExecutionEngine(db).execute(model, body.inputs, persist=body.persist)
+        result["object_id"] = object_id
+        return result
+
+    # ------------------------------------------------------------ models & FEC
+    @app.get("/api/models/operators", tags=["models"])
+    def model_operators() -> dict[str, Any]:
+        return {
+            "items": [
+                {"key": key, "version": spec.version, "arity": spec.arity,
+                 "formula": spec.formula, "description": spec.description}
+                for key, spec in sorted(REGISTRY.items())
+            ],
+            "operator_versions": operator_versions(),
+            "schema_version": "atlas.model.v1",
+            "expression_policy": "allowlisted AST arithmetic and named functions; no eval/exec",
+        }
+
+    @app.post("/api/models/compile", tags=["models"])
+    def model_compile(body: ModelCompileRequest) -> dict[str, Any]:
+        model = compile_model(body.spec)
+        return {**model.to_dict(), "canonical_spec": model.spec}
+
+    @app.post("/api/models/run", tags=["models"])
+    def model_run(body: ModelRunRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        model = compile_model(body.spec)
+        result = ExecutionEngine(db).execute(model, body.inputs, persist=body.persist)
+        result["compiled"] = model.to_dict()
+        return result
+
+    @app.get("/api/models/runs/{run_id}", tags=["models"])
+    def model_run_get(run_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        row = db.query_one("SELECT * FROM model_run WHERE run_id = ?", (run_id,))
+        if row is None:
+            raise UnknownEntity("unknown model run", run_id=run_id)
+        payload = json.loads(row["result_json"])
+        payload["execution_record"] = {
+            "run_id": row["run_id"], "status": row["status"],
+            "duration_ms": row["duration_ms"], "created_at": row["created_at"],
+            "as_of": row["as_of"], "mode": row["mode"], "fingerprint": row["fingerprint"],
+        }
+        return payload
+
+    # --------------------------------------------------------------- valuation
+    @app.get("/api/valuation/defaults/{identifier}", tags=["valuation"])
+    def valuation_defaults(
+        identifier: str, as_of: str | None = None, mode: str | None = None,
+        db: Database = Depends(get_db),
+    ) -> dict[str, Any]:
+        issuer = read_models.resolve_company(db, identifier)
+        from .metric_store import get_issuer_metrics
+
+        metrics = get_issuer_metrics(db, issuer["issuer_id"], as_of=as_of, mode=mode)
+        defaults = fec_valuation.defaults_from_metrics(metrics)
+        return {
+            "issuer": {"issuer_id": issuer["issuer_id"], "legal_name": issuer["legal_name"]},
+            "defaults": defaults,
+            "metrics": metrics.get("metrics", {}),
+            "period_end": metrics.get("period_end"),
+            "price": metrics.get("price"),
+            "price_as_of": metrics.get("price_as_of"),
+            "schema": fec_valuation.VALUATION_SCHEMA,
+            "notes": [
+                "Revenue, margin, capex, cash, debt and shares are evidence-linked defaults.",
+                "WACC, tax, D&A and working-capital assumptions remain explicit user assumptions.",
+            ],
+        }
+
+    @app.post("/api/valuation/dcf", tags=["valuation"])
+    def valuation_dcf(body: DcfRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return fec_valuation.run_dcf(
+            db, body.issuer, body.assumptions, as_of=body.as_of, mode=body.mode
+        )
+
+    @app.post("/api/valuation/reverse", tags=["valuation"])
+    def valuation_reverse(body: ReverseDcfRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return fec_valuation.reverse_dcf(
+            db, body.issuer, body.target_price, variable=body.variable,
+            bounds=tuple(body.bounds) if body.bounds else None,
+            assumptions=body.assumptions, as_of=body.as_of, mode=body.mode,
+        )
+
+    @app.post("/api/valuation/scenarios", tags=["valuation"])
+    def valuation_scenarios(body: ScenarioRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return fec_valuation.scenarios(
+            db, body.issuer, body.assumptions, as_of=body.as_of, mode=body.mode,
+            custom=body.custom,
+        )
+
+    @app.post("/api/valuation/sensitivity", tags=["valuation"])
+    def valuation_sensitivity(body: SensitivityRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return fec_valuation.sensitivity(
+            db, body.issuer, wacc_values=body.wacc_values, growth_values=body.growth_values,
+            assumptions=body.assumptions, as_of=body.as_of, mode=body.mode,
+        )
 
     # --------------------------------------------------------------- screeners
     @app.get("/api/screeners/metrics", tags=["screeners"])

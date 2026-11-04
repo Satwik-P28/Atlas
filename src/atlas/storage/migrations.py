@@ -496,11 +496,72 @@ CREATE INDEX idx_research_object_evidence ON research_object_evidence (evidence_
 """
 
 
+_MIGRATION_005 = """
+-- ===========================================================================
+-- Phase 3: materialized financial metrics, compiled model runs, node cache
+-- ===========================================================================
+
+-- A snapshot is keyed by the exact information instant and temporal mode, so a value
+-- computed from today's disclosures can never answer an earlier as-of query. The
+-- generation token covers the issuer's evidence and relevant market observations; a
+-- changed token makes the row unusable and it is recomputed.
+CREATE TABLE metric_snapshot (
+    issuer_id      TEXT NOT NULL REFERENCES issuer(issuer_id),
+    as_of          TEXT NOT NULL,
+    mode           TEXT NOT NULL,
+    model_version  TEXT NOT NULL,
+    generation     TEXT NOT NULL,
+    period_end     TEXT,
+    payload_json   TEXT NOT NULL,
+    evidence_count INTEGER NOT NULL DEFAULT 0,
+    created_at     TEXT NOT NULL,
+    updated_at     TEXT NOT NULL,
+    PRIMARY KEY (issuer_id, as_of, mode, model_version)
+);
+CREATE INDEX idx_metric_snapshot_issuer ON metric_snapshot (issuer_id, as_of);
+
+-- Every execution is reproducible from its canonical spec, inputs, compiler/operator
+-- versions and information cutoff. Results are never written into evidence.
+CREATE TABLE model_run (
+    run_id          TEXT PRIMARY KEY,
+    model_name      TEXT NOT NULL,
+    model_version   TEXT NOT NULL,
+    fingerprint     TEXT NOT NULL,
+    as_of           TEXT,
+    mode            TEXT,
+    inputs_json     TEXT NOT NULL,
+    result_json     TEXT NOT NULL,
+    trace_json      TEXT NOT NULL,
+    status          TEXT NOT NULL,
+    duration_ms     REAL NOT NULL,
+    created_at      TEXT NOT NULL
+);
+CREATE INDEX idx_model_run_fingerprint ON model_run (fingerprint, created_at);
+
+-- Node results are cached only under a key that includes the model fingerprint, node
+-- identity, operator version and canonical input values. Changing one input therefore
+-- recomputes only its dependent subgraph.
+CREATE TABLE model_node_cache (
+    cache_key       TEXT PRIMARY KEY,
+    fingerprint     TEXT NOT NULL,
+    node_id         TEXT NOT NULL,
+    operator_key    TEXT NOT NULL,
+    operator_version TEXT NOT NULL,
+    value_json      TEXT NOT NULL,
+    created_at      TEXT NOT NULL,
+    last_hit_at     TEXT,
+    hits            INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX idx_model_node_cache_fingerprint ON model_node_cache (fingerprint, node_id);
+"""
+
+
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=1, name="phase1_foundation", sql=_MIGRATION_001),
     Migration(version=2, name="phase1_1_history_and_dependencies", sql=_MIGRATION_002),
     Migration(version=3, name="phase2_terminal_user_data", sql=_MIGRATION_003),
     Migration(version=4, name="phase2_1_indexes_and_research_objects", sql=_MIGRATION_004),
+    Migration(version=5, name="phase3_metrics_and_model_runtime", sql=_MIGRATION_005),
 )
 
 LATEST_VERSION = max(m.version for m in MIGRATIONS)
