@@ -23,7 +23,7 @@ STRATEGY_SCHEMA = "atlas.strategy.v1"
 EXPERIMENT_SCHEMA = "atlas.quant.experiment.v1"
 LAB_VERSION = "atlas.quant.lab.v1"
 FREQUENCIES = ("daily", "weekly", "monthly")
-SIGNAL_KINDS = ("buy_hold", "sma_cross", "momentum", "model")
+SIGNAL_KINDS = ("buy_hold", "sma_cross", "momentum", "model", "learning_probability")
 SEMVER = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
 
 
@@ -101,6 +101,31 @@ def validate_strategy(spec: dict[str, Any]) -> dict[str, Any]:
                 raise ValidationError("slow moving average must exceed fast", signal=normalised_signal)
         else:
             normalised_signal["threshold"] = _finite_number(signal.get("threshold", 0.0), "signal.threshold", minimum=-1, maximum=1)
+    elif kind == "learning_probability":
+        threshold = _finite_number(signal.get("threshold", 0.5), "signal.threshold",
+                                   minimum=0.0, maximum=1.0)
+        forecast_rows = signal.get("forecasts")
+        if not isinstance(forecast_rows, list) or len(forecast_rows) < 1 or len(forecast_rows) > 4000:
+            raise ValidationError("learning_probability requires 1-4000 frozen forecasts")
+        seen: set[str] = set()
+        normalised_forecasts: list[dict[str, Any]] = []
+        for item in forecast_rows:
+            if not isinstance(item, dict):
+                raise ValidationError("learning forecast must be an object")
+            day = iso_date(item.get("date"))
+            if day in seen:
+                raise ValidationError("learning forecast dates must be unique", date=day)
+            seen.add(day)
+            probability = _finite_number(item.get("probability"), "signal.forecasts.probability",
+                                         minimum=0.0, maximum=1.0)
+            normalised_forecasts.append({"date": day, "probability": probability})
+        normalised_forecasts.sort(key=lambda item: item["date"])
+        normalised_signal.update({
+            "threshold": threshold,
+            "forecasts": normalised_forecasts,
+            "model_id": str(signal.get("model_id", "")),
+            "forecast_run_id": str(signal.get("forecast_run_id", "")),
+        })
     elif kind == "model":
         model_spec = signal.get("model_spec")
         if not isinstance(model_spec, dict):

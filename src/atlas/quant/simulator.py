@@ -205,9 +205,15 @@ class _Signal:
         self.kind = spec["signal"]["kind"]
         self.model = None
         self.engine = None
+        self.forecast_map: dict[str, float] = {}
         if self.kind == "model":
             self.model = compile_model(spec["signal"]["model_spec"])
             self.engine = ExecutionEngine(db=None, use_cache=False, timeout_seconds=2.0)
+        if self.kind == "learning_probability":
+            self.forecast_map = {
+                item["date"]: float(item["probability"])
+                for item in spec["signal"]["forecasts"]
+            }
 
     def close_signal(self, index: int) -> float | None:
         signal = self.spec["signal"]
@@ -230,6 +236,11 @@ class _Signal:
                 return None
             value = closes[-1] / previous - 1
             return 1.0 if value > signal["threshold"] else 0.0
+        if self.kind == "learning_probability":
+            probability = self.forecast_map.get(self.bars[index].session_date)
+            if probability is None:
+                return None
+            return 1.0 if probability >= float(signal["threshold"]) else 0.0
         if self.kind == "model":
             point = self.features.get(self.bars[index].session_date)
             if point is None:

@@ -477,5 +477,72 @@ register(OperatorSpec(
 ))
 
 
+def _binary_scoring_args(args: Sequence[Any]) -> tuple[list[Decimal], list[Decimal]]:
+    probabilities, outcomes = _series(args[0]), _series(args[1])
+    if not probabilities or len(probabilities) != len(outcomes):
+        raise ValueError("probabilities and outcomes must be non-empty and aligned")
+    for probability in probabilities:
+        if probability < 0 or probability > 1:
+            raise ValueError("probability outside [0,1]")
+    for outcome in outcomes:
+        if outcome not in (Decimal(0), Decimal(1)):
+            raise ValueError("binary outcome must be 0 or 1")
+    return list(probabilities), list(outcomes)
+
+
+def _brier_execute(args: Sequence[Any], params: dict[str, Any]) -> Decimal:
+    probabilities, outcomes = _binary_scoring_args(args)
+    return sum((p - y) ** 2 for p, y in zip(probabilities, outcomes)) / Decimal(len(outcomes))
+
+
+register(OperatorSpec(
+    "probability_brier", OPERATOR_VERSION, 2, _infer_portfolio_ratio,
+    _brier_execute, "(1/n)Σ(p-y)²", "Brier score for aligned binary probabilities and outcomes",
+))
+
+
+def _log_loss_execute(args: Sequence[Any], params: dict[str, Any]) -> Decimal:
+    probabilities, outcomes = _binary_scoring_args(args)
+    epsilon = Decimal(str(params.get("epsilon", 1e-12)))
+    total = Decimal(0)
+    for probability, outcome in zip(probabilities, outcomes):
+        p = min(Decimal(1) - epsilon, max(epsilon, probability))
+        total += outcome * p.ln() + (Decimal(1) - outcome) * (Decimal(1) - p).ln()
+    return -total / Decimal(len(outcomes))
+
+
+register(OperatorSpec(
+    "probability_log_loss", OPERATOR_VERSION, 2, _infer_portfolio_ratio,
+    _log_loss_execute, "-(1/n)Σ[y·ln(p)+(1-y)·ln(1-p)]",
+    "Log loss for aligned binary probabilities and outcomes with a declared epsilon",
+))
+
+
+def _calibration_error_execute(args: Sequence[Any], params: dict[str, Any]) -> Decimal:
+    probabilities, outcomes = _binary_scoring_args(args)
+    bins = int(params.get("bins", 10))
+    if bins < 1 or bins > 50:
+        raise ValueError("calibration bins must be in [1,50]")
+    total = Decimal(0)
+    for index in range(bins):
+        low = Decimal(index) / Decimal(bins)
+        high = Decimal(index + 1) / Decimal(bins)
+        members = [(p, y) for p, y in zip(probabilities, outcomes)
+                   if low <= p < high or (index == bins - 1 and p == 1)]
+        if not members:
+            continue
+        predicted = sum(p for p, _ in members) / Decimal(len(members))
+        observed = sum(y for _, y in members) / Decimal(len(members))
+        total += Decimal(len(members)) / Decimal(len(outcomes)) * abs(predicted - observed)
+    return total
+
+
+register(OperatorSpec(
+    "probability_calibration_error", OPERATOR_VERSION, 2, _infer_portfolio_ratio,
+    _calibration_error_execute, "Σ(n_b/n)|p̄_b-ȳ_b|",
+    "Expected calibration error with a declared fixed-width binning",
+))
+
+
 def operator_versions() -> dict[str, str]:
     return {key: spec.version for key, spec in sorted(REGISTRY.items())}

@@ -1,29 +1,31 @@
-# Atlas Quant — Phase 5
+# Atlas Quant — Phase 6
 
-**A local-first financial research terminal and quantitative research lab built on a
-point-in-time evidence platform.**
+**A local-first financial research terminal, quantitative research lab and scientific
+learning system built on a point-in-time evidence platform.**
 
 Phase 1 built the trustworthy layer: immutable evidence, exact availability, stable
 security identity, adjustment mathematics and a reverse dependency index. Phase 2 added the
 terminal. Phase 3 added the compiled financial model runtime, Model Forge, DCF and research
 applications. Phase 4 added Quant Lab: point-in-time features, versioned strategies,
 next-open backtests, an independently reconciled ledger, IBM real-data experiments and
-Time Capsules. **Phase 5 adds institutional research:** a dated Treasury curve, independently
-validated bond and European-option analytics, aligned portfolio risk, constrained
-optimization, walk-forward validation with a complete attempt ledger, typed compiler
-operators and two research applications inside Lab. See
-[docs/PHASE5_IMPLEMENTATION.md](docs/PHASE5_IMPLEMENTATION.md).
+Time Capsules. Phase 5 added institutional fixed income, options, portfolio risk,
+optimization and walk-forward validation. **Phase 6 adds the Atlas Learning Brain:** a real
+data fabric, point-in-time features, trained and calibrated forecasting, chronological
+scientific experiments, an independent model auditor, persistent research memory, bounded
+discovery, monitoring and a complete forecast-to-portfolio application. See
+[docs/PHASE6_IMPLEMENTATION.md](docs/PHASE6_IMPLEMENTATION.md).
 
 ```
-5 issuers · 8 securities · 14,977 filings · 23,583 evidence records · 17,363 bars
-6,793 real IBM vendor bars · 114 real IBM actions · schema v7
-354 backend tests (344 through Phase 4 + 10 Phase 5/regression) · 4 frontend tests
-Real SEC fundamentals for all issuers · official public 2024 U.S. Treasury curve
-IBM prices REAL (Alpha Vantage demo, reported) · Phase 5 multi-asset panel SYNTHETIC
-Apple/Microsoft/Walmart/Alphabet prices and actions clearly labelled SYNTHETIC
+Terminal demo: 5 issuers · 8 securities · 14,977 filings · 23,583 evidence records
+Phase 6 learning demo: 5 real vendor histories · 3,760 bars · 752 sessions · schema v8
+363 backend tests · 4 frontend tests · Phase 6 browser journey
+Real SEC fundamentals · official public 2024 U.S. Treasury curve
+Phase 6 prices REAL vendor demo observations, restricted local research only
+Not point-in-time verified · five current names, not a market universe
+Independent Brier/log-loss/ECE tests · negative real-data result retained
 ```
 
-![Institutional fixed-income research](artifacts/29-institutional-fixed-income.png)
+![Learning Lab with forecast, calibration, audit and portfolio result](artifacts/34-learning-lab.png)
 
 ---
 
@@ -86,6 +88,28 @@ Apple/Microsoft/Walmart/Alphabet prices and actions clearly labelled SYNTHETIC
 | Compiler operators | `/api/models/operators` | discount, bond, option, variance, volatility and risk contributions |
 | Research applications | `/lab/institutional` | fixed income, portfolio risk, OOS validation, save/reopen/fork/export |
 
+### Phase 6 Learning Brain
+
+| Capability | Where | Notes |
+|---|---|---|
+| Real market panel | `/lab/learning`, `/api/learning/dataset` | 5 EODHD demo histories, 3,760 bars, 752 sessions, restricted local cache |
+| Dataset quality and rights | Learning Lab dataset card | observed class, restricted rights, 0 errors / 1 warning, explicit vintage limitation |
+| Point-in-time features | `/api/learning/catalog` | price/volume/cross-sectional features; `date < target_date` enforced |
+| Competing models | Learning Lab | climatology, ridge, logistic, 8-unit MLP; JSON artifacts, no pickle |
+| Chronological experiment | `/api/learning/experiment` | 60/20/20 split, 2-session embargo, frozen test, retained attempts |
+| Calibration lab | Learning Lab | Platt on validation; Brier, log loss, AUC, 10-bin reliability table |
+| Model auditor | `/api/learning/runs/{id}/audit` | named findings with evidence and limitations; no aggregate score |
+| Research memory | `/api/learning/memory` | runs, attempts, models and forecasts; works without an LLM |
+| Bounded discovery | `/api/learning/discovery` | finite grid, budget cap, final test never used, recommendations only |
+| Monitoring | `/api/learning/runs/{id}/monitor` | feature drift and realized calibration; no automatic retrain/deploy |
+| Forecast-to-portfolio | Learning Lab decision layer | frozen `learning_probability` signal through the existing event-driven ledger |
+
+The real demonstration, `LRUN-5465504d8d6a287fade6`, selects ridge and then reports test
+Brier **0.248493**, Brier skill **-0.001354**, AUC **0.497647**, and conclusion
+**`not_supported`**. The auditor returns **0 errors / 4 warnings / 2 infos**. The frozen 0.50
+threshold rule returns **14.3797%**, exactly buy-and-hold; 0.55 holds cash. Forecast accuracy
+and strategy value are reported separately. These are not alpha claims.
+
 Reference bond (4.25% 2029, 2024-06-28 curve): clean **99.634862**, YTM **4.3294%**,
 modified duration **4.461737**, DV01 **0.045422** per 100 face. BSM reference
 (`S=K=100, T=1, r=5%, σ=20%`): call **10.450584**, put **5.573526**, parity residual below
@@ -119,18 +143,24 @@ screener **3,285 ms → 1,604 ms**. See [docs/PHASE2_1_READINESS.md](docs/PHASE2
 
 ```bash
 python3 -m venv .venv
-.venv/bin/pip install -e ".[dev,terminal]"
+.venv/bin/pip install -e ".[dev,terminal,learning]"
 
-# Build the demo database: real SEC fixtures + deterministic synthetic OHLCV
+# Build the terminal demo: real SEC fixtures + deterministic synthetic OHLCV
 .venv/bin/python scripts/build_terminal_db.py --db var/atlas.db --force
+
+# Build the Phase 6 learning demo from the local EODHD demo cache
+.venv/bin/python scripts/build_phase6_db.py --db var/atlas-phase6.db --force --offline
 
 # Build the terminal UI once (FastAPI serves web/dist)
 cd web && npm ci && npm run build && cd ..
 
 # Serve API + UI on loopback
-.venv/bin/atlas --db var/atlas.db serve --host 127.0.0.1 --port 8000
-# open http://127.0.0.1:8000
+.venv/bin/atlas --db var/atlas-phase6.db serve --host 127.0.0.1 --port 8000
+# open http://127.0.0.1:8000/lab/learning
 ```
+
+The vendor cache is intentionally not committed. A clean checkout without it has no real
+panel; the Learning Lab reports that rather than substituting synthetic securities.
 
 Development UI with hot reload: `cd web && npm run dev` (Vite proxies `/api` to
 `127.0.0.1:8000`). `make terminal-data`, `make web-build` and `make serve` wrap the same
@@ -157,6 +187,12 @@ asserts they are identical.
   registered as `reported`, with retrieval provenance and 114 corporate actions. They are
   raw observations, not proof of the vendor's 2015 display vintage; the Time Capsule reports
   `external_provider_only` because exact source bytes are not archived.
+* **Phase 6 uses a separate real vendor demo panel** (AAPL, MSFT, TSLA, VTI, AMZN) with
+  3,760 observed bars. It is registered `restricted`, cached only under `var/`, and never
+  committed. The window starts after the sample's last split; dividends are excluded.
+* **The Phase 6 panel is not point-in-time verified.** It is a current vendor download,
+  not an archive of what was displayed historically. The API returns
+  `point_in_time_verified: false`; the auditor emits a `data_vintage` warning.
 * **Other market prices are synthetic.** Apple, Microsoft, Walmart and Alphabet series are
   generated deterministically, registered as source `synthetic-demo` (kind `synthetic`),
   marked `data_status: "synthetic"` by the API, badged in every table and chart, and
@@ -219,7 +255,7 @@ and caveats: [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 ## 7. Verification
 
 ```bash
-.venv/bin/python -m pytest -q          # 354 passed (344 through Phase 4 + 10 Phase 5/regression)
+.venv/bin/python -m pytest -q          # 363 passed (354 through Phase 5 + 9 Phase 6)
 cd web && npm test -- --run            # 4 passed
 cd web && npm run build                # tsc + vite
 ```
@@ -229,7 +265,9 @@ Browser journeys (`web/e2e/journeys.mjs`) cover the legacy terminal journeys;
 reopen, buy-and-hold/trend/custom-model runs, accounting, Time Capsule replay, comparison,
 JSON export and a 390px mobile viewport. `web/e2e/phase5.mjs` covers the Treasury curve,
 bond pricing, saved fixed-income application, manifest download, portfolio risk,
-optimization, walk-forward, comparison and a 390px viewport. Screenshots are in `artifacts/`.
+optimization, walk-forward, comparison and a 390px viewport. `web/e2e/phase6.mjs` covers
+the real-data experiment, calibration, audit, forecast-to-portfolio, monitoring,
+save/reopen and a 390px viewport. Screenshots are in `artifacts/`.
 
 ---
 
@@ -238,7 +276,7 @@ optimization, walk-forward, comparison and a 390px viewport. Screenshots are in 
 ```
 src/atlas/
   core/        ids, units, temporal semantics, concept registry, typed errors
-  storage/     SQLite engine, versioned migrations (schema v7), source registry
+  storage/     SQLite engine, versioned migrations (schema v8), source registry
   evidence/    temporal evidence kernel, selection, provenance
   entities/    issuer / security / listing / ticker master and resolution
   market/      calendars, immutable bars, corporate actions, adjustments
@@ -247,9 +285,10 @@ src/atlas/
   quant/       features, strategy contracts, portfolio ledger, simulator, Quant Lab
   finance/     Treasury curves, bond analytics, BSM options, statistical primitives
   institutional/ multi-asset fixture, risk, optimizer, walk-forward, persistence
+  learning/    data fabric, features, models, metrics, audit, experiments, memory, discovery
   research/    research objects and content-addressed source archives
   cli.py       command line interface (incl. `serve`)
-tests/         354 tests (Phase 1–5 plus terminal API/workspaces)
+tests/         363 tests (Phase 1–6 plus terminal API/workspaces)
 web/           React 19 + TypeScript + Vite terminal; Vitest and Playwright journeys
 benchmarks/    Phase 1 benchmarks + terminal_bench.py
 fixtures/      real SEC payloads and labelled synthetic fixtures
@@ -264,16 +303,23 @@ never the reverse. The kernel does not know HTTP exists.
 
 ## 9. Known limitations
 
-* IBM prices are real vendor demo observations; the other four issuers are synthetic. No
-  licensed feed or survivorship-free universe is present.
+* IBM prices are real vendor demo observations; the other four issuers are synthetic. Phase
+  6 adds five separate real vendor demo histories. No licensed feed or survivorship-free
+  universe is present.
 * Phase 5's multi-asset panel is **synthetic**, with one delisted path. It is not a real
-  market universe and is not survivorship-bias-free. IBM remains the only real security
-  with price bars. No licensed multi-security history is present.
+  market universe and is not survivorship-bias-free.
+* Phase 6's five real demo names are selected by current availability, cover 2023–2025, and
+  are not point-in-time verified. They cannot support a market-wide or persistent-alpha
+  claim.
 * Quant Lab supports one real instrument, long-only, raw daily bars and next-open fills. It
   does not model shorting, partial fills, market impact, intraday auctions or an order book.
-* Phase 5 pricing is pure Python: no QuantLib, ORE, NumPy/SciPy, CVXPY or pandas is installed
-  or claimed. Bonds are hypothetical, options are model values, and the optimizer handles
-  at most eight assets with no turnover or sector caps.
+* Phase 5 pricing remains pure Python. Phase 6 installs NumPy 2.5.4, SciPy 1.18.1,
+  scikit-learn 1.9.1 and PyArrow 26.0.1 for learning only. Bonds are hypothetical, options
+  are model values, and the optimizer handles at most eight assets with no turnover or
+  sector caps.
+* Phase 6 implements binary and continuous forecasts, not categorical probabilities or
+  event-market settlement. It does not provide a live feed, scheduler, GPU backend, AI
+  assistant, or multi-user authentication.
 * `ATLAS_MASTER_SPEC.md` v1.1 is absent from the checkout; `docs/PHASE5_CONTRACT.md` and the
   Phase 5 documents are the in-repo authority until the supplied master is added.
 * No news, transcripts, estimates or analyst data; events are filings and actions only.
@@ -283,7 +329,7 @@ never the reverse. The kernel does not know HTTP exists.
 * Workspace editing uses explicit buttons, not drag-and-drop.
 * Single-user, no authentication. `owner_id = 'local'`; the server binds loopback by
   default and must not be exposed publicly.
-* Frontend bundle ~525 kB (164 kB gzip); the chart library could be lazy-loaded.
+* Frontend bundle ~630 kB (189 kB gzip); the chart library could be lazy-loaded.
 * Browser verification in this container needs a workspace-local Chromium sysroot
   (`scripts/fetch_browser_libs.py`); that is test tooling, not a runtime dependency.
 
@@ -307,7 +353,22 @@ never the reverse. The kernel does not know HTTP exists.
 | [docs/PORTFOLIO_OPTIMIZATION.md](docs/PORTFOLIO_OPTIMIZATION.md) | constraints, solver and diagnostics |
 | [docs/PHASE5_BENCHMARKS.md](docs/PHASE5_BENCHMARKS.md) | measured cold/warm research workloads |
 | [docs/PHASE5_READINESS.md](docs/PHASE5_READINESS.md) | acceptance gates and unsupported scope |
-| [docs/PHASE6_CONTRACT.md](docs/PHASE6_CONTRACT.md) | stable interfaces and next-phase prerequisites |
+| [docs/PHASE6_IMPLEMENTATION.md](docs/PHASE6_IMPLEMENTATION.md) | Phase 6 subsystems, schema 8, real result and defects |
+| [docs/FINANCIAL_DATA_FABRIC_V2.md](docs/FINANCIAL_DATA_FABRIC_V2.md) | dataset view, timing and quality checks |
+| [docs/MARKET_DATA_RIGHTS.md](docs/MARKET_DATA_RIGHTS.md) | provider rights and local-only data handling |
+| [docs/HISTORICAL_AVAILABILITY.md](docs/HISTORICAL_AVAILABILITY.md) | evidence classes and point-in-time limits |
+| [docs/FEATURE_ENGINE_V2.md](docs/FEATURE_ENGINE_V2.md) | features, windows and leakage defenses |
+| [docs/LEARNING_RUNTIME.md](docs/LEARNING_RUNTIME.md) | models, JSON artifacts and dependencies |
+| [docs/FORECAST_OBJECT_CONTRACT.md](docs/FORECAST_OBJECT_CONTRACT.md) | binary/continuous forecast and decision boundary |
+| [docs/PROBABILITY_CALIBRATION.md](docs/PROBABILITY_CALIBRATION.md) | scoring identities, calibration and results |
+| [docs/ML_EXPERIMENT_VALIDATION.md](docs/ML_EXPERIMENT_VALIDATION.md) | chronological protocol and negative result |
+| [docs/MODEL_AUDITOR.md](docs/MODEL_AUDITOR.md) | findings, evidence and no aggregate score |
+| [docs/RESEARCH_MEMORY.md](docs/RESEARCH_MEMORY.md) | persistent experiment ledger without an LLM |
+| [docs/AUTOMATED_DISCOVERY.md](docs/AUTOMATED_DISCOVERY.md) | bounded candidate search and limits |
+| [docs/PHASE6_BENCHMARKS.md](docs/PHASE6_BENCHMARKS.md) | measured CPU pipeline |
+| [docs/PHASE6_READINESS.md](docs/PHASE6_READINESS.md) | acceptance matrix and partial gate 5 |
+| [docs/PHASE6_CONTRACT.md](docs/PHASE6_CONTRACT.md) | Phase 5 → Phase 6 interfaces |
+| [docs/PHASE7_CONTRACT.md](docs/PHASE7_CONTRACT.md) | stable interfaces and next-phase prerequisites |
 | [docs/QUANT_LAB_ARCHITECTURE.md](docs/QUANT_LAB_ARCHITECTURE.md) | Quant Lab modules, event ordering and boundaries |
 | [docs/STRATEGY_CONTRACT.md](docs/STRATEGY_CONTRACT.md) | strategy schema, supported signals and rejection rules |
 | [docs/FEATURE_ENGINE.md](docs/FEATURE_ENGINE.md) | features, cutoffs and anti-leakage behavior |
@@ -320,7 +381,7 @@ never the reverse. The kernel does not know HTTP exists.
 | [docs/CONCEPTS.md](docs/CONCEPTS.md) | canonical concept coverage and mapping policy |
 | [docs/BENCHMARKS.md](docs/BENCHMARKS.md) | hardware, datasets, Phase 1 and Phase 2 measurements |
 | [docs/VALIDATION.md](docs/VALIDATION.md) | reconciliation methodology and results |
-| [docs/adr/](docs/adr/) | architecture decision records (24) |
+| [docs/adr/](docs/adr/) | architecture decision records (29) |
 
 Licence: Apache-2.0. Fixtures retain the licensing of their sources; see
 [fixtures/README.md](fixtures/README.md).

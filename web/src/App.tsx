@@ -4,6 +4,7 @@ import Companies from './pages/Companies'
 import Company from './pages/Company'
 import Lab from './pages/Lab'
 import Institutional from './pages/Institutional'
+import Learning from './pages/Learning'
 import Markets from './pages/Markets'
 import Research from './pages/Research'
 import Screener from './pages/Screener'
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/studio" element={<Studio />} />
         <Route path="/lab" element={<Lab />} />
         <Route path="/lab/institutional" element={<Institutional />} />
+        <Route path="/lab/learning" element={<Learning />} />
         <Route path="/watchlists" element={<Watchlists />} />
         <Route path="/workspaces" element={<Workspaces />} />
         <Route path="/workspaces/:workspaceId" element={<WorkspaceView />} />

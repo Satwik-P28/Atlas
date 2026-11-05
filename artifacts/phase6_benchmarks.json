@@ -1,0 +1,108 @@
+{
+  "schema": "atlas.phase6.benchmark.v1",
+  "hardware": {
+    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+    "processor": "x86_64",
+    "cpu_count": 2,
+    "python": "3.12.3",
+    "accelerator": "CPU only"
+  },
+  "software": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "scikit_learn": "1.9.1",
+    "pyarrow": "26.0.1"
+  },
+  "dataset": {
+    "dataset_id": "eodhd-demo:all",
+    "securities": 5,
+    "sessions": 752,
+    "bars": 3760,
+    "expected_weekdays": 782,
+    "missing_weekdays": 30,
+    "start": "2023-01-03",
+    "end": "2025-12-31",
+    "quality_errors": 0,
+    "quality_warnings": 1,
+    "content_hash": "a092e1f6df56bc9775c2b22c14a037c14462f4b6c11345dce143121c7ec0d69c",
+    "feature_rows": 3455,
+    "features": 5
+  },
+  "stages_ms": {
+    "dataset_load": {
+      "median": 67.01827398501337,
+      "min": 66.3694969844073
+    },
+    "feature_generation": {
+      "median": 46.97560396743938,
+      "min": 41.23875399818644
+    },
+    "train_validate_test_4_models": {
+      "median": 800.6231330218725,
+      "min": 790.9520149696618
+    },
+    "batch_inference": {
+      "median": 1.4766299864277244,
+      "min": 1.4392089797183871,
+      "rows": 685
+    },
+    "probability_scoring_and_calibration": {
+      "median": 6.878806510940194,
+      "min": 6.8598659709095955,
+      "bins": 10
+    },
+    "model_audit": {
+      "median": 0.009127019438892603,
+      "min": 0.0055299606174230576,
+      "findings": 6,
+      "counts": {
+        "error": 0,
+        "warning": 4,
+        "info": 2
+      }
+    },
+    "bounded_discovery_4_candidates": {
+      "median": 168.97196101490408,
+      "min": 168.97196101490408,
+      "single_run": true
+    },
+    "persisted_run_replay": {
+      "median": 2.7801140095107257,
+      "min": 2.7533340035006404,
+      "run_id": "LRUN-5465504d8d6a287fade6",
+      "forecasts": 685
+    },
+    "monitor_snapshot": {
+      "median": 116.11669900594279,
+      "min": 116.11669900594279,
+      "single_run": true,
+      "forecasts": 685
+    }
+  },
+  "notes": [
+    "Medians of three runs unless marked single; timings include Python orchestration.",
+    "The dataset contains restricted vendor demo rows stored only locally.",
+    "No GPU, network request, or vendor byte redistribution occurs in this benchmark."
+  ],
+  "experiment": {
+    "candidates": 4,
+    "selected_model": "ridge",
+    "validation_brier": 0.24966931975197482,
+    "test_brier": 0.24849332039905228,
+    "brier_skill": -0.00135420937890407,
+    "test_rows": 685,
+    "forecasts": 685,
+    "conclusion": "not_supported",
+    "duration_reported_ms": 789.521
+  },
+  "discovery": {
+    "evaluated": 2,
+    "budget": 4,
+    "test_used": false,
+    "best_validation_brier": 0.2482526508742209
+  },
+  "process": {
+    "peak_rss_mb": 158.92578125,
+    "db_size_bytes": 3407872
+  }
+}

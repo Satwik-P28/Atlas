@@ -664,6 +664,89 @@ CREATE INDEX idx_validation_attempt_run ON validation_attempt (validation_run_id
 """
 
 
+_MIGRATION_008 = """
+-- ===========================================================================
+-- Phase 6: learning datasets, calibrated forecasts and scientific memory
+-- ===========================================================================
+
+-- A learning run is the durable record of a chronological experiment. The raw
+-- result is retained even when the hypothesis loses; selection and audit evidence
+-- live beside it rather than being reconstructed from a chart.
+CREATE TABLE learning_run (
+    run_id               TEXT PRIMARY KEY,
+    kind                 TEXT NOT NULL,
+    dataset_id           TEXT NOT NULL,
+    source_id            TEXT,
+    target               TEXT NOT NULL,
+    data_class           TEXT NOT NULL,
+    as_of                TEXT NOT NULL,
+    start_date           TEXT,
+    end_date             TEXT,
+    spec_json            TEXT NOT NULL,
+    result_json          TEXT NOT NULL,
+    fingerprint          TEXT NOT NULL,
+    model_object_id      TEXT REFERENCES research_object(object_id),
+    experiment_object_id TEXT REFERENCES research_object(object_id),
+    status               TEXT NOT NULL,
+    duration_ms          REAL NOT NULL,
+    created_at           TEXT NOT NULL
+);
+CREATE INDEX idx_learning_run_dataset ON learning_run (dataset_id, created_at);
+CREATE INDEX idx_learning_run_target ON learning_run (target, created_at);
+CREATE INDEX idx_learning_run_fingerprint ON learning_run (fingerprint);
+
+CREATE TABLE learning_attempt (
+    attempt_id   TEXT PRIMARY KEY,
+    run_id       TEXT NOT NULL REFERENCES learning_run(run_id) ON DELETE CASCADE,
+    stage        TEXT NOT NULL,
+    model_key    TEXT NOT NULL,
+    rank         INTEGER NOT NULL,
+    selected     INTEGER NOT NULL DEFAULT 0,
+    metrics_json TEXT NOT NULL,
+    created_at   TEXT NOT NULL
+);
+CREATE INDEX idx_learning_attempt_run ON learning_attempt (run_id, stage, rank);
+
+-- Model artifacts are immutable JSON. A retrain creates a new row and a new
+-- research-object version; no row is updated in place.
+CREATE TABLE learning_model (
+    model_id          TEXT PRIMARY KEY,
+    run_id            TEXT NOT NULL REFERENCES learning_run(run_id) ON DELETE CASCADE,
+    object_id         TEXT REFERENCES research_object(object_id),
+    name              TEXT NOT NULL,
+    version           TEXT NOT NULL,
+    family            TEXT NOT NULL,
+    target            TEXT NOT NULL,
+    dataset_id        TEXT NOT NULL,
+    data_class        TEXT NOT NULL,
+    feature_schema_json TEXT NOT NULL,
+    artifact_json     TEXT NOT NULL,
+    metadata_json     TEXT NOT NULL,
+    fingerprint       TEXT NOT NULL,
+    created_at        TEXT NOT NULL,
+    UNIQUE (name, version)
+);
+CREATE INDEX idx_learning_model_run ON learning_model (run_id);
+CREATE INDEX idx_learning_model_family ON learning_model (family, created_at);
+
+CREATE TABLE learning_forecast (
+    forecast_id  TEXT PRIMARY KEY,
+    run_id       TEXT NOT NULL REFERENCES learning_run(run_id) ON DELETE CASCADE,
+    model_id     TEXT NOT NULL REFERENCES learning_model(model_id) ON DELETE CASCADE,
+    security_id  TEXT NOT NULL,
+    as_of        TEXT NOT NULL,
+    horizon      INTEGER NOT NULL,
+    probability  REAL NOT NULL CHECK (probability >= 0 AND probability <= 1),
+    lower        REAL,
+    upper        REAL,
+    outcome      REAL,
+    created_at   TEXT NOT NULL
+);
+CREATE INDEX idx_learning_forecast_run ON learning_forecast (run_id, as_of);
+CREATE INDEX idx_learning_forecast_model ON learning_forecast (model_id, as_of);
+"""
+
+
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=1, name="phase1_foundation", sql=_MIGRATION_001),
     Migration(version=2, name="phase1_1_history_and_dependencies", sql=_MIGRATION_002),
@@ -672,6 +755,7 @@ MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=5, name="phase3_metrics_and_model_runtime", sql=_MIGRATION_005),
     Migration(version=6, name="phase4_source_archive_and_quant_lab", sql=_MIGRATION_006),
     Migration(version=7, name="phase5_institutional_research", sql=_MIGRATION_007),
+    Migration(version=8, name="phase6_learning_runtime", sql=_MIGRATION_008),
 )
 
 LATEST_VERSION = max(m.version for m in MIGRATIONS)

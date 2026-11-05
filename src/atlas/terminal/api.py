@@ -65,6 +65,8 @@ from ..institutional.service import (
 )
 from ..institutional.universe import aligned_panel, returns_matrix
 from ..institutional.validation import walk_forward
+from ..learning.features import catalogue as learning_feature_catalogue
+from ..learning.service import LEARNING_SCHEMA, LearningService
 from ..fec import compile_model
 from ..fec import valuation as fec_valuation
 from ..fec.operators import REGISTRY, operator_versions
@@ -330,6 +332,49 @@ class InstitutionalApplicationRequest(BaseModel):
     object_ids: list[str] = Field(default_factory=list, max_length=20)
 
 
+class LearningExperimentRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    dataset: str | None = None
+    source_id: str | None = None
+    models: list[Literal["climatology", "ridge", "logistic", "mlp"]] = Field(
+        default_factory=lambda: ["climatology", "ridge", "logistic", "mlp"], min_length=1, max_length=4
+    )
+    features: list[str] | None = Field(default=None, max_length=8)
+    target: Literal["direction"] = "direction"
+    seed: int = Field(default=20261105, ge=0, le=2**31 - 1)
+    persist: bool = True
+    hypothesis: str | None = Field(default=None, max_length=1000)
+
+
+class LearningPortfolioRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    security_id: str = Field(min_length=1, max_length=80)
+    threshold: float = Field(default=0.55, ge=0, le=1)
+    commission_bps: float = Field(default=2.0, ge=0, le=500)
+    slippage_bps: float = Field(default=5.0, ge=0, le=500)
+
+
+class LearningDiscoveryRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    dataset: str | None = None
+    budget: int = Field(default=6, ge=1, le=24)
+
+
+class LearningApplicationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    run_id: str
+    name: str = Field(min_length=1, max_length=120)
+    purpose: str = Field(default="forecast research", max_length=240)
+
+
+class LearningMemoryRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    target: str | None = None
+    model: str | None = None
+    conclusion: str | None = None
+    limit: int = Field(default=50, ge=1, le=200)
+
+
 class SourceArchiveRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     source_id: str
@@ -388,7 +433,7 @@ def _error_payload(code: str, message: str, context: Any = None) -> dict[str, An
 def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None = None) -> FastAPI:
     app = FastAPI(
         title="Atlas Quant Terminal API",
-        version="0.2.0",
+        version="0.3.0",
         description=(
             "Read-oriented API over the Atlas temporal evidence kernel. Financial values are "
             "returned with evidence ids; derived metrics carry formulas and input ids. "
@@ -472,6 +517,9 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
             "simulator_version": SIMULATOR_VERSION,
             "institutional_schema": "atlas.institutional.run.v1",
             "institutional_curve_schema": "atlas.finance.yield_curve.v1",
+            "learning_schema": LEARNING_SCHEMA,
+            "forecast_schema": "atlas.forecast.v1",
+            "learning_features": learning_feature_catalogue()["features"],
             "panel_types": sorted(workspaces.PANEL_TYPES),
             "error_codes": [
                 "unknown_entity",
@@ -856,6 +904,102 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
     def quant_experiments(limit: int = Query(default=100, ge=1, le=500),
                           db: Database = Depends(get_db)) -> dict[str, Any]:
         items = QuantLab(db).list_experiments(limit=limit)
+        return {"items": items, "count": len(items), "schema": "atlas.research_object.v1"}
+
+    # ------------------------------------------------------------ learning lab
+    @app.get("/api/learning/catalog", tags=["learning"])
+    def learning_catalog(db: Database = Depends(get_db)) -> dict[str, Any]:
+        return LearningService(db).catalog()
+
+    @app.get("/api/learning/dataset", tags=["learning"])
+    def learning_dataset(dataset: str | None = None, source_id: str | None = None,
+                         start: str | None = None, end: str | None = None,
+                         db: Database = Depends(get_db)) -> dict[str, Any]:
+        from ..learning.data import load_panel
+
+        return load_panel(db, dataset=dataset, source_id=source_id, start=start, end=end)
+
+    @app.post("/api/learning/experiment", tags=["learning"])
+    def learning_experiment(body: LearningExperimentRequest,
+                            db: Database = Depends(get_db)) -> dict[str, Any]:
+        return LearningService(db).run(
+            dataset=body.dataset, source_id=body.source_id, models=body.models,
+            features=body.features, target=body.target, seed=body.seed,
+            persist=body.persist, hypothesis=body.hypothesis,
+        )
+
+    @app.get("/api/learning/runs", tags=["learning"])
+    def learning_runs(limit: int = Query(default=50, ge=1, le=200),
+                      db: Database = Depends(get_db)) -> dict[str, Any]:
+        items = LearningService(db).list_runs(limit=limit)
+        return {"items": items, "count": len(items), "schema": LEARNING_SCHEMA}
+
+    @app.get("/api/learning/runs/{run_id}", tags=["learning"])
+    def learning_run_get(run_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return LearningService(db).get_run(run_id)
+
+    @app.get("/api/learning/runs/{run_id}/forecasts", tags=["learning"])
+    def learning_run_forecasts(run_id: str, security_id: str | None = None,
+                               db: Database = Depends(get_db)) -> dict[str, Any]:
+        return LearningService(db).forecast(run_id, security_id=security_id)
+
+    @app.get("/api/learning/runs/{run_id}/audit", tags=["learning"])
+    def learning_run_audit(run_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        run = LearningService(db).get_run(run_id)
+        return {"run_id": run_id, **run.get("audit", {})}
+
+    @app.get("/api/learning/runs/{run_id}/monitor", tags=["learning"])
+    def learning_run_monitor(run_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return LearningService(db).monitor(run_id)
+
+    @app.post("/api/learning/runs/{run_id}/portfolio", tags=["learning"])
+    def learning_run_portfolio(run_id: str, body: LearningPortfolioRequest,
+                               db: Database = Depends(get_db)) -> dict[str, Any]:
+        return LearningService(db).portfolio_experiment(
+            run_id, security_id=body.security_id, threshold=body.threshold,
+            commission_bps=body.commission_bps, slippage_bps=body.slippage_bps,
+        )
+
+    @app.get("/api/learning/models", tags=["learning"])
+    def learning_models(limit: int = Query(default=100, ge=1, le=200),
+                        db: Database = Depends(get_db)) -> dict[str, Any]:
+        items = LearningService(db).models(limit=limit)
+        return {"items": items, "count": len(items), "schema": "atlas.learning.model.v2"}
+
+    @app.post("/api/learning/memory", tags=["learning"])
+    def learning_memory(body: LearningMemoryRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return LearningService(db).memory(target=body.target, model=body.model,
+                                          conclusion=body.conclusion, limit=body.limit)
+
+    @app.post("/api/learning/discovery", tags=["learning"])
+    def learning_discovery(body: LearningDiscoveryRequest,
+                           db: Database = Depends(get_db)) -> dict[str, Any]:
+        return LearningService(db).discovery(budget=body.budget, dataset=body.dataset)
+
+    @app.post("/api/learning/applications", tags=["learning"], status_code=201)
+    def learning_application_create(body: LearningApplicationRequest,
+                                    db: Database = Depends(get_db)) -> dict[str, Any]:
+        service = LearningService(db)
+        run = service.get_run(body.run_id)
+        document = {
+            "schema_version": "atlas.research_object.v1", "kind": "application",
+            "name": body.name, "version": "1.0.0", "status": "validated",
+            "description": body.purpose, "as_of": iso(utcnow()),
+            "mode": "atlas_ingested", "evidence_ids": [],
+            "source_ids": [run["dataset"]["source_id"]],
+            "object_ids": [item for item in [run.get("model_object_id"), run.get("experiment_object_id")] if item],
+            "assumptions": ["The stored forecasts are frozen artifacts."],
+            "limitations": run.get("limitations", []),
+            "spec": {"purpose": body.purpose, "views": ["forecast", "audit", "memory"],
+                     "learning_run_id": body.run_id, "model_id": run.get("model_id"),
+                     "test_metrics": run.get("test"), "audit": run.get("audit")},
+        }
+        return service.objects.create(document)
+
+    @app.get("/api/learning/applications", tags=["learning"])
+    def learning_applications(limit: int = Query(default=50, ge=1, le=200),
+                              db: Database = Depends(get_db)) -> dict[str, Any]:
+        items = research_objects.ResearchObjectStore(db).list(kind="application", limit=limit)
         return {"items": items, "count": len(items), "schema": "atlas.research_object.v1"}
 
     # ------------------------------------------------------- institutional lab

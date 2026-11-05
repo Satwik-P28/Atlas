@@ -296,6 +296,31 @@ export const api = {
   institutionalApplications: () => request<Record<string, any>>('/api/institutional/applications'),
   institutionalApplication: (body: Record<string, unknown>) =>
     request<Record<string, any>>('/api/institutional/applications', { method: 'POST', body: JSON.stringify(body) }),
+  learningCatalog: () => request<Record<string, any>>('/api/learning/catalog'),
+  learningDataset: (dataset?: string | null) =>
+    request<Record<string, any>>(`/api/learning/dataset${qs({ dataset })}`),
+  learningExperiment: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/learning/experiment', { method: 'POST', body: JSON.stringify(body) }),
+  learningRuns: () => request<Record<string, any>>('/api/learning/runs'),
+  learningRun: (runId: string) => request<Record<string, any>>(`/api/learning/runs/${enc(runId)}`),
+  learningForecasts: (runId: string, securityId?: string) =>
+    request<Record<string, any>>(`/api/learning/runs/${enc(runId)}/forecasts${qs({ security_id: securityId })}`),
+  learningAudit: (runId: string) =>
+    request<Record<string, any>>(`/api/learning/runs/${enc(runId)}/audit`),
+  learningMonitor: (runId: string) =>
+    request<Record<string, any>>(`/api/learning/runs/${enc(runId)}/monitor`),
+  learningPortfolio: (runId: string, body: Record<string, unknown>) =>
+    request<Record<string, any>>(`/api/learning/runs/${enc(runId)}/portfolio`, {
+      method: 'POST', body: JSON.stringify(body),
+    }),
+  learningModels: () => request<Record<string, any>>('/api/learning/models'),
+  learningMemory: (body: Record<string, unknown> = {}) =>
+    request<Record<string, any>>('/api/learning/memory', { method: 'POST', body: JSON.stringify(body) }),
+  learningDiscovery: (body: Record<string, unknown> = {}) =>
+    request<Record<string, any>>('/api/learning/discovery', { method: 'POST', body: JSON.stringify(body) }),
+  learningApplication: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/learning/applications', { method: 'POST', body: JSON.stringify(body) }),
+  learningApplications: () => request<Record<string, any>>('/api/learning/applications'),
 } satisfies Record<string, unknown>
 
 export type { Mode }

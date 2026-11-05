@@ -502,6 +502,36 @@ p { margin: 0 0 8px; }
   .inst-controls, .inst-option-controls, .inst-weight-grid { grid-template-columns: 1fr; }
 }
 
+/* ------------------------------------------------------------- learning lab */
+.learning-page .card { overflow: hidden; }
+.learning-checks { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.learning-check { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+.learning-check > span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.learning-check input { margin-top: 2px; accent-color: var(--accent); }
+.learning-calibration { display: grid; gap: 6px; margin: 8px 0 12px; }
+.learning-cal-row { display: grid; grid-template-columns: 42px minmax(0, 1fr) 42px 42px; gap: 8px; align-items: center; }
+.learning-cal-track { height: 10px; border-radius: 3px; background: var(--bg-input); border: 1px solid var(--border); position: relative; overflow: hidden; }
+.learning-cal-predicted { display: block; height: 100%; background: color-mix(in srgb, var(--accent) 35%, transparent); }
+.learning-cal-observed { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--text); }
+.learning-findings { display: grid; gap: 7px; max-height: 420px; overflow: auto; padding-right: 3px; }
+.learning-finding { border-left: 2px solid var(--border-strong); padding: 5px 0 5px 9px; }
+.learning-finding.is-error { border-left-color: var(--negative); }
+.learning-finding.is-warning { border-left-color: var(--warn); }
+.learning-finding.is-info { border-left-color: var(--accent); }
+.learning-finding > div { display: flex; gap: 7px; align-items: center; }
+.learning-finding p { margin: 3px 0; font-size: 12.5px; }
+.learning-decision { display: grid; grid-template-columns: minmax(160px, 1.4fr) minmax(120px, .7fr) auto auto auto; gap: 10px; align-items: end; }
+.learning-decision .button { min-height: 34px; }
+@media (max-width: 900px) {
+  .learning-checks { grid-template-columns: 1fr; }
+  .learning-decision { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .learning-decision { grid-template-columns: 1fr; }
+  .learning-cal-row { grid-template-columns: 36px minmax(0, 1fr) 36px; }
+  .learning-cal-row > span:last-child { display: none; }
+}
+
 /* -------------------------------------------------------------------- misc */
 .source-card { border: 1px solid var(--border); border-radius: 8px; padding: 14px; background: var(--bg-card); }
 .source-name { font-weight: 600; margin: 2px 0 6px; }
