@@ -1,0 +1,27 @@
+{
+  "schema": "atlas.phase8.browser.v1",
+  "base": "http://127.0.0.1:8003",
+  "schema_version": 10,
+  "fixture_bytes": 47270,
+  "fixture_sha256_prefix": "92ab1bf753438a0f",
+  "imported": true,
+  "executed": true,
+  "reproduced": true,
+  "test_rmse": 2956.577890101359,
+  "test_r2": -0.8934655019352953,
+  "forked": true,
+  "installations_after_fork": 2,
+  "desktop_viewport": {
+    "width": 1440,
+    "height": 1100
+  },
+  "mobile_viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "desktop_dom_nodes": 244,
+  "screenshots": [
+    "artifacts/38-application-gallery.png",
+    "artifacts/39-applications-mobile.png"
+  ]
+}

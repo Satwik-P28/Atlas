@@ -61,11 +61,18 @@ class EconomicService:
         claim_map = {row["claim_id"]: dict(row) for row in claims}
         for item in items:
             item["claims"] = [claim_map[claim_id] for claim_id in item["claim_ids"] if claim_id in claim_map]
+        logical = [item for item in items if item.get("status") == "unresolved"]
+        spatial = [item for item in items if item.get("status") == "spatial_representativeness"]
         return {
             "schema": "atlas.economic.conflicts.v1",
             "items": items,
             "count": len(items),
-            "policy": "Contradictory claims are preserved. No automatic source wins.",
+            "logical_conflict_count": len(logical),
+            "spatial_representativeness_count": len(spatial),
+            "policy": (
+                "Different point locations are spatial representativeness, not a logical contradiction. "
+                "Genuine same-subject value contradictions are preserved without choosing a winner."
+            ),
         }
 
     # ------------------------------------------------------------------ model

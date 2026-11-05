@@ -1,0 +1,1720 @@
+{
+  "dirty_worktree": true,
+  "file_count": 341,
+  "files": [
+    {
+      "bytes": 342,
+      "path": ".gitignore",
+      "sha256": "10605a33a53c2c2edd7400d3244696efeda48945daf22715118048262e54ede5"
+    },
+    {
+      "bytes": 2829,
+      "path": "Makefile",
+      "sha256": "2f46a5a3651f5079d2e137b4cfa6cba24d506a15bbddd27196c487622b5a2d05"
+    },
+    {
+      "bytes": 31808,
+      "path": "README.md",
+      "sha256": "88795b7efa4d7340f9b6822cc7b08ac1ecacbbf9c1da3a532fa76ab791c57d40"
+    },
+    {
+      "bytes": 10542,
+      "path": "benchmarks/bench.py",
+      "sha256": "4c505c65212a05735954c7d002ceae68b8f6ff3bfb5c0e6357b738f74ad41b0b"
+    },
+    {
+      "bytes": 1859,
+      "path": "benchmarks/out/bench.json",
+      "sha256": "3b13723663f603228c83ae2d8e9788c505adf61549022ecb95f4aaa3e59d6fb5"
+    },
+    {
+      "bytes": 3588,
+      "path": "benchmarks/phase5_bench.py",
+      "sha256": "f21a0e6bcf1782c9e1b8c818ab7d415b0e7e1dc90934b24505380bdd0903b0b9"
+    },
+    {
+      "bytes": 8404,
+      "path": "benchmarks/phase6_bench.py",
+      "sha256": "4e8834868aa45209e571f0df7733d4a4c33f8cf7b2b99b144294acd49650928a"
+    },
+    {
+      "bytes": 5770,
+      "path": "benchmarks/terminal_bench.py",
+      "sha256": "359cb1fda3215e028b4e8322a3bf872d23c470dd0804205caa16778cb8103f3f"
+    },
+    {
+      "bytes": 17205,
+      "path": "docs/ARCHITECTURE.md",
+      "sha256": "224dc7efcfbf30dd7de7f6705e2ba92cad48359a4840ea0a3be9caae1377a553"
+    },
+    {
+      "bytes": 3040,
+      "path": "docs/AUTOMATED_DISCOVERY.md",
+      "sha256": "953dd6dccd7a872e24e96b46c051e2b5b17a7a40ddd088b14579ef2ac01c4e98"
+    },
+    {
+      "bytes": 3444,
+      "path": "docs/BACKTEST_ENGINE_EVALUATION.md",
+      "sha256": "e3641ff54de26e36cbbd73a04c811fd42ac660e813ed8f6ddbd9a5e92840b245"
+    },
+    {
+      "bytes": 7111,
+      "path": "docs/BENCHMARKS.md",
+      "sha256": "903d9cc3c5434cbb960550ed193de7426faff5f9ab0215a140cd1cc06cca44ed"
+    },
+    {
+      "bytes": 2752,
+      "path": "docs/BOND_PRICING_VALIDATION.md",
+      "sha256": "659181bc464c6ed1f4d3fe9b6094372daa7727cec68f112196fb483f590a8cb6"
+    },
+    {
+      "bytes": 3982,
+      "path": "docs/CAUSAL_RESEARCH.md",
+      "sha256": "b88231b87bcc9d6d1b0faf0721377db276d8c1f22d76484d691ccbdf8356eb03"
+    },
+    {
+      "bytes": 7947,
+      "path": "docs/CONCEPTS.md",
+      "sha256": "2eb13b1cdf62b235a46d2d878da8dccac8d9351deffc35cb305b3935398f5013"
+    },
+    {
+      "bytes": 2275,
+      "path": "docs/DERIVATIVES_PRICING.md",
+      "sha256": "4c9408749231457352a4398220c35ca8dbf322e80d5433b2fb6527a31823bb28"
+    },
+    {
+      "bytes": 4795,
+      "path": "docs/ECONOMIC_DATA_FABRIC.md",
+      "sha256": "4c53c2b8a57bdc17d381699e83f5dc7fe56e28f3029796e6912216552e2c529f"
+    },
+    {
+      "bytes": 3510,
+      "path": "docs/ECONOMIC_GRAPH_CONTRACT.md",
+      "sha256": "e7cd068281d8091ca558fa5dc99b8e4c8c74764ba7c35a5eeb942a6296598d39"
+    },
+    {
+      "bytes": 4008,
+      "path": "docs/ECONOMIC_REALITY_SIMULATOR.md",
+      "sha256": "51e68d34799f8011a5302bdec6b93c651873ae4b9b027cff33b06c041e9bd877"
+    },
+    {
+      "bytes": 3633,
+      "path": "docs/ECONOMIC_SENTINEL.md",
+      "sha256": "da7f1686bd9f0fb32f79288bf11b114fa1d83720dd7196abd87bdd36927edf1b"
+    },
+    {
+      "bytes": 3690,
+      "path": "docs/EVENT_AND_CLAIM_ONTOLOGY.md",
+      "sha256": "3557f0bb205a23e8ecd85abfb31420e39bfc395a38e907930686b6c8e3d946ec"
+    },
+    {
+      "bytes": 3503,
+      "path": "docs/EVIDENCE_RECONCILIATION.md",
+      "sha256": "744c4ca00356a30659b857dde982d97c2376bba7b3715a98f6be0ad89925ad37"
+    },
+    {
+      "bytes": 1794,
+      "path": "docs/EXECUTION_BENCHMARKS.md",
+      "sha256": "4d10e6842516f574e3091f085d8832ba30d183c5273a17730e35edb1b69fc31d"
+    },
+    {
+      "bytes": 3140,
+      "path": "docs/FEATURE_ENGINE.md",
+      "sha256": "ebb6c17a59e8bb042d781cc0646ec94c383985276bff65581d6e553a81298697"
+    },
+    {
+      "bytes": 4708,
+      "path": "docs/FEATURE_ENGINE_V2.md",
+      "sha256": "29fcadd2093e47783f62c7b04a0d4bf21c195afdcbf51384b7313ad6e0481e87"
+    },
+    {
+      "bytes": 1970,
+      "path": "docs/FEC_ARCHITECTURE.md",
+      "sha256": "fb0bb3bb5ff6b7c1df31c238d67dfee84aedd2f3012118a05b1bd496de4e06b3"
+    },
+    {
+      "bytes": 1767,
+      "path": "docs/FEC_IR_SPEC.md",
+      "sha256": "ac6022455eb79650c0e0820242513c99fd071f93308421a57649015ef580d4e5"
+    },
+    {
+      "bytes": 5025,
+      "path": "docs/FINANCIAL_DATA_FABRIC_V2.md",
+      "sha256": "e5d49e2a87d88ed64180b68a60fda1aab29122428e00e99c87ad398cfda8cc84"
+    },
+    {
+      "bytes": 1565,
+      "path": "docs/FINANCIAL_TYPE_SYSTEM.md",
+      "sha256": "5cb96cd44b4bef816af4f6bb82c9ae38acd23ed513b0399ee7924a204bb2c3c9"
+    },
+    {
+      "bytes": 4598,
+      "path": "docs/FORECAST_OBJECT_CONTRACT.md",
+      "sha256": "a552231246426550f58616b4d61bfc1434b33a2dd14a6c2a6472fde94449a113"
+    },
+    {
+      "bytes": 4548,
+      "path": "docs/HISTORICAL_AVAILABILITY.md",
+      "sha256": "b81c36ffe259eb9eae13505e6328b4ac561d54288d8a1fd9058363ed5580b516"
+    },
+    {
+      "bytes": 2356,
+      "path": "docs/HISTORICAL_UNIVERSE_INTEGRITY.md",
+      "sha256": "86048c1c6e7c0762a159f31cd42394accbb49e03e8861a904eb467f8e7f8da20"
+    },
+    {
+      "bytes": 3053,
+      "path": "docs/INSTITUTIONAL_PRICING_ARCHITECTURE.md",
+      "sha256": "70d03dd667e8dc642a4d720efa1f24b62a797824ead6118b39b9172f39a08833"
+    },
+    {
+      "bytes": 4798,
+      "path": "docs/LEARNING_RUNTIME.md",
+      "sha256": "eb68ff43b9e905b098559eda4a953b1bd92ac6c2ddbd10f2d47ce1eb97d67b39"
+    },
+    {
+      "bytes": 3787,
+      "path": "docs/MARKET_DATA_RIGHTS.md",
+      "sha256": "6196ca5e3e7807df18ae6def2eb82c43a42f203690518155ed522d525832854e"
+    },
+    {
+      "bytes": 4346,
+      "path": "docs/ML_EXPERIMENT_VALIDATION.md",
+      "sha256": "5657eabac270bd2326c76294cc32dce3be764b127a3ae6c5121260ec3238a598"
+    },
+    {
+      "bytes": 4262,
+      "path": "docs/MODEL_AUDITOR.md",
+      "sha256": "47c4a3cb864cda28b4dd54d53f21f89a8f57e65fbf3a2f5d99bf7a2155ccf0e2"
+    },
+    {
+      "bytes": 2083,
+      "path": "docs/MODEL_FORGE.md",
+      "sha256": "738ea02c0baf8cff98474c93818df26a2281f9c03b03e18057bc15e2ea450de0"
+    },
+    {
+      "bytes": 1638,
+      "path": "docs/MODEL_REGISTRY.md",
+      "sha256": "1dadad4e6d4edd6c1da6e0078671d42966df23a2df8dff42cf933c9043e171d7"
+    },
+    {
+      "bytes": 3117,
+      "path": "docs/MULTI_INSTRUMENT_RESEARCH.md",
+      "sha256": "c9e689eb41ab71aed2bcd2eb564a1bcfa6304d818e108722cfdbb5a6dd5d2d76"
+    },
+    {
+      "bytes": 4095,
+      "path": "docs/OSINT_SOURCE_REGISTRY.md",
+      "sha256": "5e836510d5a7c9880f4e6941b1f1b4c14103ce4d1fcdfcf503b1bd8757f563fa"
+    },
+    {
+      "bytes": 11022,
+      "path": "docs/PHASE2_1_READINESS.md",
+      "sha256": "c4177bf75f52b32aba2477e5d4610b637eb0183c54a446640b68f02c42bd9220"
+    },
+    {
+      "bytes": 8864,
+      "path": "docs/PHASE2_CONTRACT.md",
+      "sha256": "ff5eef4921ad15d34f1c7fdf0072533e75688c23675d5006dcffccaf5906d65d"
+    },
+    {
+      "bytes": 10204,
+      "path": "docs/PHASE2_IMPLEMENTATION.md",
+      "sha256": "9be3942933a2a2aed6446714f8348e437e364cdbe320ec478a7a0ab960d73c10"
+    },
+    {
+      "bytes": 8102,
+      "path": "docs/PHASE3_CONTRACT.md",
+      "sha256": "d3868c3cb28c9bda258c30f92b69b0bab68ebe36cebab07e5100230c08f95584"
+    },
+    {
+      "bytes": 4020,
+      "path": "docs/PHASE3_IMPLEMENTATION.md",
+      "sha256": "739c4bac78185d59e95d4dba08b6cda5cdb702e98f0bf540865761d66d95552f"
+    },
+    {
+      "bytes": 2466,
+      "path": "docs/PHASE4_BENCHMARKS.md",
+      "sha256": "bc703b253c8bdac349bbf80d29903506592bbfb83e80bd1f73cdf93f3cc78772"
+    },
+    {
+      "bytes": 1468,
+      "path": "docs/PHASE4_CONTRACT.md",
+      "sha256": "e682964b5332f66159bffd6e3023705b1606bf7e07a3cff726aca6ac9f367360"
+    },
+    {
+      "bytes": 4731,
+      "path": "docs/PHASE4_IMPLEMENTATION.md",
+      "sha256": "1aa952df02059ab484ea64075b9046f7f573c58ba79f0e6092baefee13647570"
+    },
+    {
+      "bytes": 3292,
+      "path": "docs/PHASE4_VALIDATION.md",
+      "sha256": "5c593afe1b5998e8dd3399c9f7b00874927a47e9e4b8913e2ba8e9744212b3f6"
+    },
+    {
+      "bytes": 2164,
+      "path": "docs/PHASE5_BENCHMARKS.md",
+      "sha256": "73cf2d412c5dd2d352c4346c325dfcae683310da32ee6162fd0d1e74c8ffaefe"
+    },
+    {
+      "bytes": 2410,
+      "path": "docs/PHASE5_CONTRACT.md",
+      "sha256": "76c6ef856a9b053fa86357c8d23f0c4ee42dede0810f8b08fc647cc3c6ba3e7c"
+    },
+    {
+      "bytes": 6313,
+      "path": "docs/PHASE5_IMPLEMENTATION.md",
+      "sha256": "c47e91694e8c815dd573ef7d7f9b8749f33f94e710e37af880c36e7a1bb03bb1"
+    },
+    {
+      "bytes": 3705,
+      "path": "docs/PHASE5_READINESS.md",
+      "sha256": "8fd59b3710a1fc0dd00f7864ac1c50395ae35e49aeddd44aec04e9224eea0a12"
+    },
+    {
+      "bytes": 2870,
+      "path": "docs/PHASE6_BENCHMARKS.md",
+      "sha256": "99145dd0c0662972a057f8243a6b3db79f61600e188f90ec18b3f646f018c99d"
+    },
+    {
+      "bytes": 3024,
+      "path": "docs/PHASE6_CONTRACT.md",
+      "sha256": "b742383ddbb1457dee5ddb5b231d0632e115d119b5f6508360cc1cdeda8a4bb0"
+    },
+    {
+      "bytes": 6101,
+      "path": "docs/PHASE6_IMPLEMENTATION.md",
+      "sha256": "9fca586d88e29698de9d9c82596745bb6e7dba6f3115f294ce204bb47f15f6a5"
+    },
+    {
+      "bytes": 6105,
+      "path": "docs/PHASE6_READINESS.md",
+      "sha256": "f169f8028a71139ceafc2d1a80f77b18f9a8e8d1ae85e0002d8be0518d8bf56b"
+    },
+    {
+      "bytes": 3968,
+      "path": "docs/PHASE7_BENCHMARKS.md",
+      "sha256": "93f0fbef54f84fb5cc9a24cdd07127a9053927bed0d21b2a7d284a4e13cc7dca"
+    },
+    {
+      "bytes": 3793,
+      "path": "docs/PHASE7_CONTRACT.md",
+      "sha256": "ec03e5249138ab3dee66682345f3db2d1f67516fab0756b09ab801e3a18569d0"
+    },
+    {
+      "bytes": 7794,
+      "path": "docs/PHASE7_IMPLEMENTATION.md",
+      "sha256": "b12451e19ebea28ff31d8546850eca55077955b28894f0e7d489537abd9b29e2"
+    },
+    {
+      "bytes": 5600,
+      "path": "docs/PHASE7_READINESS.md",
+      "sha256": "88e56cdddfd364dd1c1857b66d595c7105b6c90749b5d74fe5a28483bffdbd1b"
+    },
+    {
+      "bytes": 4213,
+      "path": "docs/PHASE7_VALIDATION.md",
+      "sha256": "343d4c4bc4debdbf115f694a6f2a49d13689cc3b1dfb9b2a1b6fd4945ba8073e"
+    },
+    {
+      "bytes": 3695,
+      "path": "docs/PHASE8_CONTRACT.md",
+      "sha256": "cb6d59e97d02211dd34cb86ca5c33cc1cc96281a337384f6a558f60d3d93963b"
+    },
+    {
+      "bytes": 3011,
+      "path": "docs/PORTFOLIO_ACCOUNTING.md",
+      "sha256": "2386bdb9140c07ff8785996412d24df6d0dc94ec3fe69a4d7de2557126ffd2a4"
+    },
+    {
+      "bytes": 2496,
+      "path": "docs/PORTFOLIO_OPTIMIZATION.md",
+      "sha256": "4dcade5d4ed9e7b0a6a5e0a75b0cfeeac56c42fcca2a5b73221a91036228fde8"
+    },
+    {
+      "bytes": 2845,
+      "path": "docs/PORTFOLIO_RISK.md",
+      "sha256": "66d7ea1f3918dd60747a7b5168fb3c303a81adc4d576c3d505b02bc9840cba7a"
+    },
+    {
+      "bytes": 3982,
+      "path": "docs/PROBABILITY_CALIBRATION.md",
+      "sha256": "7bc2d40d0f49376895595d7fe83eca8c59f8ff4b2cd115caccc9ece65fb2d5b3"
+    },
+    {
+      "bytes": 3145,
+      "path": "docs/QUANT_LAB_ARCHITECTURE.md",
+      "sha256": "784d1d0c149e5e8953ab579a92f4360f1ee025e99625b8c6902029255e23c56d"
+    },
+    {
+      "bytes": 31147,
+      "path": "docs/REPORT.md",
+      "sha256": "a75a8947aa8420cf790c36a7b3ba2f757279f9ef83e01b3bf4e68110dfac6276"
+    },
+    {
+      "bytes": 2612,
+      "path": "docs/RESEARCH_CREDIBILITY.md",
+      "sha256": "496dea3cb6ed1ff7e3e6e8b7718f7e9caff194678b5a71aa73527b6293be7282"
+    },
+    {
+      "bytes": 4008,
+      "path": "docs/RESEARCH_MEMORY.md",
+      "sha256": "44c835aa9393a75d41c4adb662e5b228ae7c0d3bb6eb8f6209e457bba5919f3d"
+    },
+    {
+      "bytes": 2595,
+      "path": "docs/STRATEGY_CONTRACT.md",
+      "sha256": "e6490ede5911a4191b418efcd47dac55c890a8e90d20d089ce2970299fed6c20"
+    },
+    {
+      "bytes": 8263,
+      "path": "docs/TERMINAL_CONTRACT.md",
+      "sha256": "af51af509f45e3999406ac935136330efa954ffd065ac28e7fb335ecb6270123"
+    },
+    {
+      "bytes": 2939,
+      "path": "docs/TIME_CAPSULE.md",
+      "sha256": "f731393239c710ef356f2f8c882d58d3235624ad9d07c4e24b55cd5552fa36db"
+    },
+    {
+      "bytes": 3456,
+      "path": "docs/UNCERTAINTY_PROPAGATION.md",
+      "sha256": "682d18644d2f52765e6e778243fb691f5222bfe854fe401f9cb6d1e7937a1edd"
+    },
+    {
+      "bytes": 4635,
+      "path": "docs/VALIDATION.md",
+      "sha256": "082ca54efa14db9269440fd89a76c0b45d5cab31ba70ed2993440cb63d8b9c98"
+    },
+    {
+      "bytes": 3141,
+      "path": "docs/VALUATION_VALIDATION.md",
+      "sha256": "f91254d8e03d59bee84fee2c08f45644e86b61957bcf9249e27b805e7ad24bee"
+    },
+    {
+      "bytes": 3278,
+      "path": "docs/WALK_FORWARD_VALIDATION.md",
+      "sha256": "7c0b73eab06ef8b5b9864a4ab7ed96cc20853b12b1502c55c4ff236e93aa71de"
+    },
+    {
+      "bytes": 4915,
+      "path": "docs/WEATHER_ENERGY_CASE_STUDY.md",
+      "sha256": "1c2a0a338373177d08f8837bcf29ea4b320a7142a6bf5a6d8601e9fb1819433d"
+    },
+    {
+      "bytes": 2713,
+      "path": "docs/YIELD_CURVE_CONTRACT.md",
+      "sha256": "e57af0517b185aa61bd69b1d8b292cc41d99a7cb5d0df5ec42f9150240786252"
+    },
+    {
+      "bytes": 3056,
+      "path": "docs/adr/0001-python-core-sqlite.md",
+      "sha256": "a777a746fd1495e66f981af77355da19c0b14e0eb86fef3c843850a7d44f0977"
+    },
+    {
+      "bytes": 3429,
+      "path": "docs/adr/0002-identity-conventions.md",
+      "sha256": "4ef3a3ab9c0c3010e08765a677f54d896586f06b90a3fd6d5a8cc4f992ce5edf"
+    },
+    {
+      "bytes": 3375,
+      "path": "docs/adr/0003-storage-engine.md",
+      "sha256": "b0dd1871eecf36199719fdfd06c0c4dede8368f02f82354cfa22bc8f40d87d92"
+    },
+    {
+      "bytes": 3970,
+      "path": "docs/adr/0004-temporal-evidence-model.md",
+      "sha256": "982b7ca11e7a79c3d0ffda07cddb025d48154021fe9922904a30bb2263ee7862"
+    },
+    {
+      "bytes": 4009,
+      "path": "docs/adr/0005-xbrl-normalization.md",
+      "sha256": "d51a0408f967e54992a1385109709f2f5923d7aca3166997c65eb3473fc7cc81"
+    },
+    {
+      "bytes": 4077,
+      "path": "docs/adr/0006-market-data-and-adjustment.md",
+      "sha256": "318ab4bff7da813f860ea77a3bb678e6a70e73217cdc1b5403ade1c196e5e5fa"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/adr/0007-scope-and-phase2-contract.md",
+      "sha256": "0ce14efb056e90420b983878cf3947cc6477333b34f91297af9993a636f45d83"
+    },
+    {
+      "bytes": 3411,
+      "path": "docs/adr/0008-sec-filing-history.md",
+      "sha256": "b01c9808a1d7de176636fdb6f7797a16f09b88c6ad6ab93ffb07cc288f520bfc"
+    },
+    {
+      "bytes": 4448,
+      "path": "docs/adr/0009-point-in-time-selection-v2.md",
+      "sha256": "8265bdea717b4626b522dde7d8bcd153656c8269af1183bfe93097a4ae063fd0"
+    },
+    {
+      "bytes": 4380,
+      "path": "docs/adr/0010-reverse-dependency-index.md",
+      "sha256": "73122c90cf21f9c0ed4e681a87f529d41cecab5128325243c0403434d663d9d3"
+    },
+    {
+      "bytes": 4430,
+      "path": "docs/adr/0011-terminal-http-and-read-model-boundary.md",
+      "sha256": "ba980757b30ca902082e626615e117e30bc5321a6b2c37fda599f11e112d00fe"
+    },
+    {
+      "bytes": 3455,
+      "path": "docs/adr/0012-terminal-frontend-stack.md",
+      "sha256": "4ab46ccb44553722353d7a30fe511986ceba5689cd63800ec08a75866fcde1b6"
+    },
+    {
+      "bytes": 4277,
+      "path": "docs/adr/0013-server-side-indicator-registry.md",
+      "sha256": "d05f63db5464a235dc7e3e9df0c94e91e8a600886fb3990a705a1a553928927d"
+    },
+    {
+      "bytes": 3752,
+      "path": "docs/adr/0014-terminal-user-data-and-workspace-schema.md",
+      "sha256": "ad16ea16109e8105c8e59aa205e26d65cea98e24f35789c6ff994edddc8d02c4"
+    },
+    {
+      "bytes": 1900,
+      "path": "docs/adr/0015-research-object-contracts.md",
+      "sha256": "a1227131a38bdabe36d19c1fdfe709b9423d839a79315959421072417801eb38"
+    },
+    {
+      "bytes": 1324,
+      "path": "docs/adr/0016-compiler-backed-financial-runtime.md",
+      "sha256": "2ae8c786f1404d6a1303310e48fb1e31138a0b5294e11abfeca748798c9a0879"
+    },
+    {
+      "bytes": 1784,
+      "path": "docs/adr/0017-quant-lab-reference-simulator.md",
+      "sha256": "8634015ac23b68fe9cacbbab90421a54e2313608197e626aa2a2c1d4379c0b15"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/adr/0018-quant-data-model-and-archives.md",
+      "sha256": "d5558bb1c21da2d98cfb8e8c4fb9183edb069b9aed0c6bbf10aa2e373f729659"
+    },
+    {
+      "bytes": 1006,
+      "path": "docs/adr/0019-synthetic-multi-asset-fixture.md",
+      "sha256": "d84365cc697e3825078c74668e7a7d10ca447b07c5ed7f53b7584af39f613217"
+    },
+    {
+      "bytes": 888,
+      "path": "docs/adr/0020-pure-python-pricing-core.md",
+      "sha256": "4bf622f0f33bc95c14de26f625c51d94d694a32b8c8dca714ce99ddbea639c2f"
+    },
+    {
+      "bytes": 801,
+      "path": "docs/adr/0021-treasury-par-bootstrap.md",
+      "sha256": "6102eac6afc768d92b9d70f48f7cc0b9565aaf5bbe3bdcbb872a218b30ccea43"
+    },
+    {
+      "bytes": 1061,
+      "path": "docs/adr/0022-walk-forward-attempt-ledger.md",
+      "sha256": "b19153bf79e6bf3c19e12f31a9f781825f412d70e73a9c5cf82e85c6aca80a67"
+    },
+    {
+      "bytes": 914,
+      "path": "docs/adr/0023-active-set-optimizer.md",
+      "sha256": "c47f0994b4366a8b55a9b3a0f5e455026eb8260b96de4bfdd1dc7f6c59efb83d"
+    },
+    {
+      "bytes": 1033,
+      "path": "docs/adr/0024-contextual-institutional-lab.md",
+      "sha256": "57ff86eba1d27116f09939142fda60173ddeb583aeac3b44b07277cdad2abd54"
+    },
+    {
+      "bytes": 1747,
+      "path": "docs/adr/0025-real-data-provider-boundary.md",
+      "sha256": "84056ccc95065cf6fc38f337bbb8dcdc9e63ed485c0452e14cf0adf0a606dc85"
+    },
+    {
+      "bytes": 1768,
+      "path": "docs/adr/0026-chronological-learning-protocol.md",
+      "sha256": "8285f7271c85f8f818eb6a1cd9fb0d82b3569c6f62a255799c989d151e5f4db6"
+    },
+    {
+      "bytes": 1637,
+      "path": "docs/adr/0027-json-learning-artifacts.md",
+      "sha256": "e86158d290216f301ae9b6a74f485c4721ef0e9b24b6821123ed920abe448bf7"
+    },
+    {
+      "bytes": 1805,
+      "path": "docs/adr/0028-forecast-decision-separation.md",
+      "sha256": "f0b29f289c85117b06384a82583842f905beb33acd8503a4a0404df0fe268f6c"
+    },
+    {
+      "bytes": 1769,
+      "path": "docs/adr/0029-named-audit-and-bounded-discovery.md",
+      "sha256": "e5194f14c21fbceaddf94405e8fff1ec01d5a1916c945d8e38e0870f891766a8"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/adr/0030-economic-observation-schema.md",
+      "sha256": "d57a1f763d9fec5a8b00de0e3eaa4f8bb22f73ad05ce1f44021745a400701575"
+    },
+    {
+      "bytes": 1272,
+      "path": "docs/adr/0031-retrieval-proxy-availability.md",
+      "sha256": "683813eddd0011f221d9192c35875afa21f134252ade4b25b485d5bb0a5c7c00"
+    },
+    {
+      "bytes": 1193,
+      "path": "docs/adr/0032-association-causal-boundary.md",
+      "sha256": "0e80b2e8acacaa29c723b753b201101eea07e70f9e46c523f60592b5a93db12c"
+    },
+    {
+      "bytes": 969,
+      "path": "docs/adr/0033-fec-scenario-finance.md",
+      "sha256": "20e7f75018ea4f3033f4e92cb6b379d7a619807b71bf190d6eb78770adf0698a"
+    },
+    {
+      "bytes": 983,
+      "path": "docs/adr/0034-manual-economic-sentinel.md",
+      "sha256": "16819cd4f87294dee91f91728ed5be0fa13251fa66510d7a4a428c339ee967a6"
+    },
+    {
+      "bytes": 3422,
+      "path": "fixtures/README.md",
+      "sha256": "966a8667cb678bf368c2f3babeb0def709e6b26f10757d69573fc80480a4c40a"
+    },
+    {
+      "bytes": 408,
+      "path": "fixtures/market/aapl_split_bars.csv",
+      "sha256": "bce0571339a676b09d35439f0af4bb3c15dffdc65e8c7f9d6cf66d0b23366558"
+    },
+    {
+      "bytes": 1476,
+      "path": "fixtures/market/alphavantage_manifest.json",
+      "sha256": "28cc13372a66df24a8c5012105964efbe79f9771327c63f5ce6fc9a3ff500fff"
+    },
+    {
+      "bytes": 1421320,
+      "path": "fixtures/market/ibm_daily_alphavantage.json",
+      "sha256": "0ef21bcd5ecd45750bca961b66e1f40f4cd69961e44108b67ef2a4b9ffb0afbc"
+    },
+    {
+      "bytes": 23645,
+      "path": "fixtures/market/ibm_dividends_alphavantage.json",
+      "sha256": "80d757b7a00fd118339caebe2edf39c387cd1c13b613228ef0503a1930b5a92f"
+    },
+    {
+      "bytes": 247,
+      "path": "fixtures/market/ibm_splits_alphavantage.json",
+      "sha256": "e2c0de31a1b0c5ceab7ea037c0dd7d5292bbc502184519373777cd2f1652d2dd"
+    },
+    {
+      "bytes": 19098,
+      "path": "fixtures/phase5/treasury-par-yields-2024.csv",
+      "sha256": "6775840b76cd7fd41121f61d6f6c60184eca6b2ba49954ec7372c463cbeef34d"
+    },
+    {
+      "bytes": 3527,
+      "path": "fixtures/phase7/source_manifest.json",
+      "sha256": "c9cd012e56a2d996590a9b262216f2ef49af7e28515f56284b9108fb8325b534"
+    },
+    {
+      "bytes": 40261,
+      "path": "fixtures/phase7/weather_demand_2023.csv",
+      "sha256": "987feb4933df29c119d5d2d9f1f5e49c1439fe9d10c33e899a78179e0963314f"
+    },
+    {
+      "bytes": 739,
+      "path": "fixtures/phase8/README.md",
+      "sha256": "065464335bf17533e75921eba0b44002b2e6a487f0354e59c7a08dba3d191298"
+    },
+    {
+      "bytes": 2008,
+      "path": "fixtures/phase8/energy_research_pack.json",
+      "sha256": "35495abb6743205cd5c0a2a26bb075b46c5d1f9f187b697eed0af3860f994168"
+    },
+    {
+      "bytes": 47270,
+      "path": "fixtures/phase8/flagship_weather_demand.atlas",
+      "sha256": "92ab1bf753438a0f534a080697abca9c638da11521e13c1dc43700883c82227b"
+    },
+    {
+      "bytes": 3789099,
+      "path": "fixtures/sec/companyfacts_CIK0000320193.json",
+      "sha256": "73a86c6aedc31f77cac2ea4df5f80f0b3bd7e6eb58bb4e01444fbedf3afb9c43"
+    },
+    {
+      "bytes": 206002,
+      "path": "fixtures/sec/history/CIK0000320193-submissions-001.json",
+      "sha256": "c01f4199ed2a19c8ccb302597f996ac4050c13f315258301d1164b924458c502"
+    },
+    {
+      "bytes": 163755,
+      "path": "fixtures/sec/submissions_CIK0000320193.json",
+      "sha256": "3ecd3634e81a5f55741ca9c812b66a8d5f9c4a9ba5fb454addf6c516e3f51370"
+    },
+    {
+      "bytes": 3249987,
+      "path": "fixtures/sec_googl/companyfacts_CIK0001652044.json",
+      "sha256": "ec4a3095d634583925b5ea450db8a5ed974dc48f6f1b4f594022310bc78d4032"
+    },
+    {
+      "bytes": 270314,
+      "path": "fixtures/sec_googl/history/CIK0001652044-submissions-001.json",
+      "sha256": "caa8aa4043f5f755bdc421820cef0172f7216081faadf070be252e9137dc1547"
+    },
+    {
+      "bytes": 152246,
+      "path": "fixtures/sec_googl/submissions_CIK0001652044.json",
+      "sha256": "1c5158635d2e23826239e9680f15288dc42d4cd95ff3ed4a224a4c9875363659"
+    },
+    {
+      "bytes": 5719403,
+      "path": "fixtures/sec_ibm/companyfacts_CIK0000051143.json",
+      "sha256": "10fa1fafa25440b2159e2054dfe47628ba4ed353a258f526704cf9beda432bb8"
+    },
+    {
+      "bytes": 1476,
+      "path": "fixtures/sec_ibm/manifest.json",
+      "sha256": "28cc13372a66df24a8c5012105964efbe79f9771327c63f5ce6fc9a3ff500fff"
+    },
+    {
+      "bytes": 165683,
+      "path": "fixtures/sec_ibm/submissions_CIK0000051143.json",
+      "sha256": "dea6fa640957da78060fce67323e6ff9b567a6deeedcc1e0dc12f13b1ba727e2"
+    },
+    {
+      "bytes": 4938072,
+      "path": "fixtures/sec_msft/companyfacts_CIK0000789019.json",
+      "sha256": "8c1903c041f5c27e86ed15f37debb1f41882b7904bba129ef9edc76478b1e8ea"
+    },
+    {
+      "bytes": 308181,
+      "path": "fixtures/sec_msft/history/CIK0000789019-submissions-001.json",
+      "sha256": "bd8d4e5c30f839955b7bd56f9353207e4ed94fa9132d30a4c17c7742d87bbbfd"
+    },
+    {
+      "bytes": 239417,
+      "path": "fixtures/sec_msft/history/CIK0000789019-submissions-002.json",
+      "sha256": "257104802c65c724f571fc4138f1e106d22ad36b3e4dddeed3fbe42fbdb8c65f"
+    },
+    {
+      "bytes": 185425,
+      "path": "fixtures/sec_msft/submissions_CIK0000789019.json",
+      "sha256": "5c93fe7c62627741a3bd1ff48b9ce38e68be07f03c0b452624316f68ba69b068"
+    },
+    {
+      "bytes": 3078,
+      "path": "fixtures/sec_multi_manifest.json",
+      "sha256": "e73ac811ec2e5a11b925203a31d40474d8c61cf2f51673cb5866051d00c9c6e0"
+    },
+    {
+      "bytes": 5035,
+      "path": "fixtures/sec_restatement/companyfacts.json",
+      "sha256": "5392323e6ece84139647cd114d81fe1fcc7ef755a19d173468bb25de590511c7"
+    },
+    {
+      "bytes": 889,
+      "path": "fixtures/sec_restatement/submissions.json",
+      "sha256": "7132990d74349df85f5aa0d4a1e521a8a18827d4a2a31dec0431a27f85b7f32c"
+    },
+    {
+      "bytes": 3771831,
+      "path": "fixtures/sec_wmt/companyfacts_CIK0000104169.json",
+      "sha256": "49330f98609f70fcef4054edc90bc811398a58c4bf26dc0b218d607967a8dbe4"
+    },
+    {
+      "bytes": 312765,
+      "path": "fixtures/sec_wmt/history/CIK0000104169-submissions-001.json",
+      "sha256": "acc4e8e975c54f7610354cb19fdb0575da3171c4d2e6f6f7b2c8609ae1b3378a"
+    },
+    {
+      "bytes": 226645,
+      "path": "fixtures/sec_wmt/history/CIK0000104169-submissions-002.json",
+      "sha256": "0dc09274dcebecf3a894feb04e4060299aaa2d491cf1eaf1a71dfbed33fe3d2f"
+    },
+    {
+      "bytes": 157934,
+      "path": "fixtures/sec_wmt/submissions_CIK0000104169.json",
+      "sha256": "d18cb6aabfbf0d7cac41bfcac712f314566c465d8f9a258926fd2b1598191453"
+    },
+    {
+      "bytes": 1020,
+      "path": "pyproject.toml",
+      "sha256": "30c3f3595c01a602e816dcf7cfc65609138b32a87efbc2ea45a94e06ffe16245"
+    },
+    {
+      "bytes": 241,
+      "path": "requirements-learning.lock",
+      "sha256": "2a35248392e26f5d6db7f8e01668d73c30c6b0af717a97a0293d256bcbcd8c4d"
+    },
+    {
+      "bytes": 5768,
+      "path": "scripts/bench_phase3.py",
+      "sha256": "2ad9cee6655f93c8b8eee50cde684758543c46334ecaedb122a432fe2c47796b"
+    },
+    {
+      "bytes": 4943,
+      "path": "scripts/bench_phase4.py",
+      "sha256": "542a1788e217d3bdbf266a59be60584ff3299b194b2960598bef51e5be58eea7"
+    },
+    {
+      "bytes": 8988,
+      "path": "scripts/benchmark_phase7.py",
+      "sha256": "6468268000e661ef8d3678b38cb6f1759be0d8ca07880f0df1c56f64537b1d67"
+    },
+    {
+      "bytes": 5520,
+      "path": "scripts/benchmark_phase8.py",
+      "sha256": "24eb4761786330add7e62642270add424173d548ca8ea9ef8c221f307559638e"
+    },
+    {
+      "bytes": 5606,
+      "path": "scripts/benchmark_scale.py",
+      "sha256": "a71f023dd3e32838bfcd9782c8bce42d5e7ba68ec21fff02e7aa7b5c1cae34f4"
+    },
+    {
+      "bytes": 6741,
+      "path": "scripts/build_phase6_db.py",
+      "sha256": "6e7c935b9b9e13a0cb9d49eb3abda4a132a9bfe8cb84b0b1c2674b6ecf3eb2d5"
+    },
+    {
+      "bytes": 2605,
+      "path": "scripts/build_phase7_db.py",
+      "sha256": "9cf588ef50e561514853783eacb1c06bf98094a0cab1e881de423bb1d7b052d1"
+    },
+    {
+      "bytes": 9679,
+      "path": "scripts/build_phase7_fixtures.py",
+      "sha256": "9388eae6f90c566649bb06d3e0c75e80f25c56f604486cdd94882f0d73b825f9"
+    },
+    {
+      "bytes": 5353,
+      "path": "scripts/build_phase8_fixtures.py",
+      "sha256": "76db899bf83128f967a5e1c12b50b9f7c0636f7a2929ebf62475d5a309f7e9df"
+    },
+    {
+      "bytes": 13937,
+      "path": "scripts/build_terminal_db.py",
+      "sha256": "27cb04d13d06f0af8a7244e082d391cc1f7442a75099aea20aefe231075d009d"
+    },
+    {
+      "bytes": 4492,
+      "path": "scripts/fetch_browser_libs.py",
+      "sha256": "545712156c4b4a5c81cc2ce0d29ec5a6ba32151d822b2cac1f5ec6b53c4e0247"
+    },
+    {
+      "bytes": 1802,
+      "path": "scripts/fetch_phase7_data.py",
+      "sha256": "9e92d9cd445d410cc2c152deb76f54d37e9e22f0d483b7591f537fe0ce25f823"
+    },
+    {
+      "bytes": 4093,
+      "path": "scripts/release_manifest.py",
+      "sha256": "7c07d770b79e887f4920114abfbba49d3ff3d0161055ab3ddcc2a0a2d12171f6"
+    },
+    {
+      "bytes": 887,
+      "path": "src/atlas/__init__.py",
+      "sha256": "a5f154c5dd4d89b0eb4d02cd9ead2a1e12aa4fbecb1ba38c092f6816215f348e"
+    },
+    {
+      "bytes": 1064,
+      "path": "src/atlas/applications/__init__.py",
+      "sha256": "03eea13a2386b15b88ae09341cf0a5f16772847594c0422087ee6e41730d6424"
+    },
+    {
+      "bytes": 5377,
+      "path": "src/atlas/applications/cli.py",
+      "sha256": "e50a543eac389d83620ba7bd81048fe3b30f8e8472ad7c68b0f618b958d97f48"
+    },
+    {
+      "bytes": 29813,
+      "path": "src/atlas/applications/contracts.py",
+      "sha256": "85eb30faf8f39207d8e539a4596d76d64666d038b759534ac59819d82e72e0e2"
+    },
+    {
+      "bytes": 9931,
+      "path": "src/atlas/applications/packs.py",
+      "sha256": "3069227f7cbea1697b067481a01794598e4b2a122c801fe273f3fabdf4f65735"
+    },
+    {
+      "bytes": 6536,
+      "path": "src/atlas/applications/rights.py",
+      "sha256": "a9f4d2cd5b03bcb3188408b552536b03bd081f3805d48233e7993ec5892827df"
+    },
+    {
+      "bytes": 10521,
+      "path": "src/atlas/applications/sdk.py",
+      "sha256": "10e659b6613602c971986670cd9b390fbbcd1f5cc21a1f957208a3aef3c235fc"
+    },
+    {
+      "bytes": 37217,
+      "path": "src/atlas/applications/service.py",
+      "sha256": "af3f6f95d0c0405bb7452f132870829af66693a089c1c7feec6de1102c3b25fc"
+    },
+    {
+      "bytes": 52651,
+      "path": "src/atlas/cli.py",
+      "sha256": "8c0dee1e7354ecc205bd855626075d03a2f4472f199a21de740801be94be5805"
+    },
+    {
+      "bytes": 3132,
+      "path": "src/atlas/core/__init__.py",
+      "sha256": "a895e3798412c4a398f13a40a178fef9a45d7f9bec227162b07d9dcba6d1a28a"
+    },
+    {
+      "bytes": 18921,
+      "path": "src/atlas/core/concepts.py",
+      "sha256": "40d70381413783c76021e89c71a93979f78f583e7bc00966e83807d72f39aa98"
+    },
+    {
+      "bytes": 4701,
+      "path": "src/atlas/core/errors.py",
+      "sha256": "6d9e433b28081b0145c0aa78fe268e5013bd75f5f36c02e7f3a2bbabec237f34"
+    },
+    {
+      "bytes": 7942,
+      "path": "src/atlas/core/ids.py",
+      "sha256": "7fb38d10483f986bb5428db3148c75d3935f26ea183ee1392d6b4be7d6c9e893"
+    },
+    {
+      "bytes": 10078,
+      "path": "src/atlas/core/temporal.py",
+      "sha256": "cc1edfea81047d39520ac9dc6739b1d1740a09976dac5d708cdb3329d10afcbf"
+    },
+    {
+      "bytes": 9149,
+      "path": "src/atlas/core/units.py",
+      "sha256": "c8eeac1003ea03e901ee2e67a47a2af75ba57d0d802ef55f1e10e8907eb7a8a0"
+    },
+    {
+      "bytes": 21631,
+      "path": "src/atlas/demo.py",
+      "sha256": "6865620880b1d5f67d335832ec3f41c54bdbb965e99aabb5409d8681aa8f2907"
+    },
+    {
+      "bytes": 18913,
+      "path": "src/atlas/dependencies.py",
+      "sha256": "c0af9888eb62f507d40a64c01734b6fd4074805009335a30e1fa5bf08f997428"
+    },
+    {
+      "bytes": 175,
+      "path": "src/atlas/economic/__init__.py",
+      "sha256": "9163898aaec6847730e8129a8bc5ba13bd0ebd9422c1567a011cde1e20fe2de8"
+    },
+    {
+      "bytes": 5858,
+      "path": "src/atlas/economic/causal.py",
+      "sha256": "5ea33e339df8d6479a6c9ca84434b02de779066a670d425130a24dd884b1e061"
+    },
+    {
+      "bytes": 9761,
+      "path": "src/atlas/economic/contracts.py",
+      "sha256": "d6377d19777f2c770132b0aae003767915cfb6e014991f6ead9d31827e578170"
+    },
+    {
+      "bytes": 45050,
+      "path": "src/atlas/economic/data.py",
+      "sha256": "b938d1e13afa64c2a6f805ad7db6218d4a20b9a4c2b87747111afae275d5d0aa"
+    },
+    {
+      "bytes": 17065,
+      "path": "src/atlas/economic/model.py",
+      "sha256": "f61ffde606801b5bcf80304a62548424e52c780b9de79562a1fc1838aa95df03"
+    },
+    {
+      "bytes": 16360,
+      "path": "src/atlas/economic/scenario.py",
+      "sha256": "bdd05560120f67ba894b8b98270d7a2004f4bceb85d1adf6f66f48f1cf8d700b"
+    },
+    {
+      "bytes": 29322,
+      "path": "src/atlas/economic/service.py",
+      "sha256": "86ebe525b3eba93aab365251c1eb4243490dc4009b15a6d3f00a0afaeb956ed2"
+    },
+    {
+      "bytes": 591,
+      "path": "src/atlas/entities/__init__.py",
+      "sha256": "ac8636b3e5075e32da78d85b57f785e83b5bb564763e8cae50ff829b2e496f2a"
+    },
+    {
+      "bytes": 31917,
+      "path": "src/atlas/entities/master.py",
+      "sha256": "a187d299d8781463cad3f6a6c1dd9294620f4dce9ac597e8c81054aba33a1d04"
+    },
+    {
+      "bytes": 875,
+      "path": "src/atlas/evidence/__init__.py",
+      "sha256": "577589f29f6a7afbd43476236356d74a219176557d90979e61e48102e30a9c97"
+    },
+    {
+      "bytes": 42024,
+      "path": "src/atlas/evidence/kernel.py",
+      "sha256": "b593fb759431cde900510cd26f81033af94f56ca8f70409ef58546a6786e7203"
+    },
+    {
+      "bytes": 16873,
+      "path": "src/atlas/evidence/model.py",
+      "sha256": "bb89998aafaa92a2e63309d2e6378467fc01ca769e75bbd4fe751f14c01a6e04"
+    },
+    {
+      "bytes": 9433,
+      "path": "src/atlas/evidence/selection_sql.py",
+      "sha256": "5adde3d72a22a912d5f8aafdc035264e485f52a1cad13ee55fe640d1c662491b"
+    },
+    {
+      "bytes": 498,
+      "path": "src/atlas/fec/__init__.py",
+      "sha256": "06024dfd9e212974a74d801d1e9fa3431cc8e2d2aabd3e73e22016fa8b403c06"
+    },
+    {
+      "bytes": 11708,
+      "path": "src/atlas/fec/compiler.py",
+      "sha256": "16c23a50fc5da2566b23b99bc26f1191e4ed3ce3a0c541cf688a3914f42beac1"
+    },
+    {
+      "bytes": 4083,
+      "path": "src/atlas/fec/ir.py",
+      "sha256": "096dd0505294dcd523182bd3f46ce3a04a0d04f3dcb06ce6eb6ec9b98cebf1ab"
+    },
+    {
+      "bytes": 26277,
+      "path": "src/atlas/fec/operators.py",
+      "sha256": "50e183a612c9a0317827b41eca1cd225760e95b942afd3faf7a57c1744d0f905"
+    },
+    {
+      "bytes": 5460,
+      "path": "src/atlas/fec/parser.py",
+      "sha256": "9aa0d51fe232dfb0d6182c4a7822a90a9a6f53df12fa00808629120fe11281e6"
+    },
+    {
+      "bytes": 12646,
+      "path": "src/atlas/fec/runtime.py",
+      "sha256": "e99e3387027a3a2966aa1c25f75d7199ae17b12cda945b1caa0812cf9970346d"
+    },
+    {
+      "bytes": 3080,
+      "path": "src/atlas/fec/sdk.py",
+      "sha256": "5b5e0bba240b51676d4ade99681bed52c6c86e2b08c11a0241662d716fb19026"
+    },
+    {
+      "bytes": 9932,
+      "path": "src/atlas/fec/types.py",
+      "sha256": "8aa81e19676dab75e12f33bb811322673db3d47eaec3c232a4984e9fdabe6f70"
+    },
+    {
+      "bytes": 23018,
+      "path": "src/atlas/fec/valuation.py",
+      "sha256": "b2046581dad5e9a5b9d79ce52697ac36e0f31f93d95fb5d8a3b94550f9db4402"
+    },
+    {
+      "bytes": 1412,
+      "path": "src/atlas/finance/__init__.py",
+      "sha256": "5dafcef335491665bdfa491e066058179a4c70026eb82699a48999aef196867d"
+    },
+    {
+      "bytes": 23317,
+      "path": "src/atlas/finance/curves.py",
+      "sha256": "1c40cd3b6eb75055cacb312d2bbace885ea390edc4d16363052cc9df9fa8ebd4"
+    },
+    {
+      "bytes": 8286,
+      "path": "src/atlas/finance/options.py",
+      "sha256": "e36aa239efd4125da0d3424031b03636ae23bcb6b14d88a7beb289373cc2f5bd"
+    },
+    {
+      "bytes": 7302,
+      "path": "src/atlas/finance/statistics.py",
+      "sha256": "a6bbb999d7495b05fc3c3752a0af6be20c2c9fb1ffb129e31840715fce3eb1bb"
+    },
+    {
+      "bytes": 1192,
+      "path": "src/atlas/ingestion/__init__.py",
+      "sha256": "c4d3c98d128062643f1db45092884f5e0e395fc01266daa4fa9f4ee0f547ca45"
+    },
+    {
+      "bytes": 8047,
+      "path": "src/atlas/ingestion/market_alphavantage.py",
+      "sha256": "112a9402d5a1b9fee7ffdd86f8d5f9f59f54aedb191df7fc161819bab4f9d23d"
+    },
+    {
+      "bytes": 13958,
+      "path": "src/atlas/ingestion/market_csv.py",
+      "sha256": "1fab09492a41089162c43125cd01050b16f044be1ae85c389b459c4e2a2faa4e"
+    },
+    {
+      "bytes": 13602,
+      "path": "src/atlas/ingestion/sec_client.py",
+      "sha256": "ebfcc439733373334dfcb6765a3e57010be600751b665949de8190fe7dbb9431"
+    },
+    {
+      "bytes": 17412,
+      "path": "src/atlas/ingestion/sec_companyfacts.py",
+      "sha256": "79693e1409eb32415e9e7df70ddd253115252b853b48fec4b772b4f6245d6548"
+    },
+    {
+      "bytes": 12552,
+      "path": "src/atlas/ingestion/sec_history.py",
+      "sha256": "38b3c345873adc54444b7d9309f26074c9eed6f3792bb3e26caba0829304375f"
+    },
+    {
+      "bytes": 12319,
+      "path": "src/atlas/ingestion/sec_submissions.py",
+      "sha256": "1df4fa2729db79a4819a321aa37723d766bea9d11d3bb4046f3a41d136cebd32"
+    },
+    {
+      "bytes": 18926,
+      "path": "src/atlas/ingestion/sec_sync.py",
+      "sha256": "d2050e201d0ccf9a1b6d98c4836f960da98bae9d7a9cb2681d9f5dd00d6fcc0d"
+    },
+    {
+      "bytes": 426,
+      "path": "src/atlas/institutional/__init__.py",
+      "sha256": "64faac8fdd41a10246a808a83137d549a8a38eebb1efbc879bea2fe3a8ea6211"
+    },
+    {
+      "bytes": 19780,
+      "path": "src/atlas/institutional/risk.py",
+      "sha256": "e5beab42389fc15e2cbe1fc4cb978a8181b2008b653e0fda15e14e098a27ec50"
+    },
+    {
+      "bytes": 12557,
+      "path": "src/atlas/institutional/service.py",
+      "sha256": "a9fcbacfc105d196457e8e1c11a13a750498725bb3f1cea0216af5dbf643ac65"
+    },
+    {
+      "bytes": 8904,
+      "path": "src/atlas/institutional/universe.py",
+      "sha256": "0f67f2c9c201408aa4f727f8461401cff77979fb1e714d2167323490a669057f"
+    },
+    {
+      "bytes": 19503,
+      "path": "src/atlas/institutional/validation.py",
+      "sha256": "9059c115b1ebae3caded567bbb182d1f2604a56f304667a8ee3b6215888b6bf6"
+    },
+    {
+      "bytes": 629,
+      "path": "src/atlas/learning/__init__.py",
+      "sha256": "8ad8c6de02166580f705d336955810e6025493f6e7904b779c3a088a53ee7292"
+    },
+    {
+      "bytes": 6581,
+      "path": "src/atlas/learning/audit.py",
+      "sha256": "230eeee77beb11077ededf814adbd94ccdd80d8c43f72c14b44da7a1401200a7"
+    },
+    {
+      "bytes": 6511,
+      "path": "src/atlas/learning/contracts.py",
+      "sha256": "cf008bbe1492d1330e7b23febceef1f8895c72bf9c6146e600aff3a8eb189c52"
+    },
+    {
+      "bytes": 16717,
+      "path": "src/atlas/learning/data.py",
+      "sha256": "68a4b3af974912dcf707065654e2885745eee57951d611875f5ac8138092aec4"
+    },
+    {
+      "bytes": 4004,
+      "path": "src/atlas/learning/discovery.py",
+      "sha256": "dbbd2fcb38219ea39a3057d9be7fa311d71854eca3668b6da7b0a919e84c395b"
+    },
+    {
+      "bytes": 13544,
+      "path": "src/atlas/learning/experiments.py",
+      "sha256": "a31f8a9db2810539f3462482b0a4425581b725eef02910500b1f06f9b950ce7a"
+    },
+    {
+      "bytes": 9216,
+      "path": "src/atlas/learning/features.py",
+      "sha256": "ee238cbea6a64eb321826afcfe8b6a10e68412cf882c2e5486d34c710cdcdd1b"
+    },
+    {
+      "bytes": 6780,
+      "path": "src/atlas/learning/metrics.py",
+      "sha256": "65c19c7d138584349d388a710c0a65147d9728b6cfbad79f6b24320b677be26f"
+    },
+    {
+      "bytes": 10690,
+      "path": "src/atlas/learning/models.py",
+      "sha256": "08907d32397c632308329a3e9c57a59ee79c17f52407e3ad9c1e0ddffefd0456"
+    },
+    {
+      "bytes": 3643,
+      "path": "src/atlas/learning/monitoring.py",
+      "sha256": "16d1f3c5f2986ef0b7309231ed3a6b353cd1c092d8ed3deefcfaa44e79c2f22e"
+    },
+    {
+      "bytes": 18804,
+      "path": "src/atlas/learning/service.py",
+      "sha256": "971fc277e06825272c0b87dfb71bec24e90ea3cb02c283b4e623c6ab88dd14ca"
+    },
+    {
+      "bytes": 1261,
+      "path": "src/atlas/market/__init__.py",
+      "sha256": "7fc1f445a4b6a18b86650409df851f2ce83a66d85c523dd7ded2b63135f5cf3e"
+    },
+    {
+      "bytes": 16095,
+      "path": "src/atlas/market/actions.py",
+      "sha256": "01417591289e154225e0e320a10b51271f3b5ed043fa89ad7060abf04c985b6a"
+    },
+    {
+      "bytes": 11319,
+      "path": "src/atlas/market/adjust.py",
+      "sha256": "d620cd372c26a1395f2d194ab6afc4a4462f5328f1990d7d2bea353d57600204"
+    },
+    {
+      "bytes": 17294,
+      "path": "src/atlas/market/bars.py",
+      "sha256": "746e7b38ebe47d71a2dacef5aa89417c0e66de832e284e633b6bda0ff6742d01"
+    },
+    {
+      "bytes": 11339,
+      "path": "src/atlas/market/calendar.py",
+      "sha256": "5d9b2fd149aff7aa2bf4f7a9c35f1a6fac9ba28d08bf53e399987e7a0b7571b5"
+    },
+    {
+      "bytes": 657,
+      "path": "src/atlas/quant/__init__.py",
+      "sha256": "61a8c7f30e86f1f16e81a2fbc67ea69b32cebfbf250b8fe4125f6b2ea92b3825"
+    },
+    {
+      "bytes": 13668,
+      "path": "src/atlas/quant/contracts.py",
+      "sha256": "e68e2d701bcf8867d2ffc94054e98da49e2a0b915f7c63dc24f41c864c4219f1"
+    },
+    {
+      "bytes": 13905,
+      "path": "src/atlas/quant/features.py",
+      "sha256": "49d1e04614c946d464ca13abd4d0ce34d6b43ba83051e8082c4b54d86c2a2ace"
+    },
+    {
+      "bytes": 17043,
+      "path": "src/atlas/quant/lab.py",
+      "sha256": "e272b994e3080d2059d29df3cb74cf8cc0eef60da84e66dedcf5fa40f267c9a2"
+    },
+    {
+      "bytes": 9685,
+      "path": "src/atlas/quant/portfolio.py",
+      "sha256": "7e4bb95ba8c351cf2f9bce3c1ebeae53d267c5613d4c5fbc8e0ef8d20a5482e2"
+    },
+    {
+      "bytes": 23926,
+      "path": "src/atlas/quant/simulator.py",
+      "sha256": "5e13ac0919ba52706335c18abd34346725341b5a5a2b60b77923ff9472485554"
+    },
+    {
+      "bytes": 6539,
+      "path": "src/atlas/quant/vectorized.py",
+      "sha256": "726e2b96ff62c4e556cc7df00bb81a2c8433dbd158566ef49e1ddb28b4d74959"
+    },
+    {
+      "bytes": 19647,
+      "path": "src/atlas/reconcile.py",
+      "sha256": "dccf4e6aa18bf9d44b35932c12a8ef07698d3d22f329b3ececfaf8ec65fea133"
+    },
+    {
+      "bytes": 155,
+      "path": "src/atlas/research/__init__.py",
+      "sha256": "c5cf30ea0fcbaf73bf13fbd25ea7e8b22425e85a4f82787ddc3bbdd0c5aff749"
+    },
+    {
+      "bytes": 8255,
+      "path": "src/atlas/research/archive.py",
+      "sha256": "870d22faee484ed16499602471a31983335bd5bb58ca474ac81fa98172de3169"
+    },
+    {
+      "bytes": 18142,
+      "path": "src/atlas/research/objects.py",
+      "sha256": "6478d38793d3454e89a02d51767f2a2e88c13f8c0c9afa22b2e2e831eef63f1a"
+    },
+    {
+      "bytes": 13033,
+      "path": "src/atlas/research/validation.py",
+      "sha256": "3afd0ade9b688048aa7cb6709c32f9056d1a1b2db24fd39f60e19ed67150a237"
+    },
+    {
+      "bytes": 348,
+      "path": "src/atlas/storage/__init__.py",
+      "sha256": "c6ebec918c42e13eb23145210b10376091669b11293474df999bb2709bee9dff"
+    },
+    {
+      "bytes": 11012,
+      "path": "src/atlas/storage/db.py",
+      "sha256": "3d0d1f137534c44eb93d5526bd639eeba61532bb92e5062257275a309b42a4bf"
+    },
+    {
+      "bytes": 44300,
+      "path": "src/atlas/storage/migrations.py",
+      "sha256": "710f342819ce58f70d64688cdd9093046d6429d96a999d70fb288b49fabfa3d4"
+    },
+    {
+      "bytes": 2675,
+      "path": "src/atlas/storage/quality.py",
+      "sha256": "77adc48608e633b7513544ff838ffee888dec79b6a41066335d187b76535a2e4"
+    },
+    {
+      "bytes": 3276,
+      "path": "src/atlas/storage/safety.py",
+      "sha256": "c82e5048dfd56f29d121410323f3e5e830c220cd17a7bf382bec3994881b8f5c"
+    },
+    {
+      "bytes": 6558,
+      "path": "src/atlas/storage/sources.py",
+      "sha256": "98b6fa5bcfdfd54c1f1bafc6276e1f144990583c778ac3627f9dc2932b547dc7"
+    },
+    {
+      "bytes": 572,
+      "path": "src/atlas/terminal/__init__.py",
+      "sha256": "a26709f7de0d9967ffafcf3b82ebe46d77219eee7b4870b4b6acecd4bae1369b"
+    },
+    {
+      "bytes": 75225,
+      "path": "src/atlas/terminal/api.py",
+      "sha256": "bd99326a33d384dd1fe0d91df721d3ee616253c72b7d38a85c030616ceb29ce5"
+    },
+    {
+      "bytes": 4149,
+      "path": "src/atlas/terminal/cache.py",
+      "sha256": "4ae307faa4926aa92a086d8410a0a10b210741e956a7a437b7b618fd3a24b32b"
+    },
+    {
+      "bytes": 19741,
+      "path": "src/atlas/terminal/indicators.py",
+      "sha256": "e9a8b84ad30a26e3c050ef90afc78d0216da8d5f34bd6d994ccbd50b1db63744"
+    },
+    {
+      "bytes": 4626,
+      "path": "src/atlas/terminal/metric_store.py",
+      "sha256": "024cc14a709f1688d2e6a6f0081d9e86af5ad2b413be8be8d01e11c5390105be"
+    },
+    {
+      "bytes": 63620,
+      "path": "src/atlas/terminal/read_models.py",
+      "sha256": "c3779dd1cd63ef3fa8dcc9fd72ae331f4c639fd2ab202b70551a6597dfda46d2"
+    },
+    {
+      "bytes": 10513,
+      "path": "src/atlas/terminal/screener.py",
+      "sha256": "bb31ecbf70fe31803518b0c847edb2f7898dcf2a614bc66b994850ebde85e6ee"
+    },
+    {
+      "bytes": 15304,
+      "path": "src/atlas/terminal/store.py",
+      "sha256": "18fbfecc336e5a7d27b79a79a6a028aa45ed166bc89aa77e9006bc93acd657d3"
+    },
+    {
+      "bytes": 17063,
+      "path": "src/atlas/terminal/workspaces.py",
+      "sha256": "8a86f8791e1c6bd2381a3b68de830f1bbbf2820344725ffe6e6c012b07ab43f3"
+    },
+    {
+      "bytes": 17114,
+      "path": "src/atlas/validation.py",
+      "sha256": "f79dbf6c13e092e53d058b552f5c293cd7b46f8558e1bd37f405a923b01d0067"
+    },
+    {
+      "bytes": 337,
+      "path": "src/atlas_quant.egg-info/PKG-INFO",
+      "sha256": "43a6b64bfcb1704656396edc3fd9265865f57360d0ca53b77f4e1a33e6048592"
+    },
+    {
+      "bytes": 1328,
+      "path": "src/atlas_quant.egg-info/SOURCES.txt",
+      "sha256": "f698ddd6c5156c9c340da8eb37956d9153fa02036bb987358e8fe2bb807f836e"
+    },
+    {
+      "bytes": 1,
+      "path": "src/atlas_quant.egg-info/dependency_links.txt",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "bytes": 41,
+      "path": "src/atlas_quant.egg-info/entry_points.txt",
+      "sha256": "98479a05939aa726b4ab70564c3b852231f6292b822434ef7fb2c03710adde50"
+    },
+    {
+      "bytes": 55,
+      "path": "src/atlas_quant.egg-info/requires.txt",
+      "sha256": "600ea897651ba305553373589075110ba728e080d5d03734cd045a52946d820d"
+    },
+    {
+      "bytes": 6,
+      "path": "src/atlas_quant.egg-info/top_level.txt",
+      "sha256": "e7764dedc66e4378732a0f96ef9df5235dd40c8c2348dc07acb92008564c3761"
+    },
+    {
+      "bytes": 3599,
+      "path": "tests/conftest.py",
+      "sha256": "5eddd74cea4dee30c3e4a2f9ce3e5de5086d4d36225e05c09c3e95cd3495f2ba"
+    },
+    {
+      "bytes": 14029,
+      "path": "tests/test_acceptance.py",
+      "sha256": "880b33498a52b3b42fa06c8859be912af85ffe9aafbe43b259b053d668e135cd"
+    },
+    {
+      "bytes": 5564,
+      "path": "tests/test_cli.py",
+      "sha256": "3a04110483c5792b7bbf3f8b84c16a8357ba6ab416639ffc26e001378980670a"
+    },
+    {
+      "bytes": 9839,
+      "path": "tests/test_core.py",
+      "sha256": "823e7bac2876477e51566b1f226d4296b1922b52381da1deda86a8ea9295a325"
+    },
+    {
+      "bytes": 9920,
+      "path": "tests/test_dependencies.py",
+      "sha256": "0ba135642470b5e8c0fa3f7f59ca015653ae0fd3d8c8c7d9cc6d651043df0e8d"
+    },
+    {
+      "bytes": 9070,
+      "path": "tests/test_determinism.py",
+      "sha256": "be16dba0335ca9c37f3eb32b3583be317f800e91de0a737871fc11d2a1b213a0"
+    },
+    {
+      "bytes": 10304,
+      "path": "tests/test_entities.py",
+      "sha256": "077f1b9f6ce9ff3b0e66009c4ed246d70b80c7284cc6b82e6bc71ed6b6f19ce7"
+    },
+    {
+      "bytes": 15292,
+      "path": "tests/test_evidence.py",
+      "sha256": "db434b440b0887095160214e394609a9a06f815095e9fa620c18edad175a9ab5"
+    },
+    {
+      "bytes": 8711,
+      "path": "tests/test_fec.py",
+      "sha256": "d7205cafd5428adcbf3042cb0d92b2dece975b3ea24fd94682f0e7fff7104b1d"
+    },
+    {
+      "bytes": 10798,
+      "path": "tests/test_history.py",
+      "sha256": "4b0faca85fd57761fcabf14514c7a31c8467e7c2caec5ee9a1dda02649ebe22c"
+    },
+    {
+      "bytes": 17785,
+      "path": "tests/test_market.py",
+      "sha256": "387560c8b0fc24efe119e18f44ee170b64886cfd6b21e326bcfd90b36d953b53"
+    },
+    {
+      "bytes": 8502,
+      "path": "tests/test_multi_issuer.py",
+      "sha256": "8acf98f11ca4598123c16f357f887d115639667bacccebc57db934ab5f337eeb"
+    },
+    {
+      "bytes": 6832,
+      "path": "tests/test_phase21_core.py",
+      "sha256": "8d97e284d0073974c49628131b237c9eee3c0cb260f3d738adce8f265394e0c8"
+    },
+    {
+      "bytes": 4875,
+      "path": "tests/test_phase21_research.py",
+      "sha256": "a93551a323b19309929e7e326bd590a1317697f4f9b43897d71ddcaccffa9c87"
+    },
+    {
+      "bytes": 5489,
+      "path": "tests/test_phase3_metrics.py",
+      "sha256": "0ad508a080c95880c9f7fc6a857822d46de086347bbfbbd9fa1edac042fd67b9"
+    },
+    {
+      "bytes": 14104,
+      "path": "tests/test_phase3_validation.py",
+      "sha256": "06ad2a874786ae7e1ebc3e959ba3a8960fdae01aed9f590f3780fb85a65008c0"
+    },
+    {
+      "bytes": 16434,
+      "path": "tests/test_phase4_quant.py",
+      "sha256": "2ab6c3fee4ed552f8e4582a7db39e60e0ee5e2eae8162910c091039056654322"
+    },
+    {
+      "bytes": 12198,
+      "path": "tests/test_phase5_institutional.py",
+      "sha256": "a14b965fedb1cdfa3e7273e16f1e1e1f12a9fff7acd14508413bb40d4651f1b0"
+    },
+    {
+      "bytes": 13588,
+      "path": "tests/test_phase6_learning.py",
+      "sha256": "adf951cab65b6b3c41a7cc12c386a892560415614973cd5839ee1c69d580c9ec"
+    },
+    {
+      "bytes": 15455,
+      "path": "tests/test_phase7_economic.py",
+      "sha256": "b65a17917a13ea85b250b9e9ce7140fb0a9339cc68f0251bc18d09cf4240c93a"
+    },
+    {
+      "bytes": 16877,
+      "path": "tests/test_phase8_applications.py",
+      "sha256": "c65c659d2520d13845b6485920542ebd88bfd652e8fd7b09e60307beb2e7083b"
+    },
+    {
+      "bytes": 3997,
+      "path": "tests/test_properties.py",
+      "sha256": "c27a86c2bc4d16ed0eeca30139e6263f2e39f55f797e09ac0e9b259564989937"
+    },
+    {
+      "bytes": 6475,
+      "path": "tests/test_reconcile.py",
+      "sha256": "868645f04a2d28db6b7eaac4f7f3dc51f78c776747e025785993a7bee692f07d"
+    },
+    {
+      "bytes": 16754,
+      "path": "tests/test_sec.py",
+      "sha256": "a9d1042b9d56855fa7c5482ff123ad84d91b84e1e1da1e311ee802cba649e038"
+    },
+    {
+      "bytes": 14449,
+      "path": "tests/test_selection_engines.py",
+      "sha256": "fd8dffe8a6e49bbeba6d0e633703987b8bae009f590ebba3f5f04f8b7d7e7342"
+    },
+    {
+      "bytes": 7019,
+      "path": "tests/test_storage.py",
+      "sha256": "2edb3cdb967c95aad5404bb14441e9b2fe1cb65bd8b00dd3c8df32ec525bcd4a"
+    },
+    {
+      "bytes": 27122,
+      "path": "tests/test_terminal_api.py",
+      "sha256": "4f78037df75b8469c3d77f71fc803cedde5fd813cc128c5644624e174a4e268e"
+    },
+    {
+      "bytes": 8004,
+      "path": "tests/test_terminal_indicators.py",
+      "sha256": "1efca6cce37e1554f48f9e42235fc826e1f4812136f5007632db2e5ea06313ec"
+    },
+    {
+      "bytes": 5454,
+      "path": "tests/test_terminal_workspaces.py",
+      "sha256": "85d4b140d4420bbe8f083d67cb26b1db2721d0d6f2096a2252415633a231a322"
+    },
+    {
+      "bytes": 13646,
+      "path": "web/e2e/journeys.mjs",
+      "sha256": "7ced4fc6cb25ee97fa0d6a2cc8d2252746baccac1ce934a184273a6f4fa33c72"
+    },
+    {
+      "bytes": 9108,
+      "path": "web/e2e/phase4.mjs",
+      "sha256": "db4f5c9a66bcd9ee64d2e06f3c1c983161a79d8ebfe5c09c937dfb3c4b67e6f4"
+    },
+    {
+      "bytes": 7137,
+      "path": "web/e2e/phase5.mjs",
+      "sha256": "cfd69e7c159df7f060fbd511baf8c700b5f99f73f85d68393b9fb7f630b8afc6"
+    },
+    {
+      "bytes": 5244,
+      "path": "web/e2e/phase6.mjs",
+      "sha256": "d8718f6568e51786ce91258bb6f6c781b5be6ca42a94709293bca8c835181516"
+    },
+    {
+      "bytes": 9135,
+      "path": "web/e2e/phase7.mjs",
+      "sha256": "7d9e3609c39ca78f52899e4bb2babfb12d483a0d37ad303e9d5ee12b9a316ac7"
+    },
+    {
+      "bytes": 7575,
+      "path": "web/e2e/studio.mjs",
+      "sha256": "ceece576980f23a9f4989f8b37c0c06605597dec9e869806f4c046efd83924ca"
+    },
+    {
+      "bytes": 453,
+      "path": "web/index.html",
+      "sha256": "941dac219028693a6fd2eeed2d6f245bca778c8ccbb0151b464616d917fc4fa9"
+    },
+    {
+      "bytes": 112278,
+      "path": "web/package-lock.json",
+      "sha256": "509fe3d19007edd426e9020d4d254ecc56e415bc6b6f10af4d48770098cf9d87"
+    },
+    {
+      "bytes": 835,
+      "path": "web/package.json",
+      "sha256": "e6b0fae331c4af7423c024365b8c1286623c84530c67ce1db05f7ce482a7054a"
+    },
+    {
+      "bytes": 1711,
+      "path": "web/src/App.tsx",
+      "sha256": "3b36c196828eebc434a1b279d8472969e14a03a5cf14fcf42e258b410a7bef1d"
+    },
+    {
+      "bytes": 19189,
+      "path": "web/src/api.ts",
+      "sha256": "2a72ab14116531af16a958a04cf5946a4fc080282b2c21e42c08f485734d732a"
+    },
+    {
+      "bytes": 5501,
+      "path": "web/src/applications.css",
+      "sha256": "8fcec9e4f539217d36a0dc359946cd9f6e493594599bc366f3e8af5d9cb78b9c"
+    },
+    {
+      "bytes": 10241,
+      "path": "web/src/components/Chart.tsx",
+      "sha256": "3a13c2816aa644dd7d9263c9098e99ca47a68af916e8324b81febad215b1b77e"
+    },
+    {
+      "bytes": 3631,
+      "path": "web/src/components/CompanyHeader.tsx",
+      "sha256": "5123c95f517a19b5e96146d3cf6194b014fc10fa03f8d777ba5902a42d20958b"
+    },
+    {
+      "bytes": 1816,
+      "path": "web/src/components/FilingsTable.tsx",
+      "sha256": "74ec419c38c28e02d7d8a940a1f6b6031929b714f5b42e43f89a88a10242720c"
+    },
+    {
+      "bytes": 3885,
+      "path": "web/src/components/MetricGrid.tsx",
+      "sha256": "7339703b1b8d9aa366b03ae6ae6d3626721b5d58b731fa2660dabdd675ff97ed"
+    },
+    {
+      "bytes": 8476,
+      "path": "web/src/components/Shell.tsx",
+      "sha256": "0f3527e2b28b940e7c6c00d3cb31129310c6c9fda962e93891651b42dfc14667"
+    },
+    {
+      "bytes": 1064,
+      "path": "web/src/components/Sparkline.tsx",
+      "sha256": "981c27a72538936960039886d2236994737b47938a92870affe00ec00a6e70be"
+    },
+    {
+      "bytes": 5093,
+      "path": "web/src/components/StatementTable.tsx",
+      "sha256": "7dba7bfa688b15578ece49b17726f0dd1a840fbafe11e88331220305afba9333"
+    },
+    {
+      "bytes": 5592,
+      "path": "web/src/components/XrayPanel.tsx",
+      "sha256": "b041437e95b993e232708d15bfb7c8364a7262cbc5564baeb78f901f6f0d8474"
+    },
+    {
+      "bytes": 2677,
+      "path": "web/src/components/ui.tsx",
+      "sha256": "9c91adc4bc11238c1f05f0e905dc1744eb0520a40c2e607f0009df7eb8216b14"
+    },
+    {
+      "bytes": 1450,
+      "path": "web/src/format.test.ts",
+      "sha256": "562a6a34b935b0ee0d2f8a85c1dda2f70d5ffa6156679e39e9ac7b85fd51f853"
+    },
+    {
+      "bytes": 3359,
+      "path": "web/src/format.ts",
+      "sha256": "401f0140f010813bb95240dbd6d00a2e636bdfe97873aeff3c15a5454853c5e6"
+    },
+    {
+      "bytes": 415,
+      "path": "web/src/main.tsx",
+      "sha256": "46b344e06b272388482f7c62faab1c59e3ca019a2f4bb7f99b653e62bbf1ff94"
+    },
+    {
+      "bytes": 17877,
+      "path": "web/src/pages/Applications.tsx",
+      "sha256": "80d9ab623ade72487893ed64db16301bf21455d5267575f2d00aceb5a09e1fda"
+    },
+    {
+      "bytes": 3852,
+      "path": "web/src/pages/Companies.tsx",
+      "sha256": "d9c86bfb6dddbe5a001bb812f518b1404e56384968d9ee8974da41302fd99346"
+    },
+    {
+      "bytes": 27220,
+      "path": "web/src/pages/Company.tsx",
+      "sha256": "49077c6c7328562d68bdd1c0fe838fc318fb7594bd02e8b0f448853d35f733f9"
+    },
+    {
+      "bytes": 37430,
+      "path": "web/src/pages/Economic.tsx",
+      "sha256": "d9b01ff8d9981b314bd37cf9d6e4744d1c3303afbb54f83b2e76c8e93087ec33"
+    },
+    {
+      "bytes": 39757,
+      "path": "web/src/pages/Institutional.tsx",
+      "sha256": "7797a2f74d82045a9ffde178981f89977ba9e969ce6c4182dac979dfcb8de459"
+    },
+    {
+      "bytes": 30227,
+      "path": "web/src/pages/Lab.tsx",
+      "sha256": "21bb3bdf6e76abf861e2c20d96233c47b059f2b6cdd833f95e546033cf08193f"
+    },
+    {
+      "bytes": 23451,
+      "path": "web/src/pages/Learning.tsx",
+      "sha256": "e3acb6264084720efba1737d044c835ff18182f82f920d30f9b5fcc7b95cfcdf"
+    },
+    {
+      "bytes": 4658,
+      "path": "web/src/pages/Markets.tsx",
+      "sha256": "8d50849b9714af0ebe50ed515ef8164d4c863f085af5f8e9e08f959e0226a32d"
+    },
+    {
+      "bytes": 6228,
+      "path": "web/src/pages/Research.tsx",
+      "sha256": "ac08105d83e5b17cab4c5b1d6219dddee8caffb85037854a2ad893e80e78a044"
+    },
+    {
+      "bytes": 10544,
+      "path": "web/src/pages/Screener.tsx",
+      "sha256": "ce12bdbec4107e69f7791aaae5aaa78425842a3db8b38ce325eb0918edb30b1f"
+    },
+    {
+      "bytes": 38260,
+      "path": "web/src/pages/Studio.tsx",
+      "sha256": "09cbec0551c0bdc96fb266f702276edc884f0b6cefab6bd6957695353a7e7c55"
+    },
+    {
+      "bytes": 9423,
+      "path": "web/src/pages/Watchlists.tsx",
+      "sha256": "cdb999bf44e07a66c95d41207c74b13a4aebda8b6425a78f0763b71226d38bd4"
+    },
+    {
+      "bytes": 18594,
+      "path": "web/src/pages/WorkspaceView.tsx",
+      "sha256": "ab1e59fe621e018cb99d870a0d78a885fb7145332dcfb9ba1be2c2584232caa4"
+    },
+    {
+      "bytes": 7304,
+      "path": "web/src/pages/Workspaces.tsx",
+      "sha256": "8d63315e414b688e0373a26a36688c00aba2fc32612ceff83176a52f934be126"
+    },
+    {
+      "bytes": 3799,
+      "path": "web/src/state.tsx",
+      "sha256": "1754450a355c4f55f0d3866d47c2de7a9fe75892da75b1f9f96c25db0899b2fd"
+    },
+    {
+      "bytes": 38689,
+      "path": "web/src/styles.css",
+      "sha256": "d6c2a350ff756a1bb4417d3f6fcf3c8dca39a38046032783697bbf2fc88e59a2"
+    },
+    {
+      "bytes": 42,
+      "path": "web/src/test/setup.ts",
+      "sha256": "977afde26bba6a51325908cd7713cbfdc87d18f06b78b237c8f364c44864b7de"
+    },
+    {
+      "bytes": 12002,
+      "path": "web/src/types.ts",
+      "sha256": "9856d5b6e350d5117d24f8d2b3c4b3e671c034457b6c27fbea483f2959bdde0e"
+    },
+    {
+      "bytes": 497,
+      "path": "web/tsconfig.json",
+      "sha256": "8f5987c8a49f4b178cf9e89d8c3e919e9bf879b89d4267421559ff03d657d440"
+    },
+    {
+      "bytes": 795,
+      "path": "web/vite.config.ts",
+      "sha256": "77a3094449196d8e8844ff8d401e58968b34fab9cbea686d0b86e16e6b860469"
+    }
+  ],
+  "note": "Hashes establish byte identity, not publisher identity or a signed release.",
+  "phase8_package": "fixtures/phase8/flagship_weather_demand.atlas",
+  "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+  "project": "atlas-quant",
+  "python": "3.12.3",
+  "revision": "703b82d2aaddf10c8b67648e7ae6ce92e22cbe0e",
+  "schema": "atlas.release_manifest.v1",
+  "signature": null,
+  "total_bytes": 28251485
+}

@@ -1,0 +1,50 @@
+{
+  "build": {
+    "max_ms": 26.033,
+    "median_ms": 23.904,
+    "min_ms": 23.829,
+    "runs": 3
+  },
+  "environment": {
+    "cpu_count": 2,
+    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+    "processor": "x86_64",
+    "python": "3.12.3"
+  },
+  "execute": {
+    "max_ms": 28.239,
+    "median_ms": 25.761,
+    "min_ms": 25.646,
+    "runs": 3
+  },
+  "generated_at": "2026-11-05T22:04:43Z",
+  "install": {
+    "max_ms": 7.273,
+    "median_ms": 5.426,
+    "min_ms": 5.415,
+    "runs": 3
+  },
+  "note": "Timings are machine-specific and exclude process startup and browser rendering.",
+  "peak_rss_mb": 49.95,
+  "schema": "atlas.phase8.benchmark.v1",
+  "verify": {
+    "max_ms": 3.128,
+    "median_ms": 2.526,
+    "min_ms": 2.512,
+    "runs": 3
+  },
+  "workload": {
+    "cold_install": "each iteration uses a new SQLite database",
+    "execution": "installed runtime reproduces the packaged panel and FEC scenario",
+    "files": 6,
+    "iterations": 3,
+    "note": "A fresh analysis legitimately carries a new generated_at timestamp; the pinned fixture is the release artifact.",
+    "package": "fixtures/phase8/flagship_weather_demand.atlas",
+    "package_bytes": 47270,
+    "package_sha256": "92ab1bf753438a0f534a080697abca9c638da11521e13c1dc43700883c82227b",
+    "repeated_build_sha256": "5c78ce1e4867e3c3674dbe756aaf8b59fd431d19890b0033f3d8a246d4b83276",
+    "run_id": "ERUN-ac92ae9ffef03de2",
+    "same_as_pinned_release_fixture": false,
+    "scenario_id": "ESCN-9d3326c5354c4a5b"
+  }
+}

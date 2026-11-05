@@ -957,6 +957,66 @@ CREATE INDEX idx_economic_alert_status ON economic_alert (status, created_at DES
 """
 
 
+_MIGRATION_010 = """
+-- ===========================================================================
+-- Phase 8: portable application packages, installs, executions and packs
+-- ===========================================================================
+
+-- The package bytes are retained so verification is possible after installation and
+-- so export reproduces exactly the bytes that were installed. The manifest is stored
+-- separately for querying; it is never trusted without revalidation against the blob.
+CREATE TABLE application_installation (
+    install_id             TEXT PRIMARY KEY,
+    application_id         TEXT NOT NULL,
+    version                TEXT NOT NULL,
+    publisher_id           TEXT NOT NULL,
+    package_id             TEXT NOT NULL,
+    package_sha256         TEXT NOT NULL UNIQUE,
+    package_size           INTEGER NOT NULL CHECK (package_size > 0),
+    manifest_json          TEXT NOT NULL,
+    application_json       TEXT NOT NULL,
+    package_blob           BLOB NOT NULL,
+    status                 TEXT NOT NULL CHECK (status IN ('installed','inspect_only','quarantined')),
+    reproducibility        TEXT NOT NULL,
+    trust_level            TEXT NOT NULL,
+    signature_status       TEXT NOT NULL,
+    object_id              TEXT REFERENCES research_object(object_id),
+    source_installation_id TEXT,
+    diagnostics_json       TEXT NOT NULL DEFAULT '[]',
+    installed_at           TEXT NOT NULL,
+    updated_at             TEXT NOT NULL,
+    UNIQUE (application_id, version, publisher_id)
+);
+CREATE INDEX idx_application_installation_app ON application_installation (application_id, version);
+CREATE INDEX idx_application_installation_time ON application_installation (installed_at DESC);
+
+-- Execution history survives uninstall: removing an installed application cannot
+-- rewrite the fact that a result was produced. There is intentionally no foreign key.
+CREATE TABLE application_execution (
+    execution_id TEXT PRIMARY KEY,
+    install_id   TEXT NOT NULL,
+    status       TEXT NOT NULL,
+    result_json  TEXT NOT NULL,
+    duration_ms  REAL NOT NULL,
+    created_at   TEXT NOT NULL
+);
+CREATE INDEX idx_application_execution_install ON application_execution (install_id, created_at DESC);
+
+CREATE TABLE domain_pack_installation (
+    pack_id         TEXT NOT NULL,
+    version         TEXT NOT NULL,
+    publisher_id    TEXT NOT NULL,
+    manifest_json   TEXT NOT NULL,
+    manifest_digest TEXT NOT NULL,
+    applications_json TEXT NOT NULL DEFAULT '[]',
+    installed_at    TEXT NOT NULL,
+    updated_at      TEXT NOT NULL,
+    PRIMARY KEY (pack_id, version, publisher_id)
+);
+CREATE INDEX idx_domain_pack_installation_time ON domain_pack_installation (installed_at DESC);
+"""
+
+
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=1, name="phase1_foundation", sql=_MIGRATION_001),
     Migration(version=2, name="phase1_1_history_and_dependencies", sql=_MIGRATION_002),
@@ -967,6 +1027,7 @@ MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=7, name="phase5_institutional_research", sql=_MIGRATION_007),
     Migration(version=8, name="phase6_learning_runtime", sql=_MIGRATION_008),
     Migration(version=9, name="phase7_economic_intelligence", sql=_MIGRATION_009),
+    Migration(version=10, name="phase8_portable_applications", sql=_MIGRATION_010),
 )
 
 LATEST_VERSION = max(m.version for m in MIGRATIONS)

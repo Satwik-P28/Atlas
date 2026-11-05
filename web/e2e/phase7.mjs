@@ -59,7 +59,8 @@ try {
     'hypothetical company identity is missing')
   const conflictText = await page.getByTestId('econ-conflict').innerText()
   assert(/32\.8/.test(conflictText) && /35\.6/.test(conflictText), 'both station values are not visible')
-  assert(/No automatic source wins/.test(conflictText), 'conflict policy is missing')
+  assert(/Both point observations survive/.test(conflictText), 'spatial representativeness policy is missing')
+  assert(/Logical contradictions: 0/.test(conflictText), 'station disagreement is mislabeled as a logical conflict')
 
   await page.getByTestId('econ-scenario-result').waitFor()
   await page.getByLabel('Temperature shock (°C)').fill('2')

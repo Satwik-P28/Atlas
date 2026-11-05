@@ -22,6 +22,8 @@ Operational choices:
 
 from __future__ import annotations
 
+import base64
+import binascii
 import copy
 import json
 import os
@@ -31,7 +33,7 @@ from typing import Any, Literal
 from fastapi import Body, Depends, FastAPI, HTTPException, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -69,6 +71,9 @@ from ..institutional.validation import walk_forward
 from ..learning.features import catalogue as learning_feature_catalogue
 from ..learning.service import LEARNING_SCHEMA, LearningService
 from ..economic.service import ECONOMIC_SCHEMA, EconomicService
+from ..applications.contracts import PACKAGE_SCHEMA
+from ..applications.packs import DomainPackService
+from ..applications.service import ApplicationService
 from ..fec import compile_model
 from ..fec import valuation as fec_valuation
 from ..fec.operators import REGISTRY, operator_versions
@@ -407,6 +412,35 @@ class EconomicApplicationRequest(BaseModel):
     purpose: str = Field(default="weather-to-electricity economic investigation", max_length=500)
 
 
+class ApplicationExportRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    run_id: str
+    scenario_id: str | None = None
+    version: str = Field(default="1.0.0", pattern=r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
+
+
+class ApplicationInstallRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    package_base64: str = Field(min_length=1)
+
+
+class ApplicationExecuteRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    inputs: dict[str, Any] = Field(default_factory=dict)
+
+
+class ApplicationForkBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    name: str = Field(min_length=1, max_length=120)
+    version: str = Field(pattern=r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
+
+
+class DomainPackInstallRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    manifest: dict[str, Any]
+    packages: dict[str, str] = Field(default_factory=dict)
+
+
 class EconomicRevisionRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     value: float
@@ -543,6 +577,12 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
                         "economic_analyses": int(db.scalar(
                             "SELECT COUNT(*) FROM economic_analysis", default=0
                         ) or 0),
+                        "application_installations": int(db.scalar(
+                            "SELECT COUNT(*) FROM application_installation", default=0
+                        ) or 0),
+                        "domain_packs": int(db.scalar(
+                            "SELECT COUNT(*) FROM domain_pack_installation", default=0
+                        ) or 0),
                     }
                 )
             finally:
@@ -567,6 +607,9 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
             "economic_panel_schema": "atlas.economic.panel.v1",
             "economic_graph_schema": "atlas.economic.graph.v1",
             "economic_scenario_schema": "atlas.economic.scenario.v1",
+            "application_package_schema": PACKAGE_SCHEMA,
+            "application_installation_schema": "atlas.application.installation.v1",
+            "domain_pack_schema": "atlas.domain_pack.v1",
             "forecast_schema": "atlas.forecast.v1",
             "learning_features": learning_feature_catalogue()["features"],
             "panel_types": sorted(workspaces.PANEL_TYPES),
@@ -1132,6 +1175,102 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
     @app.get("/api/economic/benchmarks", tags=["economic"])
     def economic_benchmarks(db: Database = Depends(get_db)) -> dict[str, Any]:
         return EconomicService(db).benchmarks()
+
+    # ------------------------------------------------------ application gallery
+    @app.get("/api/applications", tags=["applications"])
+    def application_gallery(db: Database = Depends(get_db)) -> dict[str, Any]:
+        return ApplicationService(db).gallery()
+
+    @app.post("/api/applications/export", tags=["applications"], status_code=201)
+    def application_export(body: ApplicationExportRequest,
+                           db: Database = Depends(get_db)) -> dict[str, Any]:
+        built = ApplicationService(db).create_economic_package(
+            body.run_id, scenario_id=body.scenario_id, version=body.version,
+        )
+        return {
+            "schema": "atlas.application.export.v1",
+            "package_id": built["package_id"],
+            "package_sha256": built["package_sha256"],
+            "application_id": built["application_id"],
+            "version": built["version"],
+            "reproducibility": built["reproducibility"],
+            "package_base64": base64.b64encode(built["payload"]).decode("ascii"),
+        }
+
+    @app.post("/api/applications/install", tags=["applications"], status_code=201)
+    def application_install(body: ApplicationInstallRequest,
+                            db: Database = Depends(get_db)) -> dict[str, Any]:
+        try:
+            payload = base64.b64decode(body.package_base64, validate=True)
+        except (binascii.Error, ValueError) as exc:
+            raise ValidationError("package_base64 is not valid base64") from exc
+        return ApplicationService(db).install(payload)
+
+    @app.get("/api/applications/{install_id}", tags=["applications"])
+    def application_get(install_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return ApplicationService(db).get(install_id)
+
+    @app.get("/api/applications/{install_id}/open", tags=["applications"])
+    def application_open(install_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return ApplicationService(db).open(install_id)
+
+    @app.get("/api/applications/{install_id}/verify", tags=["applications"])
+    def application_verify(install_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return ApplicationService(db).verify(install_id)
+
+    @app.get("/api/applications/{install_id}/download", tags=["applications"])
+    def application_download(install_id: str, db: Database = Depends(get_db)) -> Response:
+        payload, filename = ApplicationService(db).export_bytes(install_id)
+        return Response(
+            content=payload, media_type="application/zip",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"',
+                     "X-Atlas-Integrity": "unsigned; SHA-256 verified by server"},
+        )
+
+    @app.post("/api/applications/{install_id}/execute", tags=["applications"])
+    def application_execute(install_id: str, body: ApplicationExecuteRequest,
+                            db: Database = Depends(get_db)) -> dict[str, Any]:
+        return ApplicationService(db).execute(install_id, body.inputs)
+
+    @app.post("/api/applications/{install_id}/fork", tags=["applications"], status_code=201)
+    def application_fork(install_id: str, body: ApplicationForkBody,
+                         db: Database = Depends(get_db)) -> dict[str, Any]:
+        return ApplicationService(db).fork(install_id, name=body.name, version=body.version)
+
+    @app.get("/api/applications/{install_id}/compare", tags=["applications"])
+    def application_compare(install_id: str, right: str,
+                            db: Database = Depends(get_db)) -> dict[str, Any]:
+        return ApplicationService(db).compare(install_id, right)
+
+    @app.delete("/api/applications/{install_id}", tags=["applications"])
+    def application_uninstall(install_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return ApplicationService(db).uninstall(install_id)
+
+    @app.get("/api/domain-packs", tags=["applications"])
+    def domain_pack_list(db: Database = Depends(get_db)) -> dict[str, Any]:
+        items = DomainPackService(db).list()
+        return {"schema": "atlas.domain_pack.list.v1", "items": items, "count": len(items)}
+
+    @app.post("/api/domain-packs/install", tags=["applications"], status_code=201)
+    def domain_pack_install(body: DomainPackInstallRequest,
+                            db: Database = Depends(get_db)) -> dict[str, Any]:
+        packages: dict[str, bytes] = {}
+        for path, encoded in body.packages.items():
+            try:
+                packages[path] = base64.b64decode(encoded, validate=True)
+            except (binascii.Error, ValueError) as exc:
+                raise ValidationError("domain-pack package is not valid base64", path=path) from exc
+        return DomainPackService(db).install(body.manifest, package_bytes=packages)
+
+    @app.get("/api/domain-packs/{pack_id}/{version}", tags=["applications"])
+    def domain_pack_get(pack_id: str, version: str,
+                        db: Database = Depends(get_db)) -> dict[str, Any]:
+        return DomainPackService(db).get(pack_id, version)
+
+    @app.delete("/api/domain-packs/{pack_id}/{version}", tags=["applications"])
+    def domain_pack_uninstall(pack_id: str, version: str,
+                              db: Database = Depends(get_db)) -> dict[str, Any]:
+        return DomainPackService(db).uninstall(pack_id, version)
 
     # ------------------------------------------------------- institutional lab
     @app.get("/api/institutional/catalog", tags=["institutional"])

@@ -765,6 +765,59 @@ def cmd_deps(db: Database, args: argparse.Namespace) -> int:
     return 0 if summary["ok"] else 1
 
 
+def cmd_app(db: Database, args: argparse.Namespace) -> int:
+    from .applications.cli import run as run_app
+
+    return run_app(db, args)
+
+
+def cmd_migrate(db: Database, args: argparse.Namespace) -> int:
+    from .storage.safety import migrate_safely
+
+    payload = migrate_safely(db, backup_dir=args.backup_dir)
+    table = (f"schema {payload['from_version']} -> {payload['to_version']}\n"
+             f"status {payload['status']}\n"
+             f"backup {payload['backup_path'] or 'none'}")
+    _emit(args, payload, table=table)
+    return 0
+
+
+def cmd_doctor(db: Database, args: argparse.Namespace) -> int:
+    from .storage.migrations import LATEST_VERSION
+
+    schema = db.schema_version()
+    integrity = db.integrity_check()
+    foreign = db.foreign_key_violations()
+    counts = {"evidence": db.row_count("evidence"), "economic_observations": db.row_count(
+        "economic_observation"
+    )}
+    if schema >= 10:
+        counts.update({
+            "application_installations": db.row_count("application_installation"),
+            "application_executions": db.row_count("application_execution"),
+            "domain_packs": db.row_count("domain_pack_installation"),
+        })
+    migrations = [dict(row) for row in db.applied_migrations()]
+    ok = integrity == "ok" and not foreign and schema == LATEST_VERSION
+    payload = {
+        "schema": "atlas.doctor.v1",
+        "status": "ok" if ok else "attention_required",
+        "database": db.path,
+        "schema_version": schema,
+        "supported_schema": LATEST_VERSION,
+        "integrity": integrity,
+        "foreign_key_violations": len(foreign),
+        "counts": counts,
+        "migrations": migrations,
+        "package_schema": "atlas.application_package.v1",
+        "signature_support": "unsupported: unsigned packages are integrity-checked, publisher identity is not verified",
+        "untrusted_executable_support": "unsupported: no Python, JavaScript, shell or native extensions are executed",
+    }
+    _emit(args, payload, table=f"status {payload['status']} · schema {schema}/{LATEST_VERSION} · "
+                                f"integrity {integrity} · foreign keys {len(foreign)}")
+    return 0 if ok else 1
+
+
 # --------------------------------------------------------------------------- #
 # Parser
 # --------------------------------------------------------------------------- #
@@ -782,6 +835,85 @@ def build_parser() -> argparse.ArgumentParser:
 
     init = subparsers.add_parser("init", help="create or migrate the database")
     init.set_defaults(func=cmd_init)
+
+    migrate = subparsers.add_parser("migrate", help="back up, migrate and verify the database")
+    migrate.add_argument("--backup-dir", default=None, help="directory for the pre-migration backup")
+    migrate.set_defaults(func=cmd_migrate)
+
+    doctor = subparsers.add_parser("doctor", help="diagnose schema, integrity and package support")
+    doctor.set_defaults(func=cmd_doctor)
+
+    app = subparsers.add_parser("app", help="portable application SDK, packages and domain packs")
+    app_sub = app.add_subparsers(dest="app_command", required=True)
+    app_init = app_sub.add_parser("init", help="scaffold a declarative application project")
+    app_init.add_argument("directory")
+    app_init.add_argument("--name", required=True)
+    app_init.add_argument("--application-id", default=None)
+    app_init.add_argument("--version", default="1.0.0")
+    app_init.set_defaults(func=cmd_app)
+    for name in ("validate", "test"):
+        item = app_sub.add_parser(name, help=f"{name} an application source project")
+        item.add_argument("--file", required=True)
+        item.set_defaults(func=cmd_app)
+    app_build = app_sub.add_parser("build", help="build a deterministic .atlas package")
+    app_build.add_argument("--file", required=True)
+    app_build.add_argument("--out", required=True)
+    app_build.set_defaults(func=cmd_app)
+    app_inspect = app_sub.add_parser("inspect", help="inspect a package without installing it")
+    app_inspect.add_argument("--package", required=True)
+    app_inspect.set_defaults(func=cmd_app)
+    app_verify = app_sub.add_parser("verify", help="verify package integrity")
+    app_verify.add_argument("--package", required=True)
+    app_verify.set_defaults(func=cmd_app)
+    app_install = app_sub.add_parser("install", help="install a package transactionally")
+    app_install.add_argument("--package", required=True)
+    app_install.set_defaults(func=cmd_app)
+    app_list = app_sub.add_parser("list", help="list locally installed applications")
+    app_list.set_defaults(func=cmd_app)
+    app_gallery = app_sub.add_parser("gallery", help="alias for list")
+    app_gallery.set_defaults(func=cmd_app)
+    app_open = app_sub.add_parser("open", help="open an installed application")
+    app_open.add_argument("--install-id", required=True)
+    app_open.set_defaults(func=cmd_app)
+    app_execute = app_sub.add_parser("execute", help="execute through the installed Atlas runtime")
+    app_execute.add_argument("--install-id", required=True)
+    app_execute.add_argument("--inputs", default=None, help="JSON input overrides")
+    app_execute.set_defaults(func=cmd_app)
+    app_export = app_sub.add_parser("export", help="export a package or a saved economic run")
+    app_export.add_argument("--install-id", default=None)
+    app_export.add_argument("--object-id", default=None)
+    app_export.add_argument("--run-id", default=None)
+    app_export.add_argument("--scenario-id", default=None)
+    app_export.add_argument("--version", default="1.0.0")
+    app_export.add_argument("--out", required=True)
+    app_export.set_defaults(func=cmd_app)
+    app_fork = app_sub.add_parser("fork", help="fork an installed application locally")
+    app_fork.add_argument("--install-id", required=True)
+    app_fork.add_argument("--name", required=True)
+    app_fork.add_argument("--version", required=True)
+    app_fork.set_defaults(func=cmd_app)
+    app_compare = app_sub.add_parser("compare", help="compare two installed applications")
+    app_compare.add_argument("--left", required=True)
+    app_compare.add_argument("--right", required=True)
+    app_compare.set_defaults(func=cmd_app)
+    app_uninstall = app_sub.add_parser("uninstall", help="remove an installation, retaining research")
+    app_uninstall.add_argument("--install-id", required=True)
+    app_uninstall.set_defaults(func=cmd_app)
+    app_pack = app_sub.add_parser("pack", help="declarative domain packs")
+    pack_sub = app_pack.add_subparsers(dest="pack_command", required=True)
+    pack_install = pack_sub.add_parser("install", help="install a domain pack and its packages")
+    pack_install.add_argument("--file", required=True)
+    pack_install.set_defaults(func=cmd_app)
+    pack_list = pack_sub.add_parser("list", help="list installed domain packs")
+    pack_list.set_defaults(func=cmd_app)
+    pack_inspect = pack_sub.add_parser("inspect", help="inspect an installed domain pack")
+    pack_inspect.add_argument("--pack-id", required=True)
+    pack_inspect.add_argument("--version", required=True)
+    pack_inspect.set_defaults(func=cmd_app)
+    pack_uninstall = pack_sub.add_parser("uninstall", help="remove pack metadata")
+    pack_uninstall.add_argument("--pack-id", required=True)
+    pack_uninstall.add_argument("--version", required=True)
+    pack_uninstall.set_defaults(func=cmd_app)
 
     concepts = subparsers.add_parser("concepts", help="list the canonical concept registry")
     concepts.set_defaults(func=cmd_concepts)
@@ -945,14 +1077,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     try:
-        db = open_database(args.db)
+        db = Database(args.db) if getattr(args, "command", None) == "migrate" else open_database(args.db)
     except AtlasError as exc:
         print(json.dumps(exc.to_dict()) if args.json else f"error: {exc}", file=sys.stderr)
         return 2
     try:
-        from .storage.sources import ensure_default_sources
+        if getattr(args, "command", None) != "migrate":
+            from .storage.sources import ensure_default_sources
 
-        ensure_default_sources(db)
+            ensure_default_sources(db)
         return args.func(db, args)
     except BrokenPipeError:  # pragma: no cover - downstream closed the pipe (e.g. | head)
         try:

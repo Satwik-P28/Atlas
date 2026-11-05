@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Shell from './components/Shell'
+import Applications from './pages/Applications'
 import Companies from './pages/Companies'
 import Company from './pages/Company'
 import Lab from './pages/Lab'
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/lab/institutional" element={<Institutional />} />
         <Route path="/lab/learning" element={<Learning />} />
         <Route path="/lab/economic" element={<Economic />} />
+        <Route path="/applications" element={<Applications />} />
         <Route path="/watchlists" element={<Watchlists />} />
         <Route path="/workspaces" element={<Workspaces />} />
         <Route path="/workspaces/:workspaceId" element={<WorkspaceView />} />

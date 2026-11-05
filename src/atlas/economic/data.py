@@ -487,8 +487,8 @@ def detect_conflicts(db: Database) -> list[dict[str, Any]]:
     now = iso(utcnow())
     rows = db.query(
         "SELECT claim_id, subject_key, predicate, value_numeric, unit, source_id, claimed_at, "
-        "epistemic_status, observation_id FROM economic_claim WHERE value_numeric IS NOT NULL "
-        "ORDER BY subject_key, claimed_at, claim_id"
+        "epistemic_status, observation_id, metadata_json FROM economic_claim "
+        "WHERE value_numeric IS NOT NULL ORDER BY subject_key, claimed_at, claim_id"
     )
     grouped: dict[tuple[str, str | None], list[Any]] = defaultdict(list)
     for row in rows:
@@ -500,36 +500,64 @@ def detect_conflicts(db: Database) -> list[dict[str, Any]]:
             continue
         items = sorted(items, key=lambda item: (item["claimed_at"], item["claim_id"]))
         claim_ids = [item["claim_id"] for item in items]
-        existing = db.query_one(
-            "SELECT conflict_id, status, resolution FROM economic_conflict WHERE subject_key = ? "
-            "ORDER BY detected_at DESC LIMIT 1", (subject,)
+        stations = []
+        for item in items:
+            raw = item["metadata_json"] or "{}"
+            try:
+                metadata = json.loads(raw)
+            except (TypeError, json.JSONDecodeError):
+                metadata = {}
+            station = metadata.get("station")
+            if station:
+                stations.append(str(station))
+        spatial = len(set(stations)) > 1
+        status = "spatial_representativeness" if spatial else "unresolved"
+        resolution = (
+            "Different point stations observe different local conditions; these are not "
+            "competing estimates of one quantity."
+            if spatial else None
         )
-        if existing:
-            found.append({"conflict_id": existing["conflict_id"], "subject_key": subject,
-                          "claim_ids": claim_ids, "status": existing["status"],
-                          "resolution": existing["resolution"]})
-            continue
+        reason = (
+            "station measurements differ because they are from different locations"
+            if spatial else "claims disagree on a numerical value for the same subject and unit"
+        )
         confidence = min(0.95, 0.55 + 0.05 * len(items))
         metadata = {
             "unit": unit, "values": [item["value_numeric"] for item in items],
             "sources": [item["source_id"] for item in items],
             "observation_ids": [item["observation_id"] for item in items],
-            "interpretation": "station representativeness; not a single truth adjudication",
+            "stations": sorted(set(stations)),
+            "conflict_class": "spatial_representativeness" if spatial else "contradictory_values",
+            "logical_contradiction": not spatial,
+            "interpretation": (
+                "Spatial representativeness: each station is valid at its own location."
+                if spatial else "The claims are treated as competing estimates of one quantity."
+            ),
             "dependent_research_stale": True,
         }
-        conflict_id = stable_id("ECNF", subject, claim_ids)
-        db.execute(
-            "INSERT INTO economic_conflict (conflict_id, subject_key, claim_ids_json, status, reason, "
-            "resolution, detected_at, metadata_json) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT DO NOTHING",
-            (conflict_id, subject, json.dumps(claim_ids), "unresolved",
-             "two observed station measurements disagree for the same metro-area subject",
-             None, now, json.dumps(metadata, sort_keys=True)),
+        existing = db.query_one(
+            "SELECT conflict_id, status, resolution FROM economic_conflict WHERE subject_key = ? "
+            "ORDER BY detected_at DESC LIMIT 1", (subject,)
         )
+        conflict_id = existing["conflict_id"] if existing else stable_id("ECNF", subject, claim_ids)
+        if existing:
+            db.execute(
+                "UPDATE economic_conflict SET status = ?, reason = ?, resolution = ?, "
+                "metadata_json = ? WHERE conflict_id = ?",
+                (status, reason, resolution, json.dumps(metadata, sort_keys=True), conflict_id),
+            )
+        else:
+            db.execute(
+                "INSERT INTO economic_conflict (conflict_id, subject_key, claim_ids_json, status, reason, "
+                "resolution, detected_at, metadata_json) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT DO NOTHING",
+                (conflict_id, subject, json.dumps(claim_ids), status, reason,
+                 resolution, now, json.dumps(metadata, sort_keys=True)),
+            )
         found.append({"conflict_id": conflict_id, "subject_key": subject,
-                      "claim_ids": claim_ids, "status": "unresolved", "resolution": None,
+                      "claim_ids": claim_ids, "status": status, "resolution": resolution,
                       "values": [item["value_numeric"] for item in items],
                       "sources": [item["source_id"] for item in items],
-                      "confidence": confidence,
+                      "confidence": confidence, "metadata": metadata,
                       "note": "Both source records are preserved. No automatic winner is selected."})
     return found
 

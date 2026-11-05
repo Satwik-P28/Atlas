@@ -350,6 +350,35 @@ export const api = {
     request<Record<string, any>>('/api/economic/applications', {
       method: 'POST', body: JSON.stringify(body),
     }),
+  applicationGallery: () => request<Record<string, any>>('/api/applications'),
+  applicationExport: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/applications/export', {
+      method: 'POST', body: JSON.stringify(body),
+    }),
+  applicationInstall: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/applications/install', {
+      method: 'POST', body: JSON.stringify(body),
+    }),
+  applicationOpen: (installId: string) =>
+    request<Record<string, any>>(`/api/applications/${enc(installId)}/open`),
+  applicationVerify: (installId: string) =>
+    request<Record<string, any>>(`/api/applications/${enc(installId)}/verify`),
+  applicationExecute: (installId: string, inputs: Record<string, unknown> = {}) =>
+    request<Record<string, any>>(`/api/applications/${enc(installId)}/execute`, {
+      method: 'POST', body: JSON.stringify({ inputs }),
+    }),
+  applicationFork: (installId: string, body: Record<string, unknown>) =>
+    request<Record<string, any>>(`/api/applications/${enc(installId)}/fork`, {
+      method: 'POST', body: JSON.stringify(body),
+    }),
+  applicationUninstall: (installId: string) =>
+    request<Record<string, any>>(`/api/applications/${enc(installId)}`, { method: 'DELETE' }),
+  applicationDownload: async (installId: string): Promise<Blob> => {
+    const response = await fetch(`${BASE}/api/applications/${enc(installId)}/download`)
+    if (!response.ok) throw new ApiError(response.status, 'download_failed', 'Package download failed')
+    return response.blob()
+  },
+  domainPacks: () => request<Record<string, any>>('/api/domain-packs'),
 } satisfies Record<string, unknown>
 
 export type { Mode }

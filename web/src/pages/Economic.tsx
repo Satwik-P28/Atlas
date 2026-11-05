@@ -546,9 +546,9 @@ export default function Economic() {
         </section>
 
         <section className="card" data-testid="econ-conflict">
-          <SectionHeader eyebrow="Evidence reconciliation" title="Two stations disagree; both survive"
+          <SectionHeader eyebrow="Evidence reconciliation" title="Two stations observe different local conditions"
             detail={conflicts?.policy}
-            actions={<Badge tone="warn">unresolved</Badge>} />
+            actions={<Badge tone="neutral">spatial, not contradictory</Badge>} />
           {firstConflict ? (
             <>
               <div className="econ-conflict-head">
@@ -565,7 +565,10 @@ export default function Economic() {
                   </div>
                 ))}
               </div>
-              <p className="notice small">{firstConflict.reason}. No automatic source wins; dependent research is marked stale, not rewritten.</p>
+              <p className="notice small">
+                {firstConflict.reason}. Both point observations survive at their own locations; no source wins.
+                Dependent research is marked stale, not rewritten. Logical contradictions: {conflicts?.logical_conflict_count ?? 0}.
+              </p>
               <button className="button tiny-button" onClick={applyCorrection} disabled={busy !== null}>
                 Record a 35.7 °C correction drill
               </button>

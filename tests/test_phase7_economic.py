@@ -38,8 +38,8 @@ def _run(service: EconomicService) -> dict:
 
 def test_schema_9_observed_coverage_rights_and_retrieval_proxy(economic):
     db = economic.db
-    assert LATEST_VERSION == 9
-    assert db.schema_version() == 9
+    assert LATEST_VERSION == 10
+    assert db.schema_version() == 10
     tables = {row["name"] for row in db.query(
         "SELECT name FROM sqlite_master WHERE type = 'table'"
     )}
@@ -92,16 +92,21 @@ def test_graph_edges_have_provenance_and_hypothetical_company_is_not_observed(ec
         assert edge["rights"]
 
 
-def test_two_contradictory_station_claims_are_preserved_without_a_winner(economic):
+def test_two_station_measurements_are_spatial_not_a_logical_contradiction(economic):
     payload = economic.conflicts()
     assert payload["count"] == 1
+    assert payload["logical_conflict_count"] == 0
+    assert payload["spatial_representativeness_count"] == 1
     conflict = payload["items"][0]
-    assert conflict["status"] == "unresolved"
-    assert conflict["resolution"] is None
+    assert conflict["status"] == "spatial_representativeness"
+    assert "Different point stations" in conflict["resolution"]
     assert len(conflict["claims"]) == 2
     values = sorted(claim["value_numeric"] for claim in conflict["claims"])
     assert values == [32.8, 35.6]
     assert conflict["metadata"]["dependent_research_stale"] is True
+    assert conflict["metadata"]["conflict_class"] == "spatial_representativeness"
+    assert conflict["metadata"]["logical_contradiction"] is False
+    assert conflict["metadata"]["stations"] == ["USW00003971", "USW00013960"]
     assert all(claim["source_id"] == "noaa-ghcn" for claim in conflict["claims"])
     assert all(claim["epistemic_status"] == "observed" for claim in conflict["claims"])
     assert len({claim["observation_id"] for claim in conflict["claims"]}) == 2
@@ -295,7 +300,7 @@ def test_economic_api_workflow(tmp_path: Path):
     client = TestClient(create_app(path))
 
     health = client.get("/api/health").json()
-    assert health["schema_version"] == 9
+    assert health["schema_version"] == 10
     assert health["economic_observations"] == 1095
     catalog = client.get("/api/economic/catalog")
     assert catalog.status_code == 200
@@ -304,7 +309,10 @@ def test_economic_api_workflow(tmp_path: Path):
     assert {"eia-930", "noaa-ghcn"} <= source_ids
     assert len(source_ids) == 3  # two public sources plus the non-evidence assumption registry
     assert client.get("/api/economic/graph").json()["counts"]["edges"] == 12
-    assert client.get("/api/economic/conflicts").json()["count"] == 1
+    conflicts = client.get("/api/economic/conflicts").json()
+    assert conflicts["count"] == 1
+    assert conflicts["logical_conflict_count"] == 0
+    assert conflicts["spatial_representativeness_count"] == 1
 
     analyzed = client.post("/api/economic/analyze", json={
         "as_of": iso(utcnow()), "mode": "public_available", "persist": True,

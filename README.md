@@ -1,4 +1,4 @@
-# Atlas Quant — Phase 7
+# Atlas Quant — Phase 8
 
 **A local-first financial research terminal, quantitative research lab and scientific
 learning system built on a point-in-time evidence platform.**
@@ -18,19 +18,29 @@ financial consequences, manual Sentinel invalidation and a complete Economic Lab
 [docs/PHASE7_IMPLEMENTATION.md](docs/PHASE7_IMPLEMENTATION.md) and
 [docs/WEATHER_ENERGY_CASE_STUDY.md](docs/WEATHER_ENERGY_CASE_STUDY.md).
 
+**Phase 8 adds portable research applications:** a deterministic, declarative
+`atlas.application_package.v1` format; an install/execute/fork/export/uninstall lifecycle;
+a local gallery; an SDK and CLI; a real declarative domain pack; backend-enforced data
+rights; migration backup and rollback checks; and a pinned package containing the real 2023
+EIA/NOAA Economic Lab. Untrusted package code is never executed and signatures are explicitly
+unsupported. See [docs/APPLICATION_PACKAGE_SPEC.md](docs/APPLICATION_PACKAGE_SPEC.md),
+[docs/PHASE8_IMPLEMENTATION.md](docs/PHASE8_IMPLEMENTATION.md) and
+[docs/PHASE8_ACCEPTANCE.md](docs/PHASE8_ACCEPTANCE.md).
+
 The supplied `ATLAS_MASTER_SPEC.md` v1.2.0 is still **not present** in the checkout. This
-is documented as a blocker across Phase 6 and Phase 7; no substitute file was invented.
+is documented as a blocker through Phase 8; no substitute file was invented. Phase 8
+therefore does not claim master-spec conformance.
 
 ```
 Terminal demo: 5 issuers · 8 securities · 14,977 filings · 23,583 evidence records
 Phase 6 learning demo: 5 real vendor histories · 3,760 bars · 752 sessions · schema v9
 Phase 7 economic demo: 365 public days · 1,095 observations · 12 evidence edges
-372 backend tests · 4 frontend tests · Phase 7 browser journey
-Public-domain EIA-930 and NOAA GHCN · two Dallas stations · one preserved conflict
+Phase 8 package: 47,270 bytes · 6 declarative files · deterministic · unsigned
+Public-domain EIA-930 and NOAA GHCN · two Dallas stations · spatial representativeness
 Observed weather is not a forecast · current archive is not a historical vintage
 Association, not causation · test R² −0.8935 retained · hypothetical firm exposure
 Independent Brier/log-loss/ECE tests · Phase 6 negative market result retained
-Schema 9 · Economic Lab at /lab/economic · FEC-backed financial scenario
+Schema 10 · Applications at /applications · FEC-backed execution · local gallery
 ```
 
 ![Economic Lab: public weather and demand, association audit, hypothetical financial consequence](artifacts/36-economic-lab.png)
@@ -158,6 +168,28 @@ Real IBM demonstration, 2,977 sessions (2015-01-02 → 2026-11-03), $100,000,
 60-session momentum **16.12%**, Model Forge signal **24.17%**. Every ledger reconciled.
 These are in-sample research results, not alpha claims. Full measurements:
 [docs/PHASE4_BENCHMARKS.md](docs/PHASE4_BENCHMARKS.md).
+
+### Phase 8 portable research applications
+
+| Capability | Command / route | Notes |
+|---|---|---|
+| Deterministic package | `atlas app build` | safe ZIP, canonical JSON, SHA-256/content root |
+| Package validation | `atlas app inspect` / `verify` | tamper, traversal, suffix and size rejection |
+| Lifecycle | `atlas app install/open/execute/fork/export/uninstall` | transactional, research-retaining removal |
+| SDK | `atlas app init/validate/test/build` | declarative FEC model, no plugin code |
+| Domain pack | `atlas app pack install/list/inspect/uninstall` | declarative, pinned package hash |
+| Local gallery | `/applications` | import, export, execute, verify, fork and remove |
+| Rights enforcement | packaging/export/install | `restricted` and unknown sources fail closed |
+| Migration safety | `atlas migrate` / `atlas doctor` | verified backup before schema 9→10 |
+| Release evidence | `scripts/release_manifest.py` | file hashes plus CycloneDX-style SBOM |
+
+Pinned artifact: `fixtures/phase8/flagship_weather_demand.atlas`, SHA-256
+`92ab1bf753438a0f534a080697abca9c638da11521e13c1dc43700883c82227b`. It is built from
+the real 2023 panel, carries its limitations and scenario, and is **unsigned**.
+
+![Applications gallery with the imported flagship package](artifacts/38-application-gallery.png)
+
+![Applications gallery at 390 pixels](artifacts/39-applications-mobile.png)
 
 ### Phase 2.1 hardening and research
 
@@ -313,7 +345,7 @@ compiler setup. Details: [docs/PHASE7_BENCHMARKS.md](docs/PHASE7_BENCHMARKS.md).
 ## 7. Verification
 
 ```bash
-.venv/bin/python -m pytest -q          # 372 passed (363 through Phase 6 + 9 Phase 7)
+.venv/bin/python -m pytest -q          # 387 passed (372 through Phase 7 + 15 Phase 8)
 cd web && npm test -- --run            # 4 passed
 cd web && npm run build                # tsc + vite
 ```
@@ -327,8 +359,11 @@ optimization, walk-forward, comparison and a 390px viewport. `web/e2e/phase6.mjs
 the real-data experiment, calibration, audit, forecast-to-portfolio, monitoring,
 save/reopen and a 390px viewport. `web/e2e/phase7.mjs` covers public-data provenance, the
 graph and conflict, test R²/RMSE, scenario recomputation, save/reopen, replay refusal,
-Sentinel refresh, a correction invalidation and a 390px viewport. Screenshots are in
-`artifacts/36-economic-lab.png` and `artifacts/37-economic-mobile.png`.
+Sentinel refresh, a correction invalidation and a 390px viewport. `web/e2e/phase8.mjs`
+imports the pinned package, checks the unsigned trust boundary, executes and verifies it,
+downloads the bytes, forks locally and checks a 390px viewport. Screenshots are in
+`artifacts/36-economic-lab.png`, `artifacts/37-economic-mobile.png`,
+`artifacts/38-application-gallery.png` and `artifacts/39-applications-mobile.png`.
 
 ---
 
@@ -337,7 +372,7 @@ Sentinel refresh, a correction invalidation and a 390px viewport. Screenshots ar
 ```
 src/atlas/
   core/        ids, units, temporal semantics, concept registry, typed errors
-  storage/     SQLite engine, versioned migrations (schema v9), source registry
+  storage/     SQLite engine, versioned migrations (schema v10), source registry, safe migration
   evidence/    temporal evidence kernel, selection, provenance
   entities/    issuer / security / listing / ticker master and resolution
   market/      calendars, immutable bars, corporate actions, adjustments
@@ -348,9 +383,10 @@ src/atlas/
   institutional/ multi-asset fixture, risk, optimizer, walk-forward, persistence
   learning/    data fabric, features, models, metrics, audit, experiments, memory, discovery
   economic/    public evidence fabric, graph, claims, association, causal, scenario, Sentinel
+  applications/package contracts, rights, SDK, lifecycle, domain packs and app CLI
   research/    research objects and content-addressed source archives
   cli.py       command line interface (incl. `serve`)
-tests/         372 tests (Phase 1–7 plus terminal API/workspaces)
+tests/         387 tests (Phase 1–8 plus terminal API/workspaces)
 web/           React 19 + TypeScript + Vite terminal; Vitest and Playwright journeys
 benchmarks/    Phase 1 benchmarks + terminal_bench.py
 fixtures/      real SEC payloads and labelled synthetic fixtures
@@ -401,7 +437,7 @@ never the reverse. The kernel does not know HTTP exists.
 * Workspace editing uses explicit buttons, not drag-and-drop.
 * Single-user, no authentication. `owner_id = 'local'`; the server binds loopback by
   default and must not be exposed publicly.
-* Frontend bundle ~660 kB (196 kB gzip); the chart library could be lazy-loaded.
+* Frontend bundle is 674.74 kB (200.15 kB gzip); the chart library could be lazy-loaded.
 * Browser verification in this container needs a workspace-local Chromium sysroot
   (`scripts/fetch_browser_libs.py`); that is test tooling, not a runtime dependency.
 

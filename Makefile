@@ -9,7 +9,7 @@ BIN     = $(VENV)/bin
 DB     ?= var/atlas.db
 CIK    ?= 320193
 
-.PHONY: help install test demo bench cli-init sync sync-live facts history reconcile deps validate stats clean terminal-data serve web-install web-build
+.PHONY: help install test demo bench cli-init sync sync-live facts history reconcile deps validate stats clean terminal-data serve web-install web-build phase8-fixtures phase8-bench release-manifest app-test
 
 help:
 	@echo "install    create the virtualenv and install the package (editable, dev extras)"
@@ -25,6 +25,10 @@ help:
 	@echo "deps       inspect the derived-computation dependency index"
 	@echo "terminal-data  build var/atlas.db with 4 SEC issuers + synthetic market series"
 	@echo "serve      run the terminal API on 127.0.0.1:8000"
+	@echo "phase8-fixtures  rebuild the pinned .atlas package and domain pack"
+	@echo "phase8-bench  measure package build/install/verify/execute"
+	@echo "release-manifest  hash release files and emit an SBOM"
+	@echo "app-test  run only the Phase 8 application contract tests"
 	@echo "web-build  build the React terminal into web/dist"
 	@echo "validate   run dataset integrity checks"
 	@echo "stats      dataset and ingestion statistics"
@@ -77,6 +81,18 @@ web-install:
 
 web-build:
 	cd web && npm run build
+
+phase8-fixtures:
+	$(BIN)/python scripts/build_phase8_fixtures.py
+
+phase8-bench:
+	$(BIN)/python scripts/benchmark_phase8.py --iterations 3
+
+release-manifest:
+	$(BIN)/python scripts/release_manifest.py
+
+app-test:
+	$(BIN)/python -m pytest -o addopts='' -q -p no:warnings tests/test_phase8_applications.py
 
 validate:
 	$(BIN)/atlas --db $(DB) validate
