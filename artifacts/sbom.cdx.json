@@ -215,11 +215,11 @@
     "properties": [
       {
         "name": "atlas:revision",
-        "value": "703b82d2aaddf10c8b67648e7ae6ce92e22cbe0e"
+        "value": "3a33e97bbaaf46516643ca6b8992fa8421c5ead8"
       },
       {
         "name": "atlas:dirty_worktree",
-        "value": "true"
+        "value": "false"
       },
       {
         "name": "atlas:phase8_package",
@@ -227,7 +227,7 @@
       }
     ]
   },
-  "serialNumber": "urn:atlas:sha256:09d24424efdfd60ebd6ffb814d33c5e5",
+  "serialNumber": "urn:atlas:sha256:db96f37e972f3e0dd9fb6354b22c208a",
   "specVersion": "1.5",
   "version": 1
 }

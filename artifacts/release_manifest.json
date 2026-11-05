@@ -1,6 +1,6 @@
 {
-  "dirty_worktree": true,
-  "file_count": 341,
+  "dirty_worktree": false,
+  "file_count": 363,
   "files": [
     {
       "bytes": 342,
@@ -8,14 +8,14 @@
       "sha256": "10605a33a53c2c2edd7400d3244696efeda48945daf22715118048262e54ede5"
     },
     {
-      "bytes": 2829,
+      "bytes": 3461,
       "path": "Makefile",
-      "sha256": "2f46a5a3651f5079d2e137b4cfa6cba24d506a15bbddd27196c487622b5a2d05"
+      "sha256": "dad560a1079a5994ba49ae53e361286acbea4315636a28658e20fd7b90389326"
     },
     {
-      "bytes": 31808,
+      "bytes": 34290,
       "path": "README.md",
-      "sha256": "88795b7efa4d7340f9b6822cc7b08ac1ecacbbf9c1da3a532fa76ab791c57d40"
+      "sha256": "f7a266ca2799ebb48e0d0b79fbb9ecff4661d0b9c819668b08d8c1477eade271"
     },
     {
       "bytes": 10542,
@@ -41,6 +41,26 @@
       "bytes": 5770,
       "path": "benchmarks/terminal_bench.py",
       "sha256": "359cb1fda3215e028b4e8322a3bf872d23c470dd0804205caa16778cb8103f3f"
+    },
+    {
+      "bytes": 2132,
+      "path": "docs/APPLICATION_PACKAGE_SPEC.md",
+      "sha256": "fa104eb3191966591f429e38b4f02d32547109c50121cf67bb0c4613d7d710f7"
+    },
+    {
+      "bytes": 1746,
+      "path": "docs/APPLICATION_SDK.md",
+      "sha256": "9aed2ebca2aa2866f08070a5e2b4b107adb7034f78f7ee0aaaf6778fc7814bc4"
+    },
+    {
+      "bytes": 1667,
+      "path": "docs/APPLICATION_SECURITY_MODEL.md",
+      "sha256": "6636f78c71bd03b31ae717c392a9691da2198170e8332219f691be36fc5ed273"
+    },
+    {
+      "bytes": 1585,
+      "path": "docs/APPLICATION_TESTING.md",
+      "sha256": "a6723ddd134aa8d2dba6eaf178e4306df726e048015c162cc9dceaaa08fe61f7"
     },
     {
       "bytes": 17205,
@@ -78,9 +98,19 @@
       "sha256": "2eb13b1cdf62b235a46d2d878da8dccac8d9351deffc35cb305b3935398f5013"
     },
     {
+      "bytes": 1774,
+      "path": "docs/DATA_RIGHTS_AND_DISTRIBUTION.md",
+      "sha256": "6e7cf1189ee7180648b4d31a0043cd4ac9fc4e3a098015344ca7f19758e63ffc"
+    },
+    {
       "bytes": 2275,
       "path": "docs/DERIVATIVES_PRICING.md",
       "sha256": "4c9408749231457352a4398220c35ca8dbf322e80d5433b2fb6527a31823bb28"
+    },
+    {
+      "bytes": 1820,
+      "path": "docs/DOMAIN_PACK_SPEC.md",
+      "sha256": "0719735c8147b064bb988950f5a680fb755038b6e7d61f523feb420f8b189cbe"
     },
     {
       "bytes": 4795,
@@ -153,6 +183,11 @@
       "sha256": "a552231246426550f58616b4d61bfc1434b33a2dd14a6c2a6472fde94449a113"
     },
     {
+      "bytes": 1639,
+      "path": "docs/GALLERY_AND_INSTALLATION.md",
+      "sha256": "9dacf3ee54decf53ad8bc415a208425c31b004c99c2d2fdc26bb9c571142a8b9"
+    },
+    {
       "bytes": 4548,
       "path": "docs/HISTORICAL_AVAILABILITY.md",
       "sha256": "b81c36ffe259eb9eae13505e6328b4ac561d54288d8a1fd9058363ed5580b516"
@@ -206,6 +241,11 @@
       "bytes": 4095,
       "path": "docs/OSINT_SOURCE_REGISTRY.md",
       "sha256": "5e836510d5a7c9880f4e6941b1f1b4c14103ce4d1fcdfcf503b1bd8757f563fa"
+    },
+    {
+      "bytes": 1766,
+      "path": "docs/PACKAGE_MIGRATION_AND_COMPATIBILITY.md",
+      "sha256": "ac37d863da470351dc9aa89a88601059d961cab9dbd3ad01f48659fa683c4e16"
     },
     {
       "bytes": 11022,
@@ -318,9 +358,49 @@
       "sha256": "343d4c4bc4debdbf115f694a6f2a49d13689cc3b1dfb9b2a1b6fd4945ba8073e"
     },
     {
+      "bytes": 2565,
+      "path": "docs/PHASE8_ACCEPTANCE.md",
+      "sha256": "64cdf734bde1cf2fffb34a7b37574db7edf64204e943809d217723625cb618ab"
+    },
+    {
+      "bytes": 1412,
+      "path": "docs/PHASE8_BENCHMARKS.md",
+      "sha256": "831a057d65a443044cea7e80e36e999b28b28a67c8b460aae8f40e75b8e8e54c"
+    },
+    {
       "bytes": 3695,
       "path": "docs/PHASE8_CONTRACT.md",
       "sha256": "cb6d59e97d02211dd34cb86ca5c33cc1cc96281a337384f6a558f60d3d93963b"
+    },
+    {
+      "bytes": 2927,
+      "path": "docs/PHASE8_IMPLEMENTATION.md",
+      "sha256": "b927ffce00d0ac691273fb287806aa04a14bbb20b4fc53d7b19845d780a8cd9c"
+    },
+    {
+      "bytes": 1598,
+      "path": "docs/PHASE8_LIMITATIONS.md",
+      "sha256": "d5973f70417860bbf1a7daf2652cf6455ce731fd56271fd3f934f26b0a623943"
+    },
+    {
+      "bytes": 1571,
+      "path": "docs/PHASE8_RELEASE.md",
+      "sha256": "212d70447b1d5d0f11166685abf9795d7ff35d1e6a3fdc0c683a629300e6f613"
+    },
+    {
+      "bytes": 1351,
+      "path": "docs/PHASE8_SUPPLY_CHAIN.md",
+      "sha256": "7ce378d618dfea2ce005bd60947bff448971a2f329d91c976b971961e5217f95"
+    },
+    {
+      "bytes": 1777,
+      "path": "docs/PHASE8_THREAT_MODEL.md",
+      "sha256": "46535ab13bc31aa5845e2ef916ebc994ced9b49f4e2e5c315003c6d5b80dac39"
+    },
+    {
+      "bytes": 1779,
+      "path": "docs/PHASE8_USER_GUIDE.md",
+      "sha256": "582eee6866494ca14d17806c277df5e7b2ee5fb03435bffac5420eefd312cf33"
     },
     {
       "bytes": 3011,
@@ -578,6 +658,31 @@
       "sha256": "16819cd4f87294dee91f91728ed5be0fa13251fa66510d7a4a428c339ee967a6"
     },
     {
+      "bytes": 1121,
+      "path": "docs/adr/0035-deterministic-application-packages.md",
+      "sha256": "d91d8dba452cbf294351bf01dc8b4dc03ca243f4200e4333411ffee917f3b3b1"
+    },
+    {
+      "bytes": 1102,
+      "path": "docs/adr/0036-no-untrusted-executable-extensions.md",
+      "sha256": "777811b6fdf953cb8f1ba02e0fabded6738e8eb28a0bd0d1508fce8ff9497a34"
+    },
+    {
+      "bytes": 1023,
+      "path": "docs/adr/0037-backend-enforced-data-rights.md",
+      "sha256": "dde45b7d5c3d8d070a26c7e51224bd4d6c65b330e6f7a350b99c50ee2a26880b"
+    },
+    {
+      "bytes": 966,
+      "path": "docs/adr/0038-declarative-domain-packs.md",
+      "sha256": "cb8d4cc910b1a54751efe1fdfdc9caf3cbc04ca0ce740c8fc5d368975913b3cb"
+    },
+    {
+      "bytes": 977,
+      "path": "docs/adr/0039-integrity-without-signatures.md",
+      "sha256": "911a8eeb4ccdd26e42051ec54bbe0545a1de54b5c3236a94aa3d00fe1bba7a57"
+    },
+    {
       "bytes": 3422,
       "path": "fixtures/README.md",
       "sha256": "966a8667cb678bf368c2f3babeb0def709e6b26f10757d69573fc80480a4c40a"
@@ -828,9 +933,9 @@
       "sha256": "e50a543eac389d83620ba7bd81048fe3b30f8e8472ad7c68b0f618b958d97f48"
     },
     {
-      "bytes": 29813,
+      "bytes": 29846,
       "path": "src/atlas/applications/contracts.py",
-      "sha256": "85eb30faf8f39207d8e539a4596d76d64666d038b759534ac59819d82e72e0e2"
+      "sha256": "7e00f1a28ce091081af8c4643f6ba99423fa91674c9302ab841ae2cf1e69c45a"
     },
     {
       "bytes": 9931,
@@ -843,9 +948,9 @@
       "sha256": "a9f4d2cd5b03bcb3188408b552536b03bd081f3805d48233e7993ec5892827df"
     },
     {
-      "bytes": 10521,
+      "bytes": 10523,
       "path": "src/atlas/applications/sdk.py",
-      "sha256": "10e659b6613602c971986670cd9b390fbbcd1f5cc21a1f957208a3aef3c235fc"
+      "sha256": "78b3d0c272e30f714fd6e87c6b6eccbae086323efadca64a57222f52963da399"
     },
     {
       "bytes": 37217,
@@ -1443,9 +1548,9 @@
       "sha256": "b65a17917a13ea85b250b9e9ce7140fb0a9339cc68f0251bc18d09cf4240c93a"
     },
     {
-      "bytes": 16877,
+      "bytes": 19024,
       "path": "tests/test_phase8_applications.py",
-      "sha256": "c65c659d2520d13845b6485920542ebd88bfd652e8fd7b09e60307beb2e7083b"
+      "sha256": "277e43132f599f07bd9c6eb4a2b82d69dc463c4854db85f19fc8250c2bf00a3a"
     },
     {
       "bytes": 3997,
@@ -1513,6 +1618,11 @@
       "sha256": "7d9e3609c39ca78f52899e4bb2babfb12d483a0d37ad303e9d5ee12b9a316ac7"
     },
     {
+      "bytes": 7135,
+      "path": "web/e2e/phase8.mjs",
+      "sha256": "4db78f933a905cbc6a8836918111ca0e5e4ab0b62028832ba27b3c286a97c27b"
+    },
+    {
       "bytes": 7575,
       "path": "web/e2e/studio.mjs",
       "sha256": "ceece576980f23a9f4989f8b37c0c06605597dec9e869806f4c046efd83924ca"
@@ -1543,9 +1653,9 @@
       "sha256": "2a72ab14116531af16a958a04cf5946a4fc080282b2c21e42c08f485734d732a"
     },
     {
-      "bytes": 5501,
+      "bytes": 5820,
       "path": "web/src/applications.css",
-      "sha256": "8fcec9e4f539217d36a0dc359946cd9f6e493594599bc366f3e8af5d9cb78b9c"
+      "sha256": "ccf94cf4a98dcfcae90e1fb41bfa5f934a47462c20d2109f33f704dcef04055a"
     },
     {
       "bytes": 10241,
@@ -1713,8 +1823,8 @@
   "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
   "project": "atlas-quant",
   "python": "3.12.3",
-  "revision": "703b82d2aaddf10c8b67648e7ae6ce92e22cbe0e",
+  "revision": "3a33e97bbaaf46516643ca6b8992fa8421c5ead8",
   "schema": "atlas.release_manifest.v1",
   "signature": null,
-  "total_bytes": 28251485
+  "total_bytes": 28298533
 }
