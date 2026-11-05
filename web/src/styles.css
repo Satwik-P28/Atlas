@@ -571,3 +571,99 @@ p { margin: 0 0 8px; }
   .field { width: 100%; }
   .toolbar .field { width: auto; }
 }
+
+/* ------------------------------------------------------------ economic lab */
+.economic-page .card { overflow: hidden; }
+.econ-source-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.econ-source { display: block; color: var(--text); }
+.econ-source:hover { border-color: var(--accent); text-decoration: none; }
+.econ-pipeline { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; margin: 12px 0; }
+.econ-pipeline-step { border: 1px solid var(--border); border-radius: 5px; padding: 8px 6px; font-size: 11px; line-height: 1.3; display: flex; flex-direction: column; gap: 5px; min-height: 64px; }
+.econ-pipeline-step > span { font-family: var(--mono); font-size: 9px; color: var(--text-faint); }
+.econ-pipeline-step.is-observed { border-top: 2px solid var(--positive); }
+.econ-pipeline-step.is-hypothetical { border-top: 2px solid var(--warn); background: color-mix(in srgb, var(--warn) 5%, transparent); }
+.econ-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.econ-chart { margin-top: 8px; }
+.econ-chart svg { width: 100%; height: auto; display: block; background: var(--bg-input); border: 1px solid var(--border); border-radius: 5px; }
+.econ-grid { stroke: var(--border); stroke-width: 1; }
+.econ-line-demand { fill: none; stroke: var(--accent); stroke-width: 1.7; }
+.econ-line-temperature { fill: none; stroke: var(--warn); stroke-width: 1.2; opacity: .85; }
+.econ-axis-label { fill: var(--text-muted); font-family: var(--mono); font-size: 10px; }
+.econ-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; padding-top: 7px; font-size: 11px; color: var(--text-muted); }
+.econ-legend > span { display: inline-flex; align-items: center; gap: 5px; }
+.econ-legend i { width: 14px; height: 2px; display: inline-block; }
+.econ-swatch-demand { background: var(--accent); }
+.econ-swatch-temperature { background: var(--warn); }
+.econ-causal { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 5px; overflow: hidden; margin: 10px 0; }
+.econ-causal > div { background: var(--bg-card); padding: 9px 10px; display: flex; flex-direction: column; gap: 2px; }
+.econ-causal span, .econ-uncertainty span, .econ-sentinel-grid span { color: var(--text-muted); font-size: 11px; }
+.econ-causal strong { font-family: var(--mono); font-size: 12px; font-weight: 500; }
+.econ-details { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 8px; }
+.econ-details summary { cursor: pointer; color: var(--accent); font-size: 12px; }
+.econ-findings { display: grid; gap: 6px; margin-top: 10px; max-height: 210px; overflow: auto; }
+.econ-controls { display: grid; grid-template-columns: repeat(4, minmax(110px, 1fr)); gap: 8px; margin-top: 10px; }
+.econ-controls label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--text-muted); }
+.econ-controls .field { min-height: 31px; }
+.econ-intervals { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; border: 1px solid var(--border); border-radius: 5px; padding: 8px 10px; margin-top: 10px; font-size: 11px; }
+.econ-intervals span { color: var(--text-muted); }
+.econ-intervals strong { font-family: var(--mono); font-weight: 500; text-align: right; }
+.econ-uncertainty { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 5px; overflow: hidden; margin-top: 10px; }
+.econ-uncertainty > div { background: var(--bg-card); padding: 7px; display: flex; flex-direction: column; gap: 3px; min-height: 68px; }
+.econ-uncertainty strong { font-size: 10.5px; font-weight: 400; color: var(--text); }
+.econ-sensitivity-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 8px; }
+.econ-graph-table { max-height: 390px; overflow: auto; }
+.econ-conflict-head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.econ-claim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.econ-claim { border: 1px solid var(--border); border-left: 2px solid var(--warn); border-radius: 4px; padding: 9px; display: grid; gap: 3px; }
+.econ-claim > div:first-child { font-size: 18px; }
+.econ-sentinel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
+.econ-sentinel-grid > div { border: 1px solid var(--border); border-radius: 4px; padding: 7px 9px; display: flex; flex-direction: column; gap: 2px; }
+.econ-sentinel-grid strong { font-size: 12px; font-weight: 500; }
+.econ-replay-controls { display: flex; gap: 8px; align-items: end; margin: 9px 0; }
+.econ-replay-controls label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--text-muted); }
+.econ-replay-result { border: 1px solid var(--border); border-left: 3px solid var(--warn); padding: 9px 10px; margin: 10px 0; }
+.econ-replay-result.is-ok { border-left-color: var(--positive); }
+.econ-replay-result p { margin: 7px 0; }
+.econ-memory { border-top: 1px solid var(--border); margin-top: 10px; padding-top: 8px; }
+.econ-memory .lab-history-row { width: 100%; }
+.econ-limit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; font-size: 12px; color: var(--text-muted); }
+.econ-limit-grid > div { border-top: 1px solid var(--border); padding: 6px 0; }
+.tiny-button { min-height: 27px; padding: 4px 8px; font-size: 11px; margin-top: 8px; }
+@media (max-width: 1100px) {
+  .econ-controls { grid-template-columns: repeat(3, minmax(110px, 1fr)); }
+  .econ-uncertainty { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .econ-pipeline { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .econ-source-grid, .econ-sensitivity-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  .econ-graph-table { max-height: none; overflow: visible; }
+  .econ-graph-table table, .econ-graph-table tbody, .econ-graph-table tr, .econ-graph-table td {
+    display: block; width: 100%;
+  }
+  .econ-graph-table thead { display: none; }
+  .econ-graph-table tbody { display: grid; gap: 8px; }
+  .econ-graph-table tbody tr {
+    border: 1px solid var(--border); border-radius: 5px; padding: 8px 9px;
+    background: var(--bg-input);
+  }
+  .econ-graph-table tbody td {
+    display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 8px;
+    border: 0; padding: 3px 0; overflow-wrap: anywhere;
+  }
+  .econ-graph-table tbody td::before {
+    content: 'From'; color: var(--text-faint); font-family: var(--mono);
+    font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .econ-graph-table tbody td:nth-child(2)::before { content: 'Relationship'; }
+  .econ-graph-table tbody td:nth-child(3)::before { content: 'To'; }
+  .econ-graph-table tbody td:nth-child(4)::before { content: 'Class'; }
+}
+@media (max-width: 560px) {
+  .econ-pipeline { grid-template-columns: 1fr 1fr; }
+  .econ-controls, .econ-uncertainty { grid-template-columns: 1fr 1fr; }
+  .econ-causal, .econ-claim-grid, .econ-limit-grid { grid-template-columns: 1fr; }
+  .econ-replay-controls { flex-direction: column; align-items: stretch; }
+  .econ-legend { flex-direction: column; }
+}

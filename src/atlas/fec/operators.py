@@ -544,5 +544,73 @@ register(OperatorSpec(
 ))
 
 
+def _infer_energy_cost(types: Sequence[FinType], params: dict[str, Any]) -> FinType:
+    if any(type_.kind not in {"scalar", "ratio"} for type_ in types[:3]):
+        raise TypeMismatch("energy exposure requires scalar or ratio inputs", code="unit_mismatch")
+    if types[3].kind not in {"price", "scalar"}:
+        raise TypeMismatch("energy price must be a price or scalar", code="unit_mismatch")
+    return FinType("money", "USD")
+
+
+def _energy_cost_impact_execute(args: Sequence[Any], params: dict[str, Any]) -> Decimal:
+    annual_mwh, demand_change, unhedged, price = (_dec(args[0]), _dec(args[1]),
+                                                   _dec(args[2]), _dec(args[3]))
+    if annual_mwh < 0 or price < 0:
+        raise ValueError("annual consumption and power price must be nonnegative")
+    if not Decimal(-1) <= demand_change <= Decimal(1):
+        raise ValueError("demand-change fraction must be in [-1,1]")
+    if not Decimal(0) <= unhedged <= Decimal(1):
+        raise ValueError("unhedged fraction must be in [0,1]")
+    return annual_mwh * demand_change * unhedged * price
+
+
+register(OperatorSpec(
+    "energy_cost_impact", OPERATOR_VERSION, 4, _infer_energy_cost, _energy_cost_impact_execute,
+    "annual_MWh · demand_change · unhedged · price",
+    "Change in uncovered electricity cost from a demand/load change",
+))
+
+
+def _infer_after_tax_cost(types: Sequence[FinType], params: dict[str, Any]) -> FinType:
+    if types[0].kind != "money":
+        raise TypeMismatch("after-tax impact requires a money amount", code="unit_mismatch")
+    if types[1].kind not in {"rate", "ratio", "scalar"}:
+        raise TypeMismatch("tax rate must be a rate or ratio", code="unit_mismatch")
+    return FinType("money", types[0].currency or "USD")
+
+
+def _after_tax_cost_execute(args: Sequence[Any], params: dict[str, Any]) -> Decimal:
+    cost, tax = _dec(args[0]), _dec(args[1])
+    if not Decimal(0) <= tax <= Decimal(1):
+        raise ValueError("tax rate must be in [0,1]")
+    return cost * (Decimal(1) - tax)
+
+
+register(OperatorSpec(
+    "after_tax_cost_impact", OPERATOR_VERSION, 2, _infer_after_tax_cost,
+    _after_tax_cost_execute, "cost · (1-tax)",
+    "After-tax cash impact of an operating-cost change",
+))
+
+
+def _infer_margin_impact(types: Sequence[FinType], params: dict[str, Any]) -> FinType:
+    if types[0].kind not in {"money", "scalar"} or types[1].kind != "money":
+        raise TypeMismatch("margin impact requires profit and revenue amounts", code="unit_mismatch")
+    return FinType("ratio")
+
+
+def _margin_impact_execute(args: Sequence[Any], params: dict[str, Any]) -> Decimal:
+    profit, revenue = _dec(args[0]), _dec(args[1])
+    if revenue <= 0:
+        raise ValueError("revenue must be positive")
+    return profit / revenue
+
+
+register(OperatorSpec(
+    "margin_impact", OPERATOR_VERSION, 2, _infer_margin_impact, _margin_impact_execute,
+    "profit_delta / revenue", "Operating-margin impact of a profit change",
+))
+
+
 def operator_versions() -> dict[str, str]:
     return {key: spec.version for key, spec in sorted(REGISTRY.items())}

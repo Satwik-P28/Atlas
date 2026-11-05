@@ -1,0 +1,109 @@
+{
+  "schema": "atlas.phase7.benchmarks.v1",
+  "measured_at": "2026-11-05T20:40:28Z",
+  "hardware": {
+    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "processor": "x86_64",
+    "cpu_count": 2,
+    "python": "3.12.3",
+    "numpy": "2.5.4",
+    "sqlite": "3.45.1"
+  },
+  "workload": {
+    "dataset": "fixtures/phase7/weather_demand_2023.csv",
+    "days": 365,
+    "observations": 1095,
+    "series": 3,
+    "entities": 12,
+    "evidence_edges": 12,
+    "analysis": "weather-demand chronological OLS",
+    "scenario_draws": 2000,
+    "large_scenario_draws": 10000,
+    "database_bytes": 1634304
+  },
+  "cold": {
+    "migrate_all_ms": 18.151,
+    "ingest_and_bootstrap_ms": 438.902,
+    "panel_query_ms": 9.524,
+    "graph_indexed_traversal_ms": 0.563
+  },
+  "warm": {
+    "panel_query": {
+      "median_ms": 8.323,
+      "min_ms": 8.188,
+      "max_ms": 8.839,
+      "samples": [
+        8.188,
+        8.493,
+        8.839,
+        8.239,
+        8.323,
+        8.252,
+        8.472
+      ]
+    },
+    "graph_indexed_traversal": {
+      "median_ms": 0.288,
+      "min_ms": 0.284,
+      "max_ms": 0.304,
+      "samples": [
+        0.288,
+        0.288,
+        0.304,
+        0.29,
+        0.287,
+        0.287,
+        0.284
+      ]
+    }
+  },
+  "operations": {
+    "geographic_join_ms": 0.63,
+    "model_fit_and_test_ms": 25.763,
+    "model_fit_validate_test_and_persist_ms": 34.047,
+    "scenario_2000_draws_compile_and_persist_ms": 15.895,
+    "scenario_10000_draws_compile_and_persist_ms": 13.286,
+    "sentinel_refresh_ms": 3.097,
+    "historical_replay_ms": 26.794,
+    "research_memory_ms": 0.457,
+    "application_save_ms": 1.558,
+    "application_restore_ms": 0.123,
+    "application_export_ms": 0.546,
+    "one_observation_revision_invalidation_ms": 1.149,
+    "stale_run_read_ms": 0.333,
+    "memory_after_invalidation_ms": 0.417
+  },
+  "throughput": {
+    "monte_carlo_draws_per_second_10k": 752672.0,
+    "scenarios_per_second_2k": 62.91
+  },
+  "serialized": {
+    "analysis_json_bytes": 19672,
+    "scenario_json_bytes": 4128,
+    "catalog_json_bytes": 12036,
+    "application_export_bytes": 5772
+  },
+  "memory": {
+    "peak_rss_mb": 52.6
+  },
+  "result": {
+    "run_id": "ERUN-ac92ae9ffef03de2",
+    "scenario_id": "ESCN-9d3326c5354c4a5b",
+    "test_rmse_mw": 2956.577890101359,
+    "baseline_rmse_mw": 4588.779128701088,
+    "skill_vs_seasonal": 0.3556940076699102,
+    "test_r2": -0.8934655019352953,
+    "conclusion": "association_supported_forecast_unstable",
+    "causal_status": "not_identified",
+    "cost_delta_usd": 37726.29728950747,
+    "stale_runs": 1
+  },
+  "notes": [
+    "The workload is CPU-only SQLite plus NumPy; timings are machine-specific.",
+    "Warm timings are the median of repeated calls after one untimed warm-up.",
+    "Scenario persistence is included; browser rendering is measured separately.",
+    "A file-backed temporary database is used; the shipped database is not modified.",
+    "The revision at the end intentionally mutates the temporary database only."
+  ]
+}

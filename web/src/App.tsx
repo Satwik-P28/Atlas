@@ -4,6 +4,7 @@ import Companies from './pages/Companies'
 import Company from './pages/Company'
 import Lab from './pages/Lab'
 import Institutional from './pages/Institutional'
+import Economic from './pages/Economic'
 import Learning from './pages/Learning'
 import Markets from './pages/Markets'
 import Research from './pages/Research'
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/lab" element={<Lab />} />
         <Route path="/lab/institutional" element={<Institutional />} />
         <Route path="/lab/learning" element={<Learning />} />
+        <Route path="/lab/economic" element={<Economic />} />
         <Route path="/watchlists" element={<Watchlists />} />
         <Route path="/workspaces" element={<Workspaces />} />
         <Route path="/workspaces/:workspaceId" element={<WorkspaceView />} />

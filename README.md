@@ -1,4 +1,4 @@
-# Atlas Quant — Phase 6
+# Atlas Quant — Phase 7
 
 **A local-first financial research terminal, quantitative research lab and scientific
 learning system built on a point-in-time evidence platform.**
@@ -9,23 +9,33 @@ terminal. Phase 3 added the compiled financial model runtime, Model Forge, DCF a
 applications. Phase 4 added Quant Lab: point-in-time features, versioned strategies,
 next-open backtests, an independently reconciled ledger, IBM real-data experiments and
 Time Capsules. Phase 5 added institutional fixed income, options, portfolio risk,
-optimization and walk-forward validation. **Phase 6 adds the Atlas Learning Brain:** a real
-data fabric, point-in-time features, trained and calibrated forecasting, chronological
-scientific experiments, an independent model auditor, persistent research memory, bounded
-discovery, monitoring and a complete forecast-to-portfolio application. See
-[docs/PHASE6_IMPLEMENTATION.md](docs/PHASE6_IMPLEMENTATION.md).
+optimization and walk-forward validation. Phase 6 added the Atlas Learning Brain: a real
+data fabric, point-in-time features, calibrated forecasting and an audited
+forecast-to-portfolio experiment. **Phase 7 adds economic intelligence:** real public EIA
+and NOAA observations, a source-backed economic graph, a claim/conflict ontology,
+association-aware causal research, an uncertainty-bearing scenario simulator, FEC-backed
+financial consequences, manual Sentinel invalidation and a complete Economic Lab. See
+[docs/PHASE7_IMPLEMENTATION.md](docs/PHASE7_IMPLEMENTATION.md) and
+[docs/WEATHER_ENERGY_CASE_STUDY.md](docs/WEATHER_ENERGY_CASE_STUDY.md).
+
+The supplied `ATLAS_MASTER_SPEC.md` v1.2.0 is still **not present** in the checkout. This
+is documented as a blocker across Phase 6 and Phase 7; no substitute file was invented.
 
 ```
 Terminal demo: 5 issuers · 8 securities · 14,977 filings · 23,583 evidence records
-Phase 6 learning demo: 5 real vendor histories · 3,760 bars · 752 sessions · schema v8
-363 backend tests · 4 frontend tests · Phase 6 browser journey
-Real SEC fundamentals · official public 2024 U.S. Treasury curve
-Phase 6 prices REAL vendor demo observations, restricted local research only
-Not point-in-time verified · five current names, not a market universe
-Independent Brier/log-loss/ECE tests · negative real-data result retained
+Phase 6 learning demo: 5 real vendor histories · 3,760 bars · 752 sessions · schema v9
+Phase 7 economic demo: 365 public days · 1,095 observations · 12 evidence edges
+372 backend tests · 4 frontend tests · Phase 7 browser journey
+Public-domain EIA-930 and NOAA GHCN · two Dallas stations · one preserved conflict
+Observed weather is not a forecast · current archive is not a historical vintage
+Association, not causation · test R² −0.8935 retained · hypothetical firm exposure
+Independent Brier/log-loss/ECE tests · Phase 6 negative market result retained
+Schema 9 · Economic Lab at /lab/economic · FEC-backed financial scenario
 ```
 
-![Learning Lab with forecast, calibration, audit and portfolio result](artifacts/34-learning-lab.png)
+![Economic Lab: public weather and demand, association audit, hypothetical financial consequence](artifacts/36-economic-lab.png)
+
+![Economic Lab at 390 pixels](artifacts/37-economic-mobile.png)
 
 ---
 
@@ -104,7 +114,33 @@ Independent Brier/log-loss/ECE tests · negative real-data result retained
 | Monitoring | `/api/learning/runs/{id}/monitor` | feature drift and realized calibration; no automatic retrain/deploy |
 | Forecast-to-portfolio | Learning Lab decision layer | frozen `learning_probability` signal through the existing event-driven ledger |
 
-The real demonstration, `LRUN-5465504d8d6a287fade6`, selects ridge and then reports test
+### Phase 7 economic intelligence
+
+| Capability | Where | Notes |
+|---|---|---|
+| Public economic data | `/lab/economic` | EIA-930 ERCOT demand + NOAA GHCN-Daily Dallas weather, 2023 |
+| Provenance and rights | `/api/economic/catalog` | Public domain, URLs, SHA-256, retrieval-proxy availability |
+| Evidence graph | `/api/economic/graph` | 12 entities / 12 edges; observed, inferred, hypothetical separated |
+| Claims and conflicts | `/api/economic/conflicts` | 32.8 vs 35.6 °C preserved; no automatic winner |
+| Association experiment | `/api/economic/analyze` | 255/55/55 chronology; seasonal and degree-day baselines |
+| Causal research | `economic.causal` | association policy, validated DiD and interrupted time series |
+| Scenario simulator | `/api/economic/runs/{id}/scenario` | +2 °C shock, 2,000 correlated coefficient draws, sensitivity |
+| Financial consequences | FEC `atlas.model.v1` | cost, after-tax cost and margin; no duplicated valuation |
+| Saved research | `/api/economic/applications` | application URO; reopen and inspect frozen evidence |
+| Sentinel | `/api/economic/sentinel` | manual refresh, exact dependency invalidation, no auto-retrain |
+| Historical replay | `/api/economic/runs/{id}/replay` | exact 2026 snapshot; refuses unsupported 2023 vintage |
+| Benchmark | `artifacts/phase7_benchmarks.json` | CPU-only measured cold/warm workload |
+
+The flagship run, `ERUN-ac92ae9ffef03de2`, selects `degree_day_curvature`. Test RMSE is
+**2,956.58 MW** versus **4,588.78 MW** for the seasonal baseline (35.57% RMSE skill), but
+test R² is **−0.8935** and mean error is **+2,378 MW**. The result is therefore
+`association_supported_forecast_unstable`, not a deployable forecast. The causal status is
+`not_identified`. A +2 °C shock gives +3.8694% conditional demand and a **$37,726.30** cost
+increase for an explicitly hypothetical 50,000 MWh manufacturer at 60% unhedged exposure.
+The test interval was never used for selection, and the 2023 as-of replay returns
+`insufficient_evidence` rather than inventing a vintage.
+
+The Phase 6 real demonstration, `LRUN-5465504d8d6a287fade6`, selects ridge and then reports test
 Brier **0.248493**, Brier skill **-0.001354**, AUC **0.497647**, and conclusion
 **`not_supported`**. The auditor returns **0 errors / 4 warnings / 2 infos**. The frozen 0.50
 threshold rule returns **14.3797%**, exactly buy-and-hold; 0.55 holds cash. Forecast accuracy
@@ -151,12 +187,18 @@ python3 -m venv .venv
 # Build the Phase 6 learning demo from the local EODHD demo cache
 .venv/bin/python scripts/build_phase6_db.py --db var/atlas-phase6.db --force --offline
 
+# Build the Phase 7 economic demo from committed public-data fixtures
+.venv/bin/python scripts/build_phase7_db.py --db var/atlas-phase7.db
+# optional refresh from public archives (network): scripts/fetch_phase7_data.py
+# then rebuild the compact fixture: scripts/build_phase7_fixtures.py
+
 # Build the terminal UI once (FastAPI serves web/dist)
 cd web && npm ci && npm run build && cd ..
 
 # Serve API + UI on loopback
-.venv/bin/atlas --db var/atlas-phase6.db serve --host 127.0.0.1 --port 8000
-# open http://127.0.0.1:8000/lab/learning
+.venv/bin/atlas --db var/atlas-phase7.db serve --host 127.0.0.1 --port 8000
+# open http://127.0.0.1:8000/lab/economic
+# Learning Lab remains available on a database built by the Phase 6 script
 ```
 
 The vendor cache is intentionally not committed. A clean checkout without it has no real
@@ -190,6 +232,15 @@ asserts they are identical.
 * **Phase 6 uses a separate real vendor demo panel** (AAPL, MSFT, TSLA, VTI, AMZN) with
   3,760 observed bars. It is registered `restricted`, cached only under `var/`, and never
   committed. The window starts after the sample's last split; dividends are excluded.
+* **Phase 7 weather and demand are real public-domain observations.** EIA-930 hourly ERCOT
+  demand and NOAA GHCN-Daily Dallas station readings are compacted into a committed derived
+  fixture; raw bulk archives stay ignored. Station values are observations, not forecasts.
+* **Phase 7 has no historical publication vintage.** Availability is the exact 2026 archive
+  retrieval instant. A 2023 as-of query excludes all 1,095 observations and says so. Replay
+  at the retrieval snapshot reproduces the calculation; replay at 2023 refuses.
+* **The Phase 7 company is not real.** Its 50,000 MWh load, 50% demand pass-through, 60%
+  unhedged exposure, $65/MWh price and $40m revenue are explicit hypothetical assumptions,
+  not observed contracts or facility data.
 * **The Phase 6 panel is not point-in-time verified.** It is a current vendor download,
   not an archive of what was displayed historically. The API returns
   `point_in_time_verified: false`; the auditor emits a `data_vintage` warning.
@@ -250,12 +301,19 @@ The company list and screener are recomputation-bound, not I/O-bound; a market-w
 universe would need caching or a materialised panel. No optimisation is claimed. Full runs
 and caveats: [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
+Phase 7 on the same 2-CPU container: schema migration 18.15 ms, 1,095-observation
+bootstrap 438.90 ms cold, warm panel query **8.32 ms**, graph traversal **0.29 ms**, model
+fit/test **25.76 ms**, 2,000-draw scenario **15.90 ms**, Sentinel refresh **3.10 ms**, peak
+RSS **52.6 MB**. Browser first contentful paint was 80 ms with 617 DOM nodes. The 10,000-draw
+scenario measured 13.29 ms warm (752,672 draws/s); the first 2,000-draw call includes cold
+compiler setup. Details: [docs/PHASE7_BENCHMARKS.md](docs/PHASE7_BENCHMARKS.md).
+
 ---
 
 ## 7. Verification
 
 ```bash
-.venv/bin/python -m pytest -q          # 363 passed (354 through Phase 5 + 9 Phase 6)
+.venv/bin/python -m pytest -q          # 372 passed (363 through Phase 6 + 9 Phase 7)
 cd web && npm test -- --run            # 4 passed
 cd web && npm run build                # tsc + vite
 ```
@@ -267,7 +325,10 @@ JSON export and a 390px mobile viewport. `web/e2e/phase5.mjs` covers the Treasur
 bond pricing, saved fixed-income application, manifest download, portfolio risk,
 optimization, walk-forward, comparison and a 390px viewport. `web/e2e/phase6.mjs` covers
 the real-data experiment, calibration, audit, forecast-to-portfolio, monitoring,
-save/reopen and a 390px viewport. Screenshots are in `artifacts/`.
+save/reopen and a 390px viewport. `web/e2e/phase7.mjs` covers public-data provenance, the
+graph and conflict, test R²/RMSE, scenario recomputation, save/reopen, replay refusal,
+Sentinel refresh, a correction invalidation and a 390px viewport. Screenshots are in
+`artifacts/36-economic-lab.png` and `artifacts/37-economic-mobile.png`.
 
 ---
 
@@ -276,7 +337,7 @@ save/reopen and a 390px viewport. Screenshots are in `artifacts/`.
 ```
 src/atlas/
   core/        ids, units, temporal semantics, concept registry, typed errors
-  storage/     SQLite engine, versioned migrations (schema v8), source registry
+  storage/     SQLite engine, versioned migrations (schema v9), source registry
   evidence/    temporal evidence kernel, selection, provenance
   entities/    issuer / security / listing / ticker master and resolution
   market/      calendars, immutable bars, corporate actions, adjustments
@@ -286,9 +347,10 @@ src/atlas/
   finance/     Treasury curves, bond analytics, BSM options, statistical primitives
   institutional/ multi-asset fixture, risk, optimizer, walk-forward, persistence
   learning/    data fabric, features, models, metrics, audit, experiments, memory, discovery
+  economic/    public evidence fabric, graph, claims, association, causal, scenario, Sentinel
   research/    research objects and content-addressed source archives
   cli.py       command line interface (incl. `serve`)
-tests/         363 tests (Phase 1–6 plus terminal API/workspaces)
+tests/         372 tests (Phase 1–7 plus terminal API/workspaces)
 web/           React 19 + TypeScript + Vite terminal; Vitest and Playwright journeys
 benchmarks/    Phase 1 benchmarks + terminal_bench.py
 fixtures/      real SEC payloads and labelled synthetic fixtures
@@ -320,8 +382,18 @@ never the reverse. The kernel does not know HTTP exists.
 * Phase 6 implements binary and continuous forecasts, not categorical probabilities or
   event-market settlement. It does not provide a live feed, scheduler, GPU backend, AI
   assistant, or multi-user authentication.
-* `ATLAS_MASTER_SPEC.md` v1.1 is absent from the checkout; `docs/PHASE5_CONTRACT.md` and the
-  Phase 5 documents are the in-repo authority until the supplied master is added.
+* Phase 7 has two public source families, not a general OSINT platform. There is no document
+  crawler, news de-duplication, entity-resolution service, GDELT feed or LLM extraction.
+* Phase 7 weather is a point station, not an area-weighted ERCOT temperature. The study
+  covers one year and one balancing authority. The current archive has no historical vintage.
+* The Phase 7 company, facility, load, contract and price exposure are hypothetical. No real
+  company data or supplier relationship is represented.
+* Phase 7 monitoring is manual and deterministic. There is no scheduler, background worker
+  or notification delivery. The scenario is not a company forecast or investment advice.
+* Phase 7 does not implement event markets, real-estate underwriting, live orders, credit
+  modeling, forward power curves or a general equilibrium simulator.
+* `ATLAS_MASTER_SPEC.md` v1.2.0 is absent from the checkout; `docs/PHASE7_CONTRACT.md` and the
+  Phase 7 documents are the in-repo authority until the supplied master is added.
 * No news, transcripts, estimates or analyst data; events are filings and actions only.
 * Screening covers 4 issuers, not a market.
 * X-Ray is reachable from statement cells, metrics and workspace evidence panels; chart
@@ -329,7 +401,7 @@ never the reverse. The kernel does not know HTTP exists.
 * Workspace editing uses explicit buttons, not drag-and-drop.
 * Single-user, no authentication. `owner_id = 'local'`; the server binds loopback by
   default and must not be exposed publicly.
-* Frontend bundle ~630 kB (189 kB gzip); the chart library could be lazy-loaded.
+* Frontend bundle ~660 kB (196 kB gzip); the chart library could be lazy-loaded.
 * Browser verification in this container needs a workspace-local Chromium sysroot
   (`scripts/fetch_browser_libs.py`); that is test tooling, not a runtime dependency.
 
@@ -369,6 +441,21 @@ never the reverse. The kernel does not know HTTP exists.
 | [docs/PHASE6_READINESS.md](docs/PHASE6_READINESS.md) | acceptance matrix and partial gate 5 |
 | [docs/PHASE6_CONTRACT.md](docs/PHASE6_CONTRACT.md) | Phase 5 → Phase 6 interfaces |
 | [docs/PHASE7_CONTRACT.md](docs/PHASE7_CONTRACT.md) | stable interfaces and next-phase prerequisites |
+| [docs/PHASE7_IMPLEMENTATION.md](docs/PHASE7_IMPLEMENTATION.md) | schema 9, economic modules, real run and defects |
+| [docs/ECONOMIC_DATA_FABRIC.md](docs/ECONOMIC_DATA_FABRIC.md) | sources, units, time and retrieval-proxy semantics |
+| [docs/OSINT_SOURCE_REGISTRY.md](docs/OSINT_SOURCE_REGISTRY.md) | public source rights and OSINT boundaries |
+| [docs/ECONOMIC_GRAPH_CONTRACT.md](docs/ECONOMIC_GRAPH_CONTRACT.md) | nodes, edges, provenance and traversal |
+| [docs/EVENT_AND_CLAIM_ONTOLOGY.md](docs/EVENT_AND_CLAIM_ONTOLOGY.md) | epistemic states and promotion rules |
+| [docs/EVIDENCE_RECONCILIATION.md](docs/EVIDENCE_RECONCILIATION.md) | station conflict, revision and duplicate policy |
+| [docs/CAUSAL_RESEARCH.md](docs/CAUSAL_RESEARCH.md) | association boundary, DiD and ITS |
+| [docs/ECONOMIC_REALITY_SIMULATOR.md](docs/ECONOMIC_REALITY_SIMULATOR.md) | shock, exposure and FEC execution |
+| [docs/UNCERTAINTY_PROPAGATION.md](docs/UNCERTAINTY_PROPAGATION.md) | separated uncertainty and sensitivities |
+| [docs/WEATHER_ENERGY_CASE_STUDY.md](docs/WEATHER_ENERGY_CASE_STUDY.md) | the complete flagship result |
+| [docs/ECONOMIC_SENTINEL.md](docs/ECONOMIC_SENTINEL.md) | manual freshness and dependency invalidation |
+| [docs/PHASE7_VALIDATION.md](docs/PHASE7_VALIDATION.md) | tests, browser journey and independent assertions |
+| [docs/PHASE7_BENCHMARKS.md](docs/PHASE7_BENCHMARKS.md) | measured CPU and browser workload |
+| [docs/PHASE7_READINESS.md](docs/PHASE7_READINESS.md) | acceptance gates, partials and blockers |
+| [docs/PHASE8_CONTRACT.md](docs/PHASE8_CONTRACT.md) | interfaces and rules for the next phase |
 | [docs/QUANT_LAB_ARCHITECTURE.md](docs/QUANT_LAB_ARCHITECTURE.md) | Quant Lab modules, event ordering and boundaries |
 | [docs/STRATEGY_CONTRACT.md](docs/STRATEGY_CONTRACT.md) | strategy schema, supported signals and rejection rules |
 | [docs/FEATURE_ENGINE.md](docs/FEATURE_ENGINE.md) | features, cutoffs and anti-leakage behavior |
@@ -381,7 +468,7 @@ never the reverse. The kernel does not know HTTP exists.
 | [docs/CONCEPTS.md](docs/CONCEPTS.md) | canonical concept coverage and mapping policy |
 | [docs/BENCHMARKS.md](docs/BENCHMARKS.md) | hardware, datasets, Phase 1 and Phase 2 measurements |
 | [docs/VALIDATION.md](docs/VALIDATION.md) | reconciliation methodology and results |
-| [docs/adr/](docs/adr/) | architecture decision records (29) |
+| [docs/adr/](docs/adr/) | architecture decision records (34) |
 
 Licence: Apache-2.0. Fixtures retain the licensing of their sources; see
 [fixtures/README.md](fixtures/README.md).

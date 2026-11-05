@@ -39,6 +39,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from ..core.errors import (
     AmbiguousResolution,
     AtlasError,
+    MissingDataError,
     NotSupportedError,
     StorageError,
     UnknownEntity,
@@ -67,6 +68,7 @@ from ..institutional.universe import aligned_panel, returns_matrix
 from ..institutional.validation import walk_forward
 from ..learning.features import catalogue as learning_feature_catalogue
 from ..learning.service import LEARNING_SCHEMA, LearningService
+from ..economic.service import ECONOMIC_SCHEMA, EconomicService
 from ..fec import compile_model
 from ..fec import valuation as fec_valuation
 from ..fec.operators import REGISTRY, operator_versions
@@ -82,6 +84,7 @@ DEFAULT_ORIGINS = os.environ.get(
 STATUS_BY_ERROR: tuple[tuple[type[BaseException], int], ...] = (
     (UnknownEntity, 404),
     (AmbiguousResolution, 409),
+    (MissingDataError, 422),
     (ValidationError, 422),
     (NotSupportedError, 422),
     (StorageError, 409),
@@ -375,6 +378,42 @@ class LearningMemoryRequest(BaseModel):
     limit: int = Field(default=50, ge=1, le=200)
 
 
+class EconomicAnalyzeRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    as_of: str | None = None
+    mode: Literal["public_available", "atlas_ingested"] = "public_available"
+    seed: int = Field(default=20261105, ge=0, le=2**31 - 1)
+    persist: bool = True
+
+
+class EconomicScenarioRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    shock_c: float = Field(default=2.0, ge=-10.0, le=10.0)
+    annual_consumption_mwh: float = Field(default=50_000.0, ge=0, le=100_000_000)
+    load_sensitivity: float = Field(default=0.5, ge=0, le=10)
+    unhedged_fraction: float = Field(default=0.6, ge=0, le=1)
+    power_price_usd_mwh: float = Field(default=65.0, ge=0, le=10_000)
+    revenue_usd: float = Field(default=40_000_000.0, gt=0, le=1_000_000_000_000)
+    tax_rate: float = Field(default=0.21, ge=0, le=1)
+    draws: int = Field(default=2_000, ge=200, le=20_000)
+    seed: int = Field(default=20261105, ge=0, le=2**31 - 1)
+
+
+class EconomicApplicationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    run_id: str
+    scenario_id: str | None = None
+    name: str = Field(min_length=1, max_length=120)
+    purpose: str = Field(default="weather-to-electricity economic investigation", max_length=500)
+
+
+class EconomicRevisionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    value: float
+    published_at: str | None = None
+    reason: str = Field(min_length=3, max_length=500)
+
+
 class SourceArchiveRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     source_id: str
@@ -498,6 +537,12 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
                         "evidence": int(db.scalar("SELECT COUNT(*) FROM evidence", default=0) or 0),
                         "issuers": int(db.scalar("SELECT COUNT(*) FROM issuer", default=0) or 0),
                         "bars": int(db.scalar("SELECT COUNT(*) FROM bar", default=0) or 0),
+                        "economic_observations": int(db.scalar(
+                            "SELECT COUNT(*) FROM economic_observation", default=0
+                        ) or 0),
+                        "economic_analyses": int(db.scalar(
+                            "SELECT COUNT(*) FROM economic_analysis", default=0
+                        ) or 0),
                     }
                 )
             finally:
@@ -518,6 +563,10 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
             "institutional_schema": "atlas.institutional.run.v1",
             "institutional_curve_schema": "atlas.finance.yield_curve.v1",
             "learning_schema": LEARNING_SCHEMA,
+            "economic_schema": ECONOMIC_SCHEMA,
+            "economic_panel_schema": "atlas.economic.panel.v1",
+            "economic_graph_schema": "atlas.economic.graph.v1",
+            "economic_scenario_schema": "atlas.economic.scenario.v1",
             "forecast_schema": "atlas.forecast.v1",
             "learning_features": learning_feature_catalogue()["features"],
             "panel_types": sorted(workspaces.PANEL_TYPES),
@@ -1001,6 +1050,88 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
                               db: Database = Depends(get_db)) -> dict[str, Any]:
         items = research_objects.ResearchObjectStore(db).list(kind="application", limit=limit)
         return {"items": items, "count": len(items), "schema": "atlas.research_object.v1"}
+
+    # ------------------------------------------------------- institutional lab
+    # ------------------------------------------------------- economic intelligence
+    @app.get("/api/economic/catalog", tags=["economic"])
+    def economic_catalog(db: Database = Depends(get_db)) -> dict[str, Any]:
+        return EconomicService(db).catalog()
+
+    @app.get("/api/economic/panel", tags=["economic"])
+    def economic_panel(as_of: str | None = None,
+                       mode: Literal["public_available", "atlas_ingested"] = "public_available",
+                       db: Database = Depends(get_db)) -> dict[str, Any]:
+        return EconomicService(db).panel(as_of=as_of, mode=mode)
+
+    @app.get("/api/economic/graph", tags=["economic"])
+    def economic_graph(as_of: str | None = None, entity_id: str | None = None,
+                       depth: int = Query(default=2, ge=1, le=5),
+                       db: Database = Depends(get_db)) -> dict[str, Any]:
+        return EconomicService(db).graph(as_of=as_of, entity_id=entity_id, depth=depth)
+
+    @app.get("/api/economic/conflicts", tags=["economic"])
+    def economic_conflicts(db: Database = Depends(get_db)) -> dict[str, Any]:
+        return EconomicService(db).conflicts()
+
+    @app.post("/api/economic/analyze", tags=["economic"])
+    def economic_analyze(body: EconomicAnalyzeRequest,
+                         db: Database = Depends(get_db)) -> dict[str, Any]:
+        return EconomicService(db).analyze(
+            as_of=body.as_of, mode=body.mode, seed=body.seed, persist=body.persist,
+        )
+
+    @app.get("/api/economic/runs", tags=["economic"])
+    def economic_runs(limit: int = Query(default=50, ge=1, le=200),
+                      db: Database = Depends(get_db)) -> dict[str, Any]:
+        items = EconomicService(db).list_runs(limit=limit)
+        return {"items": items, "count": len(items), "schema": "atlas.economic.analysis.v1"}
+
+    @app.get("/api/economic/runs/{run_id}", tags=["economic"])
+    def economic_run_get(run_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return EconomicService(db).get_run(run_id)
+
+    @app.post("/api/economic/runs/{run_id}/scenario", tags=["economic"])
+    def economic_scenario(run_id: str, body: EconomicScenarioRequest,
+                          db: Database = Depends(get_db)) -> dict[str, Any]:
+        return EconomicService(db).scenario(run_id, **body.model_dump())
+
+    @app.get("/api/economic/runs/{run_id}/scenarios", tags=["economic"])
+    def economic_scenarios(run_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return {"run_id": run_id, "items": EconomicService(db).scenarios(run_id),
+                "schema": "atlas.economic.scenario.v1"}
+
+    @app.get("/api/economic/runs/{run_id}/replay", tags=["economic"])
+    def economic_replay(run_id: str, as_of: str,
+                        mode: Literal["public_available", "atlas_ingested"] = "public_available",
+                        db: Database = Depends(get_db)) -> dict[str, Any]:
+        return EconomicService(db).replay(run_id, as_of=as_of, mode=mode)
+
+    @app.get("/api/economic/memory", tags=["economic"])
+    def economic_memory(limit: int = Query(default=100, ge=1, le=200),
+                        db: Database = Depends(get_db)) -> dict[str, Any]:
+        return EconomicService(db).memory(limit=limit)
+
+    @app.post("/api/economic/applications", tags=["economic"], status_code=201)
+    def economic_application(body: EconomicApplicationRequest,
+                             db: Database = Depends(get_db)) -> dict[str, Any]:
+        return EconomicService(db).save_application(
+            body.run_id, name=body.name, purpose=body.purpose, scenario_id=body.scenario_id,
+        )
+
+    @app.get("/api/economic/sentinel", tags=["economic"])
+    def economic_sentinel(db: Database = Depends(get_db)) -> dict[str, Any]:
+        return EconomicService(db).sentinel_refresh()
+
+    @app.post("/api/economic/observations/{observation_id}/revise", tags=["economic"])
+    def economic_revision(observation_id: str, body: EconomicRevisionRequest,
+                          db: Database = Depends(get_db)) -> dict[str, Any]:
+        return EconomicService(db).revise_observation(
+            observation_id, value=body.value, published_at=body.published_at, reason=body.reason,
+        )
+
+    @app.get("/api/economic/benchmarks", tags=["economic"])
+    def economic_benchmarks(db: Database = Depends(get_db)) -> dict[str, Any]:
+        return EconomicService(db).benchmarks()
 
     # ------------------------------------------------------- institutional lab
     @app.get("/api/institutional/catalog", tags=["institutional"])

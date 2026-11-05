@@ -14,7 +14,7 @@ interface SearchHit {
 const NAV = [
   { section: 'Market', items: [{ to: '/', label: 'Markets' }, { to: '/companies', label: 'Companies' }] },
   { section: 'Research', items: [{ to: '/research', label: 'Time machine' }, { to: '/screeners', label: 'Screeners' }] },
-  { section: 'Studio', items: [{ to: '/studio', label: 'Model studio' }, { to: '/lab', label: 'Quant lab' }, { to: '/lab/learning', label: 'Learning lab' }] },
+  { section: 'Studio', items: [{ to: '/studio', label: 'Model studio' }, { to: '/lab', label: 'Quant lab' }, { to: '/lab/learning', label: 'Learning lab' }, { to: '/lab/economic', label: 'Economic lab' }] },
   { section: 'Saved', items: [{ to: '/watchlists', label: 'Watchlists' }] },
 ]
 
@@ -26,7 +26,10 @@ export default function Shell({ children }: { children: ReactNode }) {
   const [searching, setSearching] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [health, setHealth] = useState<{ evidence?: number; bars?: number; status?: string } | null>(null)
+  const [health, setHealth] = useState<{
+    evidence?: number; bars?: number; status?: string
+    economic_observations?: number; schema_version?: number
+  } | null>(null)
   const boxRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -122,7 +125,11 @@ export default function Shell({ children }: { children: ReactNode }) {
             {health?.status === 'ok' ? 'Local evidence online' : 'Database unavailable'}
           </div>
           <div className="muted small">
-            {health?.evidence ? `${health.evidence.toLocaleString()} evidence records · ${fmtCompact(health.bars ?? 0)} bars` : 'Run the data builder to populate'}
+            {health?.evidence
+              ? `${health.evidence.toLocaleString()} evidence records · ${fmtCompact(health.bars ?? 0)} bars`
+              : health?.economic_observations
+                ? `${health.economic_observations.toLocaleString()} economic observations · schema ${health.schema_version}`
+                : 'Run the data builder to populate'}
           </div>
         </div>
       </aside>

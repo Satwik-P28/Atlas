@@ -747,6 +747,216 @@ CREATE INDEX idx_learning_forecast_model ON learning_forecast (model_id, as_of);
 """
 
 
+_MIGRATION_009 = """
+-- ===========================================================================
+-- Phase 7: economic evidence fabric, graph, claims, scenarios and Sentinel
+-- ===========================================================================
+
+CREATE TABLE economic_series (
+    series_id          TEXT PRIMARY KEY,
+    source_id          TEXT NOT NULL REFERENCES source(source_id),
+    dataset            TEXT NOT NULL,
+    name               TEXT NOT NULL,
+    geography_code     TEXT NOT NULL,
+    geography_name     TEXT NOT NULL,
+    frequency          TEXT NOT NULL,
+    unit               TEXT NOT NULL,
+    data_class         TEXT NOT NULL,
+    rights             TEXT NOT NULL,
+    redistribution     TEXT NOT NULL,
+    source_url         TEXT,
+    vintage_policy     TEXT NOT NULL,
+    publication_policy TEXT NOT NULL,
+    metadata_json      TEXT NOT NULL,
+    created_at         TEXT NOT NULL
+);
+CREATE INDEX idx_economic_series_source ON economic_series (source_id, dataset);
+
+-- Economic observations share the temporal-evidence discipline of the financial
+-- kernel: economic period, retrieval time, publication evidence, revision chain and
+-- an explicit availability basis. A current bulk archive is not a historical vintage.
+CREATE TABLE economic_observation (
+    observation_id        TEXT PRIMARY KEY,
+    series_id             TEXT NOT NULL REFERENCES economic_series(series_id),
+    source_id             TEXT NOT NULL REFERENCES source(source_id),
+    period_start          TEXT NOT NULL,
+    period_end            TEXT NOT NULL,
+    published_at          TEXT,
+    availability_time     TEXT,
+    availability_precision TEXT NOT NULL,
+    availability_basis    TEXT NOT NULL,
+    observed_at           TEXT NOT NULL,
+    vintage               TEXT NOT NULL,
+    revision_seq          INTEGER NOT NULL DEFAULT 1 CHECK (revision_seq >= 1),
+    supersedes            TEXT REFERENCES economic_observation(observation_id),
+    value_numeric         REAL NOT NULL,
+    unit                  TEXT NOT NULL,
+    quality               TEXT NOT NULL,
+    data_class            TEXT NOT NULL,
+    raw_ref               TEXT,
+    content_hash          TEXT NOT NULL,
+    metadata_json         TEXT NOT NULL,
+    created_at            TEXT NOT NULL,
+    UNIQUE (series_id, period_start, period_end, vintage, revision_seq),
+    CHECK (published_at IS NULL OR published_at >= period_end),
+    CHECK (availability_precision IN ('exact','date','unknown'))
+);
+CREATE INDEX idx_economic_observation_series ON economic_observation (series_id, period_start, revision_seq DESC);
+CREATE INDEX idx_economic_observation_time ON economic_observation (availability_time, observed_at);
+
+CREATE TABLE economic_entity (
+    entity_id       TEXT PRIMARY KEY,
+    entity_type     TEXT NOT NULL,
+    name            TEXT NOT NULL,
+    canonical_key   TEXT NOT NULL,
+    geography_code  TEXT,
+    data_class      TEXT NOT NULL,
+    status          TEXT NOT NULL,
+    source_id       TEXT REFERENCES source(source_id),
+    valid_from      TEXT,
+    valid_to        TEXT,
+    metadata_json   TEXT NOT NULL,
+    created_at      TEXT NOT NULL,
+    UNIQUE (entity_type, canonical_key, valid_from)
+);
+CREATE INDEX idx_economic_entity_type ON economic_entity (entity_type, name);
+
+CREATE TABLE economic_edge (
+    edge_id           TEXT PRIMARY KEY,
+    from_entity_id    TEXT NOT NULL REFERENCES economic_entity(entity_id),
+    to_entity_id      TEXT NOT NULL REFERENCES economic_entity(entity_id),
+    relationship_type TEXT NOT NULL,
+    source_id         TEXT NOT NULL REFERENCES source(source_id),
+    observation_id    TEXT REFERENCES economic_observation(observation_id),
+    claim_id          TEXT,
+    valid_from        TEXT,
+    valid_to          TEXT,
+    confidence        REAL NOT NULL CHECK (confidence >= 0 AND confidence <= 1),
+    epistemic_status  TEXT NOT NULL,
+    geography_code    TEXT,
+    metadata_json     TEXT NOT NULL,
+    created_at        TEXT NOT NULL,
+    CHECK (from_entity_id <> to_entity_id)
+);
+CREATE INDEX idx_economic_edge_from ON economic_edge (from_entity_id, relationship_type);
+CREATE INDEX idx_economic_edge_to ON economic_edge (to_entity_id, relationship_type);
+
+CREATE TABLE economic_event (
+    event_id         TEXT PRIMARY KEY,
+    event_type       TEXT NOT NULL,
+    label            TEXT NOT NULL,
+    geography_code   TEXT,
+    started_at       TEXT NOT NULL,
+    ended_at         TEXT,
+    observed_at      TEXT NOT NULL,
+    published_at     TEXT,
+    status           TEXT NOT NULL,
+    data_class       TEXT NOT NULL,
+    source_id        TEXT NOT NULL REFERENCES source(source_id),
+    metadata_json    TEXT NOT NULL,
+    created_at       TEXT NOT NULL
+);
+CREATE INDEX idx_economic_event_time ON economic_event (started_at, event_type);
+
+CREATE TABLE economic_claim (
+    claim_id          TEXT PRIMARY KEY,
+    subject_key       TEXT NOT NULL,
+    predicate         TEXT NOT NULL,
+    value_numeric     REAL,
+    value_text        TEXT,
+    unit              TEXT,
+    observed_at       TEXT NOT NULL,
+    claimed_at        TEXT NOT NULL,
+    source_id         TEXT NOT NULL REFERENCES source(source_id),
+    observation_id    TEXT REFERENCES economic_observation(observation_id),
+    epistemic_status  TEXT NOT NULL,
+    causal_status     TEXT NOT NULL,
+    review_status     TEXT NOT NULL,
+    supersedes        TEXT REFERENCES economic_claim(claim_id),
+    metadata_json     TEXT NOT NULL,
+    created_at        TEXT NOT NULL,
+    CHECK (epistemic_status IN ('observed','inferred','hypothesized','estimated_causal_effect','counterfactual','unresolved')),
+    CHECK (causal_status IN ('not_applicable','association','identified','not_identified'))
+);
+CREATE INDEX idx_economic_claim_subject ON economic_claim (subject_key, claimed_at);
+CREATE INDEX idx_economic_claim_status ON economic_claim (epistemic_status, causal_status);
+
+CREATE TABLE economic_conflict (
+    conflict_id      TEXT PRIMARY KEY,
+    subject_key      TEXT NOT NULL,
+    claim_ids_json   TEXT NOT NULL,
+    status           TEXT NOT NULL,
+    reason           TEXT NOT NULL,
+    resolution       TEXT,
+    detected_at      TEXT NOT NULL,
+    metadata_json    TEXT NOT NULL,
+    UNIQUE (subject_key, detected_at)
+);
+CREATE INDEX idx_economic_conflict_status ON economic_conflict (status, detected_at);
+
+CREATE TABLE economic_analysis (
+    run_id              TEXT PRIMARY KEY,
+    kind                TEXT NOT NULL,
+    as_of               TEXT NOT NULL,
+    mode                TEXT NOT NULL,
+    data_class          TEXT NOT NULL,
+    start_date          TEXT NOT NULL,
+    end_date            TEXT NOT NULL,
+    spec_json           TEXT NOT NULL,
+    result_json         TEXT NOT NULL,
+    fingerprint         TEXT NOT NULL,
+    model_object_id     TEXT REFERENCES research_object(object_id),
+    experiment_object_id TEXT REFERENCES research_object(object_id),
+    application_object_id TEXT REFERENCES research_object(object_id),
+    status              TEXT NOT NULL,
+    stale               INTEGER NOT NULL DEFAULT 0,
+    stale_reason        TEXT,
+    duration_ms         REAL NOT NULL,
+    created_at          TEXT NOT NULL
+);
+CREATE INDEX idx_economic_analysis_created ON economic_analysis (created_at DESC);
+CREATE INDEX idx_economic_analysis_fingerprint ON economic_analysis (fingerprint);
+
+CREATE TABLE economic_scenario (
+    scenario_id     TEXT PRIMARY KEY,
+    run_id          TEXT NOT NULL REFERENCES economic_analysis(run_id) ON DELETE CASCADE,
+    name            TEXT NOT NULL,
+    assumptions_json TEXT NOT NULL,
+    result_json     TEXT NOT NULL,
+    fingerprint     TEXT NOT NULL,
+    status          TEXT NOT NULL,
+    created_at      TEXT NOT NULL
+);
+CREATE INDEX idx_economic_scenario_run ON economic_scenario (run_id, created_at);
+
+CREATE TABLE economic_dependency (
+    run_id          TEXT NOT NULL REFERENCES economic_analysis(run_id) ON DELETE CASCADE,
+    dependency_type TEXT NOT NULL,
+    dependency_id   TEXT NOT NULL,
+    role            TEXT NOT NULL,
+    stale           INTEGER NOT NULL DEFAULT 0,
+    invalidated_at  TEXT,
+    reason          TEXT,
+    PRIMARY KEY (run_id, dependency_type, dependency_id)
+);
+CREATE INDEX idx_economic_dependency_target ON economic_dependency (dependency_type, dependency_id);
+
+CREATE TABLE economic_alert (
+    alert_id      TEXT PRIMARY KEY,
+    alert_type    TEXT NOT NULL,
+    severity      TEXT NOT NULL,
+    run_id        TEXT REFERENCES economic_analysis(run_id) ON DELETE CASCADE,
+    dependency_id TEXT,
+    summary       TEXT NOT NULL,
+    detail_json   TEXT NOT NULL,
+    status        TEXT NOT NULL,
+    created_at    TEXT NOT NULL,
+    UNIQUE (alert_type, run_id, dependency_id, created_at)
+);
+CREATE INDEX idx_economic_alert_status ON economic_alert (status, created_at DESC);
+"""
+
+
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=1, name="phase1_foundation", sql=_MIGRATION_001),
     Migration(version=2, name="phase1_1_history_and_dependencies", sql=_MIGRATION_002),
@@ -756,6 +966,7 @@ MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=6, name="phase4_source_archive_and_quant_lab", sql=_MIGRATION_006),
     Migration(version=7, name="phase5_institutional_research", sql=_MIGRATION_007),
     Migration(version=8, name="phase6_learning_runtime", sql=_MIGRATION_008),
+    Migration(version=9, name="phase7_economic_intelligence", sql=_MIGRATION_009),
 )
 
 LATEST_VERSION = max(m.version for m in MIGRATIONS)

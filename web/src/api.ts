@@ -321,6 +321,35 @@ export const api = {
   learningApplication: (body: Record<string, unknown>) =>
     request<Record<string, any>>('/api/learning/applications', { method: 'POST', body: JSON.stringify(body) }),
   learningApplications: () => request<Record<string, any>>('/api/learning/applications'),
+  economicCatalog: () => request<Record<string, any>>('/api/economic/catalog'),
+  economicPanel: (asOf?: string | null, mode: AsOfMode = 'public_available') =>
+    request<Record<string, any>>(`/api/economic/panel${qs({ as_of: asOf, mode })}`),
+  economicGraph: (asOf?: string | null, entityId?: string, depth = 2) =>
+    request<Record<string, any>>(`/api/economic/graph${qs({ as_of: asOf, entity_id: entityId, depth })}`),
+  economicConflicts: () => request<Record<string, any>>('/api/economic/conflicts'),
+  economicRuns: () => request<Record<string, any>>('/api/economic/runs'),
+  economicRun: (runId: string) => request<Record<string, any>>(`/api/economic/runs/${enc(runId)}`),
+  economicAnalyze: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/economic/analyze', { method: 'POST', body: JSON.stringify(body) }),
+  economicScenario: (runId: string, body: Record<string, unknown>) =>
+    request<Record<string, any>>(`/api/economic/runs/${enc(runId)}/scenario`, {
+      method: 'POST', body: JSON.stringify(body),
+    }),
+  economicScenarios: (runId: string) =>
+    request<Record<string, any>>(`/api/economic/runs/${enc(runId)}/scenarios`),
+  economicReplay: (runId: string, asOf: string) =>
+    request<Record<string, any>>(`/api/economic/runs/${enc(runId)}/replay${qs({ as_of: asOf })}`),
+  economicMemory: () => request<Record<string, any>>('/api/economic/memory'),
+  economicSentinel: () => request<Record<string, any>>('/api/economic/sentinel'),
+  economicRevision: (observationId: string, body: Record<string, unknown>) =>
+    request<Record<string, any>>(`/api/economic/observations/${enc(observationId)}/revise`, {
+      method: 'POST', body: JSON.stringify(body),
+    }),
+  economicBenchmarks: () => request<Record<string, any>>('/api/economic/benchmarks'),
+  economicSaveApplication: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/economic/applications', {
+      method: 'POST', body: JSON.stringify(body),
+    }),
 } satisfies Record<string, unknown>
 
 export type { Mode }
