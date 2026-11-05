@@ -275,6 +275,27 @@ export const api = {
   quantExperiments: () => request<{ items: Array<Record<string, any>>; count: number }>('/api/quant/experiments'),
   archiveSource: (body: Record<string, unknown>) =>
     request<Record<string, any>>('/api/research/archive', { method: 'POST', body: JSON.stringify(body) }),
+  institutionalCatalog: () => request<Record<string, any>>('/api/institutional/catalog'),
+  institutionalUniverse: () => request<Record<string, any>>('/api/institutional/universe'),
+  institutionalCurve: (date = '2024-06-28') =>
+    request<Record<string, any>>(`/api/institutional/curve${qs({ date })}`),
+  institutionalBond: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/institutional/bond', { method: 'POST', body: JSON.stringify(body) }),
+  institutionalOption: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/institutional/option', { method: 'POST', body: JSON.stringify(body) }),
+  institutionalPortfolio: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/institutional/portfolio', { method: 'POST', body: JSON.stringify(body) }),
+  institutionalOptimize: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/institutional/optimize', { method: 'POST', body: JSON.stringify(body) }),
+  institutionalValidate: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/institutional/validate', { method: 'POST', body: JSON.stringify(body) }),
+  institutionalRuns: () => request<Record<string, any>>('/api/institutional/runs'),
+  institutionalRun: (runId: string) => request<Record<string, any>>(`/api/institutional/runs/${enc(runId)}`),
+  institutionalAttempts: (runId: string) =>
+    request<Record<string, any>>(`/api/institutional/runs/${enc(runId)}/attempts`),
+  institutionalApplications: () => request<Record<string, any>>('/api/institutional/applications'),
+  institutionalApplication: (body: Record<string, unknown>) =>
+    request<Record<string, any>>('/api/institutional/applications', { method: 'POST', body: JSON.stringify(body) }),
 } satisfies Record<string, unknown>
 
 export type { Mode }

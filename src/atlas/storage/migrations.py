@@ -628,6 +628,42 @@ CREATE INDEX idx_quant_run_fingerprint ON quant_run (strategy_fingerprint, creat
 """
 
 
+_MIGRATION_007 = """
+-- ===========================================================================
+-- Phase 5: institutional pricing, risk and walk-forward research
+-- ===========================================================================
+
+CREATE TABLE institutional_run (
+    run_id       TEXT PRIMARY KEY,
+    kind         TEXT NOT NULL,
+    as_of        TEXT NOT NULL,
+    data_class   TEXT NOT NULL,
+    input_json   TEXT NOT NULL,
+    result_json  TEXT NOT NULL,
+    fingerprint  TEXT NOT NULL,
+    status       TEXT NOT NULL,
+    duration_ms  REAL NOT NULL,
+    created_at   TEXT NOT NULL
+);
+CREATE INDEX idx_institutional_run_kind ON institutional_run (kind, created_at);
+CREATE INDEX idx_institutional_run_fingerprint ON institutional_run (fingerprint);
+
+-- Every candidate evaluated by walk-forward is retained, including candidates that lose.
+CREATE TABLE validation_attempt (
+    attempt_id        TEXT PRIMARY KEY,
+    validation_run_id TEXT NOT NULL REFERENCES institutional_run(run_id) ON DELETE CASCADE,
+    fold              INTEGER NOT NULL,
+    stage             TEXT NOT NULL,
+    family            TEXT NOT NULL,
+    lookback          INTEGER NOT NULL,
+    selected          INTEGER NOT NULL DEFAULT 0,
+    metrics_json      TEXT NOT NULL,
+    created_at        TEXT NOT NULL
+);
+CREATE INDEX idx_validation_attempt_run ON validation_attempt (validation_run_id, fold, stage);
+"""
+
+
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=1, name="phase1_foundation", sql=_MIGRATION_001),
     Migration(version=2, name="phase1_1_history_and_dependencies", sql=_MIGRATION_002),
@@ -635,6 +671,7 @@ MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=4, name="phase2_1_indexes_and_research_objects", sql=_MIGRATION_004),
     Migration(version=5, name="phase3_metrics_and_model_runtime", sql=_MIGRATION_005),
     Migration(version=6, name="phase4_source_archive_and_quant_lab", sql=_MIGRATION_006),
+    Migration(version=7, name="phase5_institutional_research", sql=_MIGRATION_007),
 )
 
 LATEST_VERSION = max(m.version for m in MIGRATIONS)

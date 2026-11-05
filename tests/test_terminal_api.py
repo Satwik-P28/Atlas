@@ -151,7 +151,7 @@ def test_health_and_contract(terminal):
     client = terminal["client"]
     health = client.get("/api/health").json()
     assert health["status"] == "ok"
-    assert health["schema_version"] == 6
+    assert health["schema_version"] == 7
     assert health["issuers"] == 1
     contract = client.get("/api/schema").json()
     assert contract["selection_policy"] == "atlas.select.point_in_time.v2"

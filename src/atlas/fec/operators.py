@@ -15,6 +15,9 @@ from typing import Any, Callable, Sequence
 from .types import (
     FinType, SCALAR, TypeMismatch, add_types, common_numeric, div_types, mul_types,
 )
+from ..finance.curves import price_from_yield
+from ..finance.options import bsm_greeks, bsm_price
+from ..finance.statistics import covariance_matrix
 
 OPERATOR_VERSION = "atlas.fec.operators.v1"
 DECIMAL_PRECISION = 28
@@ -132,6 +135,30 @@ def _infer_scalar(types: Sequence[FinType], params: dict[str, Any]) -> FinType:
 
 def _infer_minmax(types: Sequence[FinType], params: dict[str, Any]) -> FinType:
     return common_numeric(list(types))
+
+
+def _infer_rate_result(types: Sequence[FinType], params: dict[str, Any]) -> FinType:
+    if types[0].kind not in {"rate", "ratio", "scalar"}:
+        raise TypeMismatch("a rate or ratio is required", code="unit_mismatch")
+    return FinType("ratio")
+
+
+def _infer_money_result(types: Sequence[FinType], params: dict[str, Any]) -> FinType:
+    return FinType("money", "USD")
+
+
+def _infer_series_ratio(types: Sequence[FinType], params: dict[str, Any]) -> FinType:
+    if types[0].kind != "series" or types[1].kind != "series":
+        raise TypeMismatch("portfolio risk requires weight and covariance series",
+                           code="unit_mismatch")
+    return FinType("series", None, "ratio")
+
+
+def _infer_portfolio_ratio(types: Sequence[FinType], params: dict[str, Any]) -> FinType:
+    if types[0].kind != "series" or types[1].kind != "series":
+        raise TypeMismatch("portfolio risk requires weight and covariance series",
+                           code="unit_mismatch")
+    return FinType("ratio")
 
 
 @dataclass(frozen=True, slots=True)
@@ -307,6 +334,147 @@ register(OperatorSpec("sum", OPERATOR_VERSION, 1, _infer_sum,
                       "Σs", "Sum a series"))
 register(OperatorSpec("mean", OPERATOR_VERSION, 1, lambda t, p: FinType("ratio"), _mean_execute,
                       "Σs/n", "Arithmetic mean of a series"))
+
+
+def _discount_factor_execute(args: Sequence[Any], params: dict[str, Any]) -> Decimal:
+    rate, years = _dec(args[0]), _dec(args[1])
+    if years < 0:
+        raise ValueError("discount time cannot be negative")
+    return (Decimal(1) + rate) ** (-years)
+
+
+register(OperatorSpec(
+    "discount_factor", OPERATOR_VERSION, 2, _infer_rate_result, _discount_factor_execute,
+    "(1+r)^-t", "Annual-compounded discount factor for a scalar rate and time in years",
+))
+
+
+def _bond_price_execute(args: Sequence[Any], params: dict[str, Any]) -> Decimal:
+    coupon, ytm, years = _dec(args[0]), _dec(args[1]), _dec(args[2])
+    frequency = int(params.get("frequency", 2))
+    face = Decimal(str(params.get("face", 100)))
+    return Decimal(str(price_from_yield(float(face), float(coupon), float(years),
+                                       float(ytm), frequency)))
+
+
+register(OperatorSpec(
+    "bond_price", OPERATOR_VERSION, 3, _infer_money_result, _bond_price_execute,
+    "Σ coupon/(1+y/f)^t + face/(1+y/f)^n",
+    "Dirty price of a fixed-coupon bond from coupon rate, yield and maturity",
+))
+
+
+def _bond_duration_execute(args: Sequence[Any], params: dict[str, Any]) -> Decimal:
+    # Macaulay duration for a par-valued bond is not assumed; compute the cash-flow
+    # weighted average directly with the same coupon convention as bond_price.
+    coupon, ytm, years = _dec(args[0]), _dec(args[1]), _dec(args[2])
+    frequency = int(params.get("frequency", 2))
+    face = Decimal(str(params.get("face", 100)))
+    periods = max(1, int(round(float(years) * frequency)))
+    periodic = ytm / Decimal(frequency)
+    cash = face * coupon / Decimal(frequency)
+    pv = Decimal(0)
+    weighted = Decimal(0)
+    for period in range(1, periods + 1):
+        discount = (Decimal(1) + periodic) ** period
+        flow = cash + (face if period == periods else Decimal(0))
+        present = flow / discount
+        pv += present
+        weighted += present * Decimal(period) / Decimal(frequency)
+    return weighted / pv
+
+
+register(OperatorSpec(
+    "bond_macaulay_duration", OPERATOR_VERSION, 3, _infer_rate_result,
+    _bond_duration_execute, "Σ t·PV(CF)/ΣPV(CF)",
+    "Macaulay duration in years for a fixed-coupon bond",
+))
+
+
+def _option_price_execute(args: Sequence[Any], params: dict[str, Any]) -> Decimal:
+    spot, strike, volatility, rate, time = (_dec(value) for value in args)
+    kind = str(params.get("kind", "call"))
+    dividend = _dec(params.get("dividend_yield", 0))
+    return Decimal(str(bsm_price(float(spot), float(strike), float(time), float(rate),
+                                float(volatility), float(dividend), kind)))
+
+
+register(OperatorSpec(
+    "option_price", OPERATOR_VERSION, 5, _infer_money_result, _option_price_execute,
+    "BSM European value", "Black-Scholes-Merton European call or put value",
+))
+
+
+def _option_greek_execute(args: Sequence[Any], params: dict[str, Any]) -> Decimal:
+    spot, strike, volatility, rate, time = (_dec(value) for value in args)
+    kind = str(params.get("kind", "call"))
+    greek = str(params.get("greek", "delta"))
+    if greek not in {"price", "delta", "gamma", "vega", "theta", "rho"}:
+        raise ValueError(f"unknown option Greek {greek!r}")
+    dividend = _dec(params.get("dividend_yield", 0))
+    result = bsm_greeks(float(spot), float(strike), float(time), float(rate),
+                        float(volatility), float(dividend), kind)
+    return Decimal(str(result[greek]))
+
+
+register(OperatorSpec(
+    "option_greek", OPERATOR_VERSION, 5, lambda t, p: SCALAR, _option_greek_execute,
+    "BSM analytical Greek", "Delta, gamma, vega, theta or rho from the declared BSM model",
+))
+
+
+def _weights_covariance(args: Sequence[Any]) -> tuple[list[float], list[list[float]]]:
+    weights = [float(_dec(value)) for value in _series(args[0])]
+    flat = [float(_dec(value)) for value in _series(args[1])]
+    n = len(weights)
+    if n < 1 or len(flat) != n * n:
+        raise ValueError("covariance series must be a flattened n x n matrix")
+    covariance = [flat[row * n:(row + 1) * n] for row in range(n)]
+    return weights, covariance
+
+
+def _portfolio_variance_execute(args: Sequence[Any], params: dict[str, Any]) -> Decimal:
+    weights, covariance = _weights_covariance(args)
+    value = sum(weights[i] * covariance[i][j] * weights[j]
+                for i in range(len(weights)) for j in range(len(weights)))
+    return Decimal(str(value))
+
+
+register(OperatorSpec(
+    "portfolio_variance", OPERATOR_VERSION, 2, _infer_portfolio_ratio,
+    _portfolio_variance_execute, "wᵀΣw", "Portfolio variance from weights and a flattened covariance matrix",
+))
+
+
+def _portfolio_volatility_execute(args: Sequence[Any], params: dict[str, Any]) -> Decimal:
+    value = float(_portfolio_variance_execute(args, params))
+    if value < 0:
+        raise ValueError("portfolio variance is negative")
+    return Decimal(str(value ** 0.5))
+
+
+register(OperatorSpec(
+    "portfolio_volatility", OPERATOR_VERSION, 2, _infer_portfolio_ratio,
+    _portfolio_volatility_execute, "√(wᵀΣw)", "Portfolio volatility from weights and covariance",
+))
+
+
+def _risk_contribution_execute(args: Sequence[Any], params: dict[str, Any]) -> tuple[Decimal, ...]:
+    weights, covariance = _weights_covariance(args)
+    variance = sum(weights[i] * covariance[i][j] * weights[j]
+                   for i in range(len(weights)) for j in range(len(weights)))
+    if variance <= 0:
+        return tuple(Decimal(0) for _ in weights)
+    marginal = [sum(covariance[i][j] * weights[j] for j in range(len(weights)))
+                for i in range(len(weights))]
+    return tuple(Decimal(str(weights[i] * marginal[i] / variance)) for i in range(len(weights)))
+
+
+register(OperatorSpec(
+    "risk_contributions", OPERATOR_VERSION, 2, _infer_series_ratio,
+    _risk_contribution_execute, "wᵢ(Σw)ᵢ/wᵀΣw",
+    "Percentage variance contributions whose sum is one when variance is positive",
+))
 
 
 def operator_versions() -> dict[str, str]:

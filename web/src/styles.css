@@ -481,6 +481,27 @@ p { margin: 0 0 8px; }
   .lab-history-row > span:last-child { display: none; }
 }
 
+/* -------------------------------------------------------- institutional lab */
+.inst-controls {
+  display: grid; grid-template-columns: repeat(5, minmax(130px, 1fr)) auto;
+  gap: 12px; align-items: end;
+}
+.inst-option-controls {
+  display: grid; grid-template-columns: repeat(6, minmax(100px, 1fr));
+  gap: 12px; align-items: end;
+}
+.inst-option-controls .button { align-self: end; min-height: 34px; }
+.inst-weight-grid { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 12px; }
+.inst-curve { width: 100%; height: auto; display: block; margin: 8px 0; }
+.inst-dot { fill: var(--accent); }
+@media (max-width: 1100px) {
+  .inst-controls, .inst-option-controls { grid-template-columns: repeat(3, minmax(130px, 1fr)); }
+  .inst-weight-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
+}
+@media (max-width: 560px) {
+  .inst-controls, .inst-option-controls, .inst-weight-grid { grid-template-columns: 1fr; }
+}
+
 /* -------------------------------------------------------------------- misc */
 .source-card { border: 1px solid var(--border); border-radius: 8px; padding: 14px; background: var(--bg-card); }
 .source-name { font-weight: 600; margin: 2px 0 6px; }

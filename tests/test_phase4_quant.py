@@ -79,7 +79,7 @@ def _buy_hold(security: str) -> dict:
 
 def test_schema_has_phase4_objects(tmp_path):
     db, _ = _fixture(tmp_path)
-    assert db.schema_version() == LATEST_VERSION == 6
+    assert db.schema_version() == LATEST_VERSION == 7
     tables = {row["name"] for row in db.query("SELECT name FROM sqlite_master WHERE type='table'")}
     assert {"quant_run", "feature_snapshot", "source_archive", "source_archive_link"} <= tables
     db.close()
@@ -302,4 +302,34 @@ def test_strategy_contract_rejects_silent_parameter_reuse(tmp_path):
     changed["execution"] = {**changed["execution"], "commission_bps": 50}
     with pytest.raises(Exception):
         lab.ensure_strategy(changed)
+    db.close()
+
+
+def test_model_strategy_reuses_declaration_after_compiler_stamp_change(tmp_path):
+    db, security = _fixture(tmp_path)
+    lab = QuantLab(db)
+    template = next(item for item in lab.builtin_templates() if item["key"] == "custom_model")
+    spec = {
+        "schema_version": "atlas.strategy.v1", "name": "Reusable model strategy",
+        "version": "1.0.0", "description": template["description"],
+        "universe": {"instruments": [{"security_id": security, "mic": "XNAS"}]},
+        "features": template["features"], "signal": template["signal"],
+        "decision_frequency": "daily", "rebalance": "daily",
+        "execution": {"signal_at": "close", "fill_at": "next_open",
+                      "commission_bps": 2, "slippage_bps": 5},
+        "benchmark": {"kind": "buy_hold"}, "initial_capital": 100000,
+        "constraints": {"long_only": True, "max_position": 1}, "risk_free_rate": 0.02,
+    }
+    first = lab.ensure_strategy(spec)
+    # Simulate an object written by an earlier compiler release: the declaration is
+    # identical but its derived operator-registry stamp is different.
+    import json
+    row = db.query_one("SELECT document_json FROM research_object WHERE object_id = ?",
+                       (first["object_id"],))
+    document = json.loads(row["document_json"])
+    document["spec"]["signal"]["model_fingerprint"] = "historical-compiler-stamp"
+    db.execute("UPDATE research_object SET document_json = ? WHERE object_id = ?",
+               (json.dumps(document, sort_keys=True, separators=(",", ":")), first["object_id"]))
+    reused = lab.ensure_strategy(spec)
+    assert reused["object_id"] == first["object_id"]
     db.close()

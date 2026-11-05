@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { api } from '../api'
 import { Badge } from '../components/ui'
 
@@ -372,6 +373,7 @@ export default function Lab() {
           </p>
         </div>
         <div className="section-actions">
+          <Link className="button" to="/lab/institutional">Risk &amp; pricing</Link>
           <Badge tone="accent">Next-open fills</Badge>
           <Badge tone="neutral">Long only</Badge>
           <Badge tone="warn">No live trading</Badge>

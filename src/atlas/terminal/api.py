@@ -55,6 +55,16 @@ from ..quant.features import FeatureEngine
 from ..quant.lab import LAB_SCHEMA, QuantLab, template_spec, universe as quant_universe
 from ..quant.simulator import SIMULATOR_VERSION, SimulationConfig
 from ..quant.vectorized import VectorizedConfig, run_preview
+from ..institutional.risk import optimize as optimize_portfolio, portfolio_analysis
+from ..institutional.service import (
+    DEFAULT_CURVE_DATE,
+    InstitutionalService,
+    bond as institutional_bond,
+    curve as institutional_curve,
+    option as institutional_option,
+)
+from ..institutional.universe import aligned_panel, returns_matrix
+from ..institutional.validation import walk_forward
 from ..fec import compile_model
 from ..fec import valuation as fec_valuation
 from ..fec.operators import REGISTRY, operator_versions
@@ -254,6 +264,72 @@ class BacktestRequest(BaseModel):
     persist: bool = True
 
 
+class BondRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    settlement_date: str
+    maturity_date: str
+    coupon_rate: float = Field(ge=0, le=1)
+    curve_date: str = DEFAULT_CURVE_DATE
+    face: float = Field(default=100.0, gt=0, le=1_000_000)
+    frequency: int = Field(default=2, ge=1, le=12)
+    persist: bool = True
+
+
+class OptionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    spot: float = Field(gt=0)
+    strike: float = Field(gt=0)
+    time: float = Field(ge=0, le=50)
+    rate: float = Field(ge=-0.99, le=1)
+    volatility: float = Field(ge=0, le=5)
+    dividend_yield: float = Field(default=0.0, ge=-0.99, le=1)
+    persist: bool = True
+
+
+class PortfolioRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    weights: dict[str, float] = Field(default_factory=dict)
+    lookback: int = Field(default=252, ge=20, le=5_000)
+    capital: float = Field(default=100_000, gt=0, le=1_000_000_000)
+    risk_free: float = Field(default=0.0, ge=-0.1, le=0.5)
+    persist: bool = True
+
+
+class OptimizeRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    weights: dict[str, float] = Field(default_factory=dict)
+    max_weight: float = Field(default=0.6, gt=0, le=1)
+    cash_weight: float = Field(default=0.0, ge=0, lt=1)
+    target_return: float | None = Field(default=None, ge=-1, le=5)
+    shrinkage: float = Field(default=0.0, ge=0, le=1)
+    current_weights: dict[str, float] | None = None
+    persist: bool = True
+
+
+class ValidationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    folds: int = Field(default=4, ge=1, le=12)
+    train: int = Field(default=252, ge=20, le=2_000)
+    validation: int = Field(default=63, ge=20, le=1_000)
+    test: int = Field(default=63, ge=20, le=1_000)
+    embargo: int = Field(default=5, ge=1, le=100)
+    step: int = Field(default=63, ge=1, le=500)
+    mode: Literal["rolling", "expanding"] = "rolling"
+    lookbacks: list[int] = Field(default_factory=lambda: [20, 60, 120], min_length=1, max_length=5)
+    rebalance: int = Field(default=21, ge=1, le=252)
+    commission_bps: float = Field(default=2.0, ge=0, le=500)
+    persist: bool = True
+
+
+class InstitutionalApplicationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    kind: Literal["fixed_income", "portfolio_risk", "optimization", "walk_forward"]
+    name: str = Field(min_length=1, max_length=120)
+    inputs: dict[str, Any] = Field(default_factory=dict)
+    result: dict[str, Any]
+    object_ids: list[str] = Field(default_factory=list, max_length=20)
+
+
 class SourceArchiveRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     source_id: str
@@ -394,6 +470,8 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
             "quant_lab_schema": LAB_SCHEMA,
             "strategy_schema": "atlas.strategy.v1",
             "simulator_version": SIMULATOR_VERSION,
+            "institutional_schema": "atlas.institutional.run.v1",
+            "institutional_curve_schema": "atlas.finance.yield_curve.v1",
             "panel_types": sorted(workspaces.PANEL_TYPES),
             "error_codes": [
                 "unknown_entity",
@@ -778,6 +856,127 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
     def quant_experiments(limit: int = Query(default=100, ge=1, le=500),
                           db: Database = Depends(get_db)) -> dict[str, Any]:
         items = QuantLab(db).list_experiments(limit=limit)
+        return {"items": items, "count": len(items), "schema": "atlas.research_object.v1"}
+
+    # ------------------------------------------------------- institutional lab
+    @app.get("/api/institutional/catalog", tags=["institutional"])
+    def institutional_catalog(db: Database = Depends(get_db)) -> dict[str, Any]:
+        return InstitutionalService(db).catalog()
+
+    @app.get("/api/institutional/universe", tags=["institutional"])
+    def institutional_universe() -> dict[str, Any]:
+        return aligned_panel()
+
+    @app.get("/api/institutional/curve", tags=["institutional"])
+    def institutional_curve_get(
+        date: str = Query(default=DEFAULT_CURVE_DATE, pattern=r"^\d{4}-\d{2}-\d{2}$"),
+    ) -> dict[str, Any]:
+        return institutional_curve(date).to_dict()
+
+    @app.post("/api/institutional/bond", tags=["institutional"])
+    def institutional_bond_post(body: BondRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        result = institutional_bond(
+            settlement_date=body.settlement_date, maturity_date=body.maturity_date,
+            coupon_rate=body.coupon_rate, curve_date=body.curve_date,
+            face=body.face, frequency=body.frequency,
+        )
+        if body.persist:
+            result = InstitutionalService(db).save(
+                "bond", inputs=body.model_dump(exclude={"persist"}), result=result,
+                as_of=body.settlement_date,
+            )
+        return result
+
+    @app.post("/api/institutional/option", tags=["institutional"])
+    def institutional_option_post(body: OptionRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        result = institutional_option(
+            spot=body.spot, strike=body.strike, time=body.time, rate=body.rate,
+            volatility=body.volatility, dividend_yield=body.dividend_yield,
+        )
+        if body.persist:
+            result = InstitutionalService(db).save(
+                "option", inputs=body.model_dump(exclude={"persist"}), result=result,
+            )
+        return result
+
+    @app.post("/api/institutional/portfolio", tags=["institutional"])
+    def institutional_portfolio(body: PortfolioRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        matrix = returns_matrix()
+        weights = body.weights or {security: 1.0 / len(matrix["securities"])
+                                   for security in matrix["securities"]}
+        result = portfolio_analysis(
+            weights=weights, lookback=body.lookback, capital=body.capital,
+            risk_free=body.risk_free,
+        )
+        if body.persist:
+            result = InstitutionalService(db).save(
+                "portfolio_risk", inputs=body.model_dump(exclude={"persist"}), result=result,
+                data_class=result.get("data_class"),
+            )
+        return result
+
+    @app.post("/api/institutional/optimize", tags=["institutional"])
+    def institutional_optimize(body: OptimizeRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        matrix = returns_matrix()
+        weights = body.weights or {security: 1.0 / len(matrix["securities"])
+                                   for security in matrix["securities"]}
+        result = optimize_portfolio(
+            weights=weights, max_weight=body.max_weight, cash_weight=body.cash_weight,
+            target_return=body.target_return, shrinkage=body.shrinkage,
+            current_weights=body.current_weights,
+        )
+        if body.persist:
+            result = InstitutionalService(db).save(
+                "optimization", inputs=body.model_dump(exclude={"persist"}), result=result,
+                data_class=result.get("data_class"),
+            )
+        return result
+
+    @app.post("/api/institutional/validate", tags=["institutional"])
+    def institutional_validate(body: ValidationRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        result = walk_forward(
+            folds=body.folds, train=body.train, validation=body.validation,
+            test=body.test, embargo=body.embargo, step=body.step, mode=body.mode,
+            lookbacks=tuple(body.lookbacks), rebalance=body.rebalance,
+            commission_bps=body.commission_bps,
+        )
+        if body.persist:
+            result = InstitutionalService(db).save_validation(
+                result, body.model_dump(exclude={"persist"})
+            )
+        return result
+
+    @app.get("/api/institutional/runs", tags=["institutional"])
+    def institutional_runs(limit: int = Query(default=50, ge=1, le=200),
+                           db: Database = Depends(get_db)) -> dict[str, Any]:
+        items = InstitutionalService(db).list_runs(limit=limit)
+        return {"items": items, "count": len(items), "schema": "atlas.institutional.run.v1"}
+
+    @app.get("/api/institutional/runs/{run_id}", tags=["institutional"])
+    def institutional_run_get(run_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return InstitutionalService(db).get_run(run_id)
+
+    @app.get("/api/institutional/runs/{run_id}/attempts", tags=["institutional"])
+    def institutional_run_attempts(run_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        service = InstitutionalService(db)
+        service.get_run(run_id)
+        return {"run_id": run_id, "items": service.validation_attempts(run_id)}
+
+    @app.post("/api/institutional/applications", tags=["institutional"], status_code=201)
+    def institutional_application_create(
+        body: InstitutionalApplicationRequest, db: Database = Depends(get_db)
+    ) -> dict[str, Any]:
+        service = InstitutionalService(db)
+        document = service.application_document(
+            kind=body.kind, name=body.name, inputs=body.inputs, result=body.result,
+            object_ids=body.object_ids,
+        )
+        return service.save_application(document)
+
+    @app.get("/api/institutional/applications", tags=["institutional"])
+    def institutional_applications(limit: int = Query(default=50, ge=1, le=200),
+                                   db: Database = Depends(get_db)) -> dict[str, Any]:
+        items = research_objects.ResearchObjectStore(db).list(kind="application", limit=limit)
         return {"items": items, "count": len(items), "schema": "atlas.research_object.v1"}
 
     @app.post("/api/research/objects/{object_id}/execute", tags=["research"])

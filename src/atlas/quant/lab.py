@@ -72,6 +72,20 @@ def universe(db: Database, *, limit: int = 100) -> list[dict[str, Any]]:
     return result
 
 
+def _strategy_identity(spec: dict[str, Any]) -> dict[str, Any]:
+    """Compare the declaration, not a compiler-generated version stamp.
+
+    ``model_fingerprint`` includes the compiler and operator-registry versions. Adding
+    an unrelated operator must not make the same declared strategy look different; the
+    executable model is recompiled and fingerprinted for each run.
+    """
+    identity = copy.deepcopy(spec)
+    signal = identity.get("signal")
+    if isinstance(signal, dict):
+        signal.pop("model_fingerprint", None)
+    return identity
+
+
 def _source_ids_for(db: Database, security_id: str, mic: str) -> list[str]:
     rows = db.query(
         "SELECT DISTINCT source_id FROM bar WHERE security_id = ? AND mic = ? ORDER BY source_id",
@@ -103,7 +117,7 @@ class QuantLab:
         )
         if existing:
             current = self.objects.get(existing["object_id"])
-            if current["document"].get("spec") != document["spec"]:
+            if _strategy_identity(current["document"].get("spec", {})) != _strategy_identity(document["spec"]):
                 raise ValidationError(
                     "a different strategy already uses this name and version; change the name or version",
                     name=document["name"], version=document["version"],

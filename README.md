@@ -1,4 +1,4 @@
-# Atlas Quant — Phase 4
+# Atlas Quant — Phase 5
 
 **A local-first financial research terminal and quantitative research lab built on a
 point-in-time evidence platform.**
@@ -6,21 +6,24 @@ point-in-time evidence platform.**
 Phase 1 built the trustworthy layer: immutable evidence, exact availability, stable
 security identity, adjustment mathematics and a reverse dependency index. Phase 2 added the
 terminal. Phase 3 added the compiled financial model runtime, Model Forge, DCF and research
-applications. **Phase 4 adds Quant Lab:** point-in-time features, versioned strategies,
-next-open chronological backtests, an independently reconciled portfolio ledger, IBM
-real-data experiments, Model Forge signals, persistent experiments and Time Capsules.
-See [docs/PHASE4_IMPLEMENTATION.md](docs/PHASE4_IMPLEMENTATION.md).
+applications. Phase 4 added Quant Lab: point-in-time features, versioned strategies,
+next-open backtests, an independently reconciled ledger, IBM real-data experiments and
+Time Capsules. **Phase 5 adds institutional research:** a dated Treasury curve, independently
+validated bond and European-option analytics, aligned portfolio risk, constrained
+optimization, walk-forward validation with a complete attempt ledger, typed compiler
+operators and two research applications inside Lab. See
+[docs/PHASE5_IMPLEMENTATION.md](docs/PHASE5_IMPLEMENTATION.md).
 
 ```
 5 issuers · 8 securities · 14,977 filings · 23,583 evidence records · 17,363 bars
-6,793 real IBM vendor bars · 114 real IBM actions · schema v6
-333 baseline backend tests + 11 Phase 4 tests · 4 frontend tests
-12 legacy browser journeys + 11 Studio checks + Phase 4 historical/Lab journey
-Real SEC fundamentals for all issuers · IBM prices REAL (Alpha Vantage demo, reported)
+6,793 real IBM vendor bars · 114 real IBM actions · schema v7
+354 backend tests (344 through Phase 4 + 10 Phase 5/regression) · 4 frontend tests
+Real SEC fundamentals for all issuers · official public 2024 U.S. Treasury curve
+IBM prices REAL (Alpha Vantage demo, reported) · Phase 5 multi-asset panel SYNTHETIC
 Apple/Microsoft/Walmart/Alphabet prices and actions clearly labelled SYNTHETIC
 ```
 
-![Markets overview](artifacts/01-markets-desktop.png)
+![Institutional fixed-income research](artifacts/29-institutional-fixed-income.png)
 
 ---
 
@@ -68,6 +71,27 @@ Apple/Microsoft/Walmart/Alphabet prices and actions clearly labelled SYNTHETIC
 | Vectorized preview | `/api/quant/preview` | close-to-close triage, explicitly not a fill simulation |
 | Experiments and Time Capsule | Lab history/capsule | save, reopen, fork, compare, replay, export |
 | Source archives | `/api/research/archive` | SHA-256 bytes plus rights/retention metadata |
+
+### Phase 5 institutional research
+
+| Capability | Where | Notes |
+|---|---|---|
+| Multi-instrument panel | `/api/institutional/universe` | 935 aligned returns, 3 active synthetic names, 1 documented delisting |
+| Treasury curve | `/api/institutional/curve` | official 2024 CSV, semiannual par bootstrap, exact SHA-256 |
+| Bond analytics | `/api/institutional/bond` | clean/dirty price, accrued, YTM, durations, convexity, DV01, shocks |
+| Option analytics | `/api/institutional/option` | BSM price/Greeks, parity, implied volatility |
+| Portfolio risk | `/api/institutional/portfolio` | covariance, beta, VaR/ES, drawdown, contributions, sectors, stress |
+| Optimization | `/api/institutional/optimize` | long-only, cap, cash, target return; explicit infeasibility |
+| Walk-forward | `/api/institutional/validate` | rolling/expanding, embargo, frozen test, 24/36-attempt logs |
+| Compiler operators | `/api/models/operators` | discount, bond, option, variance, volatility and risk contributions |
+| Research applications | `/lab/institutional` | fixed income, portfolio risk, OOS validation, save/reopen/fork/export |
+
+Reference bond (4.25% 2029, 2024-06-28 curve): clean **99.634862**, YTM **4.3294%**,
+modified duration **4.461737**, DV01 **0.045422** per 100 face. BSM reference
+(`S=K=100, T=1, r=5%, σ=20%`): call **10.450584**, put **5.573526**, parity residual below
+`1e-12`. The 3-fold synthetic walk-forward returns **-4.18%** versus **2.33%** for equal
+weight (189 test sessions); with 36 attempts, adjusted p is **1.0**. Negative results are
+retained. Benchmarks and limits: [docs/PHASE5_BENCHMARKS.md](docs/PHASE5_BENCHMARKS.md).
 
 Real IBM demonstration, 2,977 sessions (2015-01-02 → 2026-11-03), $100,000,
 2 bps commission + 5 bps slippage: buy-and-hold **108.60%**, 20/100 trend **-39.49%**,
@@ -195,7 +219,7 @@ and caveats: [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 ## 7. Verification
 
 ```bash
-.venv/bin/python -m pytest -q          # 344 passed (333 baseline + 11 Phase 4)
+.venv/bin/python -m pytest -q          # 354 passed (344 through Phase 4 + 10 Phase 5/regression)
 cd web && npm test -- --run            # 4 passed
 cd web && npm run build                # tsc + vite
 ```
@@ -203,7 +227,9 @@ cd web && npm run build                # tsc + vite
 Browser journeys (`web/e2e/journeys.mjs`) cover the legacy terminal journeys;
 `web/e2e/studio.mjs` covers 11 Phase 3 checks; `web/e2e/phase4.mjs` covers historical
 reopen, buy-and-hold/trend/custom-model runs, accounting, Time Capsule replay, comparison,
-JSON export and a 390px mobile viewport. Screenshots are in `artifacts/`.
+JSON export and a 390px mobile viewport. `web/e2e/phase5.mjs` covers the Treasury curve,
+bond pricing, saved fixed-income application, manifest download, portfolio risk,
+optimization, walk-forward, comparison and a 390px viewport. Screenshots are in `artifacts/`.
 
 ---
 
@@ -212,16 +238,18 @@ JSON export and a 390px mobile viewport. Screenshots are in `artifacts/`.
 ```
 src/atlas/
   core/        ids, units, temporal semantics, concept registry, typed errors
-  storage/     SQLite engine, versioned migrations (schema v6), source registry
+  storage/     SQLite engine, versioned migrations (schema v7), source registry
   evidence/    temporal evidence kernel, selection, provenance
   entities/    issuer / security / listing / ticker master and resolution
   market/      calendars, immutable bars, corporate actions, adjustments
   ingestion/   SEC client + parsers, CSV/Parquet import
   terminal/    read models, indicators, screener, user stores, workspaces, FastAPI app
   quant/       features, strategy contracts, portfolio ledger, simulator, Quant Lab
+  finance/     Treasury curves, bond analytics, BSM options, statistical primitives
+  institutional/ multi-asset fixture, risk, optimizer, walk-forward, persistence
   research/    research objects and content-addressed source archives
   cli.py       command line interface (incl. `serve`)
-tests/         344 tests (Phase 1–4 plus terminal API/workspaces)
+tests/         354 tests (Phase 1–5 plus terminal API/workspaces)
 web/           React 19 + TypeScript + Vite terminal; Vitest and Playwright journeys
 benchmarks/    Phase 1 benchmarks + terminal_bench.py
 fixtures/      real SEC payloads and labelled synthetic fixtures
@@ -238,8 +266,16 @@ never the reverse. The kernel does not know HTTP exists.
 
 * IBM prices are real vendor demo observations; the other four issuers are synthetic. No
   licensed feed or survivorship-free universe is present.
-* Quant Lab supports one instrument, long-only, raw daily bars and next-open fills. It does
-  not model shorting, partial fills, market impact, intraday auctions or an order book.
+* Phase 5's multi-asset panel is **synthetic**, with one delisted path. It is not a real
+  market universe and is not survivorship-bias-free. IBM remains the only real security
+  with price bars. No licensed multi-security history is present.
+* Quant Lab supports one real instrument, long-only, raw daily bars and next-open fills. It
+  does not model shorting, partial fills, market impact, intraday auctions or an order book.
+* Phase 5 pricing is pure Python: no QuantLib, ORE, NumPy/SciPy, CVXPY or pandas is installed
+  or claimed. Bonds are hypothetical, options are model values, and the optimizer handles
+  at most eight assets with no turnover or sector caps.
+* `ATLAS_MASTER_SPEC.md` v1.1 is absent from the checkout; `docs/PHASE5_CONTRACT.md` and the
+  Phase 5 documents are the in-repo authority until the supplied master is added.
 * No news, transcripts, estimates or analyst data; events are filings and actions only.
 * Screening covers 4 issuers, not a market.
 * X-Ray is reachable from statement cells, metrics and workspace evidence panels; chart
@@ -259,6 +295,19 @@ never the reverse. The kernel does not know HTTP exists.
 |---|---|
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | module contracts, schema, ingest/selection algorithms |
 | [docs/PHASE4_IMPLEMENTATION.md](docs/PHASE4_IMPLEMENTATION.md) | what Phase 4 built, real-data results, verification and limits |
+| [docs/PHASE5_IMPLEMENTATION.md](docs/PHASE5_IMPLEMENTATION.md) | Phase 5 subsystems, schema 7, verification and boundaries |
+| [docs/MULTI_INSTRUMENT_RESEARCH.md](docs/MULTI_INSTRUMENT_RESEARCH.md) | synthetic universe, alignment and portfolio semantics |
+| [docs/HISTORICAL_UNIVERSE_INTEGRITY.md](docs/HISTORICAL_UNIVERSE_INTEGRITY.md) | membership, delisting and survivorship limits |
+| [docs/WALK_FORWARD_VALIDATION.md](docs/WALK_FORWARD_VALIDATION.md) | partitions, selection protocol and attempt ledger |
+| [docs/INSTITUTIONAL_PRICING_ARCHITECTURE.md](docs/INSTITUTIONAL_PRICING_ARCHITECTURE.md) | dependency audit and adapter boundary |
+| [docs/YIELD_CURVE_CONTRACT.md](docs/YIELD_CURVE_CONTRACT.md) | Treasury source, bootstrap and conventions |
+| [docs/BOND_PRICING_VALIDATION.md](docs/BOND_PRICING_VALIDATION.md) | bond formulas, reference values and tolerances |
+| [docs/DERIVATIVES_PRICING.md](docs/DERIVATIVES_PRICING.md) | BSM model, conventions and limitations |
+| [docs/PORTFOLIO_RISK.md](docs/PORTFOLIO_RISK.md) | covariance, VaR/ES, contributions and stress |
+| [docs/PORTFOLIO_OPTIMIZATION.md](docs/PORTFOLIO_OPTIMIZATION.md) | constraints, solver and diagnostics |
+| [docs/PHASE5_BENCHMARKS.md](docs/PHASE5_BENCHMARKS.md) | measured cold/warm research workloads |
+| [docs/PHASE5_READINESS.md](docs/PHASE5_READINESS.md) | acceptance gates and unsupported scope |
+| [docs/PHASE6_CONTRACT.md](docs/PHASE6_CONTRACT.md) | stable interfaces and next-phase prerequisites |
 | [docs/QUANT_LAB_ARCHITECTURE.md](docs/QUANT_LAB_ARCHITECTURE.md) | Quant Lab modules, event ordering and boundaries |
 | [docs/STRATEGY_CONTRACT.md](docs/STRATEGY_CONTRACT.md) | strategy schema, supported signals and rejection rules |
 | [docs/FEATURE_ENGINE.md](docs/FEATURE_ENGINE.md) | features, cutoffs and anti-leakage behavior |
@@ -271,7 +320,7 @@ never the reverse. The kernel does not know HTTP exists.
 | [docs/CONCEPTS.md](docs/CONCEPTS.md) | canonical concept coverage and mapping policy |
 | [docs/BENCHMARKS.md](docs/BENCHMARKS.md) | hardware, datasets, Phase 1 and Phase 2 measurements |
 | [docs/VALIDATION.md](docs/VALIDATION.md) | reconciliation methodology and results |
-| [docs/adr/](docs/adr/) | architecture decision records (14) |
+| [docs/adr/](docs/adr/) | architecture decision records (24) |
 
 Licence: Apache-2.0. Fixtures retain the licensing of their sources; see
 [fixtures/README.md](fixtures/README.md).
