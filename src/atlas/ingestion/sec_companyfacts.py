@@ -181,54 +181,97 @@ def parse_companyfacts(
     dedupe: dict[tuple[str, ...], EvidenceRecord] = {}
     conflicting: dict[tuple[str, ...], set[str]] = {}
     concepts_covered: list[str] = []
+    mismatch_reported: set[tuple[str, str]] = set()
 
     for concept_key, concept in CONCEPTS.items():
         if wanted is not None and concept_key not in wanted:
             continue
-        resolution = resolve_tag(concept_key, available, issuer_overrides=issuer_overrides)
-        if resolution is None:
+        if issuer_overrides and concept_key in issuer_overrides:
+            resolution = resolve_tag(concept_key, available, issuer_overrides=issuer_overrides)
+            candidates = (
+                [] if resolution is None
+                else [(resolution.priority, resolution.namespace, resolution.tag)]
+            )
+        else:
+            # An issuer can migrate from one XBRL element to another (for example from
+            # RevenueFromContractWithCustomerExcludingAssessedTax to Revenues). Resolve a
+            # source tag per reported period rather than once for the whole history. A
+            # single global resolution silently dropped either the old or the new years.
+            candidates = [
+                (index, namespace, tag)
+                for index, (namespace, tag) in enumerate(concept.source_tags)
+                if (namespace, tag) in available
+            ]
+        if not candidates:
             continue
         concepts_covered.append(concept_key)
-        mapped_tags.add((resolution.namespace, resolution.tag))
-        element = facts.get(resolution.namespace, {}).get(resolution.tag, {})
-        units = element.get("units", {}) if isinstance(element, Mapping) else {}
-        if not isinstance(units, Mapping):
-            continue
-        for unit_raw, observations in units.items():
-            parsed_unit = parse_unit(unit_raw)
-            if parsed_unit.kind is not concept.unit_kind:
-                observations_skipped_units += len(observations or [])
-                result.issues.append(
-                    {
-                        "code": "unit_kind_mismatch",
-                        "severity": "warning",
-                        "concept": concept_key,
-                        "unit": unit_raw,
-                        "detail": (
-                            f"{concept_key} is expected in {concept.unit_kind.value} units; "
-                            f"observations reported in {parsed_unit.kind.value} were not mapped"
-                        ),
-                    }
-                )
+        selected_units: dict[str, dict[tuple[str, str, str], tuple[int, str, str, Mapping[str, Any]]]] = {}
+        for priority, namespace, tag in candidates:
+            mapped_tags.add((namespace, tag))
+            element = facts.get(namespace, {}).get(tag, {})
+            units = element.get("units", {}) if isinstance(element, Mapping) else {}
+            if not isinstance(units, Mapping):
                 continue
+            for unit_raw, observations in units.items():
+                parsed_unit = parse_unit(unit_raw)
+                if parsed_unit.kind is not concept.unit_kind:
+                    observations_skipped_units += len(observations or [])
+                    issue_key = (concept_key, unit_raw)
+                    if issue_key not in mismatch_reported:
+                        mismatch_reported.add(issue_key)
+                        result.issues.append(
+                            {
+                                "code": "unit_kind_mismatch",
+                                "severity": "warning",
+                                "concept": concept_key,
+                                "unit": unit_raw,
+                                "detail": (
+                                    f"{concept_key} is expected in {concept.unit_kind.value} units; "
+                                    f"observations reported in {parsed_unit.kind.value} were not mapped"
+                                ),
+                            }
+                        )
+                    continue
+                chosen = selected_units.setdefault(unit_raw, {})
+                for observation in observations or []:
+                    observations_total += 1
+                    period = _period_for(observation)
+                    if period is None:
+                        observations_skipped_period += 1
+                        result.issues.append(
+                            {
+                                "code": "invalid_period",
+                                "severity": "warning",
+                                "concept": concept_key,
+                                "detail": f"observation without a usable period: {observation!r}"[:400],
+                            }
+                        )
+                        continue
+                    if observation.get("val") is None:
+                        observations_skipped_period += 1
+                        continue
+                    # Only an exact repeat (same period, accession and value) is collapsed
+                    # here. A filing that asserts two different values for one period must
+                    # survive this pass so the dedupe/conflict stage below can flag it.
+                    key = (
+                        period.start.isoformat() if period.start else "",
+                        period.end.isoformat(),
+                        str(observation.get("accn") or ""),
+                        str(observation.get("val")),
+                    )
+                    if key in chosen:
+                        duplicates_removed += 1
+                        continue
+                    chosen[key] = (priority, namespace, tag, observation)
+        if not selected_units:
+            continue
+        for unit_raw, choices in selected_units.items():
+            parsed_unit = parse_unit(unit_raw)
             if parsed_unit.currency:
                 currencies_by_concept.setdefault(concept_key, set()).add(parsed_unit.currency)
-            for observation in observations or []:
-                observations_total += 1
+            for priority, namespace, tag, observation in choices.values():
                 period = _period_for(observation)
-                if period is None:
-                    observations_skipped_period += 1
-                    result.issues.append(
-                        {
-                            "code": "invalid_period",
-                            "severity": "warning",
-                            "concept": concept_key,
-                            "detail": f"observation without a usable period: {observation!r}"[:400],
-                        }
-                    )
-                    continue
-                if observation.get("val") is None:
-                    observations_skipped_period += 1
+                if period is None or observation.get("val") is None:
                     continue
                 try:
                     value = decimal_from_json(observation.get("val"))
@@ -302,8 +345,8 @@ def parse_companyfacts(
                         source_url=source_url,
                         source_dataset="sec_companyfacts",
                         source_dataset_version=payload.get("version"),
-                        taxonomy=resolution.namespace,
-                        source_concept=resolution.tag,
+                        taxonomy=namespace,
+                        source_concept=tag,
                         accession_number=accession,
                         form_type=form,
                         accepted_at=filing.acceptance_datetime if filing else None,

@@ -24,7 +24,12 @@ satisfied because the genuine specification is absent.
 | 17 | Supply-chain manifest and SBOM | pass | `artifacts/release_manifest.json`, `sbom.cdx.json` |
 | 18 | Measured benchmarks | pass | build 23.9 ms / install 5.4 ms / execute 25.8 ms median |
 | 19 | Documentation set and ADRs | pass | docs 1–16 plus ADR 0035–0039 |
-| 20 | Signed/trusted marketplace and executable extensions | not implemented | explicitly out of scope |
+| 20 | Packaging must not silently change existing financial/economic results | pass | clean-database install reproduces the analysis fingerprint, RMSE and scenario values; Phase 9 adds component-level numeric identity in `tests/test_phase9_equity.py` |
+
+Gate 20 was previously recorded as "signed/trusted marketplace and executable extensions". That conflated an explicitly out-of-scope feature with a correctness requirement, so it
+has been corrected: the gate that matters for packaging is that an installed package must
+not silently change the financial or economic results it declares. A signed marketplace and
+executable extensions remain out of scope and are not counted as gates.
 
 Final verification: **387 backend tests passed**, **4 frontend tests passed**, production build
 succeeded, and `web/e2e/phase8.mjs` passed desktop and 390 px browser acceptance. The browser

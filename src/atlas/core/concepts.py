@@ -352,8 +352,15 @@ _CONCEPTS: tuple[ConceptDef, ...] = (
         "Shares outstanding",
         UnitKind.SHARES,
         "instant",
-        [("dei", "EntityCommonStockSharesOutstanding")],
-        note="The dei element is cover-page shares outstanding at the filing date, not the balance-sheet date.",
+        [
+            ("us-gaap", "CommonStockSharesOutstanding"),
+            ("dei", "EntityCommonStockSharesOutstanding"),
+        ],
+        note=(
+            "CommonStockSharesOutstanding is dated at the balance-sheet instant and is preferred. "
+            "The dei fallback is cover-page shares at the filing date, not the balance-sheet date; "
+            "the source element is always exposed."
+        ),
     ),
     # ---------------------------------------------------------------- cashflow
     _c(

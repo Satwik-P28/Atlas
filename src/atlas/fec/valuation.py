@@ -215,20 +215,52 @@ def defaults_from_metrics(metrics: dict[str, Any]) -> dict[str, Any]:
     debt = values.get("total_debt", {}).get("value")
     shares = values.get("shares_outstanding", {}).get("value")
     shares_provenance: dict[str, Any] | None = None
+    if shares:
+        item = values["shares_outstanding"]
+        shares_provenance = {
+            "value": float(shares),
+            "kind": item.get("kind"),
+            "basis": "period_end_share_count",
+            "formula": None,
+            "evidence_ids": item.get("evidence_ids", []),
+            "period_end": item.get("period_end"),
+            "note": (
+                "point-in-time count at the balance-sheet date; option dilution and later "
+                "issuance are not reflected"
+            ),
+        }
     if not shares:
-        net_income = values.get("net_income", {}).get("value")
+        weighted = values.get("weighted_average_shares_diluted", {}).get("value")
+        if weighted:
+            # A period-weighted diluted count is the correct denominator for diluted EPS
+            # and per-share DCF output. It is not a point-in-time cover-page count, so it
+            # is returned with different provenance rather than relabelled.
+            shares = float(weighted)
+            shares_provenance = {
+                "value": shares,
+                "kind": values["weighted_average_shares_diluted"].get("kind"),
+                "basis": "weighted_average_diluted",
+                "formula": None,
+                "evidence_ids": values["weighted_average_shares_diluted"].get("evidence_ids", []),
+                "period_end": values["weighted_average_shares_diluted"].get("period_end"),
+                "note": "period-weighted diluted shares; used for diluted per-share output, not a cover-page count",
+            }
+    if not shares:
+        net_income = (values.get("net_income") or values.get("net_income_common") or {}).get("value")
+        net_income_key = "net_income" if values.get("net_income", {}).get("value") else "net_income_common"
         eps = values.get("eps_diluted", {}).get("value")
         if net_income and eps and eps > 0:
             shares = float(net_income) / float(eps)
             shares_provenance = {
                 "value": shares,
                 "kind": "derived_estimate",
-                "formula": "net_income / eps_diluted (implied weighted diluted shares)",
+                "basis": "derived_net_income_over_eps",
+                "formula": f"{net_income_key} / eps_diluted (implied weighted diluted shares)",
                 "evidence_ids": sorted(set(
-                    values.get("net_income", {}).get("evidence_ids", [])
+                    values.get(net_income_key, {}).get("evidence_ids", [])
                     + values.get("eps_diluted", {}).get("evidence_ids", [])
                 )),
-                "period_end": values.get("net_income", {}).get("period_end"),
+                "period_end": values.get(net_income_key, {}).get("period_end"),
                 "note": "reported share count is unavailable; this is an evidenced derivation, not a reported count",
             }
         else:

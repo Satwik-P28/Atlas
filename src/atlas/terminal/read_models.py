@@ -548,7 +548,15 @@ def issuer_metrics(
     kernel = EvidenceKernel(db)
     result = kernel.as_of(entity_id=issuer["issuer_id"], as_of=instant, mode=resolved_mode)
     facts = result.facts
-    duration_facts = [f for f in facts if f.period_type == "duration" and (f.fiscal_period or "") == "FY"]
+    # A fiscal year is a 330-400 day duration. A companyfacts payload can tag a
+    # transition period or a quarterly window as "FY"; those are not annual periods
+    # and must not become the reference period for a trailing metric.
+    duration_facts = [
+        f for f in facts
+        if f.period_type == "duration"
+        and (f.fiscal_period or "") == "FY"
+        and 330 <= (_duration_days(f.to_dict()) or 0) <= 400
+    ]
     reference_end = max((f.period_end for f in duration_facts if f.period_end), default=None)
     previous_end = None
     if reference_end:
@@ -598,6 +606,7 @@ def issuer_metrics(
         ("gross_profit", "Gross profit"),
         ("operating_income", "Operating income"),
         ("net_income", "Net income"),
+        ("net_income_common", "Net income available to common"),
         ("operating_cash_flow", "Operating cash flow"),
         ("capex", "Capital expenditure"),
         ("assets", "Total assets"),
@@ -607,6 +616,7 @@ def issuer_metrics(
         ("long_term_debt", "Long-term debt"),
         ("short_term_debt", "Short-term debt"),
         ("shares_outstanding", "Shares outstanding"),
+        ("weighted_average_shares_diluted", "Weighted average diluted shares"),
         ("eps_diluted", "Diluted EPS"),
         ("research_and_development", "Research and development"),
     ]
@@ -886,7 +896,9 @@ def financial_history(
     duration = [
         fact
         for fact in result.facts
-        if fact.period_type == "duration" and (fact.fiscal_period or "") == "FY"
+        if fact.period_type == "duration"
+        and (fact.fiscal_period or "") == "FY"
+        and 330 <= (_duration_days(fact.to_dict()) or 0) <= 400
     ]
     periods = sorted(
         {fact.period_end for fact in duration if fact.concept in wanted and fact.period_end},

@@ -378,6 +378,28 @@ export const api = {
     if (!response.ok) throw new ApiError(response.status, 'download_failed', 'Package download failed')
     return response.blob()
   },
+  equityCoverage: () => request<Record<string, any>>('/api/equity/coverage'),
+  equityWorkspace: (identifier: string, options: { asOf?: string | null; mode?: AsOfMode } = {}) =>
+    request<Record<string, any>>(
+      `/api/equity/${enc(identifier)}/workspace${qs({ as_of: options.asOf, mode: options.mode })}`,
+    ),
+  equityReadiness: (identifier: string) =>
+    request<Record<string, any>>(`/api/equity/${enc(identifier)}/readiness`),
+  equityReport: (identifier: string, body: Record<string, unknown> = {}) =>
+    request<Record<string, any>>(`/api/equity/${enc(identifier)}/report`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  equityPackage: (identifier: string, body: Record<string, unknown> = {}) =>
+    request<Record<string, any>>(`/api/equity/${enc(identifier)}/package`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  equityDownload: async (identifier: string): Promise<Blob> => {
+    const response = await fetch(`${BASE}/api/equity/${enc(identifier)}/package.atlas`)
+    if (!response.ok) throw new ApiError(response.status, 'download_failed', 'Research package download failed')
+    return response.blob()
+  },
   domainPacks: () => request<Record<string, any>>('/api/domain-packs'),
 } satisfies Record<string, unknown>
 

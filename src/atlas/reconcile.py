@@ -174,86 +174,107 @@ def _expected_observations(payload: Mapping[str, Any], report: ReconcileReport) 
         return {}
     expected: dict[tuple, _Expected] = {}
     for concept_key, concept in CONCEPTS.items():
-        chosen: tuple[str, str] | None = None
-        for namespace, tag in concept.source_tags:
-            namespace_facts = facts.get(namespace)
-            if isinstance(namespace_facts, Mapping) and tag in namespace_facts:
-                chosen = (namespace, tag)
-                break
-        if chosen is None:
+        # An issuer can migrate from one XBRL element to another between years, so the
+        # parser resolves a tag per reported period instead of once for the whole
+        # history. The independent expectation set has to walk every source tag too and
+        # apply the registry's precedence per source observation; picking a single tag
+        # here would silently disagree with the parser about the other years.
+        candidates = [
+            (priority, namespace, tag)
+            for priority, (namespace, tag) in enumerate(concept.source_tags)
+            if isinstance(facts.get(namespace), Mapping) and tag in facts[namespace]
+        ]
+        if not candidates:
             continue
         report.concepts_checked.append(concept_key)
-        units = facts[chosen[0]][chosen[1]].get("units") or {}
-        if not isinstance(units, Mapping):
-            continue
-        for unit_raw, observations in units.items():
-            try:
-                unit = parse_unit(unit_raw)
-            except Exception:  # noqa: BLE001 - unparseable unit is not a fact Atlas can use
-                report.add(
-                    "unparsable_source_unit",
-                    SEVERITY_WARNING,
-                    concept=concept_key,
-                    unit=str(unit_raw),
-                    detail=f"source unit {unit_raw!r} cannot be parsed",
-                )
+        selected: dict[tuple, tuple[int, _Expected]] = {}
+        for priority, namespace, tag in candidates:
+            units = facts[namespace][tag].get("units") or {}
+            if not isinstance(units, Mapping):
                 continue
-            if unit.kind is not concept.unit_kind:
-                # A different unit *kind* is legitimately not mapped; the parser reports
-                # it too. This is not a disagreement about a stored value.
-                continue
-            for observation in observations or []:
-                if not isinstance(observation, Mapping):
-                    continue
-                end = observation.get("end")
-                raw_value = observation.get("val")
-                if not end or raw_value is None:
-                    continue
-                start = observation.get("start") or ""
-                accession = str(observation.get("accn") or "")
+            asserted: dict[tuple, _Expected] = {}
+            for unit_raw, observations in units.items():
                 try:
-                    value = Decimal(str(raw_value))
-                except (InvalidOperation, ValueError):
+                    unit = parse_unit(unit_raw)
+                except Exception:  # noqa: BLE001 - unparseable unit is not a fact Atlas can use
                     report.add(
-                        "unparsable_source_value",
-                        SEVERITY_ERROR,
+                        "unparsable_source_unit",
+                        SEVERITY_WARNING,
                         concept=concept_key,
-                        unit=unit.raw,
-                        period_end=str(end),
-                        accession=accession,
-                        detail=f"source value {raw_value!r} is not a decimal",
+                        unit=str(unit_raw),
+                        detail=f"source unit {unit_raw!r} cannot be parsed",
                     )
                     continue
-                key = (concept_key, unit.raw, start, str(end), accession)
-                if key in expected:
-                    existing = expected[key]
-                    if existing.value != value:
+                if unit.kind is not concept.unit_kind:
+                    # A different unit *kind* is legitimately not mapped; the parser reports
+                    # it too. This is not a disagreement about a stored value.
+                    continue
+                for observation in observations or []:
+                    if not isinstance(observation, Mapping):
+                        continue
+                    end = observation.get("end")
+                    raw_value = observation.get("val")
+                    if not end or raw_value is None:
+                        continue
+                    start = observation.get("start") or ""
+                    accession = str(observation.get("accn") or "")
+                    try:
+                        value = Decimal(str(raw_value))
+                    except (InvalidOperation, ValueError):
                         report.add(
-                            "source_asserts_two_values",
+                            "unparsable_source_value",
                             SEVERITY_ERROR,
                             concept=concept_key,
                             unit=unit.raw,
                             period_end=str(end),
                             accession=accession,
-                            detail=(
-                                f"source document asserts {existing.value} and {value} for the same "
-                                "accession, period and unit"
-                            ),
+                            detail=f"source value {raw_value!r} is not a decimal",
                         )
-                    continue
-                expected[key] = _Expected(
-                    concept=concept_key,
-                    unit=unit.raw,
-                    period_start=str(start),
-                    period_end=str(end),
-                    accession=accession,
-                    value=value,
-                    form=str(observation.get("form") or ""),
-                    filed=str(observation.get("filed")) if observation.get("filed") else None,
-                    fiscal_year=int(observation["fy"]) if observation.get("fy") is not None else None,
-                    fiscal_period=str(observation["fp"]) if observation.get("fp") else None,
-                    period_type="duration" if start else "instant",
+                        continue
+                    key = (concept_key, unit.raw, start, str(end), accession)
+                    if key in asserted:
+                        existing = asserted[key]
+                        if existing.value != value:
+                            report.add(
+                                "source_asserts_two_values",
+                                SEVERITY_ERROR,
+                                concept=concept_key,
+                                unit=unit.raw,
+                                period_end=str(end),
+                                accession=accession,
+                                detail=(
+                                    f"source document asserts {existing.value} and {value} for the same "
+                                    "accession, period and unit"
+                                ),
+                            )
+                        continue
+                    expectation = _Expected(
+                        concept=concept_key,
+                        unit=unit.raw,
+                        period_start=str(start),
+                        period_end=str(end),
+                        accession=accession,
+                        value=value,
+                        form=str(observation.get("form") or ""),
+                        filed=str(observation.get("filed")) if observation.get("filed") else None,
+                        fiscal_year=int(observation["fy"]) if observation.get("fy") is not None else None,
+                        fiscal_period=str(observation["fp"]) if observation.get("fp") else None,
+                        period_type="duration" if start else "instant",
+                    )
+                    asserted[key] = expectation
+                    existing = selected.get(key)
+                    if existing is None or priority < existing[0]:
+                        selected[key] = (priority, expectation)
+        for _, expectation in selected.values():
+            expected[
+                (
+                    expectation.concept,
+                    expectation.unit,
+                    expectation.period_start,
+                    expectation.period_end,
+                    expectation.accession,
                 )
+            ] = expectation
     report.expected_observations = len(expected)
     return expected
 

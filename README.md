@@ -1,4 +1,4 @@
-# Atlas Quant — Phase 8
+# Atlas Quant — Phase 9
 
 **A local-first financial research terminal, quantitative research lab and scientific
 learning system built on a point-in-time evidence platform.**
@@ -27,15 +27,28 @@ unsupported. See [docs/APPLICATION_PACKAGE_SPEC.md](docs/APPLICATION_PACKAGE_SPE
 [docs/PHASE8_IMPLEMENTATION.md](docs/PHASE8_IMPLEMENTATION.md) and
 [docs/PHASE8_ACCEPTANCE.md](docs/PHASE8_ACCEPTANCE.md).
 
+**Phase 9 adds integrated, source-grounded equity research:** a deterministic report over
+real SEC facts, a point-in-time workspace, an independent DCF component audit, an explicit
+financial-institution refusal, a coverage-versus-valuation readiness split and a portable
+research application that reproduces its numbers from a clean database. The 20-company
+fixture has 16 issuers with valid financial coverage and 17 whose DCF executes and passes
+the arithmetic audit; three financial institutions are refused rather than valued with an
+inadmissible model. See [docs/PHASE9_IMPLEMENTATION.md](docs/PHASE9_IMPLEMENTATION.md),
+[docs/PHASE9_FINANCIAL_RECONCILIATION.md](docs/PHASE9_FINANCIAL_RECONCILIATION.md) and
+[docs/PHASE9_READINESS.md](docs/PHASE9_READINESS.md).
+
 The supplied `ATLAS_MASTER_SPEC.md` v1.2.0 is still **not present** in the checkout. This
-is documented as a blocker through Phase 8; no substitute file was invented. Phase 8
-therefore does not claim master-spec conformance.
+is documented as a blocker through Phase 9; no substitute file was invented. Phase 9
+therefore does not claim master-spec conformance or Phase 9 completion.
 
 ```
 Terminal demo: 5 issuers · 8 securities · 14,977 filings · 23,583 evidence records
 Phase 6 learning demo: 5 real vendor histories · 3,760 bars · 752 sessions · schema v9
 Phase 7 economic demo: 365 public days · 1,095 observations · 12 evidence edges
 Phase 8 package: 47,270 bytes · 6 declarative files · deterministic · unsigned
+Phase 9 real universe: 20 issuers · 489 filings · 26,296 evidence records
+Phase 9 readiness: 16 valid financial coverage · 17 DCF executions · 3 institutions refused · 0 prices
+Phase 9 audit: 7/7 raw SEC comparisons · 8/8 DCF components · package reproduced from a clean database
 Public-domain EIA-930 and NOAA GHCN · two Dallas stations · spatial representativeness
 Observed weather is not a forecast · current archive is not a historical vintage
 Association, not causation · test R² −0.8935 retained · hypothetical firm exposure

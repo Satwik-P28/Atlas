@@ -6,6 +6,7 @@ import Company from './pages/Company'
 import Lab from './pages/Lab'
 import Institutional from './pages/Institutional'
 import Economic from './pages/Economic'
+import EquityResearch from './pages/EquityResearch'
 import Learning from './pages/Learning'
 import Markets from './pages/Markets'
 import Research from './pages/Research'
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/companies" element={<Companies />} />
         <Route path="/companies/:identifier" element={<Company />} />
         <Route path="/research" element={<Research />} />
+        <Route path="/equity" element={<EquityResearch />} />
         <Route path="/screeners" element={<Screener />} />
         <Route path="/studio" element={<Studio />} />
         <Route path="/lab" element={<Lab />} />

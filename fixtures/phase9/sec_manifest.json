@@ -1,0 +1,1137 @@
+{
+  "company_count": 20,
+  "coverage_note": "Retained SEC facts begin in 2018; all annual/10-K observations and the 24 most recent sub-annual observations per unit are kept. Filing metadata is retained only for accessions that support those facts; pre-2018 filing archive files are not included. Market prices are absent. Ticker/exchange metadata in this manifest is a curated CIK-to-listing map; it is not a market feed, and SEC submissions remain the financial-fact source. This is a documented research window, not a claim of complete SEC history.",
+  "documents": [
+    {
+      "cik": "0000320193",
+      "exchange_mic": "XNAS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "gross_profit",
+        "operating_expenses",
+        "research_and_development",
+        "selling_general_administrative",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "5dcfc0547297574243b5342d6965596774bafe54f29b462507831b786155f9c8",
+        "submissions": "ad2e120cd64565c31d09010b7eab7377473b4e2688c413bef8aa2138b1e0b298"
+      },
+      "legal_name": "Apple Inc.",
+      "raw_retrieved_at": "2026-11-05T22:30:50Z",
+      "sector": "Technology",
+      "source_bytes": {
+        "companyfacts": 3858323,
+        "submissions": 164080
+      },
+      "source_sha256": {
+        "companyfacts": "75a78f918313f3336823517d6c34908d23dd07f07e90e625c61e705e3bb6d27b",
+        "submissions": "06cbfdc015e7a3222539e61eb138400befbc2fc64834858776f73a6ea8bcaeb4"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000320193.json"
+      },
+      "ticker": "AAPL"
+    },
+    {
+      "cik": "0000789019",
+      "exchange_mic": "XNAS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "gross_profit",
+        "operating_expenses",
+        "research_and_development",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "37df5d4e771ea531212a635dec9fd52e683742b11e15d96df0943c8150fe4c2d",
+        "submissions": "087150c71b5af7e2195349c9f89faf80f0232dd6edf20bc88f44364792cc5f2e"
+      },
+      "legal_name": "MICROSOFT CORP",
+      "raw_retrieved_at": "2026-11-05T22:30:51Z",
+      "sector": "Technology",
+      "source_bytes": {
+        "companyfacts": 4938072,
+        "submissions": 185905
+      },
+      "source_sha256": {
+        "companyfacts": "8c1903c041f5c27e86ed15f37debb1f41882b7904bba129ef9edc76478b1e8ea",
+        "submissions": "1a4256a23be814a5193601a2c733d1da647c45da4d73dfe98eee58e32f8f9251"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000789019.json"
+      },
+      "ticker": "MSFT"
+    },
+    {
+      "cik": "0001652044",
+      "exchange_mic": "XNAS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "research_and_development",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "net_income_common",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "25c9501e6fa6152c3ca9ec06bf1e5c8a83ba33d659e33260213b0d84d33f3b53",
+        "submissions": "40ec7493f97832fcdfdf03b93848bd0420127dee4fa54ed96865897a95631ee5"
+      },
+      "legal_name": "Alphabet Inc.",
+      "raw_retrieved_at": "2026-11-05T22:30:51Z",
+      "sector": "Communication services",
+      "source_bytes": {
+        "companyfacts": 3250837,
+        "submissions": 152569
+      },
+      "source_sha256": {
+        "companyfacts": "f87bc183f74b45ecf9a0933e0e0a1b6b97ead51a9d29367a7dae436574e1c1d0",
+        "submissions": "7c261cf8dc0fa3f6654dbc3a2ab6a9c0fac7a3b4cc738f23fbf737e120909d99"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0001652044.json"
+      },
+      "ticker": "GOOGL"
+    },
+    {
+      "cik": "0001018724",
+      "exchange_mic": "XNAS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "gross_profit",
+        "operating_expenses",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "8cb52522859beaf2c37d1ed2af2c77b3a2fa67842d08f84dfb02391bca01da81",
+        "submissions": "b42bcf09fa6a69614029d8123d87b94bf934e01018c6b3f2a692c258dcd619fa"
+      },
+      "legal_name": "AMAZON COM INC",
+      "raw_retrieved_at": "2026-11-05T22:30:52Z",
+      "sector": "Consumer discretionary",
+      "source_bytes": {
+        "companyfacts": 4554378,
+        "submissions": 160075
+      },
+      "source_sha256": {
+        "companyfacts": "acddb7c0a6973a1fd08372de3b292298a34eae7f42a7eedc4bdebd3ac659c8fd",
+        "submissions": "427f2a8fd70070334ddc7e2c7eb299a1f5315b4a7a5f250e616921234e0ba420"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0001018724.json"
+      },
+      "ticker": "AMZN"
+    },
+    {
+      "cik": "0001326801",
+      "exchange_mic": "XNAS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "research_and_development",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "net_income_common",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "long_term_debt",
+        "short_term_debt",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "25697864b1a2b7e3695e6be218d7247b9c5c8e73deef95274fbe86ecfd42e6e8",
+        "submissions": "6856304883ef78f0a3cdea54319063260e908b4a25c97daa3fe727ba316087fa"
+      },
+      "legal_name": "Meta Platforms, Inc.",
+      "raw_retrieved_at": "2026-11-05T22:30:52Z",
+      "sector": "Communication services",
+      "source_bytes": {
+        "companyfacts": 2810232,
+        "submissions": 157703
+      },
+      "source_sha256": {
+        "companyfacts": "83c9002a70c6ecbcbe2c4dbcd7020bdacf027f514f29d1560dee3527d2bf55c8",
+        "submissions": "369e6b803a3c5b4304dc1ffdca56ee283969c8d7f1d4297c840d62b5209ca270"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0001326801.json"
+      },
+      "ticker": "META"
+    },
+    {
+      "cik": "0001045810",
+      "exchange_mic": "XNAS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "gross_profit",
+        "operating_expenses",
+        "research_and_development",
+        "selling_general_administrative",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "ae6caf517eb1fbabebabe8089b338c596b933697a7954903dde1a87e4f28e523",
+        "submissions": "46db5ff2201ea5cc52535d376101ea87991351f74a3f7b6fb595014412e8f886"
+      },
+      "legal_name": "NVIDIA CORP",
+      "raw_retrieved_at": "2026-11-05T22:30:53Z",
+      "sector": "Technology",
+      "source_bytes": {
+        "companyfacts": 4092966,
+        "submissions": 159761
+      },
+      "source_sha256": {
+        "companyfacts": "19ef503a5770f5660964b3c3aea6937579d9b359da344afe6a9adf59c63d26ff",
+        "submissions": "d0d8527d09b31831022a6367d05bbdd5f2d2b3eda55323fd3383395016b90aaa"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0001045810.json"
+      },
+      "ticker": "NVDA"
+    },
+    {
+      "cik": "0000051143",
+      "exchange_mic": "XNYS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "gross_profit",
+        "research_and_development",
+        "selling_general_administrative",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "net_income_common",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "31dc82c2814038f2bd2b9cb0bbdf8b133f0b753205d7246c94e319f9983d3fd1",
+        "submissions": "3b7b20dd446475c17d37da3539b06fc76bb1c06ac8e1a8c4a5227d59d40a7e1d"
+      },
+      "legal_name": "INTERNATIONAL BUSINESS MACHINES CORP",
+      "raw_retrieved_at": "2026-11-05T22:30:53Z",
+      "sector": "Technology",
+      "source_bytes": {
+        "companyfacts": 5719403,
+        "submissions": 165683
+      },
+      "source_sha256": {
+        "companyfacts": "10fa1fafa25440b2159e2054dfe47628ba4ed353a258f526704cf9beda432bb8",
+        "submissions": "dea6fa640957da78060fce67323e6ff9b567a6deeedcc1e0dc12f13b1ba727e2"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000051143.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000051143.json"
+      },
+      "ticker": "IBM"
+    },
+    {
+      "cik": "0000019617",
+      "exchange_mic": "XNYS",
+      "fact_concepts": [
+        "revenue",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "net_income_common",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "f9acd9a5caa8a23fa40d6262c666b43f91cf099f19d3d1268edf060e0f340cc5",
+        "submissions": "e52667abec6f58459d5f816bb6fefe239071a3fa6a3b09b373f8a46b6f3c45bf"
+      },
+      "legal_name": "JPMORGAN CHASE & CO",
+      "raw_retrieved_at": "2026-11-05T22:30:54Z",
+      "sector": "Financials",
+      "source_bytes": {
+        "companyfacts": 8132761,
+        "submissions": 4679853
+      },
+      "source_sha256": {
+        "companyfacts": "058c3b43971439f545b351cd477b28ce573edaca5f7ac1aaa0915787e8f689aa",
+        "submissions": "9ccd842681b24d756a5eda79266ae7545f5255cd3ca6d48904e79bf678f7b013"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000019617.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000019617.json"
+      },
+      "ticker": "JPM"
+    },
+    {
+      "cik": "0000886982",
+      "exchange_mic": "XNYS",
+      "fact_concepts": [
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "net_income_common",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "385e7a5b3d2560c1bb761a47959b76d6d0e18063714ff3fa50628bdc67a61308",
+        "submissions": "e5a402d8d680d579c44a508a0cae771073ed09fb7b2ed3bb59de991ab113e493"
+      },
+      "legal_name": "GOLDMAN SACHS GROUP INC",
+      "raw_retrieved_at": "2026-11-05T22:30:55Z",
+      "sector": "Financials",
+      "source_bytes": {
+        "companyfacts": 6143445,
+        "submissions": 2629984
+      },
+      "source_sha256": {
+        "companyfacts": "77d5e27ca54dd2c5d4546e3fad1b38475ff7c5423899ebf544d3a73811cbe65d",
+        "submissions": "357e73eb91ef8fd1dc304a238f670b7ac1fef232d0489bc47147968cd9d8d84a"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000886982.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000886982.json"
+      },
+      "ticker": "GS"
+    },
+    {
+      "cik": "0000200406",
+      "exchange_mic": "XNYS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "gross_profit",
+        "research_and_development",
+        "selling_general_administrative",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "189727c25b4b7f45d76926ae08800aa60cbd163a71ec991fa67d7dcf710810c3",
+        "submissions": "7257dd41c0034c6d60b8a56c8c1cedae7be9a9e14d280c356734c16f7aa764be"
+      },
+      "legal_name": "JOHNSON & JOHNSON",
+      "raw_retrieved_at": "2026-11-05T22:30:55Z",
+      "sector": "Health care",
+      "source_bytes": {
+        "companyfacts": 4218885,
+        "submissions": 154245
+      },
+      "source_sha256": {
+        "companyfacts": "9ce98e50414e9a6704eaf485e1868c2298c6ae36acc85a82c0a3737485303be7",
+        "submissions": "826d25d6bf11a6a11f2a95444fd68456e913555e16a1cd416f714c2b8d32c935"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000200406.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000200406.json"
+      },
+      "ticker": "JNJ"
+    },
+    {
+      "cik": "0000078003",
+      "exchange_mic": "XNYS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "selling_general_administrative",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "net_income_common",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "ded57bb5d99c93d5c71db6427ed71bec23f88100332c865c70cd10e4e60852dc",
+        "submissions": "868379ce482cb3604f52f883cb26b1e6a7c26cba726c5a789bca47581de31524"
+      },
+      "legal_name": "PFIZER INC",
+      "raw_retrieved_at": "2026-11-05T22:30:56Z",
+      "sector": "Health care",
+      "source_bytes": {
+        "companyfacts": 5107152,
+        "submissions": 145666
+      },
+      "source_sha256": {
+        "companyfacts": "8f379293683cf844f7305fbf11e15716090a9cfe2a2af9cc0ef35bb4d77c6bce",
+        "submissions": "fa840a26db1942ac1c646b4001367aed0a9212ce610ca4e50102bb66a032de01"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000078003.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000078003.json"
+      },
+      "ticker": "PFE"
+    },
+    {
+      "cik": "0000731766",
+      "exchange_mic": "XNYS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "selling_general_administrative",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "aefbf9dd57f6dbeb19d132fb1ce1cf522cbc76f7ddcc900a558b7e5a0d6fe365",
+        "submissions": "433a6d29f23ff1ae3b248d0886ea7e5033c4912e61fe7298a8e945559afed7b8"
+      },
+      "legal_name": "UNITEDHEALTH GROUP INC",
+      "raw_retrieved_at": "2026-11-05T22:30:57Z",
+      "sector": "Health care",
+      "source_bytes": {
+        "companyfacts": 4443979,
+        "submissions": 157858
+      },
+      "source_sha256": {
+        "companyfacts": "d75b31039d2282ac4c9725f96571a0acab3742ca8a34c034f625adaabdebe63b",
+        "submissions": "95219ef2876a1a467de13eebec390cb7fd60bfe1f5d5b07a5d570a6906bfd5c7"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000731766.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000731766.json"
+      },
+      "ticker": "UNH"
+    },
+    {
+      "cik": "0000034088",
+      "exchange_mic": "XNYS",
+      "fact_concepts": [
+        "revenue",
+        "research_and_development",
+        "selling_general_administrative",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "91c16308bff4925d27fd300bb5e9060883446c8e310147258c723e16f3837555",
+        "submissions": "3cf488b51f0ede8b00c81a9a56ca330c7369b564d1f7bb44057d5e121de0b63a"
+      },
+      "legal_name": "EXXON MOBIL CORP",
+      "raw_retrieved_at": "2026-11-05T22:30:57Z",
+      "sector": "Energy",
+      "source_bytes": {
+        "companyfacts": 3122723,
+        "submissions": 162976
+      },
+      "source_sha256": {
+        "companyfacts": "9b95535419e5662e3deed01de803e83deead477a4c81316e1c45186368fdd8b8",
+        "submissions": "79aacad669ef044bf654934b659b9fda89514e0ba5514838dbfb787d53e48773"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000034088.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000034088.json"
+      },
+      "ticker": "XOM"
+    },
+    {
+      "cik": "0000093410",
+      "exchange_mic": "XNYS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "research_and_development",
+        "selling_general_administrative",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "754b455a0378a54479d38aaa466029f266904b1de7084faf68450f9e9313f5ff",
+        "submissions": "76c62dd1a0b28b10ae235c292635ea1e0575c333e2b1804ccea4f1c3f783384e"
+      },
+      "legal_name": "CHEVRON CORP",
+      "raw_retrieved_at": "2026-11-05T22:30:58Z",
+      "sector": "Energy",
+      "source_bytes": {
+        "companyfacts": 4868252,
+        "submissions": 157763
+      },
+      "source_sha256": {
+        "companyfacts": "43eaec6a9fa044700a81b6c2283acf92d0e29e710c1c33150429ef5e68e70336",
+        "submissions": "3f54efbc0b29dd0854b5b186e5b3c4847c2b997d54baba216e3ba2f3e2a9e0d4"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000093410.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000093410.json"
+      },
+      "ticker": "CVX"
+    },
+    {
+      "cik": "0000018230",
+      "exchange_mic": "XNYS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "gross_profit",
+        "operating_expenses",
+        "research_and_development",
+        "selling_general_administrative",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "net_income_common",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "dc35a5fdca1f8727626cc6709a566e63fc40d413127470b887169badb1cb84f8",
+        "submissions": "0936487f53a17dd6cbf647df8ac410f108c0bd6808adbb945c2ddd20c380f2bc"
+      },
+      "legal_name": "CATERPILLAR INC",
+      "raw_retrieved_at": "2026-11-05T22:30:58Z",
+      "sector": "Industrials",
+      "source_bytes": {
+        "companyfacts": 5937122,
+        "submissions": 167224
+      },
+      "source_sha256": {
+        "companyfacts": "0fe50d57bf90ee91f2997ca309353b4b86c2adc192ba9c469623ea7c2f52cfb7",
+        "submissions": "bcb05695563629a55636b17f85a161ff88ee3a4e80f8cdf5e56e2630a5445ec2"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000018230.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000018230.json"
+      },
+      "ticker": "CAT"
+    },
+    {
+      "cik": "0000315189",
+      "exchange_mic": "XNYS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "gross_profit",
+        "research_and_development",
+        "selling_general_administrative",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "net_income_common",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "inventory",
+        "long_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "99f76381c161dca717db3cf7dfc7eb62eaf360db5531b12a54be9ab2a008a120",
+        "submissions": "c97864d36029b9d60c92a2edfceb29f5690f5fb5746c7dbf76b4ca17e3482a4b"
+      },
+      "legal_name": "DEERE & CO",
+      "raw_retrieved_at": "2026-11-05T22:30:59Z",
+      "sector": "Industrials",
+      "source_bytes": {
+        "companyfacts": 5244762,
+        "submissions": 163792
+      },
+      "source_sha256": {
+        "companyfacts": "b845478ca3e2c2a83471cfb92524b33d83ec47fd3c1c68614f3f2487f1606b6c",
+        "submissions": "959d70ab8e039425fe4ec29dfd56ac1bc664d39221264ff1e70e5efeff9e7284"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000315189.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000315189.json"
+      },
+      "ticker": "DE"
+    },
+    {
+      "cik": "0000021344",
+      "exchange_mic": "XNYS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "gross_profit",
+        "selling_general_administrative",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "951467eadf821cea803fc4466e63e8acff196068856b199b9dd5c7474c9f6cce",
+        "submissions": "ce880c824b396b15ad182a16b7dfd4480737753e580e9b548bfc18f9550b16c8"
+      },
+      "legal_name": "COCA COLA CO",
+      "raw_retrieved_at": "2026-11-05T22:31:00Z",
+      "sector": "Consumer staples",
+      "source_bytes": {
+        "companyfacts": 5206922,
+        "submissions": 159096
+      },
+      "source_sha256": {
+        "companyfacts": "87a4173fcd3d662d18d19e0e885095aa5e3812b74c54d1ee55808ff1540a8081",
+        "submissions": "148c1ea77c29fd8aeed6d9943a6be45ecaff9845ee3f65f64f51c1422af03590"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000021344.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000021344.json"
+      },
+      "ticker": "KO"
+    },
+    {
+      "cik": "0000077476",
+      "exchange_mic": "XNAS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "gross_profit",
+        "research_and_development",
+        "selling_general_administrative",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "net_income_common",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "ae479fce77736cda5784dfe9d87f6adb44b04011b85c8c32d7a1dbb8951215f3",
+        "submissions": "7dbe716728786461bc36d5bd40bb5cd681b1e8e3c6a572b4a536eb365e73de38"
+      },
+      "legal_name": "PEPSICO INC",
+      "raw_retrieved_at": "2026-11-05T22:31:01Z",
+      "sector": "Consumer staples",
+      "source_bytes": {
+        "companyfacts": 5006158,
+        "submissions": 162402
+      },
+      "source_sha256": {
+        "companyfacts": "4a734cc934f3cf9f129fc15657589d4c6c82138f1bd889023c11170d97990d8d",
+        "submissions": "8a76bef3a85a8fd68951062bc5e578c4c947bd619dca7f1084548cb88116ab37"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000077476.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000077476.json"
+      },
+      "ticker": "PEP"
+    },
+    {
+      "cik": "0000104169",
+      "exchange_mic": "XNAS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "selling_general_administrative",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "assets",
+        "equity",
+        "cash_and_equivalents",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "2b382f3d79878573bee86d1b5f5d1cc1679b46dc69ce206c5377ab95ea3cc730",
+        "submissions": "e1b7562f570422f054f186a7740bc54f20a77f2fc2d2915d519ae6148c348d2f"
+      },
+      "legal_name": "Walmart Inc.",
+      "raw_retrieved_at": "2026-11-05T22:31:01Z",
+      "sector": "Consumer staples",
+      "source_bytes": {
+        "companyfacts": 3771831,
+        "submissions": 157935
+      },
+      "source_sha256": {
+        "companyfacts": "49330f98609f70fcef4054edc90bc811398a58c4bf26dc0b218d607967a8dbe4",
+        "submissions": "1c532676105f13022cc2fad9a5c72cf1caa81fb899a460a073d37db49f8dd5aa"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000104169.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000104169.json"
+      },
+      "ticker": "WMT"
+    },
+    {
+      "cik": "0000909832",
+      "exchange_mic": "XNAS",
+      "fact_concepts": [
+        "revenue",
+        "cost_of_revenue",
+        "gross_profit",
+        "selling_general_administrative",
+        "operating_income",
+        "pretax_income",
+        "income_tax_expense",
+        "net_income",
+        "eps_basic",
+        "eps_diluted",
+        "weighted_average_shares_diluted",
+        "interest_expense",
+        "assets",
+        "liabilities",
+        "equity",
+        "cash_and_equivalents",
+        "short_term_investments",
+        "receivables",
+        "inventory",
+        "long_term_debt",
+        "short_term_debt",
+        "shares_outstanding",
+        "operating_cash_flow",
+        "investing_cash_flow",
+        "financing_cash_flow",
+        "capex",
+        "depreciation_amortization",
+        "dividends_paid",
+        "share_repurchases"
+      ],
+      "fixture_sha256": {
+        "companyfacts": "5a01edf0dfe700622d34cffcf961d9ddbe310763cc7b0ab63e15a620d604952d",
+        "submissions": "bbdc96ac42738088ebbdb8878cbb69a56712f2efd13e33d7b5a2fda84c0193fb"
+      },
+      "legal_name": "COSTCO WHOLESALE CORP /NEW",
+      "raw_retrieved_at": "2026-11-05T22:31:02Z",
+      "sector": "Consumer staples",
+      "source_bytes": {
+        "companyfacts": 3694553,
+        "submissions": 159569
+      },
+      "source_sha256": {
+        "companyfacts": "b675ced201b27ede2b0d26ca6fd873befe96a1afa9679339a2d0b964187dcdff",
+        "submissions": "8bae787cceecdd8dfa83dfc44c1cf8f826bed9e2ed35ec90aa1d00d52d42cc9e"
+      },
+      "source_urls": {
+        "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000909832.json",
+        "submissions": "https://data.sec.gov/submissions/CIK0000909832.json"
+      },
+      "ticker": "COST"
+    }
+  ],
+  "filter": {
+    "concepts": [
+      "assets",
+      "capex",
+      "cash_and_equivalents",
+      "cost_of_revenue",
+      "depreciation_amortization",
+      "dividends_paid",
+      "eps_basic",
+      "eps_diluted",
+      "equity",
+      "financing_cash_flow",
+      "gross_profit",
+      "income_tax_expense",
+      "interest_expense",
+      "inventory",
+      "investing_cash_flow",
+      "liabilities",
+      "long_term_debt",
+      "net_income",
+      "net_income_common",
+      "operating_cash_flow",
+      "operating_expenses",
+      "operating_income",
+      "pretax_income",
+      "receivables",
+      "research_and_development",
+      "revenue",
+      "selling_general_administrative",
+      "share_repurchases",
+      "shares_outstanding",
+      "short_term_debt",
+      "short_term_investments",
+      "weighted_average_shares_diluted"
+    ],
+    "forms": [
+      "10-K",
+      "10-K/A",
+      "10-Q",
+      "10-Q/A",
+      "20-F",
+      "20-F/A",
+      "40-F",
+      "40-F/A"
+    ],
+    "maximum_observations_per_unit": 120,
+    "minimum_period_end": "2018-01-01",
+    "retention_rule": "all annual/10-K observations and the 24 most recent sub-annual observations"
+  },
+  "license": "U.S. Government public domain (SEC EDGAR)",
+  "price_coverage": "none; no market-price source is bundled or fabricated",
+  "retrieved_at": "2026-11-05T22:43:06Z",
+  "schema": "atlas.phase9.sec_coverage.v1",
+  "user_agent": "AtlasQuant/0.3 phase9@example.com"
+}

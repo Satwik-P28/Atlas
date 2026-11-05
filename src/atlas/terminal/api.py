@@ -138,6 +138,18 @@ class ScenarioRequest(DcfRequest):
     custom: dict[str, dict[str, Any]] | None = None
 
 
+class EquityReportRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    assumptions: dict[str, Any] = Field(default_factory=dict)
+    as_of: str | None = None
+    mode: str | None = None
+    target_price: float | None = Field(default=None, gt=0)
+
+
+class EquityPackageRequest(EquityReportRequest):
+    version: str = Field(default="1.0.0", pattern=r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
+
+
 class ForkRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     name: str = Field(min_length=1, max_length=120)
@@ -1498,6 +1510,81 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
         return fec_valuation.sensitivity(
             db, body.issuer, wacc_values=body.wacc_values, growth_values=body.growth_values,
             assumptions=body.assumptions, as_of=body.as_of, mode=body.mode,
+        )
+
+    # ----------------------------------------------------------- equity research
+    @app.get("/api/equity/coverage", tags=["equity"])
+    def equity_coverage(db: Database = Depends(get_db)) -> dict[str, Any]:
+        from ..research.equity import EquityResearchService
+
+        return EquityResearchService(db).coverage()
+
+    @app.get("/api/equity/{identifier}/workspace", tags=["equity"])
+    def equity_workspace(
+        identifier: str, as_of: str | None = None, mode: str | None = None,
+        db: Database = Depends(get_db),
+    ) -> dict[str, Any]:
+        from ..research.equity import EquityResearchService
+
+        return EquityResearchService(db).workspace(identifier, as_of=as_of, mode=mode)
+
+    @app.get("/api/equity/{identifier}/readiness", tags=["equity"])
+    def equity_readiness(
+        identifier: str, as_of: str | None = None, mode: str | None = None,
+        db: Database = Depends(get_db),
+    ) -> dict[str, Any]:
+        from ..research.equity import EquityResearchService
+
+        service = EquityResearchService(db)
+        issuer = read_models.resolve_company(db, identifier)
+        row = service._issuer_coverage(issuer)
+        return service.readiness(rows=[row], as_of=as_of, mode=mode)
+
+    @app.post("/api/equity/{identifier}/report", tags=["equity"])
+    def equity_report(
+        identifier: str, body: EquityReportRequest, db: Database = Depends(get_db)
+    ) -> dict[str, Any]:
+        from ..research.equity import EquityResearchService
+
+        return EquityResearchService(db).analyse(
+            identifier, assumptions=body.assumptions, as_of=body.as_of, mode=body.mode,
+            target_price=body.target_price,
+        )
+
+    @app.post("/api/equity/{identifier}/package", tags=["equity"])
+    def equity_package(
+        identifier: str, body: EquityPackageRequest, db: Database = Depends(get_db)
+    ) -> dict[str, Any]:
+        from ..research.equity import EquityResearchService
+
+        built = EquityResearchService(db).create_package(
+            identifier, assumptions=body.assumptions, as_of=body.as_of, mode=body.mode,
+            target_price=body.target_price, version=body.version,
+        )
+        payload = built.pop("payload")
+        return {
+            **built,
+            "package_base64": base64.b64encode(payload).decode("ascii"),
+            "size_bytes": len(payload),
+        }
+
+    @app.get("/api/equity/{identifier}/package.atlas", tags=["equity"], response_class=Response)
+    def equity_package_download(
+        identifier: str, as_of: str | None = None, mode: str | None = None,
+        version: str = "1.0.0", db: Database = Depends(get_db),
+    ) -> Response:
+        from ..research.equity import EquityResearchService
+
+        service = EquityResearchService(db)
+        issuer = read_models.resolve_company(db, identifier)
+        built = service.create_package(
+            issuer["issuer_id"], as_of=as_of, mode=mode, version=version
+        )
+        filename = f"{identifier.replace('/', '_')}-equity-research-{version}.atlas"
+        return Response(
+            content=built["payload"],
+            media_type="application/zip",
+            headers={"content-disposition": f'attachment; filename="{filename}"'},
         )
 
     # --------------------------------------------------------------- screeners
