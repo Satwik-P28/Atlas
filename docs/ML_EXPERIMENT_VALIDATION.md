@@ -51,7 +51,7 @@ training failures.
 
 | Metric | Ridge | Climatology |
 |---|---:|---:|
-| Test Brier | 0.248493 | 0.248830 |
+| Test Brier | 0.248493 | 0.248157 |
 | Brier skill | -0.001354 | 0 |
 | Log loss | 0.690132 | — |
 | AUC | 0.497647 | — |

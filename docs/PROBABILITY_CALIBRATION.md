@@ -61,7 +61,7 @@ Selected model: ridge. Validation rows for calibration: **680**. Test rows: **68
 |---|---:|
 | Raw Brier | 0.248114 |
 | Calibrated Brier | 0.248493 |
-| Climatology Brier | 0.248830 |
+| Climatology Brier | 0.248157 |
 | Brier skill vs climatology | -0.001354 |
 | Log loss | 0.690132 |
 | AUC | 0.497647 |

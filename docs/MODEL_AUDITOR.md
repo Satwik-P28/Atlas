@@ -17,7 +17,7 @@ separately.
 | Finding | Severity | Evidence |
 |---|---|---|
 | `chronological_partitions` | info | Test not used for selection; 2-session embargo |
-| `test_skill_not_supported` | warning | Brier skill -0.001354; test Brier 0.248493 vs baseline 0.248830 |
+| `test_skill_not_supported` | warning | Brier skill -0.001354; test Brier 0.248493 vs baseline 0.248157 |
 | `data_vintage` | warning | `observed`, not `point_in_time_verified` |
 | `redistribution_restricted` | warning | EODHD demo rights are restricted |
 | `economic_value_not_established` | warning | Forecast accuracy is not portfolio profit |

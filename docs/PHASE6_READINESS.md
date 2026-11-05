@@ -43,7 +43,7 @@ universe is a Phase 7 prerequisite.
 | Test rows / forecasts | 685 / 685 |
 | Selected model | ridge |
 | Test Brier | 0.248493 |
-| Climatology Brier | 0.248830 |
+| Climatology Brier | 0.248157 |
 | Brier skill | -0.001354 |
 | AUC | 0.497647 |
 | Conclusion | `not_supported` |
