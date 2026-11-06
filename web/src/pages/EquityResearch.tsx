@@ -43,6 +43,11 @@ export default function EquityResearch() {
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
+  const [regulatory, setRegulatory] = useState<Row | null>(null)
+  const [roe, setRoe] = useState('')
+  const [coe, setCoe] = useState('')
+  const [cutoff, setCutoff] = useState('')
+  const [priceCsv, setPriceCsv] = useState('')
 
   useEffect(() => {
     api
@@ -64,6 +69,10 @@ export default function EquityResearch() {
       .equityWorkspace(selected, { mode: 'public_available' })
       .then(setWorkspace)
       .catch((caught: Error) => setError(caught.message))
+    api
+      .equityRegulatory(selected)
+      .then(setRegulatory)
+      .catch(() => setRegulatory(null))
   }, [selected])
 
   const row = useMemo<Row | null>(() => {
@@ -77,13 +86,75 @@ export default function EquityResearch() {
     setError(null)
     setMessage(null)
     try {
-      const built = await api.equityReport(selected, { assumptions: {} })
+      const assumptions: Row = {}
+      if (roe.trim()) assumptions.sustainable_roe = Number(roe) / 100
+      if (coe.trim()) assumptions.cost_of_equity = Number(coe) / 100
+      const built = await api.equityReport(selected, {
+        assumptions,
+        as_of: cutoff || undefined,
+      })
       setReport(built)
       setMessage(
         `Report ${built.metadata?.report_sha256?.slice(0, 16) ?? ''}… · valuation ${
           built.valuation?.status ?? 'unknown'
         } · audit ${built.valuation?.audit?.verdict ?? 'n/a'}`,
       )
+    } catch (caught) {
+      setError((caught as Error).message)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  async function applyCutoff() {
+    if (!selected) return
+    setBusy('cutoff')
+    setError(null)
+    try {
+      setWorkspace(await api.equityWorkspace(selected, { mode: 'public_available', asOf: cutoff || undefined }))
+      setMessage(cutoff ? `Information cutoff set to ${cutoff}. Unavailable observations are excluded.` : 'Using the latest available observations.')
+    } catch (caught) {
+      setError((caught as Error).message)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  async function rejectDcf() {
+    if (!selected) return
+    setBusy('reject')
+    setError(null)
+    try {
+      const built = await api.equityReport(selected, { method: 'unlevered_fcff_dcf' })
+      setReport(built)
+      setMessage(`FCFF DCF request: ${built.valuation?.status}. ${built.valuation?.reason ?? ''}`)
+    } catch (caught) {
+      setError((caught as Error).message)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  async function importPrices() {
+    if (!selected || !priceCsv.trim()) return
+    setBusy('prices')
+    setError(null)
+    try {
+      const lines = priceCsv.trim().split(/\r?\n/).filter(Boolean)
+      const hasHeader = lines[0].toLowerCase().includes('date')
+      const rows = lines.slice(hasHeader ? 1 : 0).map((line) => {
+        const [date, open, high, low, close, volume] = line.split(',').map((cell) => cell.trim())
+        return { date, open: Number(open), high: Number(high), low: Number(low), close: Number(close), volume: Number(volume || 0) }
+      })
+      const imported = await api.equityPriceImport(selected, {
+        rows,
+        source_name: 'Nasdaq quote history (user import)',
+        licence: 'Provider terms; local analysis only',
+        redistribution: 'restricted',
+        adjustment_semantics: 'unadjusted',
+      })
+      setMessage(`Imported ${imported.import?.written ?? 0} observations. Export allowed: ${imported.import?.source?.export_allowed ? 'yes' : 'no (restricted)'}.`)
+      setWorkspace(await api.equityWorkspace(selected, { mode: 'public_available', asOf: cutoff || undefined }))
     } catch (caught) {
       setError((caught as Error).message)
     } finally {
@@ -257,6 +328,98 @@ export default function EquityResearch() {
               </div>
 
               <div className="card">
+                <h3>Research controls</h3>
+                <div className="equity-metrics">
+                  <div>
+                    <span className="eyebrow">Information cutoff</span>
+                    <input className="mono" type="date" value={cutoff} onChange={(event) => setCutoff(event.target.value)} />
+                  </div>
+                  <div>
+                    <span className="eyebrow">Sustainable ROE (%)</span>
+                    <input className="mono" inputMode="decimal" placeholder="reported" value={roe} onChange={(event) => setRoe(event.target.value)} />
+                  </div>
+                  <div>
+                    <span className="eyebrow">Cost of equity (%)</span>
+                    <input className="mono" inputMode="decimal" placeholder="model default" value={coe} onChange={(event) => setCoe(event.target.value)} />
+                  </div>
+                </div>
+                <div className="equity-actions">
+                  <button className="button secondary" onClick={applyCutoff} disabled={busy !== null}>Apply cutoff</button>
+                  <button className="button" onClick={generate} disabled={busy !== null}>Recalculate</button>
+                  <button className="button secondary" onClick={rejectDcf} disabled={busy !== null}>Test FCFF DCF</button>
+                </div>
+              </div>
+
+              {regulatory && (regulatory.subsidiaries?.length ?? 0) > 0 && (
+                <div className="card">
+                  <h3>Regulatory evidence · {regulatory.status}</h3>
+                  {regulatory.subsidiaries.map((block: Row) => (
+                    <div key={block.entity?.entity_id}>
+                      <p className="small">
+                        {block.entity?.legal_name} · FDIC certificate {block.entity?.cert} ·{' '}
+                        <Badge tone={block.status === 'available' ? 'positive' : 'warn'}>{block.status}</Badge>{' '}
+                        {block.latest?.period_end && <span className="mono">{block.latest.period_end}</span>}
+                      </p>
+                      {block.latest && (
+                        <div className="table-wrap">
+                          <table>
+                            <thead><tr><th>Field</th><th>Value</th><th>Definition</th></tr></thead>
+                            <tbody>
+                              {['ASSET', 'EQ', 'INTAN', 'NIMY', 'NTLNLSR', 'RBC1AAJ', 'RBCRWAJ', 'IDT1CER'].map((field) => {
+                                const item = block.latest.values?.[field]
+                                if (!item) return null
+                                const shown = item.unit === 'USD_thousands' ? money(Number(item.value) * 1000) : `${num(item.value)}%`
+                                return <tr key={field}><td className="mono">{field}</td><td className="mono">{shown}</td><td className="small">{item.definition}</td></tr>
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                      <p className="muted small">
+                        Subsidiary standalone report. It is not added to consolidated parent equity and is not divided by parent shares.
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="card">
+                <h3>Market price and model comparison</h3>
+                {report?.valuation?.market?.status === 'available' ? (
+                  <>
+                    <p className="small">
+                      Price <strong className="mono">{money(report.valuation.market.price)}</strong> on{' '}
+                      <span className="mono">{report.valuation.market.price_date}</span> · source{' '}
+                      <span className="mono">{report.valuation.market.source_id}</span> · mixed date:{' '}
+                      <Badge tone={report.valuation.market.mixed_date ? 'warn' : 'positive'}>
+                        {report.valuation.market.mixed_date ? 'yes' : 'no'}
+                      </Badge>{' '}
+                      · export allowed: <strong>{report.valuation.market.export_allowed ? 'yes' : 'no'}</strong>
+                    </p>
+                    <p className="small muted">{report.valuation.market.warning}</p>
+                    {report.valuation.market.implied?.status === 'available' && (
+                      <p className="small">Market-implied cost of equity <strong>{pct(report.valuation.market.implied.implied_cost_of_equity)}</strong></p>
+                    )}
+                  </>
+                ) : (
+                  <p className="muted small">No observed price matches this issuer. Atlas does not synthesise one.</p>
+                )}
+                <label className="eyebrow" htmlFor="price-csv">Import permitted daily closes (date,open,high,low,close,volume)</label>
+                <textarea
+                  id="price-csv"
+                  className="mono"
+                  rows={3}
+                  style={{ width: '100%' }}
+                  value={priceCsv}
+                  onChange={(event) => setPriceCsv(event.target.value)}
+                  placeholder="2026-11-05,320.10,324.00,318.50,322.22,9000000"
+                />
+                <button className="button secondary" onClick={importPrices} disabled={busy !== null || !priceCsv.trim()}>
+                  {busy === 'prices' ? 'Importing…' : 'Import restricted prices'}
+                </button>
+              </div>
+
+              <div className="card">
                 <h3>Reconciliation and quality checks</h3>
                 <div className="table-wrap">
                   <table>
@@ -344,6 +507,27 @@ export default function EquityResearch() {
                 <div className="card">
                   <h3>Source-linked research report</h3>
                   <pre className="equity-report">{report.report}</pre>
+                </div>
+              )}
+
+              {report?.valuation?.institution?.driver && (
+                <div className="card">
+                  <h3>Bank model v2 · regulatory context</h3>
+                  <p className="small">
+                    Driver <span className="mono">{report.valuation.institution.driver.label}</span> · tangible book{' '}
+                    <Badge tone={report.valuation.institution.tangible_book?.status === 'available_subsidiary_only' ? 'warn' : 'neutral'}>
+                      {report.valuation.institution.tangible_book?.status}
+                    </Badge>
+                  </p>
+                  <p className="muted small">{report.valuation.institution.tangible_book?.detail}</p>
+                  {report.valuation.institution.capital?.status === 'available' && (
+                    <p className="small">
+                      CET1 {num(report.valuation.institution.capital.observed_percent.common_equity_tier_1)}% · leverage{' '}
+                      {num(report.valuation.institution.capital.observed_percent.tier_1_leverage)}% · binding headroom{' '}
+                      {num(report.valuation.institution.capital.binding_headroom_points)} pp
+                    </p>
+                  )}
+                  <p className="muted small">Subsidiary capital evidence. Headroom is in percentage points; dollar RWA is not published.</p>
                 </div>
               )}
 

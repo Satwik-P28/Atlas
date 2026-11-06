@@ -560,12 +560,22 @@ class ApplicationService:
         expected = _json.loads(files["artifacts/expected_outputs.json"].decode("utf-8"))
         model = _json.loads(files["artifacts/institution.json"].decode("utf-8"))
         financials = _json.loads(files["data/financials.json"].decode("utf-8"))
-        recomputed = institutions.build_institution_valuation(
-            issuer=financials["issuer"],
-            metrics=financials["metrics"],
-            coverage=financials["coverage"],
-            assumptions={**(model.get("assumptions") or {}), **(inputs or {})},
-        )
+        assumptions = {**(model.get("assumptions") or {}), **(inputs or {})}
+        if str(model.get("model_version") or "").endswith(".v2"):
+            recomputed = institutions.build_bank_valuation_v2(
+                issuer=financials["issuer"],
+                metrics=financials["metrics"],
+                coverage=financials["coverage"],
+                regulatory=financials.get("regulatory"),
+                assumptions=assumptions,
+            )
+        else:
+            recomputed = institutions.build_institution_valuation(
+                issuer=financials["issuer"],
+                metrics=financials["metrics"],
+                coverage=financials["coverage"],
+                assumptions=assumptions,
+            )
         outputs = recomputed.get("outputs") or {}
         differences: dict[str, Any] = {}
         for key, value in expected.items():

@@ -1,0 +1,45 @@
+{
+ "source": "Nasdaq quote history endpoint",
+ "retrieved_at": "2026-11-06T04:13:56Z",
+ "licence": "Nasdaq.com public quote pages - personal, non-commercial use; redistribution not granted",
+ "redistribution": "restricted",
+ "adjustment_semantics": "unadjusted",
+ "series": [
+  {
+   "ticker": "JPM",
+   "rows": 463,
+   "first": "2025-01-02",
+   "last": "2026-11-05",
+   "path": "fixtures/market/nasdaq_JPM.csv"
+  },
+  {
+   "ticker": "GS",
+   "rows": 463,
+   "first": "2025-01-02",
+   "last": "2026-11-05",
+   "path": "fixtures/market/nasdaq_GS.csv"
+  },
+  {
+   "ticker": "UNH",
+   "rows": 463,
+   "first": "2025-01-02",
+   "last": "2026-11-05",
+   "path": "fixtures/market/nasdaq_UNH.csv"
+  },
+  {
+   "ticker": "AAPL",
+   "rows": 463,
+   "first": "2025-01-02",
+   "last": "2026-11-05",
+   "path": "fixtures/market/nasdaq_AAPL.csv"
+  },
+  {
+   "ticker": "AMZN",
+   "rows": 463,
+   "first": "2025-01-02",
+   "last": "2026-11-05",
+   "path": "fixtures/market/nasdaq_AMZN.csv"
+  }
+ ],
+ "note": "Observed daily OHLCV as displayed by Nasdaq. Not split/dividend adjusted; verify against a licensed feed before production use."
+}

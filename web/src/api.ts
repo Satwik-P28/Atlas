@@ -385,6 +385,13 @@ export const api = {
     ),
   equityReadiness: (identifier: string) =>
     request<Record<string, any>>(`/api/equity/${enc(identifier)}/readiness`),
+  equityRegulatory: (identifier: string) =>
+    request<Record<string, any>>(`/api/equity/${enc(identifier)}/regulatory`),
+  equityPriceImport: (identifier: string, body: Record<string, unknown>) =>
+    request<Record<string, any>>(`/api/equity/${enc(identifier)}/prices`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
   equityReport: (identifier: string, body: Record<string, unknown> = {}) =>
     request<Record<string, any>>(`/api/equity/${enc(identifier)}/report`, {
       method: 'POST',

@@ -8,6 +8,7 @@ unavailable until such an import exists, and never substitute a synthetic quote.
 
 from __future__ import annotations
 
+import json
 from datetime import datetime, timezone
 from typing import Any, Iterable, Mapping
 
@@ -124,7 +125,7 @@ def import_price_series(
                 close,
                 int(item["volume"]) if item.get("volume") is not None else None,
                 None, None, currency, adjustment, source_id, retrieved, now, None,
-                "user_imported",
+                json.dumps(["user_imported"]),
             ),
         )
         written += 1
@@ -190,6 +191,117 @@ def price_summary(db: Database, security_id: str) -> dict[str, Any]:
         "limitation": (
             "Observed historical closes are not a point-in-time vendor vintage; corporate-action "
             "adjustment is whatever the importer declared."
+        ),
+    }
+
+
+def price_history(db: Database, security_id: str, *, limit: int = 400) -> dict[str, Any]:
+    rows = list(db.query(
+        "SELECT b.ts_utc, b.close, b.volume, b.source_id, b.adjustment_status, "
+        "s.name, s.licence, s.redistribution "
+        "FROM bar b LEFT JOIN source s ON s.source_id=b.source_id "
+        "WHERE b.security_id=? AND b.interval='1d' ORDER BY b.ts_utc DESC LIMIT ?",
+        (security_id, limit),
+    ))
+    if not rows:
+        return {"status": "unavailable", "observations": 0, "points": []}
+    points = [{"date": row["ts_utc"][:10], "close": float(row["close"]),
+               "volume": row["volume"]} for row in reversed(rows)]
+    closes = sorted(point["close"] for point in points)
+    latest = points[-1]
+    below = sum(1 for value in closes if value <= latest["close"])
+    return {
+        "status": "available",
+        "observations": len(points),
+        "first_date": points[0]["date"],
+        "last_date": latest["date"],
+        "latest_close": latest["close"],
+        "minimum_close": closes[0],
+        "maximum_close": closes[-1],
+        "latest_percentile": (below / len(closes)) if closes else None,
+        "source": {
+            "source_id": rows[-1]["source_id"], "name": rows[-1]["name"],
+            "licence": rows[-1]["licence"], "redistribution": rows[-1]["redistribution"],
+        },
+        "export_allowed": rows[-1]["redistribution"] in EXPORTABLE_REDISTRIBUTION,
+        "points": points,
+    }
+
+
+def price_on_or_before(db: Database, security_id: str, date_text: str) -> dict[str, Any] | None:
+    """Return the last observation at or before a declared comparison date."""
+    row = db.query_one(
+        "SELECT ts_utc, close, currency, adjustment_status, source_id, observed_at "
+        "FROM bar WHERE security_id=? AND interval='1d' AND substr(ts_utc,1,10)<=? "
+        "ORDER BY ts_utc DESC LIMIT 1",
+        (security_id, date_text[:10]),
+    )
+    if row is None:
+        return None
+    return {
+        "date": row["ts_utc"][:10],
+        "close": float(row["close"]),
+        "currency": row["currency"],
+        "adjustment_semantics": row["adjustment_status"],
+        "source_id": row["source_id"],
+        "observed_at": row["observed_at"],
+    }
+
+
+def market_analysis(
+    *,
+    price: Mapping[str, Any] | None,
+    history: Mapping[str, Any] | None,
+    value_per_share: float | None,
+    accounting_period_end: str | None,
+    implied: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Compare a model value with an observed price without hiding the date gap."""
+    if not price:
+        return {
+            "schema": "atlas.market_analysis.v1",
+            "status": "unavailable",
+            "reason": "No observed price exists on or before the comparison date.",
+            "implied": None,
+        }
+    price_date = price["date"]
+    accounting = (accounting_period_end or "")[:10]
+    mixed = bool(accounting and accounting != price_date)
+    premium = ((value_per_share / price["close"]) - 1.0) if value_per_share and price["close"] else None
+    return {
+        "schema": "atlas.market_analysis.v1",
+        "status": "available",
+        "price": price["close"],
+        "price_date": price_date,
+        "currency": price["currency"],
+        "source_id": price["source_id"],
+        "adjustment_semantics": price["adjustment_semantics"],
+        "accounting_period_end": accounting or None,
+        "mixed_date": mixed,
+        "date_gap_days": (
+            (datetime.fromisoformat(price_date) - datetime.fromisoformat(accounting)).days
+            if mixed else 0
+        ),
+        "model_value_per_share": value_per_share,
+        "model_premium_to_price": premium,
+        "history": {
+            "observations": (history or {}).get("observations", 0),
+            "first_date": (history or {}).get("first_date"),
+            "last_date": (history or {}).get("last_date"),
+            "minimum_close": (history or {}).get("minimum_close"),
+            "maximum_close": (history or {}).get("maximum_close"),
+            "latest_percentile": (history or {}).get("latest_percentile"),
+        },
+        "implied": dict(implied or {}),
+        "export_allowed": bool((history or {}).get("export_allowed")),
+        "warning": (
+            "The price date differs from the accounting period end. This is a mixed-date "
+            "comparison, not a point-in-time valuation." if mixed else
+            "Price and accounting dates align; the model still depends on assumptions."
+        ),
+        "note": (
+            "A model-price difference is not an investment recommendation. The model value "
+            "may be wrong, the price may embed expectations the model omits, or both."
         ),
     }
 

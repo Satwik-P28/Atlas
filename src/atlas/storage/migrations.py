@@ -1017,6 +1017,66 @@ CREATE INDEX idx_domain_pack_installation_time ON domain_pack_installation (inst
 """
 
 
+_MIGRATION_011 = """
+-- Phase 9.2 regulatory evidence fabric. Observations are stored separately from
+-- SEC facts because their reporting entity, form and consolidation basis differ.
+CREATE TABLE IF NOT EXISTS regulatory_entity (
+    entity_id           TEXT PRIMARY KEY,
+    kind                TEXT NOT NULL,
+    legal_name          TEXT NOT NULL,
+    cert                INTEGER,
+    rssd                INTEGER,
+    cik                 TEXT,
+    parent_entity_id    TEXT,
+    consolidation_basis TEXT NOT NULL,
+    regulator           TEXT,
+    source_id           TEXT NOT NULL,
+    licence             TEXT NOT NULL,
+    redistribution      TEXT NOT NULL,
+    notes               TEXT,
+    created_at          TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_regulatory_entity_cik ON regulatory_entity (cik);
+CREATE INDEX IF NOT EXISTS idx_regulatory_entity_parent ON regulatory_entity (parent_entity_id);
+
+CREATE TABLE IF NOT EXISTS regulatory_observation (
+    observation_id  TEXT PRIMARY KEY,
+    entity_id       TEXT NOT NULL REFERENCES regulatory_entity(entity_id),
+    form            TEXT NOT NULL,
+    dataset         TEXT NOT NULL,
+    field           TEXT NOT NULL,
+    value           REAL,
+    text_value      TEXT,
+    unit            TEXT NOT NULL,
+    period_end      TEXT NOT NULL,
+    period_type     TEXT NOT NULL,
+    published_at    TEXT,
+    retrieved_at    TEXT NOT NULL,
+    definition      TEXT,
+    source_id       TEXT NOT NULL,
+    source_url      TEXT,
+    revision        INTEGER NOT NULL DEFAULT 0,
+    provenance_json TEXT NOT NULL,
+    UNIQUE (entity_id, form, field, period_end, revision)
+);
+CREATE INDEX IF NOT EXISTS idx_regulatory_observation_entity_period
+    ON regulatory_observation (entity_id, period_end DESC);
+CREATE INDEX IF NOT EXISTS idx_regulatory_observation_field
+    ON regulatory_observation (field, period_end DESC);
+
+CREATE TABLE IF NOT EXISTS entity_reconciliation (
+    reconciliation_id TEXT PRIMARY KEY,
+    cik               TEXT NOT NULL,
+    parent_entity_id  TEXT NOT NULL,
+    subsidiary_id     TEXT NOT NULL,
+    status            TEXT NOT NULL,
+    basis             TEXT NOT NULL,
+    checked_at        TEXT NOT NULL,
+    detail            TEXT NOT NULL,
+    UNIQUE (cik, parent_entity_id, subsidiary_id)
+);
+"""
+
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=1, name="phase1_foundation", sql=_MIGRATION_001),
     Migration(version=2, name="phase1_1_history_and_dependencies", sql=_MIGRATION_002),

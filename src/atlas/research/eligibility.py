@@ -20,8 +20,8 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping
 
-CONTRACT_VERSION = "atlas.valuation_eligibility.v2"
-CONTRACT_SCHEMA = "atlas.valuation_eligibility.contract.v2"
+CONTRACT_VERSION = "atlas.valuation_eligibility.v3"
+CONTRACT_SCHEMA = "atlas.valuation_eligibility.contract.v3"
 
 UNSUPPORTED = "unsupported"
 INSUFFICIENT_SOURCE_COVERAGE = "insufficient_source_coverage"
@@ -42,6 +42,8 @@ STATE_ORDER = (
 DCF = "unlevered_fcff_dcf"
 RESIDUAL_INCOME = "residual_income_equity"
 JUSTIFIED_EARNINGS = "justified_earnings_equity"
+REIT_FFO = "reit_ffo_affo_nav"
+PROPERTY_NOI = "property_noi_dcf"
 
 #: Inputs each method actually consumes. A bank model does not need revenue, and a DCF
 #: does not need total liabilities, so the requirement list is per method rather than a
@@ -50,6 +52,54 @@ REQUIRED_INPUTS: dict[str, tuple[str, ...]] = {
     DCF: ("revenue", "shares_outstanding", "net_income", "cash_and_equivalents"),
     RESIDUAL_INCOME: ("equity", "net_income", "shares_outstanding"),
     JUSTIFIED_EARNINGS: ("net_income", "equity", "shares_outstanding", "eps_diluted"),
+}
+
+#: Method-level contracts. v3 adds the evidence a method needs beyond its numeric
+#: inputs, so an executable bank model cannot be described as capital-verified merely
+#: because the arithmetic balanced.
+METHOD_CONTRACTS: dict[str, dict[str, Any]] = {
+    DCF: {
+        "label": "Unlevered FCFF DCF",
+        "required_inputs": list(REQUIRED_INPUTS[DCF]),
+        "required_evidence": ["revenue", "reinvestment", "enterprise_to_equity_bridge"],
+        "prohibited_for": ["bank", "capital_markets", "insurer", "real_estate_or_holding", "reit"],
+        "evidence_note": "The bridge must subtract debt and add cash at the same date as the enterprise value.",
+    },
+    RESIDUAL_INCOME: {
+        "label": "Equity residual income",
+        "required_inputs": list(REQUIRED_INPUTS[RESIDUAL_INCOME]),
+        "required_evidence": ["book_value_rollforward", "cost_of_equity", "clean_surplus"],
+        "optional_evidence": ["regulatory_capital_ratios", "tangible_common_equity", "net_interest_margin", "credit_losses"],
+        "prohibited_for": ["operating_company"],
+        "evidence_note": (
+            "A bank contract records whether regulatory capital evidence was aligned to the "
+            "correct legal entity; arithmetic verification does not assert capital adequacy."
+        ),
+    },
+    JUSTIFIED_EARNINGS: {
+        "label": "Justified earnings with partial segment disclosure",
+        "required_inputs": list(REQUIRED_INPUTS[JUSTIFIED_EARNINGS]),
+        "required_evidence": ["earnings", "payout", "segment_limitation_disclosed"],
+        "optional_evidence": ["medical_loss_ratio", "claims_reserves", "segment_split"],
+        "prohibited_for": ["operating_company"],
+        "evidence_note": "A consolidated insurer with a material services segment remains partial unless a segment split is observed.",
+    },
+    REIT_FFO: {
+        "label": "REIT FFO/AFFO and net asset value",
+        "required_inputs": [],
+        "required_evidence": ["ffo_affo", "property_nav", "lease_roll"],
+        "prohibited_for": ["operating_company", "bank", "insurer"],
+        "implemented": False,
+        "evidence_note": "Declared but not implemented; Atlas does not substitute an industrial DCF.",
+    },
+    PROPERTY_NOI: {
+        "label": "Property NOI and equity cash flow",
+        "required_inputs": [],
+        "required_evidence": ["noi", "leases", "debt_service"],
+        "prohibited_for": ["operating_company", "bank", "insurer"],
+        "implemented": False,
+        "evidence_note": "Declared but not implemented; no property-level observations are stored.",
+    },
 }
 
 SUPPORTED_METHODS: dict[str, str] = {
@@ -133,10 +183,23 @@ def classify_business_model(sic: Any) -> dict[str, Any]:
             "sic": code,
             "basis": f"SIC {code} is in the insurance division.",
         }
+    if code == 6798:
+        return {
+            "business_model": "reit",
+            "method": None,
+            "intended_method": REIT_FFO,
+            "sector": "real estate investment trust",
+            "sic": code,
+            "basis": (
+                f"SIC {code} is a real-estate investment trust. FFO/AFFO and NAV contracts are "
+                "declared but not implemented; no industrial DCF is substituted."
+            ),
+        }
     if 6500 <= code <= 6599:
         return {
             "business_model": "real_estate_or_holding",
             "method": None,
+            "intended_method": PROPERTY_NOI,
             "sector": "real estate",
             "sic": code,
             "basis": (
@@ -171,6 +234,8 @@ def build_contract(
     economic_review: Mapping[str, Any] | None = None,
     benchmark: Mapping[str, Any] | None = None,
     partial: bool = False,
+    entity_check: Mapping[str, Any] | None = None,
+    method_evidence: Mapping[str, Any] | None = None,
     extra_limitations: Iterable[str] = (),
 ) -> dict[str, Any]:
     """Build the six-state contract for one issuer and one method.
@@ -194,6 +259,11 @@ def build_contract(
     else:
         state = METHODOLOGICALLY_ELIGIBLE
         reasons = [classification["basis"]]
+    if entity_check and entity_check.get("compatible") is False:
+        state = INSUFFICIENT_SOURCE_COVERAGE
+        reasons.append(
+            "Entity reconciliation failed: " + str(entity_check.get("reason") or "incompatible reporting entities")
+        )
 
     arithmetic_status = None
     if arithmetic:
@@ -242,6 +312,17 @@ def build_contract(
         "required_inputs": list(REQUIRED_INPUTS.get(dominant_method, ())),
         "available_inputs": sorted(set(available)),
         "missing_inputs": missing,
+        "method_contract": METHOD_CONTRACTS.get(dominant_method, {}),
+        "method_evidence": dict(method_evidence or {}),
+        "entity_reconciliation": dict(entity_check) if entity_check else {"status": "not_evaluated"},
+        "evidence_gates": {
+            "data_available": not missing,
+            "method_eligible": method is not None and not missing,
+            "arithmetic_verified": bool(arithmetic and arithmetic.get("passed")),
+            "assumptions_documented": bool(assumptions),
+            "economic_review_recorded": bool(economic_review),
+            "independent_benchmark_recorded": bool(benchmark),
+        },
         "share_count_basis": coverage.get("share_basis") or "unknown",
         "accounting_normalization": {
             "status": "reported_facts_only",

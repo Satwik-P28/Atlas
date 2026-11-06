@@ -144,6 +144,7 @@ class EquityReportRequest(BaseModel):
     as_of: str | None = None
     mode: str | None = None
     target_price: float | None = Field(default=None, gt=0)
+    method: str | None = Field(default=None, max_length=80)
 
 
 class EquityPackageRequest(EquityReportRequest):
@@ -1558,7 +1559,7 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
 
         return EquityResearchService(db).analyse(
             identifier, assumptions=body.assumptions, as_of=body.as_of, mode=body.mode,
-            target_price=body.target_price,
+            target_price=body.target_price, method=body.method,
         )
 
     @app.get("/api/equity/{identifier}/valuation", tags=["equity"])
@@ -1571,6 +1572,16 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
         from ..research.equity import EquityResearchService
 
         return EquityResearchService(db).valuation(identifier, as_of=as_of, mode=mode)
+
+    @app.get("/api/equity/{identifier}/regulatory", tags=["equity"])
+    def equity_regulatory(
+        identifier: str, db: Database = Depends(get_db)
+    ) -> dict[str, Any]:
+        from ..research import regulatory
+        from ..terminal import read_models
+
+        issuer = read_models.resolve_company(db, identifier)
+        return regulatory.regulatory_evidence(db, cik=issuer.get("cik"))
 
     @app.post("/api/equity/{identifier}/prices", tags=["equity"])
     def equity_price_import(

@@ -611,3 +611,309 @@ def build_institution_valuation(
     return build_bank_valuation(
         issuer=issuer, metrics=metrics, coverage=coverage, assumptions=assumptions
     )
+
+
+# ------------------------------------------------------------------ bank v2
+BANK_MODEL_VERSION_V2 = "atlas.bank.residual_income.v2"
+CAPITAL_REQUIREMENTS = {
+    "common_equity_tier_1": 7.0,
+    "tier_1_leverage": 4.0,
+    "total_risk_based_capital": 10.5,
+}
+
+
+def _regulatory_latest(regulatory: Mapping[str, Any] | None) -> tuple[Mapping[str, Any] | None, Mapping[str, Any] | None]:
+    if not regulatory:
+        return None, None
+    for block in regulatory.get("subsidiaries") or []:
+        if block.get("status") == "available" and block.get("latest"):
+            return block, block["latest"]
+    return None, None
+
+
+def _reg_value(latest: Mapping[str, Any] | None, field: str) -> float | None:
+    if not latest:
+        return None
+    item = (latest.get("values") or {}).get(field)
+    if not isinstance(item, Mapping) or item.get("value") is None:
+        return None
+    try:
+        return float(item["value"])
+    except (TypeError, ValueError):
+        return None
+
+
+def implied_cost_of_equity(
+    *,
+    price: float,
+    shares: float,
+    book_value: float,
+    roe: float,
+    payout: float,
+    horizon: int,
+    terminal_growth: float,
+    low: float = 0.035,
+    high: float = 0.40,
+) -> dict[str, Any]:
+    """Solve for the cost of equity that reproduces the observed price.
+
+    This is a reverse of the same residual-income arithmetic, not an independent model.
+    The result is a market-implied expectation conditional on the other assumptions.
+    """
+    if price <= 0 or shares <= 0:
+        return {"status": "unavailable", "reason": "a positive price and share count are required"}
+    if low <= terminal_growth:
+        low = terminal_growth + 0.005
+
+    def value(coe: float) -> float | None:
+        calc = _bank_arithmetic(
+            book_value=book_value, roe=roe, cost_of_equity=coe, growth=0.0,
+            payout=payout, horizon=horizon, terminal_growth=terminal_growth,
+        )
+        equity = calc["calculated_equity_value"]
+        return (equity / shares) if equity is not None else None
+
+    f_low, f_high = value(low), value(high)
+    if f_low is None or f_high is None:
+        return {"status": "unavailable", "reason": "no finite value in the solver bracket"}
+    if (f_low - price) * (f_high - price) > 0:
+        return {
+            "status": "unavailable",
+            "reason": "the observed price is outside the model's value range for the declared assumptions",
+            "bracket": {"low_coe": low, "high_coe": high,
+                        "low_value": f_low, "high_value": f_high},
+        }
+    a, b = low, high
+    for _ in range(80):
+        mid = (a + b) / 2.0
+        mid_value = value(mid)
+        if mid_value is None:
+            return {"status": "unavailable", "reason": "value became undefined inside the bracket"}
+        if mid_value > price:
+            a = mid
+        else:
+            b = mid
+    solved = (a + b) / 2.0
+    return {
+        "status": "available",
+        "implied_cost_of_equity": solved,
+        "price": price,
+        "solved_value_per_share": value(solved),
+        "iterations": 80,
+        "bracket": {"low_coe": low, "high_coe": high},
+        "conditional_on": {
+            "roe": roe, "payout_ratio": payout, "horizon": horizon,
+            "terminal_growth": terminal_growth,
+        },
+        "note": (
+            "The implied cost of equity is conditional on the stated ROE, payout, horizon and "
+            "terminal growth. It is not an estimate of the true cost of capital."
+        ),
+    }
+
+
+def _bank_v2_scenarios(
+    *, book_value: float, roe: float, shares: float, base: Mapping[str, Any],
+    latest: Mapping[str, Any] | None,
+) -> dict[str, Any]:
+    payout_rows = []
+    for payout in (0.20, 0.40, 0.60):
+        for buyback in (0.0, 0.02):
+            distribution = min(1.0, payout + buyback)
+            calc = _bank_arithmetic(
+                book_value=book_value, roe=roe, cost_of_equity=float(base["cost_of_equity"]),
+                growth=0.0, payout=distribution, horizon=int(base["horizon"]),
+                terminal_growth=float(base["terminal_growth"]),
+            )
+            value = calc["calculated_equity_value"]
+            payout_rows.append({
+                "payout_ratio": payout,
+                "buyback_yield": buyback,
+                "total_distribution_ratio": distribution,
+                "value_per_share": (value / shares) if value is not None and shares else None,
+            })
+    stress = []
+    equity = _reg_value(latest, "EQ")
+    assets = _reg_value(latest, "ASSET")
+    nii = _reg_value(latest, "NIM")
+    nco = _reg_value(latest, "NTLNLS")
+    if equity is not None and assets and nii is not None and nco is not None:
+        annual_nii = nii * 4.0
+        annual_nco = nco * 4.0
+        for nii_shock in (-0.10, 0.0, 0.10):
+            for nco_multiple in (1.0, 2.0):
+                delta = (annual_nii * nii_shock * 0.79
+                         - annual_nco * (nco_multiple - 1.0) * 0.79)
+                equity_after = equity + delta
+                leverage = (equity_after / assets) * 100.0
+                stress.append({
+                    "nii_shock": nii_shock,
+                    "charge_off_multiple": nco_multiple,
+                    "annual_net_income_delta_usd": delta * 1000.0,
+                    "equity_after_usd": equity_after * 1000.0,
+                    "tier_1_leverage_after_percent": leverage,
+                    "passes_minimum": leverage >= CAPITAL_REQUIREMENTS["tier_1_leverage"],
+                })
+    return {
+        "payout_and_buyback": payout_rows,
+        "regulatory_stress": stress,
+        "regulatory_stress_basis": (
+            "subsidiary_standalone, annualized NII and net charge-offs, 21% tax assumption, "
+            "assets held constant. This is a capital sensitivity of the insured bank, not a "
+            "parent valuation."
+        ) if stress else "not_available",
+        "note": "Scenarios are assumption grids, not forecasts or management guidance.",
+    }
+
+
+def build_bank_valuation_v2(
+    *,
+    issuer: Mapping[str, Any],
+    metrics: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    regulatory: Mapping[str, Any] | None = None,
+    assumptions: Mapping[str, Any] | None = None,
+    market_price: float | None = None,
+) -> dict[str, Any]:
+    """Bank residual income v2 with regulatory evidence on the correct legal entity."""
+    classification = classify_business_model(issuer.get("sic"))
+    merged = {key: value for key, value in (assumptions or {}).items() if value is not None}
+    # Capital-markets earnings are more cyclical; the higher default cost of equity is a
+    # documented assumption, not an observation. An explicit user value always wins.
+    differentiated_default = None
+    if classification["business_model"] == "capital_markets" and "cost_of_equity" not in merged:
+        merged["cost_of_equity"] = 0.11
+        differentiated_default = {
+            "field": "cost_of_equity", "value": 0.11, "business_model": "capital_markets",
+            "reason": "higher assumed cyclicality of capital-markets revenue; not an observed input",
+        }
+    base = build_bank_valuation(
+        issuer=issuer, metrics=metrics, coverage=coverage, assumptions=merged or None
+    )
+    if not base.get("executes"):
+        return {**base, "model_version": BANK_MODEL_VERSION_V2, "regulatory": regulatory,
+                "market": None}
+    block, latest = _regulatory_latest(regulatory)
+    equity_reg = _reg_value(latest, "EQ")
+    intangibles_reg = _reg_value(latest, "INTAN")
+    assets_reg = _reg_value(latest, "ASSET")
+    tangible_reg = (
+        equity_reg - intangibles_reg
+        if equity_reg is not None and intangibles_reg is not None else None
+    )
+    capital = (latest or {}).get("capital_constraint") or {"status": "not_available"}
+    derived = (latest or {}).get("derived") or {}
+    entity_map = (regulatory or {}).get("entity_map") or {}
+    aligned = bool(block and entity_map.get("status") == "verified")
+    entity_check = {
+        "status": "verified" if aligned else "not_evaluated",
+        "compatible": True if aligned else None,
+        "parent": (entity_map.get("parent") or {}).get("legal_name"),
+        "subsidiary": (block or {}).get("entity", {}).get("legal_name"),
+        "parent_basis": "parent_consolidated (SEC)",
+        "subsidiary_basis": "subsidiary_standalone (Call Report)",
+        "additive": False,
+        "reason": (
+            "The consolidated parent supplies the per-share denominator; the insured subsidiary "
+            "supplies regulatory context. They are never summed."
+            if aligned else "No aligned regulatory subsidiary was supplied for this issuer."
+        ),
+    }
+    tangible_book = {
+        "status": "available_subsidiary_only" if tangible_reg is not None else "unavailable",
+        "basis": "subsidiary_standalone" if tangible_reg is not None else None,
+        "legal_entity": (block or {}).get("entity", {}).get("legal_name"),
+        "tangible_common_equity_usd": tangible_reg * 1000.0 if tangible_reg is not None else None,
+        "tangible_equity_to_assets": (derived.get("tangible_equity_to_assets") or {}).get("value"),
+        "value_per_share": None,
+        "used_in_per_share": False,
+        "parent_status": "not_mapped",
+        "detail": (
+            "Parent-level goodwill and intangibles are not mapped from SEC facts. Tangible equity "
+            "is reported for the insured subsidiary only and is not divided by parent shares."
+        ),
+    }
+    driver = {
+        "model": "consolidated_roe_residual_income",
+        "business_model": classification["business_model"],
+        "label": (
+            "capital-markets consolidated ROE" if classification["business_model"] == "capital_markets"
+            else "diversified-bank consolidated ROE"
+        ),
+        "segment_forecast": False,
+        "segment_evidence": "unavailable",
+        "detail": (
+            "Segment revenue and earnings are not mapped, so the model does not forecast consumer "
+            "lending, investment banking, trading or asset management separately. The ROE path is "
+            "a consolidated assumption labelled accordingly."
+        ),
+        "differentiated_default": differentiated_default,
+    }
+    assumptions_out = base["assumptions"]
+    implied = None
+    if market_price:
+        implied = implied_cost_of_equity(
+            price=float(market_price), shares=float(base["inputs"]["shares_outstanding"]),
+            book_value=float(base["inputs"]["equity"]),
+            roe=float(assumptions_out["sustainable_roe"]),
+            payout=float(assumptions_out["payout_ratio"]),
+            horizon=int(assumptions_out["horizon"]),
+            terminal_growth=float(assumptions_out["terminal_growth"]),
+        )
+    scenarios = _bank_v2_scenarios(
+        book_value=float(base["inputs"]["equity"]), roe=float(assumptions_out["sustainable_roe"]),
+        shares=float(base["inputs"]["shares_outstanding"]),
+        base={**assumptions_out, "cost_of_equity": assumptions_out["cost_of_equity"]},
+        latest=latest,
+    )
+    limitations = list(base.get("limitations") or [])
+    limitations.extend([
+        "Regulatory capital evidence covers the insured subsidiary, not the consolidated parent; capital headroom is in percentage points because dollar RWA is not published.",
+        "The parent's goodwill and intangibles are not mapped, so no parent tangible book value per share is reported.",
+        "Segment-level earnings are not available; the ROE path is consolidated and is labelled as such.",
+    ])
+    contract = build_contract(
+        issuer=issuer, metrics=metrics, coverage=coverage,
+        available=list(base["inputs"].keys()) + (["regulatory_capital"] if aligned else []),
+        assumptions=assumptions_out,
+        arithmetic=base["audit"],
+        entity_check=entity_check,
+        method_evidence={
+            "regulatory_alignment": "aligned_to_declared_subsidiary" if aligned else "not_ingested",
+            "subsidiary_entity": (block or {}).get("entity", {}).get("legal_name"),
+            "consolidation_basis": "subsidiary_standalone",
+            "parent_basis": "parent_consolidated",
+            "additive": False,
+            "capital_ratios": capital.get("observed_percent") if capital.get("status") == "available" else None,
+            "tangible_book_basis": tangible_book["basis"],
+        },
+        extra_limitations=limitations,
+    )
+    return {
+        **base,
+        "model_version": BANK_MODEL_VERSION_V2,
+        "contract": contract,
+        "regulatory": {
+            "status": (regulatory or {}).get("status", "not_ingested"),
+            "subsidiary": (block or {}).get("entity"),
+            "period_end": (latest or {}).get("period_end"),
+            "values": (latest or {}).get("values"),
+            "derived": derived,
+            "capital": capital,
+            "entity_map": entity_map,
+            "comparability": (regulatory or {}).get("comparability"),
+            "limitations": (regulatory or {}).get("limitations", []),
+        } if regulatory else None,
+        "capital": capital,
+        "tangible_book": tangible_book,
+        "driver": driver,
+        "scenarios": scenarios,
+        "implied": implied,
+        "external_value_evidence": {
+            "status": "not_recorded",
+            "detail": (
+                "No published analyst value, transaction price or independent valuation report is "
+                "recorded for this issuer. Arithmetic verification is not external economic validation."
+            ),
+        },
+    }

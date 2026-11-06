@@ -389,7 +389,7 @@ def test_api_exposes_coverage_report_and_package(phase9):
 
     eligibility = client.get("/api/equity/JPM/valuation")
     assert eligibility.status_code == 200
-    assert eligibility.json()["contract"]["contract_version"] == "atlas.valuation_eligibility.v2"
+    assert eligibility.json()["contract"]["contract_version"] == "atlas.valuation_eligibility.v3"
 
     readiness = client.get("/api/equity/JPM/readiness")
     assert readiness.status_code == 200

@@ -28,7 +28,7 @@ from ..core.temporal import AsOfMode, iso, utcnow
 from ..entities.master import SecurityMaster
 from ..fec import valuation as fec_valuation
 from ..fec.compiler import COMPILER_VERSION
-from . import institutions, prices
+from . import institutions, prices, regulatory
 from .eligibility import (
     DCF,
     JUSTIFIED_EARNINGS,
@@ -241,6 +241,9 @@ def _series_value(value: Any) -> list[float]:
 class EquityResearchService:
     def __init__(self, db: Database) -> None:
         self.db = db
+        # Additive Phase 9.2 tables are provisioned lazily so coverage can report
+        # regulatory linkage even on databases created before this phase.
+        regulatory.seed_entities(db)
         self.master = SecurityMaster(db)
         self.rights = DataRightsEngine(db)
 
@@ -367,6 +370,10 @@ class EquityResearchService:
             ) or 0),
             "market_observations": bars,
             "price_source": price_source,
+            "regulatory_linked": bool(self.db.scalar(
+                "SELECT COUNT(*) FROM regulatory_entity WHERE ltrim(cik,'0')=? AND consolidation_basis='subsidiary_standalone'",
+                (str(issuer.get("cik") or "").lstrip("0"),), 0,
+            )),
             "missing_core_concepts": missing,
             "financial_coverage_missing": coverage_missing,
             "financial_coverage_valid": financial_coverage_valid,
@@ -402,6 +409,8 @@ class EquityResearchService:
             "issuers": len(rows),
             "with_revenue": sum(1 for row in rows if "revenue" not in row["financial_coverage_missing"]),
             "with_prices": sum(1 for row in rows if row["market_observations"] > 0),
+            "with_regulatory": sum(1 for row in rows if row.get("regulatory_linked")),
+            "regulatory_linked": sum(1 for row in rows if row.get("regulatory_linked")),
             "total_evidence": sum(row["evidence_records"] for row in rows),
             "total_filings": sum(row["filings"] for row in rows),
             "financial_coverage_valid": sum(1 for row in rows if row["financial_coverage_valid"]),
@@ -747,7 +756,40 @@ class EquityResearchService:
             },
             "limitations": limitations,
             "market_price": self._market_price(issuer["issuer_id"]),
+            "regulatory": regulatory.regulatory_evidence(self.db, cik=issuer.get("cik"))
+            if issuer.get("cik") else None,
         }
+
+    def _market_analysis(self, issuer_id: str, metrics: dict[str, Any],
+                         value_per_share: float | None,
+                         implied: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Compare the model with an observed price dated as close as the data permits."""
+        securities = self.master.securities_for_issuer(issuer_id)
+        for security in securities:
+            summary = prices.price_summary(self.db, security["security_id"])
+            if summary.get("status") != "available":
+                continue
+            history = prices.price_history(self.db, security["security_id"])
+            accounting = metrics.get("period_end")
+            chosen = prices.price_on_or_before(
+                self.db, security["security_id"], accounting or summary["last_date"]
+            )
+            if chosen is None:
+                chosen = {
+                    "date": summary["last_date"], "close": summary["latest_close"],
+                    "currency": summary.get("currency"),
+                    "adjustment_semantics": summary.get("adjustment_semantics"),
+                    "source_id": (summary.get("source") or {}).get("source_id"),
+                    "observed_at": (summary.get("source") or {}).get("observed_at"),
+                }
+            return prices.market_analysis(
+                price=chosen, history=history, value_per_share=value_per_share,
+                accounting_period_end=accounting, implied=implied,
+            )
+        return prices.market_analysis(
+            price=None, history=None, value_per_share=value_per_share,
+            accounting_period_end=metrics.get("period_end"), implied=implied,
+        )
 
     def _market_price(self, issuer_id: str) -> dict[str, Any]:
         """Return the first authorised price series for the issuer, or an explicit gap."""
@@ -763,7 +805,8 @@ class EquityResearchService:
     # --------------------------------------------------------------------- report
     def _valuation(self, identifier: str, *, assumptions: dict[str, Any] | None,
                    as_of: str | None, mode: str | None,
-                   target_price: float | None, stress: bool = True) -> dict[str, Any]:
+                   target_price: float | None, stress: bool = True,
+                   method: str | None = None) -> dict[str, Any]:
         issuer = read_models.resolve_company(self.db, identifier)
         metrics = get_issuer_metrics(self.db, issuer["issuer_id"], as_of=as_of, mode=mode)
         coverage = self._issuer_coverage(issuer)
@@ -773,6 +816,15 @@ class EquityResearchService:
         ]
         eligibility = _valuation_eligibility(
             issuer, coverage["valuation_missing"], available=available
+        )
+        regulatory_block = (
+            regulatory.regulatory_evidence(self.db, cik=issuer.get("cik"))
+            if issuer.get("cik") else None
+        )
+        price_summary = self._market_price(issuer["issuer_id"])
+        observed_price = (
+            price_summary.get("latest_close")
+            if price_summary.get("status") == "available" else None
         )
         base: dict[str, Any] = {
             "eligibility": eligibility,
@@ -788,12 +840,43 @@ class EquityResearchService:
             "findings": [],
             "executes": False,
             "economically_supported": False,
+            "regulatory": regulatory_block,
         }
+        requested_method = (method or "").strip() or None
+        if requested_method and requested_method != eligibility.get("method"):
+            return {
+                **base,
+                "status": "rejected_method",
+                "requested_method": requested_method,
+                "admissible_method": eligibility.get("method"),
+                "reason": (
+                    f"{requested_method} is not admissible for a {eligibility.get('business_model')} "
+                    f"issuer. The supported method is {eligibility.get('method') or 'none'}. "
+                    "Atlas returns a rejection rather than executing an inappropriate model."
+                ),
+                "market": self._market_analysis(
+                    issuer["issuer_id"], metrics, None
+                ),
+                "eligibility": {
+                    **eligibility,
+                    "requested_method": requested_method,
+                    "admissible": False,
+                    "contract_state": "unsupported",
+                },
+            }
         if eligibility.get("method") in (RESIDUAL_INCOME, JUSTIFIED_EARNINGS):
-            model = institutions.build_institution_valuation(
-                issuer=issuer, metrics=metrics, coverage=coverage, assumptions=assumptions
-            )
+            if eligibility.get("method") == RESIDUAL_INCOME:
+                model = institutions.build_bank_valuation_v2(
+                    issuer=issuer, metrics=metrics, coverage=coverage,
+                    regulatory=regulatory_block, assumptions=assumptions,
+                    market_price=observed_price,
+                )
+            else:
+                model = institutions.build_institution_valuation(
+                    issuer=issuer, metrics=metrics, coverage=coverage, assumptions=assumptions
+                )
             contract = model.get("contract") or {}
+            value_per_share = (model.get("outputs") or {}).get("value_per_share")
             return {
                 **base,
                 "status": model["status"],
@@ -804,6 +887,10 @@ class EquityResearchService:
                 "executes": bool(model.get("executes")),
                 "economically_supported": bool(model.get("economically_supported")),
                 "findings": model.get("findings", []),
+                "market": self._market_analysis(
+                    issuer["issuer_id"], metrics, value_per_share,
+                    implied=model.get("implied"),
+                ),
                 "eligibility": {
                     **eligibility,
                     "contract_state": contract.get("state"),
@@ -1137,20 +1224,22 @@ class EquityResearchService:
 
     def valuation(self, identifier: str, *, assumptions: dict[str, Any] | None = None,
                   as_of: str | None = None, mode: str | None = None,
-                  target_price: float | None = None) -> dict[str, Any]:
+                  target_price: float | None = None,
+                  method: str | None = None) -> dict[str, Any]:
         """Return the method-appropriate valuation and its eligibility contract."""
         return self._valuation(
             identifier, assumptions=assumptions, as_of=as_of, mode=mode,
-            target_price=target_price,
+            target_price=target_price, method=method,
         )
 
     def analyse(self, identifier: str, *, assumptions: dict[str, Any] | None = None,
                 as_of: str | None = None, mode: str | None = None,
-                target_price: float | None = None) -> dict[str, Any]:
+                target_price: float | None = None,
+                method: str | None = None) -> dict[str, Any]:
         workspace = self.workspace(identifier, as_of=as_of, mode=mode)
         valuation = self._valuation(
             identifier, assumptions=assumptions, as_of=workspace["as_of"],
-            mode=workspace["mode"], target_price=target_price,
+            mode=workspace["mode"], target_price=target_price, method=method,
         )
         report = self._render_report(workspace, valuation)
         digest = hashlib.sha256(report.encode("utf-8")).hexdigest()
@@ -1494,14 +1583,91 @@ class EquityResearchService:
                        f"{_money(reverse.get('target_price'))} USD per share." if reverse.get("solved")
                        else _excerpt(reverse.get("reason"), 160)),
                 ]
-        price = metrics.get("price")
+        reg = workspace.get("regulatory") or {}
+        if reg.get("subsidiaries"):
+            lines += ["", "## Regulatory evidence (insured subsidiary)", ""]
+            for block in reg["subsidiaries"]:
+                entity = block.get("entity") or {}
+                if block.get("status") != "available":
+                    lines.append(
+                        f"{entity.get('legal_name', 'Subsidiary')}: no regulatory observations are "
+                        "stored. The parent SEC accounts are not relabelled as regulatory data."
+                    )
+                    continue
+                latest = block["latest"]
+                lines += [
+                    f"**{entity.get('legal_name')}** — FDIC certificate {entity.get('cert')}, "
+                    f"Call Report period **{latest['period_end']}**, basis "
+                    f"`{entity.get('consolidation_basis')}`.",
+                    "",
+                    "This is a subsidiary standalone report, not the consolidated parent. Its equity "
+                    "is never added to consolidated equity nor divided by the parent share count.",
+                    "",
+                    "| Reported field | Value | Definition |",
+                    "| --- | ---: | --- |",
+                ]
+                for field in ("ASSET", "EQ", "INTAN", "NETINC", "NIM", "NTLNLS", "ELNATR",
+                              "RBC1AAJ", "RBCRWAJ", "IDT1CER"):
+                    item = (latest.get("values") or {}).get(field)
+                    if not item:
+                        continue
+                    value = item.get("value")
+                    rendered = (
+                        _money(value * 1000.0) + " USD" if item.get("unit") == "USD_thousands"
+                        else f"{value:.2f}%" if item.get("unit") == "percent" else str(value)
+                    )
+                    lines.append(f"| {field} | {rendered} | {item.get('definition')} |")
+                derived = latest.get("derived") or {}
+                tce = derived.get("tangible_common_equity") or {}
+                if tce.get("status") == "available":
+                    lines.append(
+                        f"| Tangible common equity (derived) | {_money(tce['value'] * 1000.0)} USD | "
+                        "EQ minus INTAN; subsidiary only, not a parent per-share value |"
+                    )
+                capital = latest.get("capital_constraint") or {}
+                if capital.get("status") == "available":
+                    headroom = capital.get("headroom_percentage_points") or {}
+                    lines.append(
+                        f"| Capital headroom | {capital.get('binding_headroom_points', 0):.2f} pp | "
+                        f"binding constraint: {capital.get('binding_constraint')} |"
+                    )
+                lines.append("")
+        market = valuation.get("market") or {}
+        lines += ["", "## Market price and model comparison", ""]
+        if market.get("status") != "available":
+            lines += [
+                "No observed market price exists for this security. Atlas does not synthesise a "
+                "quote, so market multiples and reverse valuation remain unavailable.",
+            ]
+        else:
+            lines += [
+                f"- Price: **{_money(market.get('price'))} {market.get('currency') or ''}** on "
+                f"**{market.get('price_date')}** from `{market.get('source_id')}` (adjustment: "
+                f"`{market.get('adjustment_semantics')}`).",
+                f"- Accounting period end: **{market.get('accounting_period_end') or '—'}**.",
+                f"- Mixed-date comparison: **{'yes' if market.get('mixed_date') else 'no'}** "
+                f"({market.get('date_gap_days')} days apart).",
+                f"- Model value per share: **{_money(market.get('model_value_per_share'))} USD**; "
+                f"model premium to price: **{_pct(market.get('model_premium_to_price'))}**.",
+                f"- Observed range: {_money((market.get('history') or {}).get('minimum_close'))} to "
+                f"{_money((market.get('history') or {}).get('maximum_close'))} USD over "
+                f"{(market.get('history') or {}).get('observations', 0)} sessions.",
+                f"- {market.get('warning')}",
+                f"- {market.get('note')}",
+            ]
+            implied = market.get("implied") or {}
+            if implied.get("status") == "available":
+                lines.append(
+                    f"- Market-implied cost of equity: **{_pct(implied.get('implied_cost_of_equity'))}**, "
+                    "conditional on the stated ROE, payout, horizon and terminal growth."
+                )
         lines += [
             "",
             "## Historical availability and missing information",
             "",
             f"- The report is computed as of **{workspace['as_of']}** in **{workspace['mode']}** mode; "
             "filings accepted after that instant are excluded by the existing evidence kernel.",
-            f"- Market price: **{'not bundled' if price is None else _money(price) + ' USD (' + str(metrics.get('price_source')) + ')'}**.",
+            f"- Market price: **{'not bundled' if (workspace.get('market_price') or {}).get('latest_close') is None else _money((workspace.get('market_price') or {}).get('latest_close')) + ' USD (' + str((workspace.get('market_price') or {}).get('source_id')) + ')'}**.",
             "- Not available: qualitative business narrative, management guidance, sell-side estimates, "
             "licensed consensus data, evaluated bond prices and low-latency news.",
         ]
@@ -1591,7 +1757,11 @@ class EquityResearchService:
         contract = model.get("contract") or {}
         as_of = workspace["as_of"]
         cik = str(company.get("cik") or "")
-        source_rows = self._source_rows(["sec-edgar"])
+        regulatory_block = (
+            regulatory.regulatory_evidence(self.db, cik=company.get("cik"))
+            if company.get("cik") else None
+        )
+        source_rows = self._source_rows(["sec-edgar", "fdic-bankfind"])
         if not source_rows:
             raise MissingDataError("SEC source metadata is missing from this database")
         decisions = self.rights.decisions_for_metadata(source_rows)
@@ -1681,7 +1851,12 @@ class EquityResearchService:
                 "valuation_contract_state": contract.get("state"),
                 "valuation_economically_supported": bool(model.get("economically_supported")),
                 "institution_model_version": model["model_version"],
+                "regulatory_evidence": "subsidiary_standalone" if regulatory_block else "not_included",
                 "price_included": False,
+                "price_export_note": (
+                    "Observed market prices are not packaged: the imported series is restricted "
+                    "and can be reconnected from its provider under the user's own entitlement."
+                ),
             },
         }
         financials = {
@@ -1694,9 +1869,28 @@ class EquityResearchService:
             "quality_checks": workspace["quality_checks"],
             "provenance": workspace["provenance"],
             "limitations": workspace["limitations"],
+            "regulatory": regulatory_block,
         }
+        known_sources = {item["source_id"] for item in app["sources"]}
+        for row in source_rows[1:]:
+            if row["source_id"] in known_sources:
+                continue
+            app["sources"].append({
+                "source_id": row["source_id"], "name": row["name"], "kind": row["kind"],
+                "homepage": row.get("homepage"), "license": row["licence"],
+                "redistribution": row["redistribution"], "rights_basis": "public_domain",
+                "snapshot_paths": ["data/regulatory.json"] if row["source_id"] == "fdic-bankfind" else [],
+            })
+            app["dependencies"]["datasets"].append({
+                "source_id": row["source_id"], "required": False,
+                "redistribution": row["redistribution"],
+            })
         files = {
             "data/financials.json": pretty(financials),
+            "data/regulatory.json": pretty(regulatory_block or {
+                "status": "not_ingested",
+                "detail": "No regulatory subsidiary is mapped to this issuer.",
+            }),
             "artifacts/institution.json": pretty(model),
             "artifacts/eligibility_contract.json": pretty(contract),
             "artifacts/expected_outputs.json": pretty(expected),
@@ -1730,8 +1924,11 @@ class EquityResearchService:
             {"path": "report.md", "role": "analysis_result",
              "rights": "public_domain", "source_ids": ["sec-edgar"],
              "media_type": "text/markdown"},
+            {"path": "data/regulatory.json", "role": "approved_source_snapshot",
+             "rights": "public_domain", "source_ids": ["fdic-bankfind"],
+             "media_type": "application/json"},
             {"path": "sources.json", "role": "rights_manifest",
-             "rights": "public_domain", "source_ids": ["sec-edgar"],
+             "rights": "public_domain", "source_ids": ["sec-edgar", "fdic-bankfind"],
              "media_type": "application/json"},
         ]
         payload = build_package(
