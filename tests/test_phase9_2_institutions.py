@@ -69,6 +69,21 @@ def test_jpm_and_gs_differentiate_cost_of_equity(live):
     assert gs["institution"]["assumptions"]["cost_of_equity"] == 0.11
     assert gs["institution"]["driver"]["business_model"] == "capital_markets"
 
+
+def test_bank_common_equity_is_total_less_sec_preferred(live):
+    db, _ = live
+    svc = EquityResearchService(db)
+    jpm = svc.valuation("JPM", as_of="2025-06-30")["institution"]
+    gs = svc.valuation("GS", as_of="2025-06-30")["institution"]
+    assert jpm["inputs"]["preferred_stock"] == 20_050_000_000
+    assert jpm["outputs"]["book_value_common_equity"] == 324_708_000_000
+    assert gs["inputs"]["preferred_stock"] == 13_253_000_000
+    assert gs["outputs"]["book_value_common_equity"] == 108_743_000_000
+    assert jpm["outputs"]["book_value_basis"] == "sec_total_stockholders_equity_less_preferred_stock"
+    assert jpm["outputs"]["common_equity_status"] == "derived_total_equity_less_preferred_stock"
+    assert jpm["outputs"]["book_value_per_common_share"] == pytest.approx(324_708_000_000 / 2_797_600_000)
+    assert jpm["outputs"]["reported_roe"] == pytest.approx(56_868_000_000 / 324_708_000_000)
+
 def test_implied_cost_of_equity_reproduces_price(live):
     db, _ = live
     model = EquityResearchService(db).valuation("JPM")["institution"]

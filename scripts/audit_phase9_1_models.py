@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def _bank_reference(model: dict) -> dict:
     a = model["assumptions"]
-    book = Decimal(str(model["outputs"]["book_value_common_equity"]))
+    book = Decimal(str(model["outputs"].get("book_value_used", model["outputs"].get("book_value_common_equity"))))
     bv0 = book
     roe = Decimal(str(a["sustainable_roe"]))
     coe = Decimal(str(a["cost_of_equity"]))

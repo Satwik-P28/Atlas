@@ -281,6 +281,22 @@ _CONCEPTS: tuple[ConceptDef, ...] = (
         ),
     ),
     _c(
+        "preferred_stock",
+        Statement.BALANCE,
+        "Preferred stock",
+        UnitKind.MONETARY,
+        "instant",
+        [
+            ("us-gaap", "PreferredStockValue"),
+            ("us-gaap", "PreferredStockIncludingAdditionalPaidInCapitalNetOfDiscount"),
+        ],
+        note=(
+            "Issuers use different preferred-stock elements. The fallback includes additional "
+            "paid-in capital net of discount; the source tag is always reported so a total "
+            "equity less preferred reconciliation can be audited."
+        ),
+    ),
+    _c(
         "cash_and_equivalents",
         Statement.BALANCE,
         "Cash and cash equivalents",

@@ -2,9 +2,9 @@
   "schema": "atlas.phase9_2.reproduction.v1",
   "package": {
     "path": "artifacts/phase9_2_application.atlas",
-    "bytes": 61109,
-    "sha256": "66deed04176f25b08228a75569917c6c0834e646742d8c05b7cd2ad183c80ce8",
-    "package_sha256": "66deed04176f25b08228a75569917c6c0834e646742d8c05b7cd2ad183c80ce8",
+    "bytes": 61281,
+    "sha256": "e99e6269ec47f7953177281f5ee85b73ef3dfb144b4321c28cfc1ad606ed09ed",
+    "package_sha256": "e99e6269ec47f7953177281f5ee85b73ef3dfb144b4321c28cfc1ad606ed09ed",
     "application_id": "atlas.firstparty.equity-research-0000019617-residual_income_equity",
     "price_included": false,
     "contains_restricted_price_289_91": false,
@@ -31,7 +31,7 @@
     "status": "installed",
     "already_installed": null,
     "integrity_status": "computationally_reproducible",
-    "install_id": "AINS-66deed04176f25b08228"
+    "install_id": "AINS-e99e6269ec47f7953177"
   },
   "execution": {
     "status": "reproduced",
@@ -41,70 +41,74 @@
     "valuation_method": "residual_income_equity",
     "contract_state": "arithmetically_verified",
     "outputs": {
-      "book_value_common_equity": 344758000000.0,
-      "book_value_basis": "consolidated_total_stockholders_equity",
-      "common_equity_status": "not_derived_preferred_stock_unmapped",
-      "reported_roe": 0.16960012530528662,
-      "calculated_equity_value": 855220863386.2341,
-      "value_per_share": 305.69804953754436,
-      "realizable_common_price": 305.69804953754436,
+      "book_value_common_equity": 324708000000.0,
+      "book_value_used": 324708000000.0,
+      "book_value_total_equity": 344758000000.0,
+      "preferred_equity": 20050000000.0,
+      "book_value_basis": "sec_total_stockholders_equity_less_preferred_stock",
+      "common_equity_status": "derived_total_equity_less_preferred_stock",
+      "book_value_per_common_share": 116.0666285387475,
+      "reported_roe": 0.17513581433164566,
+      "calculated_equity_value": 805484009387.5044,
+      "value_per_share": 287.91964876590805,
+      "realizable_common_price": 287.91964876590805,
       "negative_residual_equity": false,
-      "pv_explicit_residual_income": 119587031901.99388,
-      "pv_terminal_value": 390875831484.2402,
-      "terminal_value": 615331876817.4271,
+      "pv_explicit_residual_income": 112632240455.13846,
+      "pv_terminal_value": 368143768932.36597,
+      "terminal_value": 579546183286.9232,
       "terminal_value_share": 0.45704665100962716,
       "rows": [
         {
           "year": 1,
-          "opening_book_value": 344758000000.0,
-          "net_income": 58608860000.00001,
-          "dividends": 23443544000.000004,
-          "residual_income": 25856850000.000008,
-          "present_value": 23613561643.835625,
-          "closing_book_value": 379923316000.0
+          "opening_book_value": 324708000000.0,
+          "net_income": 55200360000.00001,
+          "dividends": 22080144000.000004,
+          "residual_income": 24353100000.000008,
+          "present_value": 22240273972.60275,
+          "closing_book_value": 357828216000.0
         },
         {
           "year": 2,
-          "opening_book_value": 379923316000.0,
-          "net_income": 64586963720.00001,
-          "dividends": 25834785488.000004,
-          "residual_income": 28494248700.000008,
-          "present_value": 23764515919.184345,
-          "closing_book_value": 418675494232.0
+          "opening_book_value": 357828216000.0,
+          "net_income": 60830796720.00001,
+          "dividends": 24332318688.000004,
+          "residual_income": 26837116200.000008,
+          "present_value": 22382449240.00751,
+          "closing_book_value": 394326694032.0
         },
         {
           "year": 3,
-          "opening_book_value": 418675494232.0,
-          "net_income": 71174834019.44,
-          "dividends": 28469933607.776,
-          "residual_income": 31400662067.4,
-          "present_value": 23916435199.03301,
-          "closing_book_value": 461380394643.664
+          "opening_book_value": 394326694032.0,
+          "net_income": 67035537985.44,
+          "dividends": 26814215194.176003,
+          "residual_income": 29574502052.4,
+          "present_value": 22525533390.40025,
+          "closing_book_value": 434548016823.264
         },
         {
           "year": 4,
-          "opening_book_value": 461380394643.664,
-          "net_income": 78434667089.42288,
-          "dividends": 31373866835.769154,
-          "residual_income": 34603529598.2748,
-          "present_value": 24069325652.36016,
-          "closing_book_value": 508441194897.31775
+          "opening_book_value": 434548016823.264,
+          "net_income": 73873162859.95488,
+          "dividends": 29549265143.981953,
+          "residual_income": 32591101261.744804,
+          "present_value": 22669532233.991856,
+          "closing_book_value": 478871914539.23694
         },
         {
           "year": 5,
-          "opening_book_value": 508441194897.31775,
-          "net_income": 86435003132.54402,
-          "dividends": 34574001253.01761,
-          "residual_income": 38133089617.298836,
-          "present_value": 24223193487.58073,
-          "closing_book_value": 560302196776.8442
+          "opening_book_value": 478871914539.23694,
+          "net_income": 81408225471.67029,
+          "dividends": 32563290188.668118,
+          "residual_income": 35915393590.44278,
+          "present_value": 22814451618.136097,
+          "closing_book_value": 527716849822.23914
         }
       ]
     },
     "expected_outputs": {
-      "calculated_equity_value": 855220863386.2341,
-      "realizable_common_price": 305.69804953754436,
-      "value_per_share": 305.69804953754436
+      "calculated_equity_value": 805484009387.5044,
+      "realizable_common_price": 287.91964876590805,
+      "value_per_share": 287.91964876590805
     }
   },
   "source_reconciliation": {
@@ -116,7 +120,7 @@
   },
   "limitations": [
     "The package reproduces the packaged SEC snapshot and assumptions, not original SEC bytes.",
-    "The opening book value is total stockholders' equity, not common equity; preferred stock is unmapped.",
+    "The opening book value is SEC total stockholders' equity less same-period SEC preferred stock; preferred is a GAAP balance-sheet claim, not CET1.",
     "No bulk FR Y-9C release timestamp is available, so point-in-time regulatory reconstruction is not claimed.",
     "The restricted market price is intentionally absent from the package."
   ]

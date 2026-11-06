@@ -17,8 +17,10 @@ layer.
   is substituted for the other.
 - Bank residual income v2 with subsidiary tangible equity, capital headroom, regulatory
   stress and an implied cost of equity, still built on the Phase 9.1 engine.
-- Explicit runtime flag that the opening book is total stockholders' equity and that
-  preferred stock is unmapped; no common-equity claim is made.
+- **Common-equity correction:** same-period SEC preferred stock is mapped for JPM and GS.
+  The opening book is SEC total equity less that preferred claim, with total, preferred,
+  common book, book per common share, basis and status all exposed. JPM: $324.708B;
+  GS: $108.743B.
 - Eligibility contract v3 with method contracts and entity reconciliation.
 - Restricted observed-price import and date-aligned market comparison.
 - Interface controls for ROE, cost of equity, information cutoff, price import,
@@ -36,8 +38,10 @@ or Phase 10 work was started.
 
 - The bulk FR Y-9C archive has no release timestamp or vintage; point-in-time
   reconstruction is not claimed.
-- The SEC concept set does not retain preferred stock, so common equity is not derived
-  for valuation. See `PHASE9_2_FINAL_ACCEPTANCE.md`.
+- Preferred stock is a GAAP balance-sheet claim, not CET1; FR Y-9C total/preferred are a
+  reconciliation check, not cross-basis model inputs.
+- The local Chromium runner crashes on the rebuilt SPA; Cloud browser rendering passed but
+  the full A–J suite was not counted. See `PHASE9_2_FINAL_ACCEPTANCE.md`.
 - Parent goodwill and other intangibles are not both mapped; no parent tangible book
   per share.
 - Segment forecasts and external analyst benchmarks are unavailable.

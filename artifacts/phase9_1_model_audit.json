@@ -3,17 +3,17 @@
     {
       "check": "bank_residual_income_equity_value",
       "method": "independent Decimal residual-income loop",
-      "model": 733262715298.8607,
+      "model": 729245478495.1555,
       "passed": true,
-      "reference": 733262715298.861,
+      "reference": 729245478495.1559,
       "ticker": "JPM"
     },
     {
       "check": "bank_residual_income_value_per_share",
       "method": "independent Decimal residual-income loop",
-      "model": 271.96154413576915,
+      "model": 270.4715816687024,
       "passed": true,
-      "reference": 271.9615441357692,
+      "reference": 270.4715816687026,
       "ticker": "JPM"
     },
     {
@@ -31,17 +31,17 @@
     {
       "check": "bank_residual_income_equity_value",
       "method": "independent Decimal residual-income loop",
-      "model": 204578343853.37894,
+      "model": 174387712278.59406,
       "passed": true,
-      "reference": 204578343853.37897,
+      "reference": 174387712278.5941,
       "ticker": "GS"
     },
     {
       "check": "bank_residual_income_value_per_share",
       "method": "independent Decimal residual-income loop",
-      "model": 690.0316782804465,
+      "model": 588.2003124501215,
       "passed": true,
-      "reference": 690.0316782804466,
+      "reference": 588.2003124501216,
       "ticker": "GS"
     },
     {
@@ -86,7 +86,7 @@
     },
     {
       "check": "package_deterministic",
-      "model": "5127119db11d2eaa",
+      "model": "5fd93de72eee585f",
       "passed": true,
       "ticker": "JPM"
     },
@@ -98,7 +98,7 @@
     },
     {
       "check": "package_deterministic",
-      "model": "a8ef74a104eaaed4",
+      "model": "f53d05f6d8110f0a",
       "passed": true,
       "ticker": "UNH"
     },
@@ -113,7 +113,7 @@
     "passed": 16,
     "total": 16
   },
-  "db": "var/phase9.db",
+  "db": "/workspace/chats/41a4fd2abe41a6515dc8d5bb/var/phase9.db",
   "limits": [
     "The bank and insurer reference implementations share the same documented inputs; agreement proves arithmetic, not the economic validity of the assumptions.",
     "Call Report, FDIC and CMS data are not joined; only consolidated SEC facts are used.",

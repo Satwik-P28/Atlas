@@ -34,6 +34,21 @@ FIXTURE = ROOT / "fixtures" / "phase9"
 MANIFEST = FIXTURE / "sec_manifest.json"
 
 
+def _merge_preferred_facts(ticker: str, facts: dict) -> dict:
+    """Merge the compact, source-backed preferred-stock observations."""
+    supplement = FIXTURE / "sec" / ticker / "preferred_companyfacts.json"
+    if not supplement.exists():
+        return facts
+    payload = json.loads(supplement.read_text(encoding="utf-8"))
+    merged = dict(facts)
+    merged["facts"] = {ns: dict(elements) for ns, elements in facts.get("facts", {}).items()}
+    merged["facts"].setdefault("us-gaap", {}).update(
+        payload.get("facts", {}).get("us-gaap", {})
+    )
+    merged["_atlas_supplement"] = payload.get("_atlas_supplement")
+    return merged
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--db", default="var/phase9.db")
@@ -72,7 +87,11 @@ def main() -> int:
     for item in documents:
         folder = FIXTURE / "sec" / item["ticker"]
         submissions, facts, _, _ = load_fixture_payloads(folder, item["cik"])
-        submissions_doc, facts_doc = register_fixture_documents(db, folder, item["cik"])
+        facts = _merge_preferred_facts(item["ticker"], facts)
+        facts_body = json.dumps(facts, separators=(",", ":"), sort_keys=True).encode()
+        submissions_doc, facts_doc = register_fixture_documents(
+            db, folder, item["cik"], companyfacts_body=facts_body
+        )
         report = ingestor.sync_payloads(
             item["cik"],
             submissions_payload=submissions,

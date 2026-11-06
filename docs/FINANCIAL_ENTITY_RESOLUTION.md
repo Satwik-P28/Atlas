@@ -13,3 +13,9 @@ The consolidated parent supplies equity, earnings and the share count. The subsi
 supplies Call Report capital, credit and margin evidence. `assert_comparable` rejects mixed
 consolidation bases and mixed reporting periods. Subsidiary equity is never added to parent
 equity and never divided by parent shares.
+
+Common equity is derived only within the SEC GAAP series: `StockholdersEquity` minus the
+same-period SEC preferred-stock fact. JPM uses
+`PreferredStockIncludingAdditionalPaidInCapitalNetOfDiscount`; GS uses
+`PreferredStockValue`. The FR Y-9C `BHCK3210` and `BHCK3283` values are a separate
+reconciliation check, not inputs to a cross-basis subtraction. Preferred is not CET1.

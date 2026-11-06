@@ -38,22 +38,29 @@ inadmissible model. See [docs/PHASE9_IMPLEMENTATION.md](docs/PHASE9_IMPLEMENTATI
 [docs/PHASE9_READINESS.md](docs/PHASE9_READINESS.md).
 
 The supplied `ATLAS_MASTER_SPEC.md` v1.2.0 is still **not present** in the checkout. This
-is documented as a blocker through Phase 9; no substitute file was invented. Phase 9
-therefore does not claim master-spec conformance or Phase 9 completion.
+is documented as a blocker; no substitute file was invented. The Phase 9.2 common-equity
+gate is closed, but master-spec conformance and Phase 9 completion are not claimed.
+
+**Phase 9.2 corrects the bank starting book:** SEC `StockholdersEquity` minus same-period
+SEC preferred stock, both GAAP basis. JPM opens at **$324.708B** common equity (not
+$344.758B total equity); GS opens at **$108.743B**. Book value per common share and ROE are
+computed on that common basis, and the portable package reproduces **$287.9196/share** at
+17% ROE and 9.5% cost of equity. See [PHASE9_2_FINAL_ACCEPTANCE.md](PHASE9_2_FINAL_ACCEPTANCE.md).
 
 ```
 Terminal demo: 5 issuers · 8 securities · 14,977 filings · 23,583 evidence records
 Phase 6 learning demo: 5 real vendor histories · 3,760 bars · 752 sessions · schema v9
 Phase 7 economic demo: 365 public days · 1,095 observations · 12 evidence edges
 Phase 8 package: 47,270 bytes · 6 declarative files · deterministic · unsigned
-Phase 9 real universe: 20 issuers · 489 filings · 26,296 evidence records
-Phase 9 readiness: 16 valid financial coverage · 17 DCF executions · 3 institutions refused · 0 prices
-Phase 9 audit: 7/7 raw SEC comparisons · 8/8 DCF components · package reproduced from a clean database
+Phase 9 real universe: 20 issuers · 489 filings · 26,440 evidence records
+Phase 9 readiness: 16 valid financial coverage · 17 DCF executions · 3 institutions refused · 4 restricted prices
+Phase 9 bank valuation: JPM common book $324.708B · GS common book $108.743B · package $287.9196 reproduced
+Phase 9 audit: 28/28 independent checks · 446 backend tests · 4 frontend tests
 Public-domain EIA-930 and NOAA GHCN · two Dallas stations · spatial representativeness
 Observed weather is not a forecast · current archive is not a historical vintage
 Association, not causation · test R² −0.8935 retained · hypothetical firm exposure
 Independent Brier/log-loss/ECE tests · Phase 6 negative market result retained
-Schema 10 · Applications at /applications · FEC-backed execution · local gallery
+Schema 13 · Applications at /applications · FR Y-9C evidence · local gallery
 ```
 
 ![Economic Lab: public weather and demand, association audit, hypothetical financial consequence](artifacts/36-economic-lab.png)
@@ -358,7 +365,7 @@ compiler setup. Details: [docs/PHASE7_BENCHMARKS.md](docs/PHASE7_BENCHMARKS.md).
 ## 7. Verification
 
 ```bash
-.venv/bin/python -m pytest -q          # 387 passed (372 through Phase 7 + 15 Phase 8)
+.venv/bin/python -m pytest -q          # 446 passed through Phase 9.2
 cd web && npm test -- --run            # 4 passed
 cd web && npm run build                # tsc + vite
 ```
@@ -385,7 +392,7 @@ downloads the bytes, forks locally and checks a 390px viewport. Screenshots are 
 ```
 src/atlas/
   core/        ids, units, temporal semantics, concept registry, typed errors
-  storage/     SQLite engine, versioned migrations (schema v10), source registry, safe migration
+  storage/     SQLite engine, versioned migrations (schema v13), source registry, safe migration
   evidence/    temporal evidence kernel, selection, provenance
   entities/    issuer / security / listing / ticker master and resolution
   market/      calendars, immutable bars, corporate actions, adjustments
@@ -399,7 +406,7 @@ src/atlas/
   applications/package contracts, rights, SDK, lifecycle, domain packs and app CLI
   research/    research objects and content-addressed source archives
   cli.py       command line interface (incl. `serve`)
-tests/         387 tests (Phase 1–8 plus terminal API/workspaces)
+tests/         446 tests (Phase 1–9.2 plus terminal API/workspaces)
 web/           React 19 + TypeScript + Vite terminal; Vitest and Playwright journeys
 benchmarks/    Phase 1 benchmarks + terminal_bench.py
 fixtures/      real SEC payloads and labelled synthetic fixtures
@@ -441,8 +448,9 @@ never the reverse. The kernel does not know HTTP exists.
   or notification delivery. The scenario is not a company forecast or investment advice.
 * Phase 7 does not implement event markets, real-estate underwriting, live orders, credit
   modeling, forward power curves or a general equilibrium simulator.
-* `ATLAS_MASTER_SPEC.md` v1.2.0 is absent from the checkout; `docs/PHASE7_CONTRACT.md` and the
-  Phase 7 documents are the in-repo authority until the supplied master is added.
+* `ATLAS_MASTER_SPEC.md` v1.2.0 is absent from the checkout; no substitute was generated.
+  The Phase 9.2 common-equity correction is complete, but master-spec conformance remains
+  blocked. See `docs/MASTER_SPEC_GATE.md`.
 * No news, transcripts, estimates or analyst data; events are filings and actions only.
 * Screening covers 4 issuers, not a market.
 * X-Ray is reachable from statement cells, metrics and workspace evidence panels; chart
@@ -450,9 +458,11 @@ never the reverse. The kernel does not know HTTP exists.
 * Workspace editing uses explicit buttons, not drag-and-drop.
 * Single-user, no authentication. `owner_id = 'local'`; the server binds loopback by
   default and must not be exposed publicly.
-* Frontend bundle is 674.74 kB (200.15 kB gzip); the chart library could be lazy-loaded.
+* Frontend bundle is 701.09 kB (207.27 kB gzip); the chart library could be lazy-loaded.
 * Browser verification in this container needs a workspace-local Chromium sysroot
-  (`scripts/fetch_browser_libs.py`); that is test tooling, not a runtime dependency.
+  (`scripts/fetch_browser_libs.py`). After the sysroot is installed, Chromium 156 crashes
+  on the rebuilt SPA in this container; the Cloud browser renders it, but the full A–J
+  runner was not counted as passed for this build.
 
 ---
 

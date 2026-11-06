@@ -8,13 +8,16 @@ Used for JPMorgan Chase (SIC 6021) and Goldman Sachs (SIC 6211).
 Equity value = BV0 + Σ (NI_t - CoE·BV_t-1)/(1+CoE)^t + PV(terminal residual)
 BV_t       = BV_t-1 + NI_t - dividends
 NI_t       = sustainable ROE · BV_t-1
+BV0        = SEC StockholdersEquity − same-period SEC preferred stock
 ```
 
-- Book value, net income and share counts are reported SEC facts with evidence ids.
+- JPM opens on **$324.708B** common equity after deducting $20.050B preferred; GS opens on **$108.743B** after deducting $13.253B. Each bank uses its own filed SEC tag.
+- Book value, preferred stock, net income and share counts are reported SEC facts with evidence ids. Preferred is GAAP, not CET1.
 - Cost of equity, sustainable ROE, payout, horizon and terminal growth are explicit
   assumptions, echoed in the output and the package.
 - Sensitivity covers cost of equity ±1 pp, ROE ±2 pp, terminal growth 1.5–3.5% and both
-  period-end and weighted-average diluted share counts.
+  period-end and weighted-average diluted share counts. Common-basis book value per share
+  and common ROE are emitted separately from total equity.
 - A negative calculated equity value is retained. `realizable_common_price` is `null`,
   with a finding explaining that a negative residual is not a tradable negative price.
 - Tangible book value is **not** produced: goodwill and intangibles are not mapped, so

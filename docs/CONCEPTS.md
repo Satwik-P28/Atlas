@@ -64,6 +64,7 @@ Apple reports `NetIncomeLoss`, which maps to `net_income`; Atlas does not substi
 | `assets` | monetary | instant | `Assets` |
 | `liabilities` | monetary | instant | `Liabilities` |
 | `equity` | monetary | instant | `StockholdersEquity`, `StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest` |
+| `preferred_stock` | monetary | instant | `PreferredStockValue`, `PreferredStockIncludingAdditionalPaidInCapitalNetOfDiscount` |
 | `cash_and_equivalents` | monetary | instant | `CashAndCashEquivalentsAtCarryingValue`, `CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents` |
 | `short_term_investments` | monetary | instant | `ShortTermInvestments`, `MarketableSecuritiesCurrent`, `AvailableForSaleSecuritiesDebtSecuritiesCurrent` |
 | `receivables` | monetary | instant | `AccountsReceivableNetCurrent`, `ReceivablesNetCurrent` |

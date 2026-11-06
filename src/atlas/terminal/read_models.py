@@ -612,6 +612,7 @@ def issuer_metrics(
         ("assets", "Total assets"),
         ("liabilities", "Total liabilities"),
         ("equity", "Shareholders' equity"),
+        ("preferred_stock", "Preferred stock"),
         ("cash_and_equivalents", "Cash and equivalents"),
         ("long_term_debt", "Long-term debt"),
         ("short_term_debt", "Short-term debt"),

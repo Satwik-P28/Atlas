@@ -71,6 +71,7 @@ def _evidence(metrics: Mapping[str, Any], key: str) -> list[str]:
 def _inputs(metrics: Mapping[str, Any]) -> dict[str, Any]:
     return {
         "equity": _metric(metrics, "equity"),
+        "preferred_stock": _metric(metrics, "preferred_stock"),
         "net_income": _metric(metrics, "net_income"),
         "net_income_common": _metric(metrics, "net_income_common"),
         "eps_diluted": _metric(metrics, "eps_diluted"),
@@ -97,6 +98,7 @@ def _provenance(metrics: Mapping[str, Any]) -> dict[str, Any]:
         }
         for key in (
             "equity",
+            "preferred_stock",
             "net_income",
             "net_income_common",
             "eps_diluted",
@@ -249,7 +251,28 @@ def build_bank_valuation(
     inputs = _inputs(metrics)
     merged = dict(BANK_DEFAULTS)
     merged.update({key: value for key, value in (assumptions or {}).items() if value is not None})
-    book_value = inputs.get("equity")
+    total_equity = inputs.get("equity")
+    preferred = inputs.get("preferred_stock")
+    common_reconciled = bool(
+        total_equity is not None
+        and preferred is not None
+        and 0 <= preferred < total_equity
+    )
+    book_value = (
+        total_equity - preferred
+        if common_reconciled
+        else total_equity
+    )
+    book_value_basis = (
+        "sec_total_stockholders_equity_less_preferred_stock"
+        if common_reconciled
+        else "consolidated_total_stockholders_equity"
+    )
+    common_equity_status = (
+        "derived_total_equity_less_preferred_stock"
+        if common_reconciled
+        else "not_derived_preferred_stock_unmapped"
+    )
     net_income = inputs.get("net_income_common") or inputs.get("net_income")
     shares = inputs.get("shares_outstanding")
     if book_value is None or net_income is None or not shares:
@@ -263,7 +286,7 @@ def build_bank_valuation(
             "executes": False,
             "economically_supported": False,
         }
-    reported_roe = inputs.get("roe") or (net_income / book_value if book_value else None)
+    reported_roe = net_income / book_value if book_value else None
     roe = float(merged["sustainable_roe"]) if merged.get("sustainable_roe") is not None else float(reported_roe)
     cost_of_equity = float(merged["cost_of_equity"])
     terminal_growth = float(merged["terminal_growth"])
@@ -307,16 +330,17 @@ def build_bank_valuation(
             "severity": "error",
             "detail": "No finite terminal value exists under these assumptions.",
         })
-    findings.append({
-        "code": "common_equity_not_derived",
-        "severity": "warning",
-        "detail": (
-            "The opening book value is consolidated total stockholders' equity. Preferred "
-            "stock is not mapped in the SEC concept set, so the preferred claim is not "
-            "deducted and this is not a common-equity starting book. Per-share residual "
-            "income is diagnostic arithmetic, not a common-share valuation."
-        ),
-    })
+    if not common_reconciled:
+        findings.append({
+            "code": "common_equity_not_derived",
+            "severity": "warning",
+            "detail": (
+                "The opening book value is consolidated total stockholders' equity. Preferred "
+                "stock is missing or invalid in the SEC evidence, so the preferred claim is not "
+                "deducted. Per-share residual income is diagnostic arithmetic, not a common-share "
+                "valuation."
+            ),
+        })
     if inputs.get("weighted_average_shares_diluted"):
         findings.append({
             "code": "share_basis_divergence",
@@ -367,7 +391,13 @@ def build_bank_valuation(
     }
     limitations = [
         "Tangible book value is not computed: goodwill and intangible assets are not mapped in this fixture, so the tangible-book cross-check is unavailable rather than assumed to equal book value.",
-        "The opening book value is total stockholders' equity, not common equity: preferred stock is not mapped, so no common-equity claim is made for the per-share result.",
+        (
+            "Common equity is SEC total stockholders' equity less reported SEC preferred stock. "
+            "It is a GAAP-basis reconciliation, not regulatory CET1 capital."
+            if common_reconciled else
+            "The opening book value is total stockholders' equity, not common equity: preferred "
+            "stock is missing, so no common-equity claim is made for the per-share result."
+        ),
         "Credit losses, net interest margin, deposit beta and regulatory capital ratios are not modelled from Call Reports; only consolidated SEC facts are used.",
         "Segment-level earnings and regulatory-entity data are not available in this fixture and are not proxied.",
         "The cost of equity is an explicit analyst assumption, not a market-observed quantity; no price series is bundled.",
@@ -403,11 +433,13 @@ def build_bank_valuation(
         "inputs": inputs,
         "provenance": _provenance(metrics),
         "outputs": {
-            # Retained for contract compatibility. The basis below is authoritative: preferred
-            # stock is not yet mapped, so this is not a common-equity measure.
-            "book_value_common_equity": book_value,
-            "book_value_basis": "consolidated_total_stockholders_equity",
-            "common_equity_status": "not_derived_preferred_stock_unmapped",
+            "book_value_common_equity": book_value if common_reconciled else None,
+            "book_value_used": book_value,
+            "book_value_total_equity": total_equity,
+            "preferred_equity": preferred,
+            "book_value_basis": book_value_basis,
+            "common_equity_status": common_equity_status,
+            "book_value_per_common_share": book_value / float(shares),
             "reported_roe": reported_roe,
             "calculated_equity_value": equity_value,
             "value_per_share": raw_per_share,
@@ -962,14 +994,14 @@ def build_bank_valuation_v2(
     if market_price:
         implied = implied_cost_of_equity(
             price=float(market_price), shares=float(base["inputs"]["shares_outstanding"]),
-            book_value=float(base["inputs"]["equity"]),
+            book_value=float(base["outputs"]["book_value_used"]),
             roe=float(assumptions_out["sustainable_roe"]),
             payout=float(assumptions_out["payout_ratio"]),
             horizon=int(assumptions_out["horizon"]),
             terminal_growth=float(assumptions_out["terminal_growth"]),
         )
     scenarios = _bank_v2_scenarios(
-        book_value=float(base["inputs"]["equity"]), roe=float(assumptions_out["sustainable_roe"]),
+        book_value=float(base["outputs"]["book_value_used"]), roe=float(assumptions_out["sustainable_roe"]),
         shares=float(base["inputs"]["shares_outstanding"]),
         base={**assumptions_out, "cost_of_equity": assumptions_out["cost_of_equity"]},
         latest=latest,

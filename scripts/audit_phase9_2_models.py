@@ -52,11 +52,52 @@ def main() -> int:
     def check(name, passed, detail):
         checks.append({"name": name, "passed": bool(passed), "detail": detail})
 
-    jpm = svc.valuation("JPM"); gs = svc.valuation("GS"); unh = svc.valuation("UNH")
+    cutoff = "2025-06-30"
+    jpm = svc.valuation("JPM", as_of=cutoff); gs = svc.valuation("GS", as_of=cutoff); unh = svc.valuation("UNH", as_of=cutoff)
     jm = jpm["institution"]; gm = gs["institution"]; um = unh["institution"]
+
+    def source_fact(cik: str, concept: str):
+        rows = db.query(
+            "SELECT value_numeric, source_concept, form_type, accession_number, period_end "
+            "FROM evidence WHERE entity_id LIKE ? AND concept=? AND period_end='2024-12-31' "
+            "AND form_type='10-K' ORDER BY acceptance_datetime DESC LIMIT 1",
+            (f"%{cik}%", concept),
+        )
+        return rows[0] if rows else None
+
+    jpm_total = source_fact("19617", "equity")
+    jpm_pref = source_fact("19617", "preferred_stock")
+    jpm_common_source = source_fact("19617", "net_income_common")
+    gs_total = source_fact("886982", "equity")
+    gs_pref = source_fact("886982", "preferred_stock")
+    jpm_common = Decimal(str(jpm_total["value_numeric"])) - Decimal(str(jpm_pref["value_numeric"]))
+    gs_common = Decimal(str(gs_total["value_numeric"])) - Decimal(str(gs_pref["value_numeric"]))
+    check("JPM SEC preferred stock", jpm_pref is not None and Decimal(str(jpm_pref["value_numeric"])) == Decimal("20050000000") and jpm_pref["source_concept"] == "PreferredStockIncludingAdditionalPaidInCapitalNetOfDiscount",
+          "2024 10-K: PreferredStockIncludingAdditionalPaidInCapitalNetOfDiscount = 20,050,000,000 USD")
+    check("JPM SEC common equity", jpm_total is not None and jpm_pref is not None and jpm_common == Decimal("324708000000"),
+          f"2024 10-K: 344,758,000,000 total equity - 20,050,000,000 preferred = {jpm_common} common")
+    check("GS SEC preferred stock", gs_pref is not None and Decimal(str(gs_pref["value_numeric"])) == Decimal("13253000000") and gs_pref["source_concept"] == "PreferredStockValue",
+          "2024 10-K: PreferredStockValue = 13,253,000,000 USD")
+    check("GS SEC common equity", gs_total is not None and gs_pref is not None and gs_common == Decimal("108743000000"),
+          f"2024 10-K: 121,996,000,000 total equity - 13,253,000,000 preferred = {gs_common} common")
+    check("model starts on SEC common equity", approx(jm["outputs"]["book_value_used"], jpm_common) and approx(gm["outputs"]["book_value_used"], gs_common) and jm["outputs"]["book_value_basis"] == "sec_total_stockholders_equity_less_preferred_stock" and gm["outputs"]["book_value_basis"] == "sec_total_stockholders_equity_less_preferred_stock",
+          "both bank models use SEC total equity less the same-period SEC preferred-stock fact")
+    check("book value per common share", approx(jm["outputs"]["book_value_per_common_share"], jpm_common / Decimal(str(jm["inputs"]["shares_outstanding"])), Decimal("0.01")) and approx(gm["outputs"]["book_value_per_common_share"], gs_common / Decimal(str(gm["inputs"]["shares_outstanding"])), Decimal("0.01")),
+          "period-end common equity / period-end common shares")
+    check("common earnings and ROE", jpm_common_source is not None and approx(jm["inputs"]["net_income_common"], jpm_common_source["value_numeric"]) and approx(jm["outputs"]["reported_roe"], Decimal(str(jm["inputs"]["net_income_common"])) / jpm_common),
+          "net income available to common / common equity, not total-equity ROE")
+    regulatory_parent = jm.get("holding_company_evidence") or {}
+    regulatory_latest = regulatory_parent.get("latest") or {}
+    regulatory_values = regulatory_latest.get("values") or {}
+    check("SEC and FR Y-9C reconciliation", (
+        jpm_total is not None and jpm_pref is not None
+        and Decimal(str(regulatory_values.get("total_equity_capital", {}).get("value") or 0)) * 1000 == Decimal(str(jpm_total["value_numeric"]))
+        and Decimal(str(regulatory_values.get("perpetual_preferred_stock", {}).get("value") or 0)) * 1000 == Decimal(str(jpm_pref["value_numeric"]))
+    ), "JPM SEC GAAP total equity and preferred stock equal the FR Y-9C reported amounts in dollars for 2024-12-31; the model uses only the SEC series")
+
     ri = jm["outputs"]["rows"][0]
     close_bv, pv, pv_tv, equity = reference_ri(
-        jm["inputs"]["equity"], jm["assumptions"]["sustainable_roe"],
+        jm["outputs"]["book_value_used"], jm["assumptions"]["sustainable_roe"],
         jm["assumptions"]["cost_of_equity"], jm["assumptions"]["payout_ratio"],
         int(jm["assumptions"]["horizon"]), jm["assumptions"]["terminal_growth"])
     check("book-value roll-forward", approx(ri["closing_book_value"], (Decimal(str(ri["opening_book_value"])) + Decimal(str(ri["net_income"])) - Decimal(str(ri["dividends"])))),
@@ -101,6 +142,11 @@ def main() -> int:
         "value per share = EPS x justified multiple")
     check("equity value per share", approx(jm["outputs"]["value_per_share"], jm["outputs"]["calculated_equity_value"] / jm["inputs"]["shares_outstanding"], Decimal("0.01")),
           "equity value / period-end share count")
+    check("market-implied cost of equity", (
+        jm.get("implied") is not None and jm["implied"]["converged"] is True
+        and jm["implied"]["unique_root"] is True
+        and approx(jm["implied"]["solved_value_per_share"], jm["implied"]["price"], Decimal("0.01"))
+    ), "bisection solves the common-equity residual model back to the observed price")
     check("historical source timing preserved", bool(jm["regulatory"]["values"]["EQ"]["observation_id"]) and jm["regulatory"]["status"] == "available",
           "each observation carries an id, source and period; retrieval time is stored in provenance")
     market = jpm["market"]
@@ -128,7 +174,7 @@ def main() -> int:
     except regulatory.RegulatoryReconciliationError:
         period_rejected = True
     check("incompatible reporting periods rejected", period_rejected, "different period ends raise instead of forming a ratio")
-    package = svc.create_package("JPM")
+    package = svc.create_package("JPM", as_of=cutoff)
     loaded = read_package(package["payload"])
     financials = json.loads(loaded["files"]["data/financials.json"])
     replay = institutions.build_bank_valuation_v2(
@@ -146,6 +192,7 @@ def main() -> int:
         "independent_reference": "Decimal arithmetic implemented in this script; production operators are not called for reference values.",
         "limitations": [
             "Parent goodwill and intangibles are not mapped, so no parent tangible book per share is audited.",
+            "Preferred stock is a GAAP balance-sheet amount; it is not regulatory CET1 capital.",
             "No external valuation report or analyst estimate is available; economic review remains unrecorded.",
         ],
     }

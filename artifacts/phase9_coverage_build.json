@@ -32,8 +32,8 @@
     },
     {
       "cik": "0000019617",
-      "concepts": 21,
-      "evidence": 897,
+      "concepts": 22,
+      "evidence": 969,
       "filings": 4,
       "identity_note": "primary ticker declared by coverage manifest (SEC lists multiple instruments)",
       "issuer_id": "ISS-CIK0000019617",
@@ -42,8 +42,8 @@
     },
     {
       "cik": "0000886982",
-      "concepts": 21,
-      "evidence": 949,
+      "concepts": 22,
+      "evidence": 1021,
       "filings": 4,
       "identity_note": "primary ticker declared by coverage manifest (SEC lists multiple instruments)",
       "issuer_id": "ISS-CIK0000886982",
@@ -52,7 +52,7 @@
     }
   ],
   "coverage_note": "Retained SEC facts begin in 2018; all annual/10-K observations and the 24 most recent sub-annual observations per unit are kept. Filing metadata is retained only for accessions that support those facts; pre-2018 filing archive files are not included. Market prices are absent. Ticker/exchange metadata in this manifest is a curated CIK-to-listing map; it is not a market feed, and SEC submissions remain the financial-fact source. This is a documented research window, not a claim of complete SEC history.",
-  "evidence": 6360,
+  "evidence": 6504,
   "filings": 80,
   "issuers": 5,
   "price_coverage": "none",

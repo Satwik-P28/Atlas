@@ -440,9 +440,17 @@ def _locate(base: Path, stem: str, cik: str) -> Path:
 
 
 def register_fixture_documents(
-    db: Database, directory: str | Path, cik: str | int
+    db: Database,
+    directory: str | Path,
+    cik: str | int,
+    *,
+    companyfacts_body: bytes | None = None,
 ) -> tuple[str | None, str | None]:
-    """Store fixture payload bytes as raw documents for provenance."""
+    """Store fixture payload bytes as raw documents for provenance.
+
+    ``companyfacts_body`` lets an offline builder register the exact merged payload it
+    ingests when a compact fixture is supplemented with additional source-backed tags.
+    """
     normalized = normalize_cik(cik)
     base = Path(directory)
     source_id = SourceRegistry(db).ensure(SEC_EDGAR)
@@ -457,7 +465,11 @@ def register_fixture_documents(
         db,
         source_id=source_id,
         url=f"fixture://{normalized}/companyfacts.json",
-        body=_locate(base, "companyfacts", normalized).read_bytes(),
+        body=(
+            companyfacts_body
+            if companyfacts_body is not None
+            else _locate(base, "companyfacts", normalized).read_bytes()
+        ),
         media_type="application/json",
     )
     return submissions_doc, facts_doc

@@ -14,9 +14,13 @@ imported.
 
 ## What was checked
 
-The repository root, `docs/`, and the workspace/home search paths were searched for a
-file matching the name. No candidate was found; therefore no size or hash could be
-verified and no file was committed. No replacement document was generated.
+The repository root, `docs/`, and the workspace/home search paths were searched again on
+2026-11-06 during the final Phase 9.2 correction. No candidate or attachment path was
+available. No size or hash could be verified, and no file was committed. No replacement
+document was generated.
+
+The common-equity valuation gate is now closed independently of this blocked transfer.
+Master-spec conformance and Phase 9 completion still must not be claimed.
 
 ## How to close the gate
 
@@ -25,5 +29,5 @@ verified and no file was committed. No replacement document was generated.
 3. The script exits 0 only when both the byte length and SHA-256 match; then commit the
    file unchanged.
 
-Until step 3 succeeds, Phase 9/9.1 completion must not be reported, and this gate remains
-the first open item in the project.
+Until step 3 succeeds, Phase 9 completion must not be reported, and this gate remains the
+first open item in the project.
