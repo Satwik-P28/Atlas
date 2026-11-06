@@ -1099,6 +1099,51 @@ CREATE TABLE market_price_series (
 CREATE INDEX idx_market_price_series_security ON market_price_series (security_id, source_id);
 """
 
+_MIGRATION_013 = """
+-- Phase 9.2 final acceptance: official FR Y-9C consolidated holding-company evidence.
+-- These rows are deliberately separate from regulatory_observation because the reporting
+-- entity is the top-tier consolidated holding company, not an insured depository. The
+-- bulk NIC archive does not carry a historical publication timestamp or vintage, so that
+-- absence is stored explicitly rather than inferred from the quarter end.
+CREATE TABLE fr_y9c_observation (
+    observation_id       TEXT PRIMARY KEY,
+    entity_id            TEXT NOT NULL REFERENCES regulatory_entity(entity_id),
+    rssd                 TEXT NOT NULL,
+    cik                  TEXT NOT NULL,
+    legal_name           TEXT NOT NULL,
+    form                 TEXT NOT NULL DEFAULT 'FR Y-9C',
+    schedule             TEXT NOT NULL,
+    field_code           TEXT NOT NULL,
+    concept              TEXT NOT NULL,
+    field_name           TEXT NOT NULL,
+    value_numeric        REAL,
+    value_text           TEXT,
+    unit                 TEXT NOT NULL,
+    period_end           TEXT NOT NULL,
+    reporting_date       TEXT NOT NULL,
+    published_at         TEXT,
+    availability_precision TEXT NOT NULL,
+    availability_basis   TEXT NOT NULL,
+    retrieved_at         TEXT NOT NULL,
+    archive_id           TEXT NOT NULL REFERENCES source_archive(archive_id),
+    archive_sha256       TEXT NOT NULL,
+    archive_name         TEXT NOT NULL,
+    source_id            TEXT NOT NULL REFERENCES source(source_id),
+    source_url           TEXT NOT NULL,
+    revision             INTEGER NOT NULL DEFAULT 0,
+    revision_status      TEXT NOT NULL,
+    data_rights          TEXT NOT NULL,
+    provenance_json      TEXT NOT NULL,
+    created_at           TEXT NOT NULL,
+    UNIQUE (entity_id, form, field_code, period_end, revision),
+    CHECK (availability_precision IN ('exact','date','unknown')),
+    CHECK (value_numeric IS NOT NULL OR value_text IS NOT NULL OR value_text = '')
+);
+CREATE INDEX idx_fr_y9c_entity_period ON fr_y9c_observation (entity_id, period_end DESC);
+CREATE INDEX idx_fr_y9c_field ON fr_y9c_observation (field_code, period_end DESC);
+CREATE INDEX idx_fr_y9c_archive ON fr_y9c_observation (archive_id);
+"""
+
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=1, name="phase1_foundation", sql=_MIGRATION_001),
     Migration(version=2, name="phase1_1_history_and_dependencies", sql=_MIGRATION_002),
@@ -1112,6 +1157,7 @@ MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=10, name="phase8_portable_applications", sql=_MIGRATION_010),
     Migration(version=11, name="phase9_2_regulatory_evidence", sql=_MIGRATION_011),
     Migration(version=12, name="phase9_2_market_price_rights", sql=_MIGRATION_012),
+    Migration(version=13, name="phase9_2_fr_y9c_consolidated", sql=_MIGRATION_013),
 )
 
 LATEST_VERSION = max(m.version for m in MIGRATIONS)

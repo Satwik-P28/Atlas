@@ -27,8 +27,8 @@ def _populate(db: Database) -> None:
 def test_fresh_install_reaches_explicit_version(tmp_path):
     db = Database(tmp_path / "fresh.db")
     assert db.schema_version() == 0
-    assert db.migrate() == list(range(1, 13))
-    assert db.schema_version() == LATEST_VERSION == 12
+    assert db.migrate() == list(range(1, 14))
+    assert db.schema_version() == LATEST_VERSION == 13
     tables = set(db.tables())
     assert {"regulatory_entity", "regulatory_observation", "entity_reconciliation",
             "market_price_series"} <= tables
@@ -44,9 +44,9 @@ def test_populated_phase9_1_database_upgrades_without_data_loss(tmp_path):
     db.close()
 
     upgraded = Database(path, create=False)
-    assert upgraded.migrate() == [11, 12]
+    assert upgraded.migrate() == [11, 12, 13]
     assert upgraded.scalar("SELECT legal_name FROM issuer WHERE issuer_id='ISS-1'") == "Preserved Co"
-    assert upgraded.schema_version() == 12
+    assert upgraded.schema_version() == 13
     upgraded.close()
 
 
@@ -82,9 +82,9 @@ def test_concurrent_startup_applies_each_migration_once(tmp_path):
 
     with ThreadPoolExecutor(max_workers=2) as pool:
         versions = list(pool.map(lambda _: run(), range(2)))
-    assert versions == [12, 12]
+    assert versions == [13, 13]
     check = Database(path, create=False)
-    assert check.scalar("SELECT COUNT(*) FROM schema_migration WHERE version IN (11,12)") == 2
+    assert check.scalar("SELECT COUNT(*) FROM schema_migration WHERE version IN (11,12,13)") == 3
     check.close()
 
 

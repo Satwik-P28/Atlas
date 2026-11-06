@@ -402,8 +402,8 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(body),
     }),
-  equityDownload: async (identifier: string): Promise<Blob> => {
-    const response = await fetch(`${BASE}/api/equity/${enc(identifier)}/package.atlas`)
+  equityDownload: async (identifier: string, asOf?: string | null): Promise<Blob> => {
+    const response = await fetch(`${BASE}/api/equity/${enc(identifier)}/package.atlas${qs({ as_of: asOf })}`)
     if (!response.ok) throw new ApiError(response.status, 'download_failed', 'Research package download failed')
     return response.blob()
   },

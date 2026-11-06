@@ -48,6 +48,8 @@ export default function EquityResearch() {
   const [coe, setCoe] = useState('')
   const [cutoff, setCutoff] = useState('')
   const [priceCsv, setPriceCsv] = useState('')
+  const [saved, setSaved] = useState<Row[]>([])
+  const [savedRevision, setSavedRevision] = useState(0)
 
   useEffect(() => {
     api
@@ -74,6 +76,36 @@ export default function EquityResearch() {
       .then(setRegulatory)
       .catch(() => setRegulatory(null))
   }, [selected])
+
+  useEffect(() => {
+    let cancelled = false
+    if (!selected) {
+      setSaved([])
+      return
+    }
+    async function loadSaved() {
+      try {
+        const payload = await api.researchObjects('application')
+        const items: Row[] = []
+        for (const summary of payload.items ?? []) {
+          try {
+            const object = await api.researchObject(summary.object_id)
+            const application = object.document?.spec?.application
+            if (application?.type === 'equity_research' && application?.identifier === selected) {
+              items.push({ ...summary, document: object.document })
+            }
+          } catch {
+            // A removed or unreadable object must not prevent the research page from loading.
+          }
+        }
+        if (!cancelled) setSaved(items)
+      } catch {
+        if (!cancelled) setSaved([])
+      }
+    }
+    loadSaved()
+    return () => { cancelled = true }
+  }, [selected, savedRevision])
 
   const row = useMemo<Row | null>(() => {
     const items: Row[] = coverage?.items ?? []
@@ -174,9 +206,160 @@ export default function EquityResearch() {
     setBusy('package')
     setError(null)
     try {
-      const blob = await api.equityDownload(selected)
-      saveBlob(blob, 'equity-research.atlas')
+      const assumptions: Row = {}
+      if (roe.trim()) assumptions.sustainable_roe = Number(roe) / 100
+      if (coe.trim()) assumptions.cost_of_equity = Number(coe) / 100
+      const built = await api.equityPackage(selected, {
+        assumptions,
+        as_of: cutoff || undefined,
+        method: report?.valuation?.method ?? undefined,
+      })
+      const binary = atob(String(built.package_base64 ?? ''))
+      const bytes = new Uint8Array(binary.length)
+      for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index)
+      saveBlob(new Blob([bytes], { type: 'application/zip' }), 'equity-research.atlas')
       setMessage('Research package downloaded. It is declarative and unsigned; the hash proves integrity only.')
+    } catch (caught) {
+      setError((caught as Error).message)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  async function saveResearch() {
+    if (!selected || !report?.metadata) {
+      setError('Generate a report before saving a research application.')
+      return
+    }
+    setBusy('save')
+    setError(null)
+    try {
+      const institution = report.valuation?.institution ?? {}
+      const assumptionInputs: Row = {
+        sustainable_roe: roe.trim() ? Number(roe) / 100 : null,
+        cost_of_equity: coe.trim() ? Number(coe) / 100 : null,
+      }
+      const evidenceIds = (workspace?.provenance?.evidence_details ?? [])
+        .map((item: Row) => item.evidence_id)
+        .filter((item: unknown): item is string => typeof item === 'string' && item.length > 0)
+      const sourceIds = new Set<string>(report.metadata.source_ids ?? ['sec-edgar'])
+      if ((regulatory?.subsidiaries?.length ?? 0) > 0) sourceIds.add('fdic-bankfind')
+      if (regulatory?.holding_company?.status === 'available') sourceIds.add('ffiec-nic-bhcf')
+      const market = report.valuation?.market
+      const stamp = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
+      const document: Row = {
+        schema_version: 'atlas.research_object.v1',
+        kind: 'application',
+        name: `Bank research · ${workspace?.company?.ticker ?? selected} · ${stamp}`,
+        version: '1.0.0',
+        status: 'validated',
+        description: `Reproducible consolidated bank research for ${workspace?.company?.legal_name ?? selected}.`,
+        as_of: report.metadata.as_of,
+        mode: report.metadata.mode,
+        evidence_ids: [...new Set(evidenceIds)],
+        source_ids: [...sourceIds],
+        assumptions: Object.fromEntries(
+          Object.entries(assumptionInputs).filter(([, value]) => value != null),
+        ),
+        limitations: [
+          ...(workspace?.limitations ?? []),
+          ...(institution.limitations ?? []),
+        ],
+        spec: {
+          purpose: 'Reopen and deterministically reproduce this bank research report without executable code.',
+          views: [
+            { id: 'report', type: 'report', title: 'Equity research report' },
+            { id: 'regulatory', type: 'evidence', title: 'Consolidated and subsidiary regulatory evidence' },
+            { id: 'model', type: 'table', title: 'Bank residual-income model and assumptions' },
+          ],
+          application: {
+            type: 'equity_research',
+            identifier: selected,
+            ticker: workspace?.company?.ticker ?? null,
+            cik: workspace?.company?.cik ?? null,
+            company: workspace?.company?.legal_name ?? null,
+          },
+          method: report.valuation?.method ?? null,
+          information_cutoff: report.metadata.as_of,
+          assumption_inputs: assumptionInputs,
+          resolved_assumptions: institution.assumptions ?? {},
+          result: {
+            report_sha256: report.metadata.report_sha256,
+            value_per_share: institution.outputs?.value_per_share ?? null,
+            calculated_equity_value: institution.outputs?.calculated_equity_value ?? null,
+            economically_supported: Boolean(report.metadata.valuation_economically_supported),
+          },
+          regulatory_evidence: {
+            status: regulatory?.status ?? null,
+            parent: regulatory?.holding_company?.status === 'available' ? {
+              legal_name: regulatory.holding_company.parent?.legal_name ?? null,
+              rssd: regulatory.holding_company.parent?.rssd ?? null,
+              form: 'FR Y-9C',
+              period_end: regulatory.holding_company.latest?.period_end ?? null,
+              publication: regulatory.holding_company.latest?.publication ?? null,
+              point_in_time_claim: regulatory.holding_company.point_in_time_claim ?? null,
+            } : null,
+            subsidiaries: (regulatory?.subsidiaries ?? []).map((block: Row) => ({
+              entity_id: block.entity?.entity_id ?? null,
+              legal_name: block.entity?.legal_name ?? null,
+              cert: block.entity?.cert ?? null,
+              basis: block.entity?.consolidation_basis ?? null,
+              period_end: block.latest?.period_end ?? null,
+            })),
+          },
+          market_context: market ? {
+            status: market.status ?? null,
+            price_date: market.price_date ?? null,
+            source_id: market.source_id ?? null,
+            export_allowed: Boolean(market.export_allowed),
+            price_included: false,
+          } : null,
+        },
+      }
+      const created = await api.createResearchObject(document)
+      setMessage(`Saved research application ${created.object_id}. Reopen it to reproduce the report.`)
+      setSavedRevision((value) => value + 1)
+    } catch (caught) {
+      setError((caught as Error).message)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  async function reopenResearch(objectId: string) {
+    setBusy(`reopen:${objectId}`)
+    setError(null)
+    try {
+      const object = await api.researchObject(objectId)
+      const document = object.document as Row
+      const spec = document.spec ?? {}
+      const application = spec.application ?? {}
+      if (application.type !== 'equity_research' || !application.identifier) {
+        throw new Error('This application is not a bank research application.')
+      }
+      const restoredCutoff = String(spec.information_cutoff ?? document.as_of ?? '').slice(0, 10)
+      const inputs = spec.assumption_inputs ?? {}
+      const restoredRoe = inputs.sustainable_roe == null ? '' : String(Number(inputs.sustainable_roe) * 100)
+      const restoredCoe = inputs.cost_of_equity == null ? '' : String(Number(inputs.cost_of_equity) * 100)
+      setSelected(application.identifier)
+      setCutoff(restoredCutoff)
+      setRoe(restoredRoe)
+      setCoe(restoredCoe)
+      const assumptions: Row = {}
+      if (inputs.sustainable_roe != null) assumptions.sustainable_roe = Number(inputs.sustainable_roe)
+      if (inputs.cost_of_equity != null) assumptions.cost_of_equity = Number(inputs.cost_of_equity)
+      const built = await api.equityReport(application.identifier, {
+        assumptions,
+        as_of: restoredCutoff || undefined,
+        method: spec.method ?? undefined,
+      })
+      setReport(built)
+      const expected = spec.result?.report_sha256
+      if (expected && expected !== built.metadata?.report_sha256) {
+        setError(`Reopened application did not reproduce the saved report hash (${expected} vs ${built.metadata?.report_sha256}).`)
+      } else {
+        setMessage(`Reopened ${objectId} · report ${String(built.metadata?.report_sha256 ?? '').slice(0, 16)}… reproduced.`)
+      }
     } catch (caught) {
       setError((caught as Error).message)
     } finally {
@@ -339,15 +522,15 @@ export default function EquityResearch() {
                 <div className="equity-metrics">
                   <div>
                     <span className="eyebrow">Information cutoff</span>
-                    <input className="mono" type="date" value={cutoff} onChange={(event) => setCutoff(event.target.value)} />
+                    <input data-testid="equity-cutoff" className="mono" type="date" value={cutoff} onChange={(event) => setCutoff(event.target.value)} />
                   </div>
                   <div>
                     <span className="eyebrow">Sustainable ROE (%)</span>
-                    <input className="mono" inputMode="decimal" placeholder="reported" value={roe} onChange={(event) => setRoe(event.target.value)} />
+                    <input data-testid="equity-roe" className="mono" inputMode="decimal" placeholder="reported" value={roe} onChange={(event) => setRoe(event.target.value)} />
                   </div>
                   <div>
                     <span className="eyebrow">Cost of equity (%)</span>
-                    <input className="mono" inputMode="decimal" placeholder="model default" value={coe} onChange={(event) => setCoe(event.target.value)} />
+                    <input data-testid="equity-coe" className="mono" inputMode="decimal" placeholder="model default" value={coe} onChange={(event) => setCoe(event.target.value)} />
                   </div>
                 </div>
                 <div className="equity-actions">
@@ -356,6 +539,48 @@ export default function EquityResearch() {
                   <button className="button secondary" onClick={rejectDcf} disabled={busy !== null}>Test FCFF DCF</button>
                 </div>
               </div>
+
+              {regulatory?.holding_company?.status === 'available' && (
+                <div className="card" data-testid="equity-regulatory-parent">
+                  <h3>Consolidated holding company · FR Y-9C</h3>
+                  <p className="small">
+                    {regulatory.holding_company.parent?.legal_name} · top-tier RSSD{' '}
+                    <span className="mono">{regulatory.holding_company.parent?.rssd}</span> · period{' '}
+                    <span className="mono">{regulatory.holding_company.latest?.period_end}</span>{' '}
+                    <Badge tone="positive">consolidated</Badge>
+                  </p>
+                  <div className="table-wrap">
+                    <table>
+                      <thead><tr><th>FR Y-9C field</th><th>Value</th><th>Schedule</th><th>Definition</th></tr></thead>
+                      <tbody>
+                        {['total_assets', 'total_equity_capital', 'goodwill', 'allowance_for_credit_losses', 'net_income', 'cash_dividends_common', 'net_interest_income', 'risk_weighted_assets', 'regulatory_total_capital', 'common_equity_tier_1_ratio', 'tier_1_risk_based_ratio', 'tier_1_leverage_ratio'].map((field) => {
+                          const item = regulatory.holding_company.latest?.values?.[field]
+                          if (!item) return null
+                          const shown = item.value === null
+                            ? 'missing'
+                            : item.unit === 'USD_thousands'
+                              ? money(Number(item.value) * 1000)
+                              : `${num(item.value)}%`
+                          return (
+                            <tr key={field}>
+                              <td className="mono">{item.field_code}</td>
+                              <td className="mono">{shown}</td>
+                              <td className="small">{item.schedule}</td>
+                              <td className="small">{item.definition}</td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="muted small">
+                    Publication timestamp: {regulatory.holding_company.latest?.publication?.published_at || 'not present in the bulk archive'}.
+                    {' '}The archive is refreshed in place, so this is a consolidated snapshot, not a point-in-time
+                    regulatory reconstruction. It is not added to the FDIC subsidiary and does not set current
+                    minimum capital requirements.
+                  </p>
+                </div>
+              )}
 
               {regulatory && (regulatory.subsidiaries?.length ?? 0) > 0 && (
                 <div className="card">
@@ -388,16 +613,15 @@ export default function EquityResearch() {
                     </div>
                   ))}
                 </div>
-              )}
-
-              <div className="card">
-                <h3>Market price and model comparison</h3>
-                {report?.valuation?.market?.status === 'available' ? (
-                  <>
-                    <p className="small">
-                      Price <strong className="mono">{money(report.valuation.market.price)}</strong> on{' '}
+              )}                  <div className="card" data-testid="equity-market-context">
+                    <h3>Market price and model comparison</h3>
+                    {report?.valuation?.market?.status === 'available' ? (
+                      <>
+                        <p className="small">
+                          Price <strong className="mono">{money(report.valuation.market.price)}</strong> on{' '}
                       <span className="mono">{report.valuation.market.price_date}</span> · source{' '}
-                      <span className="mono">{report.valuation.market.source_id}</span> · mixed date:{' '}
+                      <span className="mono">{report.valuation.market.source_id}</span> · adjustment{' '}
+                      <span className="mono">{report.valuation.market.adjustment_semantics ?? 'not stated'}</span> · mixed date:{' '}
                       <Badge tone={report.valuation.market.mixed_date ? 'warn' : 'positive'}>
                         {report.valuation.market.mixed_date ? 'yes' : 'no'}
                       </Badge>{' '}
@@ -526,6 +750,13 @@ export default function EquityResearch() {
                       {report.valuation.institution.tangible_book?.status}
                     </Badge>
                   </p>
+                  <p className="small" data-testid="equity-value-per-share">
+                    Value per share <strong className="mono" data-testid="equity-value-number">
+                      {money(report.valuation.institution.outputs?.value_per_share)}
+                    </strong>{' '}
+                    USD · method <span className="mono">{report.valuation.method}</span> · economically supported{' '}
+                    <strong>{report.valuation.economically_supported ? 'yes' : 'no'}</strong>.
+                  </p>
                   <p className="muted small">{report.valuation.institution.tangible_book?.detail}</p>
                   {report.valuation.institution.capital?.status === 'available' && (
                     <p className="small">
@@ -537,6 +768,43 @@ export default function EquityResearch() {
                   <p className="muted small">Subsidiary capital evidence. Headroom is in percentage points; dollar RWA is not published.</p>
                 </div>
               )}
+
+              <div className="card" data-testid="equity-saved-panel">
+                <h3>Saved bank research</h3>
+                <p className="muted small">
+                  A saved application records the company, information cutoff, selected method, assumption inputs,
+                  source and regulatory identities, report hash and limitations. It never records the restricted
+                  market price. Reopening rebuilds the report through the same deterministic engine.
+                </p>
+                <button
+                  className="button secondary"
+                  data-testid="equity-save"
+                  onClick={saveResearch}
+                  disabled={busy !== null || !report}
+                >
+                  {busy === 'save' ? 'Saving…' : 'Save research application'}
+                </button>
+                {saved.length > 0 ? (
+                  <div className="equity-saved-list">
+                    {saved.map((item) => (
+                      <div className="equity-saved-item" key={item.object_id}>
+                        <span className="small">
+                          <strong className="mono">{item.object_id}</strong> · {item.name}
+                        </span>
+                        <button
+                          className="button secondary small"
+                          onClick={() => reopenResearch(item.object_id)}
+                          disabled={busy !== null}
+                        >
+                          {busy === `reopen:${item.object_id}` ? 'Reopening…' : 'Reopen'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="muted small">No saved application exists for this company yet.</p>
+                )}
+              </div>
 
               {valuation && valuation.status !== 'supported' && (
                 <div className="card">

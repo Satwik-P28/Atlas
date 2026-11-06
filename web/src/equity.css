@@ -104,6 +104,63 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
+}
+
+.equity-metrics input {
+  width: 100%;
+  min-width: 0;
+}
+
+.equity-saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.equity-saved-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid var(--border, #d8dce3);
+  padding-top: 8px;
+  min-width: 0;
+}
+
+.equity-saved-item > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .equity-saved-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .equity-page {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .equity-list-head,
+  .equity-row {
+    grid-template-columns: minmax(0, 1fr) 62px 72px 64px;
+    gap: 4px;
+    padding: 8px;
+    font-size: 0.75rem;
+  }
+
+  .equity-detail .card {
+    padding: 12px;
+  }
+
+  .equity-page .button,
+  .equity-page input {
+    min-height: 44px;
+  }
 }
 
 .equity-report {

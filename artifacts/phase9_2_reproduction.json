@@ -1,0 +1,123 @@
+{
+  "schema": "atlas.phase9_2.reproduction.v1",
+  "package": {
+    "path": "artifacts/phase9_2_application.atlas",
+    "bytes": 61109,
+    "sha256": "66deed04176f25b08228a75569917c6c0834e646742d8c05b7cd2ad183c80ce8",
+    "package_sha256": "66deed04176f25b08228a75569917c6c0834e646742d8c05b7cd2ad183c80ce8",
+    "application_id": "atlas.firstparty.equity-research-0000019617-residual_income_equity",
+    "price_included": false,
+    "contains_restricted_price_289_91": false,
+    "parent_regulatory": "available"
+  },
+  "fresh_database": "temporary directory, removed after execution",
+  "fresh_schema": 13,
+  "migrations": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "install": {
+    "status": "installed",
+    "already_installed": null,
+    "integrity_status": "computationally_reproducible",
+    "install_id": "AINS-66deed04176f25b08228"
+  },
+  "execution": {
+    "status": "reproduced",
+    "reproduced": true,
+    "differences": {},
+    "model_version": "atlas.bank.residual_income.v2",
+    "valuation_method": "residual_income_equity",
+    "contract_state": "arithmetically_verified",
+    "outputs": {
+      "book_value_common_equity": 344758000000.0,
+      "book_value_basis": "consolidated_total_stockholders_equity",
+      "common_equity_status": "not_derived_preferred_stock_unmapped",
+      "reported_roe": 0.16960012530528662,
+      "calculated_equity_value": 855220863386.2341,
+      "value_per_share": 305.69804953754436,
+      "realizable_common_price": 305.69804953754436,
+      "negative_residual_equity": false,
+      "pv_explicit_residual_income": 119587031901.99388,
+      "pv_terminal_value": 390875831484.2402,
+      "terminal_value": 615331876817.4271,
+      "terminal_value_share": 0.45704665100962716,
+      "rows": [
+        {
+          "year": 1,
+          "opening_book_value": 344758000000.0,
+          "net_income": 58608860000.00001,
+          "dividends": 23443544000.000004,
+          "residual_income": 25856850000.000008,
+          "present_value": 23613561643.835625,
+          "closing_book_value": 379923316000.0
+        },
+        {
+          "year": 2,
+          "opening_book_value": 379923316000.0,
+          "net_income": 64586963720.00001,
+          "dividends": 25834785488.000004,
+          "residual_income": 28494248700.000008,
+          "present_value": 23764515919.184345,
+          "closing_book_value": 418675494232.0
+        },
+        {
+          "year": 3,
+          "opening_book_value": 418675494232.0,
+          "net_income": 71174834019.44,
+          "dividends": 28469933607.776,
+          "residual_income": 31400662067.4,
+          "present_value": 23916435199.03301,
+          "closing_book_value": 461380394643.664
+        },
+        {
+          "year": 4,
+          "opening_book_value": 461380394643.664,
+          "net_income": 78434667089.42288,
+          "dividends": 31373866835.769154,
+          "residual_income": 34603529598.2748,
+          "present_value": 24069325652.36016,
+          "closing_book_value": 508441194897.31775
+        },
+        {
+          "year": 5,
+          "opening_book_value": 508441194897.31775,
+          "net_income": 86435003132.54402,
+          "dividends": 34574001253.01761,
+          "residual_income": 38133089617.298836,
+          "present_value": 24223193487.58073,
+          "closing_book_value": 560302196776.8442
+        }
+      ]
+    },
+    "expected_outputs": {
+      "calculated_equity_value": 855220863386.2341,
+      "realizable_common_price": 305.69804953754436,
+      "value_per_share": 305.69804953754436
+    }
+  },
+  "source_reconciliation": {
+    "issuer_cik": "0000019617",
+    "period_end": "2024-12-31",
+    "parent_form": "FR Y-9C",
+    "parent_rssd": 1039502,
+    "subsidiary_cert": null
+  },
+  "limitations": [
+    "The package reproduces the packaged SEC snapshot and assumptions, not original SEC bytes.",
+    "The opening book value is total stockholders' equity, not common equity; preferred stock is unmapped.",
+    "No bulk FR Y-9C release timestamp is available, so point-in-time regulatory reconstruction is not claimed.",
+    "The restricted market price is intentionally absent from the package."
+  ]
+}

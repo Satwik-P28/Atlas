@@ -1,12 +1,57 @@
 {
-  "bank_v2_gs": 10.363,
-  "bank_v2_jpm": 12.371,
-  "entity_resolution": 0.077,
-  "insurer_unh": 8.272,
-  "market_analysis_jpm": 10.466,
-  "package_bytes": 49701,
-  "package_jpm": 2009.324,
-  "regulatory_evidence_jpm": 3.424,
-  "report_bytes": 12972,
-  "report_jpm": 1959.635
+  "bank_v2_gs": 9.631,
+  "bank_v2_jpm": 12.035,
+  "browser_known_data_gaps": [
+    {
+      "status": 422,
+      "url": "http://127.0.0.1:3000/api/economic/panel?mode=public_available"
+    }
+  ],
+  "browser_workflow_ms": 46597,
+  "entity_resolution": 0.08,
+  "fr_y9c_bulk_import": 409.43,
+  "fr_y9c_consolidated_statement": 0.5,
+  "fr_y9c_evidence_jpm": 0.221,
+  "fr_y9c_missing_fields": [
+    "net_charge_offs"
+  ],
+  "fr_y9c_observations_written": 17,
+  "fr_y9c_rows_in_archive": 3806,
+  "fresh_migrations": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "fresh_schema": 13,
+  "insurer_unh": 6.755,
+  "market_analysis_jpm": 14.781,
+  "package_bytes": 61215,
+  "package_execute": 6.318,
+  "package_executed_reproduced": true,
+  "package_executed_status": "reproduced",
+  "package_install": 5.497,
+  "package_jpm": 2080.327,
+  "regulatory_evidence_jpm": 7.991,
+  "report_bytes": 16676,
+  "report_jpm": 2189.325,
+  "source_sizes": {
+    "benchmark_package_bytes": 61215,
+    "benchmark_package_sha256": "958202b4fe0f74b70c2395118b51ebfba2054516d926cb2b18ec7d27a9ce5431",
+    "bhcf_zip_bytes": 1509964,
+    "database_bytes": 39067648,
+    "dictionary_bytes": 170487,
+    "exported_artifact_bytes": 61109,
+    "exported_artifact_sha256": "66deed04176f25b08228a75569917c6c0834e646742d8c05b7cd2ad183c80ce8",
+    "fr_y9c_member_rows": 3806
+  }
 }

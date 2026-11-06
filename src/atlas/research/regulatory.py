@@ -81,10 +81,14 @@ ENTITIES: tuple[dict[str, Any], ...] = (
         "kind": "parent_holding_company",
         "legal_name": "JPMorgan Chase & Co.",
         "cik": "19617",
+        "rssd": 1039502,
         "parent_entity_id": None,
         "consolidation_basis": PARENT,
-        "regulator": "SEC",
-        "notes": "Consolidated 10-K registrant. SEC facts only in this build.",
+        "regulator": "SEC / Federal Reserve",
+        "notes": (
+            "Consolidated SEC registrant and top-tier FR Y-9C filer (RSSD 1039502). "
+            "Consolidated regulatory evidence is kept separate from the bank subsidiary."
+        ),
     },
     {
         "entity_id": "REG-JPM-BANK",
@@ -485,11 +489,15 @@ def regulatory_evidence(db: Database, *, cik: Any, periods: int = 6) -> dict[str
             "history": blocks,
         })
     parent_rows = [row for row in mapping.get("entities", []) if row["consolidation_basis"] == PARENT]
+    from . import fr_y9c
+
+    consolidated = fr_y9c.holding_company_evidence(db, cik=cik, periods=periods)
     return {
         "schema": REGULATORY_SCHEMA,
         "cik": cik,
         "status": "available" if any(block["status"] == "available" for block in latest_blocks) else "not_ingested",
         "parent": parent_rows[0] if parent_rows else None,
+        "holding_company": consolidated,
         "subsidiaries": latest_blocks,
         "entity_map": mapping,
         "comparability": {
@@ -504,5 +512,6 @@ def regulatory_evidence(db: Database, *, cik: Any, periods: int = 6) -> dict[str
             "Subsidiary equity is not divided by parent shares and is not added to consolidated equity.",
             "FDIC does not publish dollar risk-weighted assets in this dataset, so capital headroom is in percentage points only.",
             "FDIC revision history is not archived; the retrieval timestamp describes when Atlas fetched the record.",
+            "FR Y-9C consolidated values, when present, are a separate top-tier reporting basis. The bulk archive has no historical publication timestamp, so it cannot support a point-in-time claim.",
         ],
     }

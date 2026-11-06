@@ -102,8 +102,8 @@ def _seed_database(path: Path) -> Database:
 def test_schema_8_and_provider_rights():
     with tempfile.TemporaryDirectory() as directory:
         db = Database(Path(directory) / "phase6.db")
-        assert db.migrate() == list(range(1, 13))
-        assert LATEST_VERSION == 12
+        assert db.migrate() == list(range(1, 14))
+        assert LATEST_VERSION == 13
         tables = {row["name"] for row in db.query("SELECT name FROM sqlite_master WHERE type='table'")}
         assert {"learning_run", "learning_attempt", "learning_model", "learning_forecast"} <= tables
         db.close()
@@ -230,7 +230,7 @@ def test_api_persists_learning_run_forecast_audit_monitor_and_portfolio():
         db = _seed_database(path)
         db.close()
         client = TestClient(create_app(path))
-        assert client.get("/api/health").json()["schema_version"] == 12
+        assert client.get("/api/health").json()["schema_version"] == 13
         catalog = client.get("/api/learning/catalog")
         assert catalog.status_code == 200
         assert catalog.json()["datasets"][0]["securities"] == 5

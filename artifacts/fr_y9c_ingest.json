@@ -1,0 +1,79 @@
+{
+  "archive": {
+    "bytes": 1509964,
+    "dictionary": {
+      "name": "Financial_Download_Dictionary.xlsx",
+      "sha256": "26c40652a520826167108064db90e329f5cf4c725cb1017599152781ec62188a"
+    },
+    "name": "BHCF20241231.ZIP",
+    "rows_in_archive": 3806,
+    "sha256": "65b6479f0b0bc191e57cd2a446cbe31cbcaa3131bf6a1bbdbe4df259f6c89a4b",
+    "source_url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20241231.ZIP",
+    "text_member": "BHCF20241231.txt",
+    "text_sha256": "2cc0f8d98f075b5bb722cc201792289c3be2e7da8bebeed65182b6d0b1650e4e"
+  },
+  "availability_precision": "unknown",
+  "cik": "19617",
+  "data_rights": "public_domain_us_government",
+  "derived": {
+    "common_equity": {
+      "basis": "derived_from_consolidated_reported_fields",
+      "components": [
+        "BHCK3210",
+        "BHCK3283"
+      ],
+      "formula": "BHCK3210 - BHCK3283",
+      "status": "available",
+      "unit": "USD_thousands",
+      "value": 324708000.0
+    },
+    "goodwill": {
+      "status": "available",
+      "unit": "USD_thousands",
+      "value": 52565000.0
+    },
+    "tangible_common_equity": {
+      "components": [
+        "BHCK3210",
+        "BHCK3283",
+        "BHCK3163"
+      ],
+      "formula": "common equity - goodwill - other intangible assets",
+      "reason": "Other intangible assets are not mapped in the selected FR Y-9C fields; goodwill is not used as a proxy for all intangibles.",
+      "status": "not_available",
+      "unit": "USD_thousands",
+      "value": null
+    }
+  },
+  "entity_id": "REG-JPM-PARENT",
+  "identity_checks": [
+    {
+      "actual": "1039502",
+      "expected": "1039502",
+      "name": "top-tier RSSD matches the declared holding company",
+      "passed": true
+    },
+    {
+      "actual": "JPMORGAN CHASE & CO.",
+      "expected": "JPMorgan Chase & Co.",
+      "name": "archive legal name matches the SEC registrant",
+      "passed": true
+    },
+    {
+      "actual": "20241231",
+      "expected": "YYYYMMDD",
+      "name": "FR Y-9C reporting period is present",
+      "passed": true
+    }
+  ],
+  "legal_name": "JPMORGAN CHASE & CO.",
+  "missing_fields": [
+    "net_charge_offs"
+  ],
+  "observations_written": 17,
+  "period_end": "2024-12-31",
+  "point_in_time_eligible": false,
+  "published_at": null,
+  "rssd": "1039502",
+  "schema": "atlas.fr_y9c.ingest.v1"
+}

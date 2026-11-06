@@ -307,6 +307,16 @@ def build_bank_valuation(
             "severity": "error",
             "detail": "No finite terminal value exists under these assumptions.",
         })
+    findings.append({
+        "code": "common_equity_not_derived",
+        "severity": "warning",
+        "detail": (
+            "The opening book value is consolidated total stockholders' equity. Preferred "
+            "stock is not mapped in the SEC concept set, so the preferred claim is not "
+            "deducted and this is not a common-equity starting book. Per-share residual "
+            "income is diagnostic arithmetic, not a common-share valuation."
+        ),
+    })
     if inputs.get("weighted_average_shares_diluted"):
         findings.append({
             "code": "share_basis_divergence",
@@ -357,6 +367,7 @@ def build_bank_valuation(
     }
     limitations = [
         "Tangible book value is not computed: goodwill and intangible assets are not mapped in this fixture, so the tangible-book cross-check is unavailable rather than assumed to equal book value.",
+        "The opening book value is total stockholders' equity, not common equity: preferred stock is not mapped, so no common-equity claim is made for the per-share result.",
         "Credit losses, net interest margin, deposit beta and regulatory capital ratios are not modelled from Call Reports; only consolidated SEC facts are used.",
         "Segment-level earnings and regulatory-entity data are not available in this fixture and are not proxied.",
         "The cost of equity is an explicit analyst assumption, not a market-observed quantity; no price series is bundled.",
@@ -392,7 +403,11 @@ def build_bank_valuation(
         "inputs": inputs,
         "provenance": _provenance(metrics),
         "outputs": {
+            # Retained for contract compatibility. The basis below is authoritative: preferred
+            # stock is not yet mapped, so this is not a common-equity measure.
             "book_value_common_equity": book_value,
+            "book_value_basis": "consolidated_total_stockholders_equity",
+            "common_equity_status": "not_derived_preferred_stock_unmapped",
             "reported_roe": reported_roe,
             "calculated_equity_value": equity_value,
             "value_per_share": raw_per_share,
@@ -843,6 +858,61 @@ def build_bank_valuation_v2(
     derived = (latest or {}).get("derived") or {}
     entity_map = (regulatory or {}).get("entity_map") or {}
     aligned = bool(block and entity_map.get("status") == "verified")
+    holding = (regulatory or {}).get("holding_company") or {}
+    holding_latest = holding.get("latest") or {}
+    holding_values = holding_latest.get("values") or {}
+    holding_derived = holding_latest.get("derived") or {}
+
+    def consolidated_value(concept: str) -> float | None:
+        item = holding_values.get(concept) or {}
+        raw = item.get("value")
+        return float(raw) if raw is not None else None
+
+    consolidated_ratios = {
+        key: consolidated_value(key)
+        for key in (
+            "common_equity_tier_1_ratio", "tier_1_risk_based_ratio",
+            "total_risk_based_ratio", "tier_1_leverage_ratio",
+        )
+    }
+    parent_publication = holding_latest.get("publication") or {}
+    parent_capital = {
+        "status": (
+            "available_consolidated_snapshot"
+            if holding.get("status") == "available"
+            else "blocked_fr_y9c_unavailable"
+        ),
+        "basis": "parent_consolidated",
+        "form": holding.get("form"),
+        "period_end": holding_latest.get("period_end"),
+        "rssd": (holding.get("parent") or {}).get("rssd"),
+        "cik": holding.get("cik"),
+        "values": {
+            "total_assets": consolidated_value("total_assets"),
+            "total_equity_capital": consolidated_value("total_equity_capital"),
+            "common_equity": (holding_derived.get("common_equity") or {}).get("value"),
+            "goodwill": consolidated_value("goodwill"),
+            "risk_weighted_assets": consolidated_value("risk_weighted_assets"),
+            "regulatory_total_capital": consolidated_value("regulatory_total_capital"),
+        },
+        "capital_ratios_percent": consolidated_ratios,
+        "publication": parent_publication,
+        "historical_use": holding.get("historical_use"),
+        "point_in_time_claim": holding.get("point_in_time_claim"),
+        "used_in_per_share": False,
+        "subsidiary_evidence_used_for_parent": False,
+        "reason": (
+            "Official FR Y-9C evidence is present for the consolidated top-tier holding company. "
+            "It is shown as a separate regulatory snapshot and is not substituted for GAAP equity. "
+            if holding.get("status") == "available" else
+            "No official FR Y-9C observation has been ingested. The insured-bank Call Report is "
+            "not a substitute for consolidated holding-company capital."
+        ),
+        "required_evidence": (
+            None if holding.get("status") == "available" else
+            "Federal Reserve FR Y-9C for the top-tier holding company"
+        ),
+    }
     entity_check = {
         "status": "verified" if aligned else "not_evaluated",
         "compatible": True if aligned else None,
@@ -908,7 +978,15 @@ def build_bank_valuation_v2(
     limitations.extend([
         "Regulatory capital evidence covers the insured subsidiary, not the consolidated parent; capital headroom is in percentage points because dollar RWA is not published.",
         "The parent's goodwill and intangibles are not mapped, so no parent tangible book value per share is reported.",
-        "Consolidated holding-company capital is gated: no FR Y-9C observation is ingested, so subsidiary capital is not promoted to a parent-level conclusion.",
+        (
+            "FR Y-9C consolidated capital is a current regulatory archive snapshot. The bulk archive "
+            "has no historical publication timestamp or vintage, so it is not used as a point-in-time "
+            "input and does not establish current minimum requirements."
+            if holding.get("status") == "available" else
+            "Consolidated holding-company capital is gated: no FR Y-9C observation is ingested, so "
+            "subsidiary capital is not promoted to a parent-level conclusion."
+        ),
+        "Reported historical regulatory ratios are not the modeled capital impact of hypothetical shocks.",
         "Segment-level earnings are not available; the ROE path is consolidated and is labelled as such.",
     ])
     contract = build_contract(
@@ -922,8 +1000,12 @@ def build_bank_valuation_v2(
             "subsidiary_entity": (block or {}).get("entity", {}).get("legal_name"),
             "consolidation_basis": "subsidiary_standalone",
             "parent_basis": "parent_consolidated",
+            "consolidated_regulatory_form": holding.get("form"),
+            "consolidated_regulatory_period": holding_latest.get("period_end"),
+            "consolidated_publication_timestamp": parent_publication.get("published_at"),
             "additive": False,
             "capital_ratios": capital.get("observed_percent") if capital.get("status") == "available" else None,
+            "consolidated_capital_ratios": consolidated_ratios,
             "tangible_book_basis": tangible_book["basis"],
         },
         extra_limitations=limitations,
@@ -948,17 +1030,9 @@ def build_bank_valuation_v2(
         "driver": driver,
         "scenarios": scenarios,
         "implied": implied,
-        "parent_capital": {
-            "status": "blocked_fr_y9c_unavailable",
-            "basis": "parent_consolidated",
-            "reason": (
-                "No official FR Y-9C observation for JPMorgan Chase & Co. has been ingested. "
-                "The insured-bank Call Report is not a substitute for consolidated holding-company "
-                "capital, and the two are never aggregated."
-            ),
-            "required_evidence": "Federal Reserve FR Y-9C, reporting entity RSSD 852218 / CIK 19617",
-            "subsidiary_evidence_used_for_parent": False,
-        },
+        "parent_capital": parent_capital,
+        "consolidated_capital": parent_capital,
+        "holding_company_evidence": holding,
         "external_value_evidence": {
             "status": "not_recorded",
             "detail": (

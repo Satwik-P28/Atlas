@@ -1,0 +1,169 @@
+{
+  "schema": "atlas.phase9_2.browser.v1",
+  "base": "http://127.0.0.1:3000",
+  "viewport": {
+    "desktop": "1440x1100",
+    "mobile": "390x844"
+  },
+  "assertions": [
+    "A/B parent RSSD 1039502, FR Y-9C consolidated 4.00T/15.68%, FDIC CERT 628",
+    "C baseline 280.5100 -> modified 305.7000 matched API",
+    "D cutoff 2025-06-30; price 289.91 on 2025-06-30; accounting 2024-12-31",
+    "E FCFF rejected as unsupported_methodology; cutoff preserved",
+    "F market source user-market-data, unadjusted, export denied, mixed date",
+    "G URO-APP-fa8186f1b037 saved and reopened at 305.7000",
+    "H exported equity-research.atlas",
+    "J Equity Research, Studio, Lab, Learning Lab, Economic Lab, Applications render",
+    "I 390x844 no document overflow, no clipped key values, controls usable"
+  ],
+  "values": {
+    "baseline_value_per_share": 280.51,
+    "modified_value_per_share": 305.7,
+    "report_sha256": "595133961e843ef41401dc884022ecd3d033b0c84bfe6e723cd310a8a8a7e80f",
+    "price": 289.91,
+    "price_date": "2025-06-30"
+  },
+  "saved_object_id": "URO-APP-fa8186f1b037",
+  "package_path": "artifacts/phase9_2_application.atlas",
+  "routes": [
+    {
+      "route": "/",
+      "heading": "Coverage overview",
+      "text_length": 1589
+    },
+    {
+      "route": "/studio",
+      "heading": "Studio",
+      "text_length": 4073
+    },
+    {
+      "route": "/lab",
+      "heading": "Research, not a performance chart",
+      "text_length": 1951
+    },
+    {
+      "route": "/lab/learning",
+      "heading": "Learning Lab",
+      "text_length": 3709
+    },
+    {
+      "route": "/lab/economic",
+      "heading": "Weather, electricity, financial consequence",
+      "text_length": 3704
+    },
+    {
+      "route": "/applications",
+      "heading": "Portable research, without executable strangers",
+      "text_length": 4391
+    },
+    {
+      "route": "/equity",
+      "heading": "Source-grounded equity research",
+      "text_length": 3892
+    }
+  ],
+  "mobile": {
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "clipped": [],
+    "controls": [
+      {
+        "tag": "BUTTON",
+        "text": "Generate report",
+        "width": 129,
+        "height": 44
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Download package",
+        "width": 150,
+        "height": 44
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "width": 160,
+        "height": 44
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "width": 160,
+        "height": 44
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "width": 160,
+        "height": 44
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Apply cutoff",
+        "width": 104,
+        "height": 44
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Recalculate",
+        "width": 101,
+        "height": 44
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Test FCFF DCF",
+        "width": 116,
+        "height": 44
+      }
+    ],
+    "tables": [
+      {
+        "overflowX": "auto",
+        "scrollWidth": 332,
+        "clientWidth": 332,
+        "clippedCells": []
+      },
+      {
+        "overflowX": "auto",
+        "scrollWidth": 332,
+        "clientWidth": 332,
+        "clippedCells": []
+      },
+      {
+        "overflowX": "auto",
+        "scrollWidth": 373,
+        "clientWidth": 332,
+        "clippedCells": []
+      },
+      {
+        "overflowX": "auto",
+        "scrollWidth": 413,
+        "clientWidth": 332,
+        "clippedCells": []
+      }
+    ]
+  },
+  "health": {
+    "status": "ok",
+    "database": "var/phase9.db",
+    "as_of": "2026-11-06T21:04:39Z",
+    "terminal_schema": "atlas.terminal.v1",
+    "schema_version": 13,
+    "supported_schema": 13,
+    "integrity_check": "ok",
+    "evidence": 26296,
+    "issuers": 20,
+    "bars": 2315,
+    "economic_observations": 0,
+    "economic_analyses": 0,
+    "application_installations": 1,
+    "domain_packs": 0
+  },
+  "known_data_gaps": [
+    {
+      "status": 422,
+      "url": "http://127.0.0.1:3000/api/economic/panel?mode=public_available"
+    }
+  ],
+  "browser_workflow_ms": 46597
+}

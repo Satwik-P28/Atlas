@@ -1598,6 +1598,71 @@ class EquityResearchService:
                        else _excerpt(reverse.get("reason"), 160)),
                 ]
         reg = workspace.get("regulatory") or {}
+        holding = reg.get("holding_company") or {}
+        if holding.get("status") == "available":
+            parent = holding.get("parent") or {}
+            latest = holding.get("latest") or {}
+            publication = latest.get("publication") or {}
+            lines += [
+                "",
+                "## Consolidated holding-company regulatory evidence (FR Y-9C)",
+                "",
+                f"**{parent.get('legal_name')}** — top-tier RSSD **{parent.get('rssd')}**, "
+                f"SEC CIK **{holding.get('cik')}**, period **{latest.get('period_end')}**. "
+                "This is the consolidated holding company, not the insured bank subsidiary.",
+                "",
+                "| FR Y-9C field | Value | Schedule | Definition |",
+                "| --- | ---: | --- | --- |",
+            ]
+            values = latest.get("values") or {}
+            for concept in (
+                "total_assets", "total_equity_capital", "goodwill",
+                "allowance_for_credit_losses", "net_income", "cash_dividends_common",
+                "net_interest_income", "risk_weighted_assets", "regulatory_total_capital",
+                "common_equity_tier_1_ratio", "tier_1_risk_based_ratio",
+                "tier_1_leverage_ratio",
+            ):
+                item = values.get(concept) or {}
+                if not item:
+                    continue
+                if item.get("value") is None:
+                    rendered = "missing"
+                elif item.get("unit") == "USD_thousands":
+                    rendered = _money(float(item["value"]) * 1000.0) + " USD"
+                elif item.get("unit") == "percent":
+                    rendered = f"{float(item['value']):.4f}%"
+                else:
+                    rendered = str(item["value"])
+                lines.append(
+                    f"| {item.get('field_code')} · {concept.replace('_', ' ')} | {rendered} | "
+                    f"{item.get('schedule')} | {item.get('definition')} |"
+                )
+            common = (latest.get("derived") or {}).get("common_equity") or {}
+            if common.get("status") == "available":
+                lines.append(
+                    f"| Derived common equity | {_money(float(common['value']) * 1000.0)} USD | "
+                    "Derived | BHCK3210 minus BHCK3283; not regulatory CET1 capital |"
+                )
+            tangible = (latest.get("derived") or {}).get("tangible_common_equity") or {}
+            lines.append(
+                "| Tangible common equity | not available | Derived | "
+                + str(tangible.get("reason") or "required intangible fields are missing") + " |"
+            )
+            lines += [
+                "",
+                f"- Publication timestamp: **{publication.get('published_at') or 'not published in the bulk archive'}**.",
+                f"- Historical use: **{holding.get('historical_use')}**. "
+                "The archive is refreshed in place, so this snapshot is not a point-in-time reconstruction.",
+                "- Consolidated regulatory capital is not GAAP equity and does not set current minimum requirements.",
+            ]
+        elif holding:
+            lines += [
+                "",
+                "## Consolidated holding-company regulatory evidence (FR Y-9C)",
+                "",
+                "No official FR Y-9C consolidated observation is stored. The subsidiary Call Report "
+                "is not relabelled as parent regulatory capital.",
+            ]
         if reg.get("subsidiaries"):
             lines += ["", "## Regulatory evidence (insured subsidiary)", ""]
             for block in reg["subsidiaries"]:
