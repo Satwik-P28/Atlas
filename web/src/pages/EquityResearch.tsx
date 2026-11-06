@@ -128,7 +128,7 @@ export default function EquityResearch() {
             <button className="button" onClick={generate} disabled={busy !== null || !selected}>
               {busy === 'report' ? 'Building report…' : 'Generate report'}
             </button>
-            <button className="button secondary" onClick={download} disabled={busy !== null || !selected || row?.valuation_eligibility?.status !== 'eligible'}>
+            <button className="button secondary" onClick={download} disabled={busy !== null || !selected || (row?.valuation_eligibility?.status !== 'eligible' && !row?.valuation_eligibility?.financial_institution)}>
               {busy === 'package' ? 'Packaging…' : 'Download package'}
             </button>
           </div>
@@ -139,7 +139,8 @@ export default function EquityResearch() {
         <div><span className="eyebrow">Issuers</span><strong>{coverage.issuers}</strong></div>
         <div><span className="eyebrow">Valid financial coverage</span><strong>{coverage.financial_coverage_valid}</strong></div>
         <div><span className="eyebrow">Valuation eligible</span><strong>{coverage.valuation_eligible}</strong></div>
-        <div><span className="eyebrow">DCF executes</span><strong>{coverage.valuation_executes}</strong></div>
+        <div><span className="eyebrow">DCF executes</span><strong>{coverage.dcf_executes ?? coverage.valuation_executes}</strong></div>
+        <div><span className="eyebrow">Institution models</span><strong>{coverage.institution_models_execute ?? 0}</strong></div>
         <div><span className="eyebrow">Economically supported</span><strong>{coverage.valuation_economically_supported}</strong></div>
         <div><span className="eyebrow">Methodology rejected</span><strong>{coverage.methodology_rejected}</strong></div>
         <div><span className="eyebrow">Market prices</span><strong>{coverage.with_prices}</strong></div>
@@ -182,7 +183,9 @@ export default function EquityResearch() {
                 </span>
                 <span>
                   <Badge tone={eligibilityTone(item.valuation_eligibility?.status ?? 'unknown')}>
-                    {item.valuation_eligibility?.status ?? 'unknown'}
+                    {item.valuation_eligibility?.financial_institution
+                      ? item.valuation_eligibility?.method ?? 'institution'
+                      : item.valuation_eligibility?.status ?? 'unknown'}
                   </Badge>
                 </span>
                 <span className="mono">
@@ -202,6 +205,11 @@ export default function EquityResearch() {
             <>
               <div className="card">
                 <h3>{workspace.company?.legal_name}</h3>
+                <div className="muted small">
+                  Method {row.valuation_method ?? '—'} · contract{' '}
+                  {row.valuation_eligibility?.contract_state ?? 'not evaluated'} · business model{' '}
+                  {row.business_model ?? '—'}
+                </div>
                 <div className="muted small">
                   Ticker {row.ticker ?? 'not mapped'} · CIK {row.cik} · SIC {row.sic ?? '—'} · fiscal year end{' '}
                   {row.fiscal_year_end ?? '—'} · cutoff {workspace.as_of} ({workspace.mode})

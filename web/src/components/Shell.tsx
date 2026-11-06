@@ -207,7 +207,7 @@ export default function Shell({ children }: { children: ReactNode }) {
         )}
         <main className="content">{children}</main>
         <footer className="footer">
-          <span>SEC fundamentals are public-domain filings. Market prices are labelled SYNTHETIC unless imported from a licensed source.</span>
+          <span>SEC fundamentals are public-domain filings. Atlas bundles no market prices; price analysis appears only after an authorised import.</span>
           <Link to="/research" className="footer-link">
             Point-in-time policy
           </Link>

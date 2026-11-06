@@ -45,6 +45,10 @@ FORBIDDEN_KEYS = {
 RUNTIMES = {
     "fec_model": "atlas.fec.model.v1",
     "economic_weather_demand": "atlas.economic.weather_demand.v1",
+    # A deterministic research bundle whose analysis is recomputed from the packaged
+    # snapshot and model assumptions on replay. Used for equity methods that are not
+    # expressed as an FEC operator graph (bank residual income, insurer earnings).
+    "report_bundle": "atlas.report_bundle.v1",
 }
 CAPABILITIES = {
     "read_approved_snapshot",

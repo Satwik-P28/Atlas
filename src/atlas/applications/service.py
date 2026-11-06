@@ -528,6 +528,8 @@ class ApplicationService:
         runtime = app["runtime"]["kind"]
         if runtime == "economic_weather_demand":
             result = self._execute_economic(app, loaded, inputs or {})
+        elif runtime == "report_bundle":
+            result = self._execute_report(app, loaded, inputs or {})
         elif runtime == "fec_model":
             result = self._execute_fec(app, loaded, inputs or {})
         else:  # pragma: no cover - validation prevents this
@@ -541,6 +543,53 @@ class ApplicationService:
         })
         self._persist_execution(install_id, result, result["duration_ms"])
         return result
+
+    def _execute_report(self, app: dict[str, Any], loaded: dict[str, Any],
+                        inputs: dict[str, Any]) -> dict[str, Any]:
+        """Recompute a packaged institution analysis from its own snapshot.
+
+        This is not a replay of stored numbers: the model is rebuilt from the packaged
+        financial snapshot and the packaged assumptions, then compared to the packaged
+        expected outputs. A mismatch is reported, not smoothed over.
+        """
+        import json as _json
+
+        from ..research import institutions
+
+        files = loaded["files"]
+        expected = _json.loads(files["artifacts/expected_outputs.json"].decode("utf-8"))
+        model = _json.loads(files["artifacts/institution.json"].decode("utf-8"))
+        financials = _json.loads(files["data/financials.json"].decode("utf-8"))
+        recomputed = institutions.build_institution_valuation(
+            issuer=financials["issuer"],
+            metrics=financials["metrics"],
+            coverage=financials["coverage"],
+            assumptions={**(model.get("assumptions") or {}), **(inputs or {})},
+        )
+        outputs = recomputed.get("outputs") or {}
+        differences: dict[str, Any] = {}
+        for key, value in expected.items():
+            got = outputs.get(key)
+            if isinstance(value, (int, float)) and isinstance(got, (int, float)):
+                if abs(float(value) - float(got)) > max(1e-6, abs(float(value)) * 1e-9):
+                    differences[key] = {"expected": value, "recomputed": got}
+            elif value != got:
+                differences[key] = {"expected": value, "recomputed": got}
+        return {
+            "status": "reproduced" if not differences else "mismatch",
+            "reproduced": not differences,
+            "runtime": "atlas.report_bundle.v1",
+            "model_version": recomputed.get("model_version"),
+            "valuation_method": recomputed.get("method"),
+            "contract_state": (recomputed.get("contract") or {}).get("state"),
+            "outputs": outputs,
+            "expected_outputs": expected,
+            "differences": differences,
+            "limitation": (
+                "Recomputed from the packaged SEC snapshot and assumptions; original SEC bytes "
+                "are not embedded, so source-byte reproduction is not claimed."
+            ),
+        }
 
     def _execute_economic(self, app: dict[str, Any], loaded: dict[str, Any],
                           inputs: dict[str, Any]) -> dict[str, Any]:

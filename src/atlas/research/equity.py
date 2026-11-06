@@ -28,6 +28,15 @@ from ..core.temporal import AsOfMode, iso, utcnow
 from ..entities.master import SecurityMaster
 from ..fec import valuation as fec_valuation
 from ..fec.compiler import COMPILER_VERSION
+from . import institutions, prices
+from .eligibility import (
+    DCF,
+    JUSTIFIED_EARNINGS,
+    RESIDUAL_INCOME,
+    build_contract,
+    classify_business_model,
+    missing_inputs,
+)
 from ..storage.db import Database
 from ..terminal import read_models
 from ..terminal.metric_store import get_issuer_metrics
@@ -110,28 +119,60 @@ def _sic_number(value: Any) -> int | None:
         return None
 
 
-def _valuation_eligibility(issuer: dict[str, Any], missing: Iterable[str]) -> dict[str, Any]:
-    """Decide whether the implemented methodology is admissible for this issuer."""
-    sic = _sic_number(issuer.get("sic"))
+def _valuation_eligibility(
+    issuer: dict[str, Any],
+    missing: Iterable[str],
+    available: Iterable[str] | None = None,
+) -> dict[str, Any]:
+    """Decide which methodology is admissible and whether its inputs are present.
+
+    The industrial DCF guard is unchanged: a financial institution still returns
+    ``unsupported_methodology`` for that method. What changed is that a second, valid
+    method is now named and evaluated instead of leaving the issuer with no analysis.
+    """
+    classification = classify_business_model(issuer.get("sic"))
+    sic = classification["sic"]
     missing = sorted(set(missing))
-    if sic is not None and FINANCIAL_INSTITUTION_SIC[0] <= sic <= FINANCIAL_INSTITUTION_SIC[1]:
+    if classification["method"] in (RESIDUAL_INCOME, JUSTIFIED_EARNINGS):
+        method_missing = (
+            missing_inputs(classification["method"], available)
+            if available is not None else []
+        )
+        status = "unsupported_methodology" if not method_missing else "insufficient_data"
         return {
-            "status": "unsupported_methodology",
-            "method": VALUATION_METHOD,
+            "status": status,
+            "method": classification["method"],
+            "rejected_method": VALUATION_METHOD,
+            "financial_institution": True,
+            "business_model": classification["business_model"],
+            "method_basis": classification["basis"],
             "sic": sic,
+            "missing_inputs": method_missing,
             "reasons": [
-                f"SIC {sic} identifies a bank, insurer, broker or other financial institution.",
-                "An unlevered free-cash-flow-to-firm DCF is not an economically valid model here: "
-                "debt and deposits are operating inputs, interest expense is an operating cost, and "
-                "free cash flow to the firm is not defined the way it is for a non-financial "
-                "operating company.",
-                "Atlas does not substitute an equity DCF, dividend discount model or residual "
-                "income model because none of those is implemented and independently validated "
-                "in this release.",
+                f"SIC {sic} identifies a {classification['business_model']}; an unlevered "
+                "free-cash-flow-to-firm DCF is not an economically valid model here because debt "
+                "and deposits are operating inputs and interest expense is an operating cost.",
+                "Atlas applies "
+                + (
+                    "residual income on book value"
+                    if classification["method"] == RESIDUAL_INCOME
+                    else "justified earnings on diluted EPS"
+                )
+                + f" (`{classification['method']}`) instead: "
+                + (
+                    institutions.BANK_MODEL_VERSION
+                    if classification["method"] == RESIDUAL_INCOME
+                    else institutions.INSURER_MODEL_VERSION
+                )
+                + ".",
+                (
+                    "Required inputs for this method are missing: " + ", ".join(method_missing) + "."
+                    if method_missing else
+                    "All required inputs for this method are present in the evidence store."
+                ),
             ],
             "required_remedy": (
-                "a validated financial-institution model (residual income or excess-return) "
-                "before any per-share valuation is published"
+                "additional reported facts before this method can execute" if method_missing else None
             ),
         }
     reasons = []
@@ -139,7 +180,11 @@ def _valuation_eligibility(issuer: dict[str, Any], missing: Iterable[str]) -> di
         reasons.append("Required valuation inputs are missing: " + ", ".join(missing) + ".")
     return {
         "status": "eligible" if not missing else "insufficient_data",
-        "method": VALUATION_METHOD,
+        "method": DCF,
+        "rejected_method": None,
+        "financial_institution": False,
+        "business_model": classification["business_model"],
+        "method_basis": classification["basis"],
         "sic": sic,
         "reasons": reasons,
         "required_remedy": None if not missing else "additional reported facts before valuation",
@@ -301,7 +346,7 @@ class EquityResearchService:
         valuation_missing = [] if "revenue" in concepts else ["revenue"]
         if not share_concepts:
             valuation_missing.append("shares_outstanding")
-        eligibility = _valuation_eligibility(issuer, valuation_missing)
+        eligibility = _valuation_eligibility(issuer, valuation_missing, available=concepts)
         return {
             "issuer_id": issuer["issuer_id"],
             "cik": issuer.get("cik"),
@@ -327,7 +372,14 @@ class EquityResearchService:
             "financial_coverage_valid": financial_coverage_valid,
             "valuation_missing": valuation_missing,
             "share_concepts": share_concepts,
+            "share_basis": (
+                "period_end_share_count" if "shares_outstanding" in concepts
+                else "weighted_average_diluted" if "weighted_average_shares_diluted" in concepts
+                else "unavailable"
+            ),
             "valuation_eligibility": eligibility,
+            "valuation_method": eligibility.get("method"),
+            "business_model": eligibility.get("business_model"),
             "coverage_status": (
                 "fundamentals_and_prices" if bars else
                 "sec_fundamentals_only" if not missing else
@@ -356,12 +408,19 @@ class EquityResearchService:
             "valuation_eligible": sum(
                 1 for row in rows if row["valuation_eligibility"]["status"] == "eligible"
             ),
+            "institution_methods_available": sum(
+                1 for row in rows
+                if row["valuation_eligibility"].get("method") in (RESIDUAL_INCOME, JUSTIFIED_EARNINGS)
+            ),
+            "dcf_executes": readiness.get("dcf_executes", 0),
+            "institution_models_execute": readiness.get("institution_models_execute", 0),
             "methodology_rejected": sum(
                 1 for row in rows
                 if row["valuation_eligibility"]["status"] == "unsupported_methodology"
             ),
             "valuation_executes": readiness["valuation_executes"],
             "valuation_economically_supported": readiness["valuation_economically_supported"],
+            "contract_states": readiness.get("contract_states", {}),
             "readiness": readiness,
             "items": rows,
             "source": {
@@ -415,24 +474,32 @@ class EquityResearchService:
                 "financial_institution": row["financial_institution"],
                 "valuation_executes": False,
                 "economically_supported": False,
+                "method": eligibility.get("method"),
+                "contract_state": None,
                 "status": eligibility["status"],
                 "value_per_share": None,
                 "audit_verdict": None,
                 "flags": [],
                 "reason": " ".join(eligibility["reasons"]) or None,
             }
-            if eligibility["status"] == "eligible":
+            if eligibility["status"] == "eligible" or eligibility.get("method") in (
+                RESIDUAL_INCOME, JUSTIFIED_EARNINGS
+            ):
                 valuation = self._valuation(
                     row["issuer_id"], assumptions=None, as_of=as_of, mode=mode,
                     target_price=None, stress=False,
                 )
+                institution = valuation.get("institution") or {}
                 summary.update({
                     "valuation_executes": bool(valuation.get("executes")),
                     "economically_supported": bool(valuation.get("economically_supported")),
+                    "method": valuation.get("method") or eligibility.get("method"),
+                    "contract_state": (valuation.get("contract") or {}).get("state"),
                     "status": valuation["status"],
                     "value_per_share": (
                         valuation["dcf"]["outputs"].get("value_per_share")
-                        if valuation.get("dcf") else None
+                        if valuation.get("dcf") else
+                        (institution.get("outputs") or {}).get("value_per_share")
                     ),
                     "audit_verdict": (
                         valuation.get("audit", {}).get("verdict")
@@ -442,11 +509,23 @@ class EquityResearchService:
                     "reason": valuation.get("reason"),
                 })
             items.append(summary)
+        states: dict[str, int] = {}
+        for item in items:
+            key = item.get("contract_state") or "not_evaluated"
+            states[key] = states.get(key, 0) + 1
         return {
             "schema": "atlas.equity_research.readiness.v1",
             "issuers": len(items),
             "financial_coverage_valid": sum(1 for item in items if item["financial_coverage_valid"]),
             "valuation_executes": sum(1 for item in items if item["valuation_executes"]),
+            "dcf_executes": sum(
+                1 for item in items if item["valuation_executes"] and item.get("method") == DCF
+            ),
+            "institution_models_execute": sum(
+                1 for item in items if item["valuation_executes"]
+                and item.get("method") in (RESIDUAL_INCOME, JUSTIFIED_EARNINGS)
+            ),
+            "contract_states": states,
             "valuation_economically_supported": sum(
                 1 for item in items if item["economically_supported"]
             ),
@@ -667,7 +746,19 @@ class EquityResearchService:
                 "selection_policy": metrics.get("policy"),
             },
             "limitations": limitations,
+            "market_price": self._market_price(issuer["issuer_id"]),
         }
+
+    def _market_price(self, issuer_id: str) -> dict[str, Any]:
+        """Return the first authorised price series for the issuer, or an explicit gap."""
+        securities = self.master.securities_for_issuer(issuer_id)
+        if not securities:
+            return prices.price_summary(self.db, "")
+        summaries = [prices.price_summary(self.db, row["security_id"]) for row in securities]
+        for summary in summaries:
+            if summary["status"] == "available":
+                return summary
+        return summaries[0]
 
     # --------------------------------------------------------------------- report
     def _valuation(self, identifier: str, *, assumptions: dict[str, Any] | None,
@@ -676,9 +767,18 @@ class EquityResearchService:
         issuer = read_models.resolve_company(self.db, identifier)
         metrics = get_issuer_metrics(self.db, issuer["issuer_id"], as_of=as_of, mode=mode)
         coverage = self._issuer_coverage(issuer)
-        eligibility = _valuation_eligibility(issuer, coverage["valuation_missing"])
+        available = [
+            key for key, item in (metrics.get("metrics") or {}).items()
+            if isinstance(item, dict) and item.get("value") is not None
+        ]
+        eligibility = _valuation_eligibility(
+            issuer, coverage["valuation_missing"], available=available
+        )
         base: dict[str, Any] = {
             "eligibility": eligibility,
+            "method": eligibility.get("method"),
+            "contract": None,
+            "institution": None,
             "defaults": None,
             "dcf": None,
             "scenarios": None,
@@ -689,6 +789,26 @@ class EquityResearchService:
             "executes": False,
             "economically_supported": False,
         }
+        if eligibility.get("method") in (RESIDUAL_INCOME, JUSTIFIED_EARNINGS):
+            model = institutions.build_institution_valuation(
+                issuer=issuer, metrics=metrics, coverage=coverage, assumptions=assumptions
+            )
+            contract = model.get("contract") or {}
+            return {
+                **base,
+                "status": model["status"],
+                "reason": model.get("reason"),
+                "institution": model,
+                "contract": model.get("contract"),
+                "audit": model.get("audit"),
+                "executes": bool(model.get("executes")),
+                "economically_supported": bool(model.get("economically_supported")),
+                "findings": model.get("findings", []),
+                "eligibility": {
+                    **eligibility,
+                    "contract_state": contract.get("state"),
+                },
+            }
         if eligibility["status"] != "eligible":
             return {
                 **base,
@@ -711,6 +831,24 @@ class EquityResearchService:
                 "context": getattr(exc, "context", {}),
             }
         audit = self._dcf_audit(dcf, metrics, eligibility)
+        contract = build_contract(
+            issuer=issuer,
+            metrics=metrics,
+            coverage=coverage,
+            available=available,
+            assumptions={
+                key: merged.get(key) for key in (
+                    "revenue_growth", "operating_margin", "tax_rate", "wacc",
+                    "terminal_growth", "horizon",
+                )
+            },
+            arithmetic={
+                "passed": bool(audit.get("arithmetic_valid")),
+                "verdict": audit.get("verdict"),
+                "checks": len(audit.get("checks") or []),
+                "version": "atlas.dcf.component_audit.v1",
+            },
+        )
         result = {
             **base,
             "status": "supported",
@@ -718,6 +856,7 @@ class EquityResearchService:
             "defaults": defaults,
             "dcf": dcf,
             "audit": audit,
+            "contract": contract,
             "economically_supported": audit["economically_supported"],
             "findings": audit["findings"],
         }
@@ -996,6 +1135,15 @@ class EquityResearchService:
             ),
         }
 
+    def valuation(self, identifier: str, *, assumptions: dict[str, Any] | None = None,
+                  as_of: str | None = None, mode: str | None = None,
+                  target_price: float | None = None) -> dict[str, Any]:
+        """Return the method-appropriate valuation and its eligibility contract."""
+        return self._valuation(
+            identifier, assumptions=assumptions, as_of=as_of, mode=mode,
+            target_price=target_price,
+        )
+
     def analyse(self, identifier: str, *, assumptions: dict[str, Any] | None = None,
                 as_of: str | None = None, mode: str | None = None,
                 target_price: float | None = None) -> dict[str, Any]:
@@ -1018,6 +1166,9 @@ class EquityResearchService:
             "financial_coverage_valid": workspace["coverage"]["financial_coverage_valid"],
             "financial_coverage_missing": workspace["coverage"]["financial_coverage_missing"],
             "valuation_eligibility": valuation["eligibility"]["status"],
+            "valuation_method": valuation.get("method"),
+            "valuation_contract": (valuation.get("contract") or {}).get("state"),
+            "institution_model": (valuation.get("institution") or {}).get("model_version"),
             "valuation_executes": bool(valuation.get("executes")),
             "valuation_economically_supported": bool(valuation.get("economically_supported")),
             "dcf_audit_verdict": (
@@ -1148,6 +1299,25 @@ class EquityResearchService:
             lines.append(f"- {reason}")
         if eligibility.get("required_remedy"):
             lines.append(f"- Required before any per-share valuation: {eligibility['required_remedy']}.")
+        contract = valuation.get("contract")
+        if contract:
+            lines += [
+                "",
+                "### Valuation eligibility contract",
+                "",
+                f"- Contract: `{contract['contract_version']}`",
+                f"- State: **{contract['state']}** ({contract['state_index']} of {len(contract['state_history']) - 1} transitions reached)",
+                f"- Business model: **{contract['business_model']}** — {contract['classification_basis']}",
+                f"- Method: `{contract.get('method') or 'none'}`",
+                f"- Share-count basis: **{contract.get('share_count_basis')}**",
+                f"- Arithmetic validation: **{contract.get('audit_status')}**",
+                "- Promotion policy: execution alone does not promote this contract. Independent arithmetic, an economic review and a reference benchmark are separate gates.",
+            ]
+            for limitation in contract.get("economic_limitations", []):
+                lines.append(f"- Limitation: {limitation}")
+            if contract.get("prohibited_methods"):
+                for item in contract["prohibited_methods"]:
+                    lines.append(f"- Prohibited: {item}")
         lines += ["", "## Valuation", ""]
         if valuation["status"] != "supported":
             label = (
@@ -1161,6 +1331,63 @@ class EquityResearchService:
                 "This is a declared limitation, not a zero, a comparable-company multiple or a "
                 "synthetic price. Atlas does not tune assumptions to produce an attractive value.",
             ]
+        elif valuation.get("institution"):
+            model = valuation["institution"]
+            outputs = model["outputs"]
+            lines += [
+                f"Method: `{model['method']}` — {model.get('method_description')}",
+                "",
+                f"Model version `{model['model_version']}`. The model executed: "
+                f"**{'yes' if model.get('executes') else 'no'}**. Execution is not an economic "
+                "validation, and the contract state records how far verification has actually gone.",
+                "",
+                "| Output | Value |",
+                "| --- | ---: |",
+            ]
+            for key, value in outputs.items():
+                if key in {"rows", "residual_income_cross_check", "reported_roe", "negative_residual_equity"}:
+                    continue
+                rendered = _money(value) if isinstance(value, (int, float)) else _excerpt(value, 120)
+                lines.append(f"| {key.replace('_', ' ')} | {rendered} |")
+            if outputs.get("negative_residual_equity"):
+                lines += [
+                    "",
+                    "The calculated residual equity value is negative. Atlas reports it as a calculated "
+                    "residual, not as a negative share price a holder could realise. The computation is "
+                    "not floored at zero and the assumptions are not tuned to remove the result.",
+                ]
+            lines += ["", "### Assumptions", "", "| Input | Value |", "| --- | ---: |"]
+            for key, value in model["assumptions"].items():
+                rendered = _money(value) if isinstance(value, (int, float)) and abs(value) > 5 else value
+                lines.append(f"| {key} | {rendered} |")
+            rows = (outputs.get("rows") or [])
+            if rows:
+                lines += [
+                    "", "### Residual-income schedule", "",
+                    "| Year | Opening book value | Net income | Dividends | Residual income | PV |",
+                    "| --- | ---: | ---: | ---: | ---: | ---: |",
+                ]
+                for row in rows:
+                    lines.append(
+                        f"| {row['year']} | {_money(row['opening_book_value'])} | {_money(row['net_income'])} | "
+                        f"{_money(row['dividends'])} | {_money(row['residual_income'])} | {_money(row['present_value'])} |"
+                    )
+            lines += ["", "### Sensitivity", "", "| Scenario | Value per share |", "| --- | ---: |"]
+            grid = (model.get("sensitivity") or {}).get("cost_of_equity_and_roe") or []
+            for cell in grid:
+                label = f"CoE {cell['cost_of_equity']:.1%}, ROE {cell['roe']:.1%}"
+                lines.append(f"| {label} | {_money(cell.get('value_per_share'))} |")
+            for cell in (model.get("sensitivity") or {}).get("cost_of_equity_and_growth") or []:
+                label = f"CoE {cell['cost_of_equity']:.1%}, growth {cell['growth']:.1%}"
+                lines.append(f"| {label} | {_money(cell.get('value_per_share'))} |")
+            for cell in (model.get("sensitivity") or {}).get("share_basis") or []:
+                lines.append(
+                    f"| Share basis {cell['basis']} ({cell['shares']:,.0f}) | {_money(cell.get('value_per_share'))} |"
+                )
+            for finding in model.get("findings", []):
+                lines.append(f"- **{finding['code']}**: {finding['detail']}")
+            for limitation in model.get("limitations", []):
+                lines.append(f"- Limitation: {limitation}")
         else:
             dcf = valuation["dcf"]
             assumptions = dcf["assumptions"]
@@ -1305,7 +1532,8 @@ class EquityResearchService:
             lines += ["| Code | Severity | Finding |", "| --- | --- | --- |"]
             for finding in findings:
                 lines.append(
-                    f"| `{finding['code']}` | {finding['severity']} | {finding['message']} |"
+                    f"| `{finding['code']}` | {finding['severity']} | "
+                    f"{finding.get('message') or finding.get('detail') or ''} |"
                 )
             lines.append("")
         else:
@@ -1315,10 +1543,11 @@ class EquityResearchService:
             lines += [
                 f"- Financial coverage valid: **{coverage['financial_coverage_valid']}** "
                 f"(missing: {', '.join(coverage['financial_coverage_missing']) or 'none'}).",
-                f"- DCF executes: **{audit['arithmetic_valid']}**; verdict **{audit['verdict']}**; "
-                f"economically supported: **{audit['economically_supported']}**.",
-                "- Arithmetic consistency is not economic validity; WACC, margin, growth and "
-                "terminal growth remain unvalidated analyst assumptions.",
+                f"- Model executes: **{audit.get('arithmetic_valid', audit.get('passed'))}**; "
+                f"verdict **{audit.get('verdict', 'n/a')}**; economically supported: "
+                f"**{audit.get('economically_supported', valuation.get('economically_supported', False))}**.",
+                "- Arithmetic consistency is not economic validity; discount rate, growth and "
+                "terminal assumptions remain unvalidated analyst assumptions.",
             ]
         else:
             lines.append(
@@ -1352,7 +1581,174 @@ class EquityResearchService:
             )
         ]
 
+    def _institution_application(self, analysis: dict[str, Any], version: str = "1.0.0") -> dict[str, Any]:
+        """Package a bank or insurer analysis without pretending it is an FEC DCF."""
+        workspace = analysis["workspace"]
+        valuation = analysis["valuation"]
+        model = valuation["institution"]
+        company = workspace["company"]
+        coverage = workspace["coverage"]
+        contract = model.get("contract") or {}
+        as_of = workspace["as_of"]
+        cik = str(company.get("cik") or "")
+        source_rows = self._source_rows(["sec-edgar"])
+        if not source_rows:
+            raise MissingDataError("SEC source metadata is missing from this database")
+        decisions = self.rights.decisions_for_metadata(source_rows)
+        if not all(item["packaging_allowed"] for item in decisions):
+            raise ValidationError("SEC source rights do not permit research package export")
+        outputs = model["outputs"]
+        expected = {
+            key: outputs[key]
+            for key in ("value_per_share", "calculated_equity_value", "realizable_common_price")
+            if key in outputs
+        }
+        app_id = f"{APPLICATION_ID_PREFIX}-{cik}-{model['method']}"[:96]
+        app = {
+            "schema": APPLICATION_SCHEMA,
+            "application_id": app_id,
+            "name": f"Equity research · {company['legal_name']}",
+            "version": version,
+            "publisher": {"id": "atlas.first-party", "name": "Atlas Quant first-party"},
+            "description": (
+                f"Source-grounded {model['method']} equity research for {company['legal_name']} "
+                f"({coverage.get('ticker') or company.get('cik')}) using SEC facts."
+            ),
+            "compatibility": {"minimum": "0.3.0", "maximum_exclusive": "0.4.0"},
+            "runtime": {
+                "kind": "report_bundle",
+                "model_runtime": "atlas.report_bundle.v1",
+                "report_sha256": analysis["metadata"]["report_sha256"],
+                "model_version": model["model_version"],
+            },
+            "dependencies": {
+                "compiler": COMPILER_VERSION,
+                "operators": [],
+                "model_runtime": "atlas.report_bundle.v1",
+                "datasets": [{
+                    "source_id": source_rows[0]["source_id"],
+                    "required": True,
+                    "redistribution": source_rows[0]["redistribution"],
+                }],
+            },
+            "inputs": [
+                {"key": key, "type": "Scalar", "unit": "fraction", "default": value,
+                 "classification": "assumption"}
+                for key, value in model["assumptions"].items()
+            ],
+            "outputs": [
+                {"key": "value_per_share", "unit": "USD/share"},
+                {"key": "calculated_equity_value", "unit": "USD"},
+            ],
+            "views": [
+                {"id": "report", "type": "report", "title": "Equity research report"},
+                {"id": "eligibility", "type": "table", "title": "Valuation eligibility contract"},
+                {"id": "model", "type": "table", "title": "Institution model and sensitivity"},
+                {"id": "evidence", "type": "evidence", "title": "Source records and X-Ray"},
+                {"id": "limitations", "type": "limitations", "title": "Coverage and known limitations"},
+            ],
+            "sources": [{
+                "source_id": source_rows[0]["source_id"],
+                "name": source_rows[0]["name"],
+                "kind": source_rows[0]["kind"],
+                "homepage": source_rows[0].get("homepage"),
+                "license": source_rows[0]["licence"],
+                "redistribution": source_rows[0]["redistribution"],
+                "rights_basis": decisions[0]["license"],
+                "snapshot_paths": [
+                    "data/financials.json", "artifacts/institution.json",
+                    "artifacts/eligibility_contract.json", "report.md",
+                ],
+            }],
+            "capabilities": [
+                "read_approved_snapshot", "render_declarative_ui", "write_application_state",
+            ],
+            "resources": {
+                "max_package_bytes": 8 * 1024 * 1024,
+                "max_memory_mb": 256,
+                "max_execution_seconds": 30,
+            },
+            "license": "Apache-2.0 for application and report metadata; SEC facts retain their public-domain terms.",
+            "limitations": workspace["limitations"] + model.get("limitations", []),
+            "created_at": as_of,
+            "state": {
+                "issuer_id": company["issuer_id"],
+                "cik": company.get("cik"),
+                "period_end": workspace["metrics"].get("period_end"),
+                "report_sha256": analysis["metadata"]["report_sha256"],
+                "valuation_fingerprint": None,
+                "valuation_method": model["method"],
+                "valuation_contract_state": contract.get("state"),
+                "valuation_economically_supported": bool(model.get("economically_supported")),
+                "institution_model_version": model["model_version"],
+                "price_included": False,
+            },
+        }
+        financials = {
+            "schema": "atlas.equity_research.financials.v1",
+            "issuer": company,
+            "coverage": coverage,
+            "metrics": workspace["metrics"],
+            "statements": workspace["statements"],
+            "history": workspace["history"],
+            "quality_checks": workspace["quality_checks"],
+            "provenance": workspace["provenance"],
+            "limitations": workspace["limitations"],
+        }
+        files = {
+            "data/financials.json": pretty(financials),
+            "artifacts/institution.json": pretty(model),
+            "artifacts/eligibility_contract.json": pretty(contract),
+            "artifacts/expected_outputs.json": pretty(expected),
+            "report.md": analysis["report"].encode("utf-8"),
+            "sources.json": pretty({
+                "schema": "atlas.application.sources.v1",
+                "sources": app["sources"],
+                "note": "Only SEC public-domain observations are packaged; no market prices are included.",
+            }),
+            "README.md": (
+                f"# {app['name']}\n\n"
+                f"Runtime: `atlas.report_bundle.v1` using `{model['model_version']}`. Built from SEC "
+                f"facts as of {as_of}.\n\n"
+                "This is a reproducible analysis bundle, not a DCF model. The eligibility contract "
+                "records which verification gates the result has actually passed.\n"
+            ).encode("utf-8"),
+        }
+        metadata = [
+            {"path": "data/financials.json", "role": "approved_source_snapshot",
+             "rights": "public_domain", "source_ids": ["sec-edgar"],
+             "media_type": "application/json"},
+            {"path": "artifacts/institution.json", "role": "analysis_result",
+             "rights": "public_domain", "source_ids": ["sec-edgar"],
+             "media_type": "application/json"},
+            {"path": "artifacts/eligibility_contract.json", "role": "analysis_result",
+             "rights": "public_domain", "source_ids": ["sec-edgar"],
+             "media_type": "application/json"},
+            {"path": "artifacts/expected_outputs.json", "role": "analysis_result",
+             "rights": "public_domain", "source_ids": ["sec-edgar"],
+             "media_type": "application/json"},
+            {"path": "report.md", "role": "analysis_result",
+             "rights": "public_domain", "source_ids": ["sec-edgar"],
+             "media_type": "text/markdown"},
+            {"path": "sources.json", "role": "rights_manifest",
+             "rights": "public_domain", "source_ids": ["sec-edgar"],
+             "media_type": "application/json"},
+        ]
+        payload = build_package(
+            app, files, file_metadata=metadata, built_at=as_of,
+            source_revision=os.environ.get("ATLAS_SOURCE_REVISION", "working-tree"),
+            reproducibility="computationally_reproducible",
+        )
+        return {
+            "payload": payload,
+            "application": app,
+            "expected_outputs": expected,
+            "report_sha256": analysis["metadata"]["report_sha256"],
+        }
+
     def _application(self, analysis: dict[str, Any], version: str = "1.0.0") -> dict[str, Any]:
+        if analysis["valuation"].get("institution"):
+            return self._institution_application(analysis, version=version)
         workspace = analysis["workspace"]
         valuation = analysis["valuation"]
         if valuation["status"] != "supported":

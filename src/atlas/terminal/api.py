@@ -150,6 +150,16 @@ class EquityPackageRequest(EquityReportRequest):
     version: str = Field(default="1.0.0", pattern=r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
 
 
+class EquityPriceImportRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    rows: list[dict[str, Any]] = Field(min_length=1, max_length=5000)
+    source_name: str = Field(min_length=1, max_length=200)
+    licence: str = Field(min_length=1, max_length=200)
+    redistribution: str = Field(default="user_responsibility")
+    adjustment_semantics: str = Field(default="unadjusted")
+    currency: str = Field(default="USD", max_length=8)
+
+
 class ForkRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     name: str = Field(min_length=1, max_length=120)
@@ -1550,6 +1560,54 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
             identifier, assumptions=body.assumptions, as_of=body.as_of, mode=body.mode,
             target_price=body.target_price,
         )
+
+    @app.get("/api/equity/{identifier}/valuation", tags=["equity"])
+    def equity_valuation(
+        identifier: str,
+        as_of: str | None = None,
+        mode: str | None = None,
+        db: Database = Depends(get_db),
+    ) -> dict[str, Any]:
+        from ..research.equity import EquityResearchService
+
+        return EquityResearchService(db).valuation(identifier, as_of=as_of, mode=mode)
+
+    @app.post("/api/equity/{identifier}/prices", tags=["equity"])
+    def equity_price_import(
+        identifier: str,
+        request: EquityPriceImportRequest,
+        db: Database = Depends(get_db),
+    ) -> dict[str, Any]:
+        from ..core.errors import ValidationError
+        from ..research import prices
+        from ..research.equity import EquityResearchService
+
+        service = EquityResearchService(db)
+        workspace = service.workspace(identifier)
+        ticker = workspace["coverage"].get("ticker")
+        if not ticker:
+            raise ValidationError("issuer has no resolved ticker for a price import")
+        try:
+            imported = prices.import_price_series(
+                db,
+                ticker=ticker,
+                rows=request.rows,
+                source_name=request.source_name,
+                licence=request.licence,
+                redistribution=request.redistribution,
+                adjustment_semantics=request.adjustment_semantics,
+                currency=request.currency,
+            )
+        except prices.PriceImportError as exc:
+            raise ValidationError(str(exc)) from exc
+        summary = service.workspace(identifier)["market_price"]
+        return {
+            "import": imported,
+            "market_price": summary,
+            "multiples": prices.valuation_multiples(
+                workspace["metrics"], summary.get("latest_close")
+            ),
+        }
 
     @app.post("/api/equity/{identifier}/package", tags=["equity"])
     def equity_package(

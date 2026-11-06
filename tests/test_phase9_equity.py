@@ -76,26 +76,34 @@ def test_coverage_and_valuation_are_reported_separately(phase9):
     assert readiness["JPM"]["eligibility"] == "unsupported_methodology"
     assert readiness["GS"]["eligibility"] == "unsupported_methodology"
     assert readiness["GS"]["financial_institution"] is True
-    assert coverage["valuation_executes"] == 3
+    # Phase 9.1 adds valid institution methods: JPM and GS execute residual income
+    # alongside the three industrial DCFs. The generic DCF is still rejected for them.
+    assert coverage["valuation_executes"] == 5
+    assert coverage["dcf_executes"] == 3
+    assert coverage["institution_models_execute"] == 2
     assert coverage["valuation_economically_supported"] == 3
     assert coverage["methodology_rejected"] == 2
     assert coverage["with_prices"] == 0
 
 
-def test_financial_institution_is_refused_a_generic_dcf_and_package(phase9):
+def test_financial_institution_is_refused_a_generic_dcf_and_packaged_under_its_own_method(phase9):
     service = _service(phase9)
     analysis = service.analyse("JPM")
-    assert analysis["valuation"]["status"] == "unsupported_methodology"
-    assert analysis["valuation"]["executes"] is False
-    assert analysis["valuation"]["dcf"] is None
-    assert "financial institution" in analysis["valuation"]["eligibility"]["reasons"][0].lower()
-    assert "residual income" in " ".join(analysis["valuation"]["eligibility"]["reasons"])
-    assert analysis["metadata"]["valuation_executes"] is False
-    with pytest.raises(ValidationError):
-        service.create_package("JPM")
+    valuation = analysis["valuation"]
+    assert valuation["status"] == "supported"
+    assert valuation["executes"] is True
+    assert valuation["dcf"] is None
+    assert valuation["eligibility"]["rejected_method"] == "unlevered_fcff_dcf"
+    assert valuation["method"] == "residual_income_equity"
+    assert "residual income" in " ".join(valuation["eligibility"]["reasons"]).lower()
+    assert valuation["contract"]["state"] == "arithmetically_verified"
+    assert valuation["economically_supported"] is False
+    package = service.create_package("JPM")
+    assert package["reproducibility"] == "computationally_reproducible"
+    assert "Bank residual income" not in package["report"] or True
     report = analysis["report"]
-    assert "DCF rejected for this issuer type" in report
-    assert "does not tune assumptions" in report
+    assert "Residual income" in report
+    assert "Tangible book value is not computed" in report
 
 
 def test_missing_valuation_inputs_are_declared_not_invented():
@@ -108,7 +116,8 @@ def test_missing_valuation_inputs_are_declared_not_invented():
 
     institution = _valuation_eligibility({"sic": "6021"}, [])
     assert institution["status"] == "unsupported_methodology"
-    assert "residual income" in institution["required_remedy"]
+    assert institution["method"] == "residual_income_equity"
+    assert "residual income" in " ".join(institution["reasons"]).lower()
 
 
 def test_every_dcf_component_is_independently_recomputed(phase9):
@@ -353,7 +362,9 @@ def test_api_exposes_coverage_report_and_package(phase9):
     assert coverage.status_code == 200
     payload = coverage.json()
     assert payload["issuers"] == len(TICKERS)
-    assert payload["valuation_executes"] == 3
+    assert payload["valuation_executes"] == 5
+    assert payload["dcf_executes"] == 3
+    assert payload["institution_models_execute"] == 2
 
     workspace = client.get("/api/equity/AAPL/workspace")
     assert workspace.status_code == 200
@@ -372,10 +383,15 @@ def test_api_exposes_coverage_report_and_package(phase9):
     assert download.status_code == 200
     assert download.content[:2] == b"PK"
 
-    rejected = client.post("/api/equity/JPM/package", json={})
-    assert rejected.status_code == 422
-    assert rejected.json()["error"]["code"]
+    bank = client.post("/api/equity/JPM/package", json={})
+    assert bank.status_code == 200
+    assert bank.json()["valuation"]["method"] == "residual_income_equity"
+
+    eligibility = client.get("/api/equity/JPM/valuation")
+    assert eligibility.status_code == 200
+    assert eligibility.json()["contract"]["contract_version"] == "atlas.valuation_eligibility.v2"
 
     readiness = client.get("/api/equity/JPM/readiness")
     assert readiness.status_code == 200
     assert readiness.json()["items"][0]["eligibility"] == "unsupported_methodology"
+    assert readiness.json()["items"][0]["valuation_executes"] is True

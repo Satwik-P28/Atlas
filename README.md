@@ -521,3 +521,24 @@ never the reverse. The kernel does not know HTTP exists.
 
 Licence: Apache-2.0. Fixtures retain the licensing of their sources; see
 [fixtures/README.md](fixtures/README.md).
+
+## Phase 9.1 — valuation integrity and financial institutions
+
+Phase 9.1 adds a versioned valuation eligibility contract, bank residual-income and
+insurer justified-earnings models, rights-aware market-price import, and an independent
+Decimal audit. The generic FCFF DCF is still rejected for banks and insurers; JPMorgan,
+Goldman Sachs and UnitedHealth are now analysed with methods appropriate to their
+business models instead of being left unvalued.
+
+- Contract states: unsupported → insufficient source coverage → methodologically
+  eligible → arithmetically verified → economically reviewed → independently benchmarked.
+  Execution alone promotes nothing.
+- Negative residual equity is preserved and labelled; it is not presented as a tradable
+  negative share price and is never floored at zero.
+- No market prices are bundled. Price multiples and reverse DCF require an authorised
+  import with declared licence, redistribution and adjustment semantics.
+- The master specification gate remains **blocked**: `ATLAS_MASTER_SPEC.md` v1.2.0 was
+  not supplied in the repository. See `docs/MASTER_SPEC_GATE.md`.
+
+See `docs/PHASE9_1_IMPLEMENTATION.md`, `docs/VALUATION_ELIGIBILITY_CONTRACT.md`,
+`docs/INSTITUTION_MODELS.md` and `docs/MARKET_DATA_AND_RIGHTS.md`.
