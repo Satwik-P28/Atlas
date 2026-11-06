@@ -683,8 +683,37 @@ def implied_cost_of_equity(
             "bracket": {"low_coe": low, "high_coe": high,
                         "low_value": f_low, "high_value": f_high},
         }
-    a, b = low, high
-    for _ in range(80):
+    # Scan the bracket so a non-monotonic value function cannot be hidden behind
+    # one bisection result. Multiple sign changes mean the price is consistent with
+    # more than one cost of equity and no single number should be reported.
+    scan = [low + (high - low) * index / 200.0 for index in range(201)]
+    scan_values = [(coe, value(coe)) for coe in scan]
+    sign_changes = 0
+    intervals = []
+    for (left, left_value), (right, right_value) in zip(scan_values, scan_values[1:]):
+        if left_value is None or right_value is None:
+            continue
+        if (left_value - price) == 0 or (right_value - price) == 0:
+            continue
+        if (left_value - price) * (right_value - price) < 0:
+            sign_changes += 1
+            intervals.append([left, right])
+    if sign_changes == 0:
+        return {"status": "unavailable", "reason": "no price-consistent cost of equity in the bracket"}
+    if sign_changes > 1:
+        return {
+            "status": "ambiguous",
+            "reason": (
+                "The observed price is consistent with more than one cost of equity under the "
+                "declared assumptions; Atlas does not report a single precise implied rate."
+            ),
+            "root_intervals": intervals,
+            "bracket": {"low_coe": low, "high_coe": high},
+        }
+    a, b = intervals[0]
+    iterations = 0
+    for _ in range(100):
+        iterations += 1
         mid = (a + b) / 2.0
         mid_value = value(mid)
         if mid_value is None:
@@ -693,13 +722,22 @@ def implied_cost_of_equity(
             a = mid
         else:
             b = mid
+        if abs(mid_value - price) <= max(1e-8, abs(price) * 1e-10):
+            break
     solved = (a + b) / 2.0
+    solved_value = value(solved)
+    residual = abs(solved_value - price) if solved_value is not None else None
     return {
         "status": "available",
         "implied_cost_of_equity": solved,
         "price": price,
-        "solved_value_per_share": value(solved),
-        "iterations": 80,
+        "solved_value_per_share": solved_value,
+        "iterations": iterations,
+        "residual_usd": residual,
+        "converged": bool(residual is not None and residual <= 0.01),
+        "unique_root": True,
+        "scan_root_intervals": 1,
+        "method": "monotonic_bracket_scan_plus_bisection",
         "bracket": {"low_coe": low, "high_coe": high},
         "conditional_on": {
             "roe": roe, "payout_ratio": payout, "horizon": horizon,
@@ -870,6 +908,7 @@ def build_bank_valuation_v2(
     limitations.extend([
         "Regulatory capital evidence covers the insured subsidiary, not the consolidated parent; capital headroom is in percentage points because dollar RWA is not published.",
         "The parent's goodwill and intangibles are not mapped, so no parent tangible book value per share is reported.",
+        "Consolidated holding-company capital is gated: no FR Y-9C observation is ingested, so subsidiary capital is not promoted to a parent-level conclusion.",
         "Segment-level earnings are not available; the ROE path is consolidated and is labelled as such.",
     ])
     contract = build_contract(
@@ -909,6 +948,17 @@ def build_bank_valuation_v2(
         "driver": driver,
         "scenarios": scenarios,
         "implied": implied,
+        "parent_capital": {
+            "status": "blocked_fr_y9c_unavailable",
+            "basis": "parent_consolidated",
+            "reason": (
+                "No official FR Y-9C observation for JPMorgan Chase & Co. has been ingested. "
+                "The insured-bank Call Report is not a substitute for consolidated holding-company "
+                "capital, and the two are never aggregated."
+            ),
+            "required_evidence": "Federal Reserve FR Y-9C, reporting entity RSSD 852218 / CIK 19617",
+            "subsidiary_evidence_used_for_parent": False,
+        },
         "external_value_evidence": {
             "status": "not_recorded",
             "detail": (

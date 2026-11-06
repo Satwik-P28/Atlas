@@ -149,12 +149,18 @@ class Database:
 
     # ------------------------------------------------------------- migrations
     def schema_version(self) -> int:
-        self.execute(_SCHEMA_TABLE)
+        """Read the applied version without creating anything."""
+        exists = self.scalar(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='schema_migration'"
+        )
+        if not exists:
+            return 0
         row = self.query_one("SELECT MAX(version) AS v FROM schema_migration")
         return int(row["v"]) if row and row["v"] is not None else 0
 
     def applied_migrations(self) -> list[sqlite3.Row]:
-        self.execute(_SCHEMA_TABLE)
+        if not self.schema_version():
+            return []
         return self.query("SELECT version, name, applied_at, duration_ms FROM schema_migration ORDER BY version")
 
     def migrate(self, target: int | None = None) -> list[int]:
@@ -171,16 +177,21 @@ class Database:
         for migration in MIGRATIONS:
             if migration.version <= current or migration.version > target:
                 continue
-            self._apply(migration)
-            applied.append(migration.version)
+            if self._apply(migration):
+                applied.append(migration.version)
         return applied
 
-    def _apply(self, migration: Migration) -> None:
+    def _apply(self, migration: Migration) -> bool:
         import time
 
         started = time.perf_counter()
         try:
             with self.transaction():
+                # Re-read under BEGIN IMMEDIATE. Another process may have committed
+                # this migration between migrate()'s initial read and this lock.
+                latest = self.scalar("SELECT MAX(version) FROM schema_migration", default=0) or 0
+                if int(latest) >= migration.version:
+                    return False
                 # executescript issues an implicit COMMIT in sqlite3; run statements
                 # individually so the DDL stays inside our transaction.
                 for statement in _split_statements(migration.sql):
@@ -190,6 +201,7 @@ class Database:
                     "INSERT INTO schema_migration (version, name, applied_at, duration_ms) VALUES (?,?,?,?)",
                     (migration.version, migration.name, _now_iso(), duration_ms),
                 )
+                return True
         except sqlite3.Error as exc:
             raise MigrationError(
                 f"migration {migration.version} ({migration.name}) failed: {exc}", version=migration.version
@@ -213,6 +225,16 @@ class Database:
 
     def foreign_key_violations(self) -> list[sqlite3.Row]:
         return self.query("PRAGMA foreign_key_check")
+
+    def backup_to(self, path: str | Path) -> str:
+        """Write a consistent SQLite backup and return its SHA-256."""
+        import hashlib
+
+        target = Path(path)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with sqlite3.connect(target) as destination:
+            self._conn.backup(destination)
+        return hashlib.sha256(target.read_bytes()).hexdigest()
 
     def checkpoint(self) -> None:
         """Fold the WAL back into the main database file."""

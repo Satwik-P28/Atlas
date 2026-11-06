@@ -241,9 +241,6 @@ def _series_value(value: Any) -> list[float]:
 class EquityResearchService:
     def __init__(self, db: Database) -> None:
         self.db = db
-        # Additive Phase 9.2 tables are provisioned lazily so coverage can report
-        # regulatory linkage even on databases created before this phase.
-        regulatory.seed_entities(db)
         self.master = SecurityMaster(db)
         self.rights = DataRightsEngine(db)
 
@@ -762,34 +759,54 @@ class EquityResearchService:
 
     def _market_analysis(self, issuer_id: str, metrics: dict[str, Any],
                          value_per_share: float | None,
-                         implied: dict[str, Any] | None = None) -> dict[str, Any]:
-        """Compare the model with an observed price dated as close as the data permits."""
+                         implied: dict[str, Any] | None = None,
+                         cutoff: str | None = None) -> dict[str, Any]:
+        """Compare the model with a price known at the information cutoff.
+
+        The price is the last observation on or before the cutoff, never the latest
+        stored quote. The filing timestamp is reported separately from the period end
+        so a statement filed after the cutoff cannot be presented as known.
+        """
+        cutoff_day = str(cutoff or metrics.get("as_of") or "")[:10]
+        filing_available = None
+        revenue = ((metrics.get("metrics") or {}).get("revenue") or {})
+        ids = revenue.get("evidence_ids") or []
+        if ids:
+            placeholders = ",".join("?" for _ in ids)
+            filing_available = self.db.scalar(
+                f"SELECT MAX(availability_time) FROM evidence WHERE evidence_id IN ({placeholders})",
+                tuple(ids), default=None,
+            )
         securities = self.master.securities_for_issuer(issuer_id)
         for security in securities:
-            summary = prices.price_summary(self.db, security["security_id"])
-            if summary.get("status") != "available":
-                continue
-            history = prices.price_history(self.db, security["security_id"])
-            accounting = metrics.get("period_end")
-            chosen = prices.price_on_or_before(
-                self.db, security["security_id"], accounting or summary["last_date"]
+            chosen = (
+                prices.price_on_or_before(self.db, security["security_id"], cutoff_day)
+                if cutoff_day else None
             )
             if chosen is None:
-                chosen = {
-                    "date": summary["last_date"], "close": summary["latest_close"],
-                    "currency": summary.get("currency"),
-                    "adjustment_semantics": summary.get("adjustment_semantics"),
-                    "source_id": (summary.get("source") or {}).get("source_id"),
-                    "observed_at": (summary.get("source") or {}).get("observed_at"),
-                }
+                continue
+            history = prices.price_history(self.db, security["security_id"], end_date=cutoff_day)
             return prices.market_analysis(
                 price=chosen, history=history, value_per_share=value_per_share,
-                accounting_period_end=accounting, implied=implied,
+                accounting_period_end=metrics.get("period_end"), implied=implied,
+                information_cutoff=cutoff_day, filing_available_at=filing_available,
             )
         return prices.market_analysis(
             price=None, history=None, value_per_share=value_per_share,
             accounting_period_end=metrics.get("period_end"), implied=implied,
+            information_cutoff=cutoff_day, filing_available_at=filing_available,
         )
+
+    def _comparison_price(self, issuer_id: str, cutoff: str | None) -> float | None:
+        """Return a price that was observable at the cutoff, or no price."""
+        day = str(cutoff or "")[:10]
+        if not day:
+            return None
+        for security in self.master.securities_for_issuer(issuer_id):
+            chosen = prices.price_on_or_before(self.db, security["security_id"], day)
+            if chosen is not None:
+                return float(chosen["close"])
+        return None
 
     def _market_price(self, issuer_id: str) -> dict[str, Any]:
         """Return the first authorised price series for the issuer, or an explicit gap."""
@@ -821,11 +838,8 @@ class EquityResearchService:
             regulatory.regulatory_evidence(self.db, cik=issuer.get("cik"))
             if issuer.get("cik") else None
         )
-        price_summary = self._market_price(issuer["issuer_id"])
-        observed_price = (
-            price_summary.get("latest_close")
-            if price_summary.get("status") == "available" else None
-        )
+        cutoff_day = str(as_of or iso(utcnow()))[:10]
+        observed_price = self._comparison_price(issuer["issuer_id"], cutoff_day)
         base: dict[str, Any] = {
             "eligibility": eligibility,
             "method": eligibility.get("method"),
@@ -855,7 +869,7 @@ class EquityResearchService:
                     "Atlas returns a rejection rather than executing an inappropriate model."
                 ),
                 "market": self._market_analysis(
-                    issuer["issuer_id"], metrics, None
+                    issuer["issuer_id"], metrics, None, cutoff=as_of
                 ),
                 "eligibility": {
                     **eligibility,
@@ -889,7 +903,7 @@ class EquityResearchService:
                 "findings": model.get("findings", []),
                 "market": self._market_analysis(
                     issuer["issuer_id"], metrics, value_per_share,
-                    implied=model.get("implied"),
+                    implied=model.get("implied"), cutoff=as_of,
                 ),
                 "eligibility": {
                     **eligibility,
@@ -1634,7 +1648,17 @@ class EquityResearchService:
                 lines.append("")
         market = valuation.get("market") or {}
         lines += ["", "## Market price and model comparison", ""]
-        if market.get("status") != "available":
+        if market.get("status") == "available" and not market.get("export_allowed"):
+            lines += [
+                "A restricted market observation is stored locally, but its price is withheld from "
+                "this exported report because redistribution is not authorized. The application "
+                "state records `price_included: false`; reconnect an authorized series to reproduce "
+                "the market comparison.",
+                "",
+                f"- Information cutoff: **{market.get('information_cutoff') or '—'}**.",
+                f"- Filing available at: **{market.get('filing_available_at') or 'not recorded'}**.",
+            ]
+        elif market.get("status") != "available":
             lines += [
                 "No observed market price exists for this security. Atlas does not synthesise a "
                 "quote, so market multiples and reverse valuation remain unavailable.",
@@ -1667,7 +1691,12 @@ class EquityResearchService:
             "",
             f"- The report is computed as of **{workspace['as_of']}** in **{workspace['mode']}** mode; "
             "filings accepted after that instant are excluded by the existing evidence kernel.",
-            f"- Market price: **{'not bundled' if (workspace.get('market_price') or {}).get('latest_close') is None else _money((workspace.get('market_price') or {}).get('latest_close')) + ' USD (' + str((workspace.get('market_price') or {}).get('source_id')) + ')'}**.",
+            "- Market price: **" + (
+                "not bundled" if (workspace.get('market_price') or {}).get('latest_close') is None
+                else "restricted observation stored locally; value withheld from this exported report"
+                if not (workspace.get('market_price') or {}).get('source', {}).get('export_allowed')
+                else _money((workspace.get('market_price') or {}).get('latest_close')) + " USD (" + str((workspace.get('market_price') or {}).get('source_id')) + ")"
+            ) + "**.",
             "- Not available: qualitative business narrative, management guidance, sell-side estimates, "
             "licensed consensus data, evaluated bond prices and low-latency news.",
         ]

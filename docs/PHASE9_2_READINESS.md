@@ -9,7 +9,7 @@
 - Restricted market prices imported with date alignment.
 - Eligibility v3 and method rejection.
 - Portable packages include the public regulatory snapshot and exclude restricted prices.
-- Independent audit and browser journeys exercised.
+- Independent audit passes 16/16; JPM browser workflow partially exercised (see acceptance matrix).
 
 ## Blocked or limited
 
@@ -18,3 +18,6 @@
 - No dollar RWA, so capital headroom is percentage points only.
 - No external valuation or analyst benchmark; contracts stop at arithmetic verification.
 - No macOS/Windows testing.
+- 390 px mobile viewport and save/reopen research remain unverified.
+- Consolidated FR Y-9C is not ingested; parent capital gate is blocked.
+- Nasdaq automated collection authorization is not established; only local CSV import remains.

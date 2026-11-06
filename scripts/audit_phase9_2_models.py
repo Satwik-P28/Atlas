@@ -104,8 +104,12 @@ def main() -> int:
     check("historical source timing preserved", bool(jm["regulatory"]["values"]["EQ"]["observation_id"]) and jm["regulatory"]["status"] == "available",
           "each observation carries an id, source and period; retrieval time is stored in provenance")
     market = jpm["market"]
-    check("market-price date alignment", market["price_date"] <= (market["accounting_period_end"] or market["price_date"]) and market["mixed_date"] is False,
-          f"price {market['price_date']} against period {market['accounting_period_end']}")
+    filing_time = market.get("filing_available_at")
+    check("market-price cutoff safety", (
+        market["status"] == "available" and market["lookahead_safe"] is True
+        and market["price_date"] <= market["information_cutoff"]
+        and (filing_time is None or filing_time[:10] <= market["information_cutoff"])
+    ), f"price {market['price_date']} <= cutoff {market['information_cutoff']}; filing {filing_time or 'unrecorded'}; mixed_date={market['mixed_date']}")
     rejected = False
     try:
         regulatory.assert_comparable([

@@ -1077,6 +1077,28 @@ CREATE TABLE IF NOT EXISTS entity_reconciliation (
 );
 """
 
+_MIGRATION_012 = """
+-- Phase 9.2 acceptance: market series rights and authorization metadata. A bar row
+-- records the observation; this table records whether automated collection, retention
+-- and redistribution were actually authorized for that series.
+CREATE TABLE market_price_series (
+    series_id                 TEXT PRIMARY KEY,
+    security_id               TEXT NOT NULL REFERENCES security(security_id),
+    source_id                 TEXT NOT NULL REFERENCES source(source_id),
+    series_name               TEXT NOT NULL,
+    licence                   TEXT NOT NULL,
+    redistribution             TEXT NOT NULL,
+    automated_access_authorized INTEGER NOT NULL CHECK (automated_access_authorized IN (0,1)),
+    authorization_basis        TEXT,
+    collection_method          TEXT NOT NULL,
+    adjustment_semantics       TEXT NOT NULL,
+    retrieved_from             TEXT,
+    created_at                 TEXT NOT NULL,
+    UNIQUE (security_id, source_id, adjustment_semantics)
+);
+CREATE INDEX idx_market_price_series_security ON market_price_series (security_id, source_id);
+"""
+
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=1, name="phase1_foundation", sql=_MIGRATION_001),
     Migration(version=2, name="phase1_1_history_and_dependencies", sql=_MIGRATION_002),
@@ -1088,6 +1110,8 @@ MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=8, name="phase6_learning_runtime", sql=_MIGRATION_008),
     Migration(version=9, name="phase7_economic_intelligence", sql=_MIGRATION_009),
     Migration(version=10, name="phase8_portable_applications", sql=_MIGRATION_010),
+    Migration(version=11, name="phase9_2_regulatory_evidence", sql=_MIGRATION_011),
+    Migration(version=12, name="phase9_2_market_price_rights", sql=_MIGRATION_012),
 )
 
 LATEST_VERSION = max(m.version for m in MIGRATIONS)

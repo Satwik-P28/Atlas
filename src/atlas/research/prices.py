@@ -51,6 +51,9 @@ def import_price_series(
     adjustment_semantics: str,
     retrieved_at: str | None = None,
     currency: str = "USD",
+    automated_access_authorized: bool = False,
+    authorization_basis: str | None = None,
+    collection_method: str = "user_import",
 ) -> dict[str, Any]:
     """Import observed closes for one security.
 
@@ -95,6 +98,19 @@ def import_price_series(
             (source_name, licence, redistribution, now, source_id),
         )
 
+    series_id = f"MPS-{security_id}-{source_id}-{adjustment_semantics}"
+    db.execute(
+        "INSERT INTO market_price_series (series_id, security_id, source_id, series_name, licence, "
+        "redistribution, automated_access_authorized, authorization_basis, collection_method, "
+        "adjustment_semantics, retrieved_from, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) "
+        "ON CONFLICT(series_id) DO UPDATE SET licence=excluded.licence, "
+        "redistribution=excluded.redistribution, automated_access_authorized=excluded.automated_access_authorized, "
+        "authorization_basis=excluded.authorization_basis, collection_method=excluded.collection_method, "
+        "retrieved_from=excluded.retrieved_from",
+        (series_id, security_id, source_id, source_name, licence, redistribution,
+         int(automated_access_authorized), authorization_basis, collection_method,
+         adjustment_semantics, retrieved_at, now),
+    )
     retrieved = retrieved_at or now
     written = 0
     rejected = 0
@@ -144,6 +160,12 @@ def import_price_series(
             "retrieved_at": retrieved,
         },
         "adjustment_semantics": adjustment_semantics,
+        "authorization": {
+            "automated_access_authorized": bool(automated_access_authorized),
+            "authorization_basis": authorization_basis,
+            "collection_method": collection_method,
+            "redistribution": redistribution,
+        },
         "limitation": (
             "Imported prices are user-supplied observations, not a point-in-time vendor vintage. "
             "They are not redistributed in a research package unless their terms permit it."
@@ -195,13 +217,17 @@ def price_summary(db: Database, security_id: str) -> dict[str, Any]:
     }
 
 
-def price_history(db: Database, security_id: str, *, limit: int = 400) -> dict[str, Any]:
+def price_history(db: Database, security_id: str, *, limit: int = 400,
+                  end_date: str | None = None) -> dict[str, Any]:
+    """Return observations up to ``end_date``; a cutoff never sees later sessions."""
+    cutoff = (end_date or "")[:10]
     rows = list(db.query(
         "SELECT b.ts_utc, b.close, b.volume, b.source_id, b.adjustment_status, "
         "s.name, s.licence, s.redistribution "
         "FROM bar b LEFT JOIN source s ON s.source_id=b.source_id "
-        "WHERE b.security_id=? AND b.interval='1d' ORDER BY b.ts_utc DESC LIMIT ?",
-        (security_id, limit),
+        "WHERE b.security_id=? AND b.interval='1d' "
+        "AND (? = '' OR substr(b.ts_utc,1,10) <= ?) ORDER BY b.ts_utc DESC LIMIT ?",
+        (security_id, cutoff, cutoff, limit),
     ))
     if not rows:
         return {"status": "unavailable", "observations": 0, "points": []}
@@ -255,6 +281,8 @@ def market_analysis(
     value_per_share: float | None,
     accounting_period_end: str | None,
     implied: Mapping[str, Any] | None = None,
+    information_cutoff: str | None = None,
+    filing_available_at: str | None = None,
 ) -> dict[str, Any]:
     """Compare a model value with an observed price without hiding the date gap."""
     if not price:
@@ -265,6 +293,19 @@ def market_analysis(
             "implied": None,
         }
     price_date = price["date"]
+    cutoff = (information_cutoff or "")[:10]
+    if cutoff and price_date > cutoff:
+        return {
+            "schema": "atlas.market_analysis.v1",
+            "status": "rejected_lookahead",
+            "reason": (
+                f"The selected price {price_date} is after the research information cutoff {cutoff}. "
+                "Atlas refuses to compare a model with a future price unless the caller labels it "
+                "as a hypothetical."
+            ),
+            "information_cutoff": cutoff,
+            "price_date": price_date,
+        }
     accounting = (accounting_period_end or "")[:10]
     mixed = bool(accounting and accounting != price_date)
     premium = ((value_per_share / price["close"]) - 1.0) if value_per_share and price["close"] else None
@@ -277,6 +318,9 @@ def market_analysis(
         "source_id": price["source_id"],
         "adjustment_semantics": price["adjustment_semantics"],
         "accounting_period_end": accounting or None,
+        "information_cutoff": cutoff or None,
+        "filing_available_at": filing_available_at,
+        "lookahead_safe": True,
         "mixed_date": mixed,
         "date_gap_days": (
             (datetime.fromisoformat(price_date) - datetime.fromisoformat(accounting)).days

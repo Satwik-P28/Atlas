@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 """Import observed daily prices with explicit restricted redistribution terms.
 
-The fixture files are the exact OHLCV rows returned by the Nasdaq quote history endpoint
-at retrieval time. They are stored locally for analysis only. Redistribution is not
-granted, so the import is marked ``restricted`` and research packages exclude it.
+This script imports local CSV rows only. It performs no network collection. Any file that
+originated from a vendor remains restricted unless the user can point to terms that
+authorize retention and analysis; redistribution is never granted by a ``restricted``
+label. Research packages exclude these observations.
 """
 
 from __future__ import annotations

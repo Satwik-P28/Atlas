@@ -76,8 +76,8 @@
       "passed": true
     },
     {
-      "detail": "price 2025-12-31 against period 2025-12-31",
-      "name": "market-price date alignment",
+      "detail": "price 2026-11-05 <= cutoff 2026-11-06; filing 2026-02-13T21:20:00Z; mixed_date=True",
+      "name": "market-price cutoff safety",
       "passed": true
     },
     {

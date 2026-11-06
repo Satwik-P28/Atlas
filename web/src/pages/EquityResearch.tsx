@@ -125,7 +125,14 @@ export default function EquityResearch() {
     setBusy('reject')
     setError(null)
     try {
-      const built = await api.equityReport(selected, { method: 'unlevered_fcff_dcf' })
+      const assumptions: Row = {}
+      if (roe.trim()) assumptions.sustainable_roe = Number(roe) / 100
+      if (coe.trim()) assumptions.cost_of_equity = Number(coe) / 100
+      const built = await api.equityReport(selected, {
+        assumptions,
+        method: 'unlevered_fcff_dcf',
+        as_of: cutoff || undefined,
+      })
       setReport(built)
       setMessage(`FCFF DCF request: ${built.valuation?.status}. ${built.valuation?.reason ?? ''}`)
     } catch (caught) {

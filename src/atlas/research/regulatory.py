@@ -17,7 +17,6 @@ from typing import Any, Iterable, Mapping
 
 from ..core.temporal import iso, utcnow
 from ..storage.db import Database
-from ..storage.migrations import _MIGRATION_011
 
 REGULATORY_SCHEMA = "atlas.regulatory.evidence.v1"
 REGULATORY_MAP_SCHEMA = "atlas.regulatory.entity_map.v1"
@@ -139,9 +138,6 @@ ENTITIES: tuple[dict[str, Any], ...] = (
 
 def seed_entities(db: Database) -> list[dict[str, Any]]:
     """Insert the declared parent/subsidiary chart idempotently."""
-    # Phase 9.2 keeps the released schema version stable: the regulatory tables are
-    # additive and are provisioned here for both new and existing databases.
-    db.connection.executescript(_MIGRATION_011)
     now = iso(utcnow())
     source = db.query_one("SELECT source_id FROM source WHERE source_id=?", (FDIC_SOURCE_ID,))
     if source is None:

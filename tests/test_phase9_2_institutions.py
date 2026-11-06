@@ -102,3 +102,81 @@ def test_package_replays_from_packaged_regulatory_snapshot(live):
     result = service.execute(installed["install_id"])
     assert result["status"] == "reproduced"
     assert result["contract_state"] == "arithmetically_verified"
+
+
+def test_market_comparison_never_uses_a_price_after_the_cutoff(live):
+    db, _ = live
+    svc = EquityResearchService(db)
+    historical = svc.analyse("JPM", as_of="2025-06-30T00:00:00Z")
+    assert historical["valuation"]["market"]["status"] == "unavailable"
+    assert historical["valuation"]["institution"]["implied"] is None
+    later = svc.analyse("JPM", as_of="2026-01-15T00:00:00Z")
+    market = later["valuation"]["market"]
+    assert market["status"] == "available"
+    assert market["price_date"] == "2025-12-31"
+    assert market["price_date"] <= market["information_cutoff"]
+    assert market["lookahead_safe"] is True
+    assert market["filing_available_at"] is None or market["filing_available_at"][:10] <= market["information_cutoff"]
+
+
+def test_market_analysis_rejects_a_future_price():
+    from atlas.research.prices import market_analysis
+    out = market_analysis(
+        price={"date": "2026-11-05", "close": 100, "currency": "USD",
+               "adjustment_semantics": "unadjusted", "source_id": "x", "observed_at": "2026-11-05"},
+        history=None, value_per_share=110, accounting_period_end="2025-12-31",
+        information_cutoff="2025-06-30",
+    )
+    assert out["status"] == "rejected_lookahead"
+
+
+def test_restricted_price_is_not_in_report_or_package(live):
+    db, _ = live
+    svc = EquityResearchService(db)
+    analysis = svc.analyse("JPM")
+    assert "322.22" not in analysis["report"]
+    assert "withheld" in analysis["report"]
+    pkg = svc.create_package("JPM")
+    loaded = read_package(pkg["payload"])
+    assert "322.22" not in loaded["files"]["report.md"].decode()
+    assert all("price" not in name for name in loaded["files"])
+    series = db.query("SELECT * FROM market_price_series")
+    assert series and all(row["automated_access_authorized"] == 0 for row in series)
+
+
+def test_implied_cost_reports_convergence_and_unique_root(live):
+    db, _ = live
+    implied = EquityResearchService(db).valuation("JPM")["institution"]["implied"]
+    assert implied["status"] == "available"
+    assert implied["converged"] is True
+    assert implied["unique_root"] is True
+    assert implied["residual_usd"] <= 0.01
+    assert implied["iterations"] <= 100
+    assert implied["scan_root_intervals"] == 1
+
+
+def test_parent_capital_gate_is_blocked_without_fr_y9c(live):
+    db, _ = live
+    model = EquityResearchService(db).valuation("JPM")["institution"]
+    gate = model["parent_capital"]
+    assert gate["status"] == "blocked_fr_y9c_unavailable"
+    assert gate["subsidiary_evidence_used_for_parent"] is False
+
+
+def test_price_history_is_truncated_at_cutoff(live):
+    from atlas.research.prices import price_history
+    db, _ = live
+    security_id = db.scalar("SELECT security_id FROM market_price_series LIMIT 1")
+    full = price_history(db, security_id)
+    cut = price_history(db, security_id, end_date="2026-01-01")
+    assert full["last_date"] == "2026-11-05"
+    assert cut["last_date"] == "2025-12-31"
+    assert all(point["date"] <= "2026-01-01" for point in cut.get("points", []))
+
+
+def test_assumption_changes_recompute_value(live):
+    db, _ = live
+    svc = EquityResearchService(db)
+    base = svc.valuation("JPM")["institution"]["outputs"]["value_per_share"]
+    changed = svc.valuation("JPM", assumptions={"cost_of_equity": 0.13})["institution"]["outputs"]["value_per_share"]
+    assert changed < base
