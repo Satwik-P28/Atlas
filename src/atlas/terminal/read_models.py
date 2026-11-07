@@ -626,6 +626,34 @@ def issuer_metrics(
         if metric:
             metrics[concept] = metric
 
+    # Average-equity ROE needs the prior fiscal-year instant, not the prior duration
+    # fact. Keep it as a separate, evidenced concept so an ending-equity proxy is never
+    # silently presented as a company-reported or average-equity return.
+    if previous_end:
+        for concept, label, key in (
+            ("equity", "Shareholders' equity at prior fiscal year-end", "beginning_equity"),
+            ("preferred_stock", "Preferred stock at prior fiscal year-end", "beginning_preferred_stock"),
+        ):
+            fact = _fact_for(facts, concept, previous_end)
+            if fact is None or fact.value is None:
+                continue
+            value = _dec(fact.value)
+            if value is None:
+                continue
+            metrics[key] = {
+                "key": key,
+                "label": label,
+                "value": float(value),
+                "text": str(fact.value),
+                "unit": fact.unit,
+                "kind": "source_observation",
+                "formula": None,
+                "period_end": fact.period_end,
+                "evidence_ids": [fact.evidence_id],
+                "source": "SEC XBRL company facts",
+                "note": "Prior fiscal year-end instant used only for average-equity ROE.",
+            }
+
     def derived(
         key: str,
         label: str,

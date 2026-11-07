@@ -683,7 +683,8 @@ class EquityResearchService:
         return limitations
 
     def workspace(self, identifier: str, *, as_of: str | None = None,
-                  mode: str | None = None) -> dict[str, Any]:
+                  mode: str | None = None,
+                  market_source_id: str | None = None) -> dict[str, Any]:
         issuer = read_models.resolve_company(self.db, identifier)
         resolved_mode = mode or AsOfMode.PUBLIC_AVAILABLE.value
         metrics = get_issuer_metrics(self.db, issuer["issuer_id"], as_of=as_of, mode=resolved_mode)
@@ -752,7 +753,9 @@ class EquityResearchService:
                 "selection_policy": metrics.get("policy"),
             },
             "limitations": limitations,
-            "market_price": self._market_price(issuer["issuer_id"]),
+            "market_price": self._market_price(
+                issuer["issuer_id"], source_id=market_source_id
+            ),
             "regulatory": regulatory.regulatory_evidence(self.db, cik=issuer.get("cik"))
             if issuer.get("cik") else None,
         }
@@ -760,7 +763,8 @@ class EquityResearchService:
     def _market_analysis(self, issuer_id: str, metrics: dict[str, Any],
                          value_per_share: float | None,
                          implied: dict[str, Any] | None = None,
-                         cutoff: str | None = None) -> dict[str, Any]:
+                         cutoff: str | None = None,
+                         market_source_id: str | None = None) -> dict[str, Any]:
         """Compare the model with a price known at the information cutoff.
 
         The price is the last observation on or before the cutoff, never the latest
@@ -780,12 +784,18 @@ class EquityResearchService:
         securities = self.master.securities_for_issuer(issuer_id)
         for security in securities:
             chosen = (
-                prices.price_on_or_before(self.db, security["security_id"], cutoff_day)
+                prices.price_on_or_before(
+                    self.db, security["security_id"], cutoff_day,
+                    source_id=market_source_id,
+                )
                 if cutoff_day else None
             )
             if chosen is None:
                 continue
-            history = prices.price_history(self.db, security["security_id"], end_date=cutoff_day)
+            history = prices.price_history(
+                self.db, security["security_id"], end_date=cutoff_day,
+                source_id=market_source_id,
+            )
             return prices.market_analysis(
                 price=chosen, history=history, value_per_share=value_per_share,
                 accounting_period_end=metrics.get("period_end"), implied=implied,
@@ -797,23 +807,30 @@ class EquityResearchService:
             information_cutoff=cutoff_day, filing_available_at=filing_available,
         )
 
-    def _comparison_price(self, issuer_id: str, cutoff: str | None) -> float | None:
-        """Return a price that was observable at the cutoff, or no price."""
+    def _comparison_price(self, issuer_id: str, cutoff: str | None,
+                          market_source_id: str | None = None) -> dict[str, Any] | None:
+        """Return a selected price observable at the cutoff, or no price."""
         day = str(cutoff or "")[:10]
         if not day:
             return None
         for security in self.master.securities_for_issuer(issuer_id):
-            chosen = prices.price_on_or_before(self.db, security["security_id"], day)
+            chosen = prices.price_on_or_before(
+                self.db, security["security_id"], day, source_id=market_source_id
+            )
             if chosen is not None:
-                return float(chosen["close"])
+                return chosen
         return None
 
-    def _market_price(self, issuer_id: str) -> dict[str, Any]:
-        """Return the first authorised price series for the issuer, or an explicit gap."""
+    def _market_price(self, issuer_id: str, *,
+                      source_id: str | None = None) -> dict[str, Any]:
+        """Return the selected price series for the issuer, or an explicit gap."""
         securities = self.master.securities_for_issuer(issuer_id)
         if not securities:
             return prices.price_summary(self.db, "")
-        summaries = [prices.price_summary(self.db, row["security_id"]) for row in securities]
+        summaries = [
+            prices.price_summary(self.db, row["security_id"], source_id=source_id)
+            for row in securities
+        ]
         for summary in summaries:
             if summary["status"] == "available":
                 return summary
@@ -823,7 +840,8 @@ class EquityResearchService:
     def _valuation(self, identifier: str, *, assumptions: dict[str, Any] | None,
                    as_of: str | None, mode: str | None,
                    target_price: float | None, stress: bool = True,
-                   method: str | None = None) -> dict[str, Any]:
+                   method: str | None = None,
+                   market_source_id: str | None = None) -> dict[str, Any]:
         issuer = read_models.resolve_company(self.db, identifier)
         metrics = get_issuer_metrics(self.db, issuer["issuer_id"], as_of=as_of, mode=mode)
         coverage = self._issuer_coverage(issuer)
@@ -839,7 +857,10 @@ class EquityResearchService:
             if issuer.get("cik") else None
         )
         cutoff_day = str(as_of or iso(utcnow()))[:10]
-        observed_price = self._comparison_price(issuer["issuer_id"], cutoff_day)
+        selected_price = self._comparison_price(
+            issuer["issuer_id"], cutoff_day, market_source_id=market_source_id
+        )
+        observed_price = float(selected_price["close"]) if selected_price else None
         base: dict[str, Any] = {
             "eligibility": eligibility,
             "method": eligibility.get("method"),
@@ -869,7 +890,8 @@ class EquityResearchService:
                     "Atlas returns a rejection rather than executing an inappropriate model."
                 ),
                 "market": self._market_analysis(
-                    issuer["issuer_id"], metrics, None, cutoff=as_of
+                    issuer["issuer_id"], metrics, None, cutoff=as_of,
+                    market_source_id=market_source_id,
                 ),
                 "eligibility": {
                     **eligibility,
@@ -904,6 +926,7 @@ class EquityResearchService:
                 "market": self._market_analysis(
                     issuer["issuer_id"], metrics, value_per_share,
                     implied=model.get("implied"), cutoff=as_of,
+                    market_source_id=market_source_id,
                 ),
                 "eligibility": {
                     **eligibility,
@@ -1239,21 +1262,27 @@ class EquityResearchService:
     def valuation(self, identifier: str, *, assumptions: dict[str, Any] | None = None,
                   as_of: str | None = None, mode: str | None = None,
                   target_price: float | None = None,
-                  method: str | None = None) -> dict[str, Any]:
+                  method: str | None = None,
+                  market_source_id: str | None = None) -> dict[str, Any]:
         """Return the method-appropriate valuation and its eligibility contract."""
         return self._valuation(
             identifier, assumptions=assumptions, as_of=as_of, mode=mode,
             target_price=target_price, method=method,
+            market_source_id=market_source_id,
         )
 
     def analyse(self, identifier: str, *, assumptions: dict[str, Any] | None = None,
                 as_of: str | None = None, mode: str | None = None,
                 target_price: float | None = None,
-                method: str | None = None) -> dict[str, Any]:
-        workspace = self.workspace(identifier, as_of=as_of, mode=mode)
+                method: str | None = None,
+                market_source_id: str | None = None) -> dict[str, Any]:
+        workspace = self.workspace(
+            identifier, as_of=as_of, mode=mode, market_source_id=market_source_id
+        )
         valuation = self._valuation(
             identifier, assumptions=assumptions, as_of=workspace["as_of"],
             mode=workspace["mode"], target_price=target_price, method=method,
+            market_source_id=market_source_id,
         )
         report = self._render_report(workspace, valuation)
         digest = hashlib.sha256(report.encode("utf-8")).hexdigest()
@@ -1448,7 +1477,7 @@ class EquityResearchService:
                 "| --- | ---: |",
             ]
             for key, value in outputs.items():
-                if key in {"rows", "residual_income_cross_check", "reported_roe", "negative_residual_equity"}:
+                if key in {"rows", "residual_income_cross_check", "reported_roe", "roe_used", "negative_residual_equity"}:
                     continue
                 rendered = _money(value) if isinstance(value, (int, float)) else _excerpt(value, 120)
                 lines.append(f"| {key.replace('_', ' ')} | {rendered} |")
@@ -1947,9 +1976,14 @@ class EquityResearchService:
                 "institution_model_version": model["model_version"],
                 "regulatory_evidence": "subsidiary_standalone" if regulatory_block else "not_included",
                 "price_included": False,
+                "market_price_selection": (
+                    (valuation.get("market") or {}).get("source_selection")
+                ),
                 "price_export_note": (
                     "Observed market prices are not packaged: the imported series is restricted "
-                    "and can be reconnected from its provider under the user's own entitlement."
+                    "and can be reconnected from its provider under the user's own entitlement. "
+                    "The selected provider/session policy is recorded so a later import cannot "
+                    "silently change which source this analysis used."
                 ),
             },
         }
@@ -2181,6 +2215,9 @@ class EquityResearchService:
                 "valuation_economically_supported": valuation["audit"]["economically_supported"],
                 "share_denominator_basis": valuation["audit"]["share_denominator"]["basis"],
                 "price_included": False,
+                "market_price_selection": (
+                    (workspace.get("market_price") or {}).get("source_selection")
+                ),
             },
         }
         financials = {
@@ -2287,11 +2324,12 @@ class EquityResearchService:
     def create_package(self, identifier: str, *, assumptions: dict[str, Any] | None = None,
                        as_of: str | None = None, mode: str | None = None,
                        target_price: float | None = None,
-                       version: str = "1.0.0") -> dict[str, Any]:
+                       version: str = "1.0.0",
+                       market_source_id: str | None = None) -> dict[str, Any]:
         analysis = self.analyse(
             identifier, assumptions=assumptions,
             as_of=as_of or self._package_cutoff(identifier), mode=mode,
-            target_price=target_price,
+            target_price=target_price, market_source_id=market_source_id,
         )
         built = self._application(analysis, version=version)
         from ..applications.contracts import read_package

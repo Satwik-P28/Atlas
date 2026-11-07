@@ -74,6 +74,8 @@ result = {
     "limitations": [
         "The package reproduces the packaged SEC snapshot and assumptions, not original SEC bytes.",
         "The opening book value is SEC total stockholders' equity less same-period SEC preferred stock; preferred is a GAAP balance-sheet claim, not CET1.",
+        "The ROE used by the package is net income available to common divided by the average of prior and current year-end common equity. The ending-equity ratio remains a labelled proxy.",
+        "Regulatory leverage is not verified: no Tier 1 capital numerator or regulatory exposure denominator is mapped. The stress output is GAAP equity/assets only.",
         "No bulk FR Y-9C release timestamp is available, so point-in-time regulatory reconstruction is not claimed.",
         "The restricted market price is intentionally absent from the package.",
     ],
@@ -93,8 +95,12 @@ assert outputs["preferred_equity"] == 20_050_000_000
 assert outputs["book_value_common_equity"] == 324_708_000_000
 assert outputs["book_value_used"] == 324_708_000_000
 assert abs(outputs["book_value_per_common_share"] - 324_708_000_000 / 2_797_600_000) < 1e-9
-assert outputs["reported_roe"] == 56_868_000_000 / 324_708_000_000
-assert abs(outputs["value_per_share"] - 287.919648765908) < 0.01
+assert outputs["ending_equity_roe_proxy"] == 56_868_000_000 / 324_708_000_000
+assert outputs["average_common_roe"] == 56_868_000_000 / ((324_708_000_000 + 300_474_000_000) / 2)
+assert outputs["roe_basis"] == "average_common_equity"
+assert outputs["company_reported_roe"] is None
+assert abs(outputs["value_per_share"] - 295.4643539226478) < 0.01
+assert result["execution"]["model_version"] == "atlas.bank.residual_income.v3"
 
 out = ROOT / "artifacts" / "phase9_2_reproduction.json"
 out.write_text(json.dumps(result, indent=2) + "\n")

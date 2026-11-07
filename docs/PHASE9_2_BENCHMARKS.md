@@ -9,8 +9,8 @@ Measured locally with `scripts/benchmark_phase9_2.py` on 2026-11-06. Hardware: 2
 | Consolidated FR Y-9C evidence | 0.52 ms |
 | FDIC regulatory evidence, JPM | 8.55 ms |
 | Entity resolution | 0.08 ms |
-| Bank v2, JPM | 13.29 ms |
-| Bank v2, GS | 11.44 ms |
+| Bank v3, JPM | 13.29 ms |
+| Bank v3, GS | 11.44 ms |
 | Insurer model, UNH | 8.18 ms |
 | Market analysis, JPM | 10.73 ms |
 | JPM report generation | 2,253.45 ms |
@@ -28,9 +28,9 @@ Source and output sizes:
 | FR Y-9C rows in archive | 3,806 |
 | FR Y-9C observations written | 17 |
 | Report | 16,176 bytes |
-| Exported package | 61,281 bytes |
-| Exported package SHA-256 | `e99e6269ec47f7953177281f5ee85b73ef3dfb144b4321c28cfc1ad606ed09ed` |
-| Benchmark package | 61,459 bytes |
+| Exported package | 63,816 bytes |
+| Exported package SHA-256 | `3bbaca5447ffbd3421dce48fb833fccbd16a2977fa875e15498aae7bc4d1cfe8` |
+| Benchmark package | 63,894 bytes |
 | Fixture database | 37,523,456 bytes |
 
 The benchmark also installs and executes a freshly generated package on schema 13;

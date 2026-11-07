@@ -70,6 +70,20 @@ def main() -> int:
     jpm_common_source = source_fact("19617", "net_income_common")
     gs_total = source_fact("886982", "equity")
     gs_pref = source_fact("886982", "preferred_stock")
+    jpm_beginning_total = db.query_one(
+        "SELECT value_numeric FROM evidence WHERE entity_id LIKE '%19617%' AND concept='equity' "
+        "AND period_end='2023-12-31' AND form_type='10-K' "
+        "ORDER BY acceptance_datetime DESC LIMIT 1"
+    )
+    jpm_beginning_pref = db.query_one(
+        "SELECT value_numeric FROM evidence WHERE entity_id LIKE '%19617%' AND concept='preferred_stock' "
+        "AND period_end='2023-12-31' AND form_type='10-K' "
+        "ORDER BY acceptance_datetime DESC LIMIT 1"
+    )
+    jpm_beginning_common = (
+        Decimal(str(jpm_beginning_total["value_numeric"])) - Decimal(str(jpm_beginning_pref["value_numeric"]))
+        if jpm_beginning_total and jpm_beginning_pref else None
+    )
     jpm_common = Decimal(str(jpm_total["value_numeric"])) - Decimal(str(jpm_pref["value_numeric"]))
     gs_common = Decimal(str(gs_total["value_numeric"])) - Decimal(str(gs_pref["value_numeric"]))
     check("JPM SEC preferred stock", jpm_pref is not None and Decimal(str(jpm_pref["value_numeric"])) == Decimal("20050000000") and jpm_pref["source_concept"] == "PreferredStockIncludingAdditionalPaidInCapitalNetOfDiscount",
@@ -84,8 +98,19 @@ def main() -> int:
           "both bank models use SEC total equity less the same-period SEC preferred-stock fact")
     check("book value per common share", approx(jm["outputs"]["book_value_per_common_share"], jpm_common / Decimal(str(jm["inputs"]["shares_outstanding"])), Decimal("0.01")) and approx(gm["outputs"]["book_value_per_common_share"], gs_common / Decimal(str(gm["inputs"]["shares_outstanding"])), Decimal("0.01")),
           "period-end common equity / period-end common shares")
-    check("common earnings and ROE", jpm_common_source is not None and approx(jm["inputs"]["net_income_common"], jpm_common_source["value_numeric"]) and approx(jm["outputs"]["reported_roe"], Decimal(str(jm["inputs"]["net_income_common"])) / jpm_common),
-          "net income available to common / common equity, not total-equity ROE")
+    expected_average = (
+        Decimal(str(jm["inputs"]["net_income_common"]))
+        / ((jpm_beginning_common + jpm_common) / Decimal(2))
+        if jpm_beginning_common else None
+    )
+    check("common earnings and average-equity ROE", (
+        jpm_common_source is not None
+        and approx(jm["inputs"]["net_income_common"], jpm_common_source["value_numeric"])
+        and expected_average is not None
+        and approx(jm["outputs"]["average_common_roe"], expected_average)
+        and approx(jm["outputs"]["ending_equity_roe_proxy"], Decimal(str(jm["inputs"]["net_income_common"])) / jpm_common)
+        and jm["outputs"]["company_reported_roe"] is None
+    ), "average common equity uses the prior and current SEC year-end common equity; the ending-equity ratio is labelled separately")
     regulatory_parent = jm.get("holding_company_evidence") or {}
     regulatory_latest = regulatory_parent.get("latest") or {}
     regulatory_values = regulatory_latest.get("values") or {}
@@ -135,6 +160,13 @@ def main() -> int:
     check("credit-loss and NII stress arithmetic", stress is not None and approx(
         stress["annual_net_income_delta_usd"], expected_delta, Decimal("1")),
         "subsidiary stress applies annualized NII shock and 21% tax; reported allowance ratio uses a broader loan base and is not asserted as an identity")
+    check("regulatory leverage identity is not imputed", (
+        stress is not None
+        and stress.get("regulatory_leverage_after_percent") is None
+        and stress.get("regulatory_leverage_status") == "regulatory_leverage_not_verified"
+        and "passes_minimum" not in stress
+        and stress.get("gaap_equity_to_assets_after_percent") is not None
+    ), "GAAP equity/assets is labelled as such and is not compared with a Tier 1 leverage minimum")
     check("insurance premium and claims arithmetic", um["health_insurance"]["status"] == "not_available_in_fixture",
           "no premium or claims fields are invented when the fixture lacks them")
     check("insurance operating margin identity", um["outputs"]["justified_pe"] is not None and approx(

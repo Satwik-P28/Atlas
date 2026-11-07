@@ -82,7 +82,13 @@ def test_bank_common_equity_is_total_less_sec_preferred(live):
     assert jpm["outputs"]["book_value_basis"] == "sec_total_stockholders_equity_less_preferred_stock"
     assert jpm["outputs"]["common_equity_status"] == "derived_total_equity_less_preferred_stock"
     assert jpm["outputs"]["book_value_per_common_share"] == pytest.approx(324_708_000_000 / 2_797_600_000)
-    assert jpm["outputs"]["reported_roe"] == pytest.approx(56_868_000_000 / 324_708_000_000)
+    assert jpm["outputs"]["ending_equity_roe_proxy"] == pytest.approx(56_868_000_000 / 324_708_000_000)
+    assert jpm["outputs"]["average_common_roe"] == pytest.approx(
+        56_868_000_000 / ((324_708_000_000 + 300_474_000_000) / 2)
+    )
+    assert jpm["outputs"]["roe_used"] == jpm["outputs"]["average_common_roe"]
+    assert jpm["outputs"]["roe_basis"] == "average_common_equity"
+    assert jpm["outputs"]["company_reported_roe"] is None
 
 def test_implied_cost_of_equity_reproduces_price(live):
     db, _ = live
@@ -195,3 +201,61 @@ def test_assumption_changes_recompute_value(live):
     base = svc.valuation("JPM")["institution"]["outputs"]["value_per_share"]
     changed = svc.valuation("JPM", assumptions={"cost_of_equity": 0.13})["institution"]["outputs"]["value_per_share"]
     assert changed < base
+
+
+def test_bank_regulatory_stress_is_gaap_not_tier_1_leverage(live):
+    db, _ = live
+    model = EquityResearchService(db).valuation("JPM")["institution"]
+    stress = model["scenarios"]["regulatory_stress"]
+    assert stress
+    first = stress[0]
+    assert first["gaap_equity_to_assets_after_percent"] > 4
+    assert first["regulatory_leverage_after_percent"] is None
+    assert first["regulatory_leverage_status"] == "regulatory_leverage_not_verified"
+    assert "passes_minimum" not in first
+    assert "tier_1_leverage_after_percent" not in first
+    assert model["scenarios"]["regulatory_leverage"]["scenario_metric"] == "gaap_equity_to_assets"
+    assert any(f["code"] == "regulatory_leverage_not_verified" for f in model["findings"])
+
+
+def test_bank_growth_is_implied_by_clean_surplus_not_a_free_assumption(live):
+    db, _ = live
+    svc = EquityResearchService(db)
+    base = svc.valuation("JPM")["institution"]
+    supplied = svc.valuation("JPM", assumptions={"growth": 0.25})["institution"]
+    assert base["assumptions"]["growth_is_free_parameter"] is False
+    assert base["assumptions"]["growth_basis"] == "implied_clean_surplus_retention"
+    assert base["assumptions"]["implied_growth"] == pytest.approx(
+        base["assumptions"]["sustainable_roe"] * (1 - base["assumptions"]["payout_ratio"])
+    )
+    assert supplied["outputs"]["value_per_share"] == pytest.approx(
+        base["outputs"]["value_per_share"]
+    )
+    assert supplied["assumptions"]["rejected_assumptions"][0]["field"] == "growth"
+    assert any(f["code"] == "growth_is_not_a_free_parameter" for f in supplied["findings"])
+    assert supplied["assumptions"]["terminal_payout_ratio"] == pytest.approx(
+        1 - supplied["assumptions"]["terminal_growth"]
+        / supplied["assumptions"]["sustainable_roe"]
+    )
+
+
+def test_invalid_terminal_growth_refuses_a_finite_value(live):
+    db, _ = live
+    model = EquityResearchService(db).valuation(
+        "JPM", assumptions={"cost_of_equity": 0.10, "terminal_growth": 0.10}
+    )["institution"]
+    assert model["outputs"]["calculated_equity_value"] is None
+    assert model["outputs"]["value_per_share"] is None
+    assert any(f["code"] == "terminal_growth_exceeds_cost_of_equity" for f in model["findings"])
+
+
+def test_saved_package_records_the_selected_market_source(live):
+    db, _ = live
+    svc = EquityResearchService(db)
+    package = svc.create_package("JPM", as_of="2026-01-15")
+    state = package["manifest"]["application"]["state"]
+    selection = state["market_price_selection"]
+    assert selection["selected_source_id"]
+    assert selection["price_date"] == "2025-12-31"
+    assert selection["policy"] == "atlas.market_price.selection.v1"
+    assert state["price_included"] is False

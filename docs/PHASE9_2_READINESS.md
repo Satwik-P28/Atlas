@@ -8,14 +8,16 @@
 - Parent consolidated capital is separate from the FDIC CERT 628 subsidiary.
 - **Common-equity correction:** SEC total stockholders' equity less same-period SEC
   preferred stock, both GAAP. JPM **$324.708B**, GS **$108.743B**.
-- Book value per common share, common net income and common ROE are emitted and audited.
-- Bank residual income v2 arithmetic independently audited **28/28**.
+- Book value per common share, common net income, ending-equity ROE proxy and average common ROE are emitted and audited. Company-reported ROE is not claimed.
+- Bank residual income v3 arithmetic independently audited **29/29**; free `growth` is rejected and regulatory Tier 1 leverage is marked not verified.
+- Market imports are append-only across providers, idempotent on replay, revisioned on correction and rejected atomically on bad rows.
+- Source/licence identities are isolated; ticker ambiguity and exchange mismatch fail closed.
 - Restricted market prices imported with date alignment and excluded from reports and
   portable packages.
 - Eligibility v3 and explicit FCFF-DCF rejection for banks.
 - Research object save/reopen remains supported; portable package reproduces on a clean
   database with `differences={}`.
-- **446 backend tests**, **4 frontend tests** and production frontend build pass.
+- **459 backend tests**, **4 frontend tests** and production frontend build pass.
 - Phase 9.2 benchmark records import, evidence, valuation, export and package replay.
 
 ## Blocked or limited

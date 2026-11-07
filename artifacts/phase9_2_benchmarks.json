@@ -1,17 +1,17 @@
 {
-  "bank_v2_gs": 11.437,
-  "bank_v2_jpm": 13.288,
+  "bank_v2_gs": 20.255,
+  "bank_v2_jpm": 17.034,
   "browser_known_data_gaps": [
     {
       "status": 422,
-      "url": "http://127.0.0.1:3000/api/economic/panel?mode=public_available"
+      "url": "/api/economic/panel?mode=public_available"
     }
   ],
-  "browser_workflow_ms": 46597,
-  "entity_resolution": 0.079,
-  "fr_y9c_bulk_import": 421.237,
-  "fr_y9c_consolidated_statement": 0.521,
-  "fr_y9c_evidence_jpm": 0.217,
+  "browser_workflow_ms": null,
+  "entity_resolution": 0.087,
+  "fr_y9c_bulk_import": 428.644,
+  "fr_y9c_consolidated_statement": 0.448,
+  "fr_y9c_evidence_jpm": 0.29,
   "fr_y9c_missing_fields": [
     "net_charge_offs"
   ],
@@ -33,25 +33,25 @@
     13
   ],
   "fresh_schema": 13,
-  "insurer_unh": 8.183,
-  "market_analysis_jpm": 10.728,
-  "package_bytes": 61459,
-  "package_execute": 7.406,
+  "insurer_unh": 17.164,
+  "market_analysis_jpm": 19.56,
+  "package_bytes": 63894,
+  "package_execute": 6.721,
   "package_executed_reproduced": true,
   "package_executed_status": "reproduced",
-  "package_install": 6.416,
-  "package_jpm": 2202.806,
-  "regulatory_evidence_jpm": 8.551,
-  "report_bytes": 16176,
-  "report_jpm": 2253.451,
+  "package_install": 6.199,
+  "package_jpm": 2412.381,
+  "regulatory_evidence_jpm": 8.666,
+  "report_bytes": 17220,
+  "report_jpm": 2383.091,
   "source_sizes": {
-    "benchmark_package_bytes": 61459,
-    "benchmark_package_sha256": "5fd93de72eee585f7b07e0fe9d5cd6cc9db85890441b40ad8d6fa08bae18f284",
+    "benchmark_package_bytes": 63894,
+    "benchmark_package_sha256": "4fe4818b5f02d1aacc6c71134b8b4084ea8a4b19d09293a9652176039f9f9107",
     "bhcf_zip_bytes": 1509964,
-    "database_bytes": 37523456,
+    "database_bytes": 37834752,
     "dictionary_bytes": 170487,
-    "exported_artifact_bytes": 61281,
-    "exported_artifact_sha256": "e99e6269ec47f7953177281f5ee85b73ef3dfb144b4321c28cfc1ad606ed09ed",
+    "exported_artifact_bytes": 63816,
+    "exported_artifact_sha256": "3bbaca5447ffbd3421dce48fb833fccbd16a2977fa875e15498aae7bc4d1cfe8",
     "fr_y9c_member_rows": 3806
   }
 }

@@ -221,7 +221,7 @@ def test_price_import_requires_rights_and_produces_multiples(phase9):
     imported = import_price_series(
         phase9, ticker=ticker, rows=rows, source_name="Test feed",
         licence="test-only", redistribution="user_responsibility",
-        adjustment_semantics="split_adjusted",
+        adjustment_semantics="unadjusted",
     )
     assert imported["written"] == 2
     assert imported["source"]["export_allowed"] is False

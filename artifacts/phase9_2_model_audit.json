@@ -31,8 +31,8 @@
       "passed": true
     },
     {
-      "detail": "net income available to common / common equity, not total-equity ROE",
-      "name": "common earnings and ROE",
+      "detail": "average common equity uses the prior and current SEC year-end common equity; the ending-equity ratio is labelled separately",
+      "name": "common earnings and average-equity ROE",
       "passed": true
     },
     {
@@ -51,17 +51,17 @@
       "passed": true
     },
     {
-      "detail": "reference PV 111925686945.0849146225130131898802",
+      "detail": "reference PV 122945752656.4176528398436464679490",
       "name": "residual-income present value",
       "passed": true
     },
     {
-      "detail": "reference PV terminal 341201304395.9854986450600763381913",
+      "detail": "reference PV terminal 378937323877.5820347744328054432074",
       "name": "terminal residual value",
       "passed": true
     },
     {
-      "detail": "reference equity 777834991341.0704132675730895280715",
+      "detail": "reference equity 826591076533.9996876142764519111564",
       "name": "equity value bridge",
       "passed": true
     },
@@ -93,6 +93,11 @@
     {
       "detail": "subsidiary stress applies annualized NII shock and 21% tax; reported allowance ratio uses a broader loan base and is not asserted as an identity",
       "name": "credit-loss and NII stress arithmetic",
+      "passed": true
+    },
+    {
+      "detail": "GAAP equity/assets is labelled as such and is not compared with a Tier 1 leverage minimum",
+      "name": "regulatory leverage identity is not imputed",
       "passed": true
     },
     {
@@ -142,8 +147,8 @@
     }
   ],
   "counts": {
-    "passed": 28,
-    "total": 28
+    "passed": 29,
+    "total": 29
   },
   "database": "var/phase9.db",
   "independent_reference": "Decimal arithmetic implemented in this script; production operators are not called for reference values.",

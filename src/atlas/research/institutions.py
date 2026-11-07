@@ -31,17 +31,21 @@ from .eligibility import (
 )
 
 INSTITUTION_SCHEMA = "atlas.institution_valuation.v1"
-BANK_MODEL_VERSION = "atlas.bank.residual_income.v1"
+BANK_MODEL_VERSION = "atlas.bank.residual_income.v3"
 INSURER_MODEL_VERSION = "atlas.insurer.justified_earnings.v1"
 
 BANK_DEFAULTS = {
     "cost_of_equity": 0.10,
     "sustainable_roe": None,
-    "growth": 0.03,
     "payout_ratio": 0.40,
     "horizon": 5,
     "terminal_growth": 0.025,
 }
+
+#: Growth is not a free bank assumption in v3. With a constant ROE and a constant
+#: payout, clean surplus determines book-value growth as ROE x (1 - payout). Keeping
+#: a second, independently supplied rate would silently contradict the roll-forward.
+BANK_GROWTH_BASIS = "implied_clean_surplus_retention"
 
 INSURER_DEFAULTS = {
     "cost_of_equity": 0.09,
@@ -72,6 +76,8 @@ def _inputs(metrics: Mapping[str, Any]) -> dict[str, Any]:
     return {
         "equity": _metric(metrics, "equity"),
         "preferred_stock": _metric(metrics, "preferred_stock"),
+        "beginning_equity": _metric(metrics, "beginning_equity"),
+        "beginning_preferred_stock": _metric(metrics, "beginning_preferred_stock"),
         "net_income": _metric(metrics, "net_income"),
         "net_income_common": _metric(metrics, "net_income_common"),
         "eps_diluted": _metric(metrics, "eps_diluted"),
@@ -99,6 +105,8 @@ def _provenance(metrics: Mapping[str, Any]) -> dict[str, Any]:
         for key in (
             "equity",
             "preferred_stock",
+            "beginning_equity",
+            "beginning_preferred_stock",
             "net_income",
             "net_income_common",
             "eps_diluted",
@@ -131,7 +139,6 @@ def _bank_arithmetic(
     book_value: float,
     roe: float,
     cost_of_equity: float,
-    growth: float,
     payout: float,
     horizon: int,
     terminal_growth: float,
@@ -193,7 +200,6 @@ def _bank_sensitivity(
                 book_value=book_value,
                 roe=scenario_roe,
                 cost_of_equity=cost_of_equity,
-                growth=base["growth"],
                 payout=base["payout_ratio"],
                 horizon=base["horizon"],
                 terminal_growth=base["terminal_growth"],
@@ -211,7 +217,6 @@ def _bank_sensitivity(
             book_value=book_value,
             roe=roe,
             cost_of_equity=base["cost_of_equity"],
-            growth=base["growth"],
             payout=base["payout_ratio"],
             horizon=base["horizon"],
             terminal_growth=terminal_growth,
@@ -286,17 +291,51 @@ def build_bank_valuation(
             "executes": False,
             "economically_supported": False,
         }
-    reported_roe = net_income / book_value if book_value else None
+    # End-of-period ROE is a valid arithmetic ratio but not the traditional annual
+    # return on average common equity. Keep the two identities separate and only use
+    # the average when both beginning and ending common equity are evidenced.
+    ending_equity_roe_proxy = net_income / book_value if book_value else None
+    beginning_total = inputs.get("beginning_equity")
+    beginning_preferred = inputs.get("beginning_preferred_stock")
+    beginning_common = (
+        beginning_total - beginning_preferred
+        if beginning_total is not None and beginning_preferred is not None
+        and 0 <= beginning_preferred < beginning_total
+        else None
+    )
+    average_common_equity = (
+        (beginning_common + book_value) / 2.0
+        if beginning_common is not None and book_value is not None and beginning_common > 0
+        else None
+    )
+    average_common_roe = (
+        net_income / average_common_equity if average_common_equity else None
+    )
+    roe_basis = (
+        "average_common_equity" if average_common_roe is not None
+        else "ending_common_equity_proxy"
+    )
+    reported_roe = average_common_roe if average_common_roe is not None else ending_equity_roe_proxy
+    rejected_assumptions: list[dict[str, Any]] = []
+    if "growth" in merged:
+        rejected_assumptions.append({
+            "field": "growth",
+            "reason": (
+                "Bank growth is implied by clean-surplus retention (ROE x (1 - payout)); "
+                "an independent growth rate is not accepted."
+            ),
+        })
     roe = float(merged["sustainable_roe"]) if merged.get("sustainable_roe") is not None else float(reported_roe)
     cost_of_equity = float(merged["cost_of_equity"])
     terminal_growth = float(merged["terminal_growth"])
     horizon = int(merged["horizon"])
+    payout = float(merged["payout_ratio"])
+    implied_growth = roe * (1.0 - payout)
     calc = _bank_arithmetic(
         book_value=float(book_value),
         roe=roe,
         cost_of_equity=cost_of_equity,
-        growth=float(merged["growth"]),
-        payout=float(merged["payout_ratio"]),
+        payout=payout,
         horizon=horizon,
         terminal_growth=terminal_growth,
     )
@@ -329,6 +368,17 @@ def build_bank_valuation(
             "code": "terminal_growth_exceeds_cost_of_equity",
             "severity": "error",
             "detail": "No finite terminal value exists under these assumptions.",
+        })
+    for rejected in rejected_assumptions:
+        findings.append({
+            "code": "growth_is_not_a_free_parameter",
+            "severity": "warning",
+            "detail": (
+                "The supplied growth assumption was not applied. "
+                f"The model uses {BANK_GROWTH_BASIS}: {implied_growth:.6f}. "
+                "Change ROE or payout if a different book-value growth path is intended."
+            ),
+            "rejected_input": rejected,
         })
     if not common_reconciled:
         findings.append({
@@ -407,8 +457,14 @@ def build_bank_valuation(
         metrics=metrics,
         coverage=coverage,
         available=[key for key, value in inputs.items() if value is not None],
-        assumptions={key: merged[key] for key in ("cost_of_equity", "sustainable_roe", "growth",
-                                                   "payout_ratio", "horizon", "terminal_growth")},
+        assumptions={
+            "cost_of_equity": cost_of_equity,
+            "sustainable_roe": roe,
+            "implied_growth": implied_growth,
+            "payout_ratio": payout,
+            "horizon": horizon,
+            "terminal_growth": terminal_growth,
+        },
         arithmetic=arithmetic,
         extra_limitations=limitations,
     )
@@ -424,11 +480,14 @@ def build_bank_valuation(
         "assumptions": {
             "cost_of_equity": cost_of_equity,
             "sustainable_roe": roe,
-            "growth": float(merged["growth"]),
-            "payout_ratio": float(merged["payout_ratio"]),
+            "implied_growth": implied_growth,
+            "growth_basis": BANK_GROWTH_BASIS,
+            "growth_is_free_parameter": False,
+            "payout_ratio": payout,
             "horizon": horizon,
             "terminal_growth": terminal_growth,
             "share_basis": "period_end_share_count",
+            "rejected_assumptions": rejected_assumptions,
         },
         "inputs": inputs,
         "provenance": _provenance(metrics),
@@ -440,7 +499,13 @@ def build_bank_valuation(
             "book_value_basis": book_value_basis,
             "common_equity_status": common_equity_status,
             "book_value_per_common_share": book_value / float(shares),
-            "reported_roe": reported_roe,
+            "beginning_common_equity": beginning_common,
+            "average_common_equity": average_common_equity,
+            "ending_equity_roe_proxy": ending_equity_roe_proxy,
+            "average_common_roe": average_common_roe,
+            "company_reported_roe": None,
+            "roe_used": reported_roe,
+            "roe_basis": roe_basis,
             "calculated_equity_value": equity_value,
             "value_per_share": raw_per_share,
             "realizable_common_price": None if negative else raw_per_share,
@@ -661,7 +726,9 @@ def build_institution_valuation(
 
 
 # ------------------------------------------------------------------ bank v2
-BANK_MODEL_VERSION_V2 = "atlas.bank.residual_income.v2"
+BANK_MODEL_VERSION_V2 = "atlas.bank.residual_income.v3"
+#: Reported thresholds are retained for context only. They are not applied to a GAAP
+#: equity/assets calculation, because that ratio has a different numerator and denominator.
 CAPITAL_REQUIREMENTS = {
     "common_equity_tier_1": 7.0,
     "tier_1_leverage": 4.0,
@@ -714,7 +781,7 @@ def implied_cost_of_equity(
 
     def value(coe: float) -> float | None:
         calc = _bank_arithmetic(
-            book_value=book_value, roe=roe, cost_of_equity=coe, growth=0.0,
+            book_value=book_value, roe=roe, cost_of_equity=coe,
             payout=payout, horizon=horizon, terminal_growth=terminal_growth,
         )
         equity = calc["calculated_equity_value"]
@@ -807,7 +874,7 @@ def _bank_v2_scenarios(
             distribution = min(1.0, payout + buyback)
             calc = _bank_arithmetic(
                 book_value=book_value, roe=roe, cost_of_equity=float(base["cost_of_equity"]),
-                growth=0.0, payout=distribution, horizon=int(base["horizon"]),
+                payout=distribution, horizon=int(base["horizon"]),
                 terminal_growth=float(base["terminal_growth"]),
             )
             value = calc["calculated_equity_value"]
@@ -836,17 +903,37 @@ def _bank_v2_scenarios(
                     "charge_off_multiple": nco_multiple,
                     "annual_net_income_delta_usd": delta * 1000.0,
                     "equity_after_usd": equity_after * 1000.0,
-                    "tier_1_leverage_after_percent": leverage,
-                    "passes_minimum": leverage >= CAPITAL_REQUIREMENTS["tier_1_leverage"],
+                    "gaap_equity_to_assets_after_percent": leverage,
+                    "regulatory_leverage_after_percent": None,
+                    "regulatory_leverage_status": "regulatory_leverage_not_verified",
+                    "missing_regulatory_fields": [
+                        "tier_1_capital_numerator",
+                        "regulatory_leverage_exposure_denominator",
+                    ],
                 })
     return {
         "payout_and_buyback": payout_rows,
         "regulatory_stress": stress,
         "regulatory_stress_basis": (
-            "subsidiary_standalone, annualized NII and net charge-offs, 21% tax assumption, "
-            "assets held constant. This is a capital sensitivity of the insured bank, not a "
-            "parent valuation."
+            "GAAP equity divided by reported assets for the insured subsidiary, with annualized "
+            "NII and net charge-offs and a 21% tax assumption, assets held constant. This is a "
+            "GAAP equity-to-assets sensitivity, NOT a regulatory Tier 1 leverage ratio; it is not "
+            "compared with a regulatory minimum."
         ) if stress else "not_available",
+        "regulatory_leverage": {
+            "status": "regulatory_leverage_not_verified" if stress else "not_available",
+            "reason": (
+                "A modeled regulatory Tier 1 leverage ratio requires Tier 1 capital and the "
+                "regulatory leverage exposure denominator on a consistent legal-entity basis. "
+                "Neither is available for the hypothetical scenarios; GAAP equity is not promoted "
+                "to Tier 1 capital."
+            ),
+            "missing_fields": [
+                "tier_1_capital_numerator",
+                "regulatory_leverage_exposure_denominator",
+            ],
+            "scenario_metric": "gaap_equity_to_assets",
+        },
         "note": "Scenarios are assumption grids, not forecasts or management guidance.",
     }
 
@@ -989,7 +1076,16 @@ def build_bank_valuation_v2(
         ),
         "differentiated_default": differentiated_default,
     }
-    assumptions_out = base["assumptions"]
+    assumptions_out = dict(base["assumptions"])
+    terminal_growth = float(assumptions_out["terminal_growth"])
+    terminal_roe = float(assumptions_out["sustainable_roe"])
+    assumptions_out["terminal_payout_ratio"] = (
+        1.0 - terminal_growth / terminal_roe if terminal_roe else None
+    )
+    assumptions_out["terminal_clean_surplus"] = (
+        "terminal book value grows at terminal_growth only when distributions are "
+        "1 - terminal_growth/ROE; the explicit-period payout is not carried into perpetuity"
+    )
     implied = None
     if market_price:
         implied = implied_cost_of_equity(
@@ -1006,6 +1102,17 @@ def build_bank_valuation_v2(
         base={**assumptions_out, "cost_of_equity": assumptions_out["cost_of_equity"]},
         latest=latest,
     )
+    findings = list(base.get("findings") or [])
+    if scenarios.get("regulatory_stress"):
+        findings.append({
+            "code": "regulatory_leverage_not_verified",
+            "severity": "warning",
+            "detail": (
+                "The stress table reports GAAP equity-to-assets, not regulatory Tier 1 leverage. "
+                "Tier 1 capital and the leverage exposure denominator are unavailable, so no "
+                "regulatory minimum test is performed."
+            ),
+        })
     limitations = list(base.get("limitations") or [])
     limitations.extend([
         "Regulatory capital evidence covers the insured subsidiary, not the consolidated parent; capital headroom is in percentage points because dollar RWA is not published.",
@@ -1044,7 +1151,9 @@ def build_bank_valuation_v2(
     )
     return {
         **base,
+        "assumptions": assumptions_out,
         "model_version": BANK_MODEL_VERSION_V2,
+        "findings": findings,
         "contract": contract,
         "regulatory": {
             "status": (regulatory or {}).get("status", "not_ingested"),

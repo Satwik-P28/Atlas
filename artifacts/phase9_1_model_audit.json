@@ -86,7 +86,7 @@
     },
     {
       "check": "package_deterministic",
-      "model": "5fd93de72eee585f",
+      "model": "4fe4818b5f02d1aa",
       "passed": true,
       "ticker": "JPM"
     },
@@ -98,7 +98,7 @@
     },
     {
       "check": "package_deterministic",
-      "model": "f53d05f6d8110f0a",
+      "model": "08b13b821f8e0add",
       "passed": true,
       "ticker": "UNH"
     },
@@ -113,7 +113,7 @@
     "passed": 16,
     "total": 16
   },
-  "db": "/workspace/chats/41a4fd2abe41a6515dc8d5bb/var/phase9.db",
+  "db": "var/phase9.db",
   "limits": [
     "The bank and insurer reference implementations share the same documented inputs; agreement proves arithmetic, not the economic validity of the assumptions.",
     "Call Report, FDIC and CMS data are not joined; only consolidated SEC facts are used.",

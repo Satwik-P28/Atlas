@@ -1,7 +1,8 @@
 # Phase 9.2 acceptance matrix
 
-**Status: implementation and common-equity correction verified; master-spec gate blocked.**
-See the root [`PHASE9_2_FINAL_ACCEPTANCE.md`](../PHASE9_2_FINAL_ACCEPTANCE.md).
+**Status: Phase 9.2.1 evidence and financial corrections verified; master-spec gate blocked.**
+See the root [`PHASE9_2_FINAL_ACCEPTANCE.md`](../PHASE9_2_FINAL_ACCEPTANCE.md) and
+[`PHASE9_2_1_INTEGRITY_AUDIT.md`](PHASE9_2_1_INTEGRITY_AUDIT.md).
 
 | Area | Status | Evidence / remaining gap |
 | --- | --- | --- |
@@ -10,7 +11,13 @@ See the root [`PHASE9_2_FINAL_ACCEPTANCE.md`](../PHASE9_2_FINAL_ACCEPTANCE.md).
 | Official FR Y-9C evidence | **Verified snapshot** | FFIEC `BHCF20241231.ZIP`, 3,806 rows, JPM RSSD 1039502, 17 observations. |
 | Parent/subsidiary separation | **Verified** | Parent consolidated and CERT 628 are non-additive; parent capital not used per share. |
 | Common-equity bank valuation | **Verified** | SEC total less same-period SEC preferred; JPM $324.708B, GS $108.743B. |
-| Common book/share and ROE | **Verified** | JPM $116.0666 and 17.5136%; GS $350.0457 and 12.4376%. |
+| Common book/share | **Verified** | JPM $116.0666; GS $350.0457. |
+| ROE definitions | **Verified** | JPM ending proxy 17.5136%, average common 18.1925%; GS 12.4376% / 12.6139%. Company-reported ROE is not claimed. |
+| Market evidence preservation | **Verified** | Two providers can report the same session; replay is idempotent; corrections append revisions; batches roll back. |
+| Source rights isolation | **Verified** | Stable per-licence source ids; existing rights cannot be promoted by a later import. |
+| Security/exchange identity | **Verified** | Ambiguous tickers are rejected; explicit `security_id` + `mic` required; no hard-coded `XNYS`. |
+| Bank growth contract | **Verified** | `growth` is implied by ROE × retention; supplied growth is flagged, not ignored. |
+| Regulatory stress identity | **Verified** | GAAP equity/assets is labelled as such; Tier 1 leverage is `not_verified`; no minimum test. |
 | SEC/FR Y-9C reconciliation | **Verified** | JPM GAAP total/preferred equal FR Y-9C BHCK3210/BHCK3283; no cross-basis subtraction. |
 | Point-in-time regulatory history | **Not claimed** | No publication timestamp or vintage. |
 | Information cutoff | **Verified** | 2025-06-30 selects price 2025-06-30 and accounting 2024-12-31. |
@@ -19,8 +26,8 @@ See the root [`PHASE9_2_FINAL_ACCEPTANCE.md`](../PHASE9_2_FINAL_ACCEPTANCE.md).
 | Browser interaction | **Cloud visual pass; A–J partial** | JPM workspace and cutoff control render in Cloud browser. Local Playwright crashes in Chromium 156, so the full A–J suite is not claimed. |
 | 390 px mobile | **Not rerun** | Previous evidence predates this UI result; layout code unchanged. |
 | Frontend tests and build | **Verified** | 4/4 tests; `tsc -b && vite build` passes. |
-| Backend regressions | **Verified** | 446 passed. |
-| Independent model audit | **Verified** | Phase 9.2 28/28; Phase 9.1 16/16. |
+| Backend regressions | **Verified** | Full suite; see final acceptance count. |
+| Independent model audit | **Verified** | Phase 9.2 29/29; Phase 9.1 16/16. |
 | Clean package reproduction | **Verified** | Fresh schema 13; `reproduced`; `differences={}`. |
 
 No model is promoted to `economically_reviewed` or `independently_benchmarked`.
@@ -30,7 +37,7 @@ No model is promoted to `economically_reviewed` or `independently_benchmarked`.
 - `artifacts/phase9_2_reproduction.json` — common-equity outputs and package hash.
 - `artifacts/phase9_2_model_audit.json` — 28 independent checks.
 - `artifacts/phase9_2_benchmarks.json` — timings and source sizes.
-- `artifacts/phase9_2_application.atlas` — 61,281-byte export.
+- `artifacts/phase9_2_application.atlas` — 63,816-byte export with source-selection state.
 - `artifacts/phase9_2_final_desktop_jpm.png` — Cloud-browser JPM workspace.
 - `artifacts/phase9_2_e2e_final.log` — local runner failure, retained rather than hidden.
 

@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  push:
+    branches: [main, freebuff/41a4fd2abe41a6515dc8d5bb]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  backend:
+    name: Backend tests and audits
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install backend dependencies
+        run: python -m pip install -e '.[dev,terminal,learning,columnar]'
+      - name: Compile sources
+        run: python -m compileall -q src scripts tests
+      - name: Run backend suite
+        run: python -m pytest
+      - name: Build deterministic reference database
+        run: |
+          python scripts/build_phase9_db.py --db var/phase9.db --force
+          python scripts/fetch_phase9_2_regulatory.py --db var/phase9.db
+          python scripts/import_fr_y9c.py --db var/phase9.db --cik 19617 --entity REG-JPM-PARENT --retrieved-at 2026-11-06T20:00:00Z
+          python scripts/import_phase9_2_prices.py --db var/phase9.db
+      - name: Independent financial audit
+        run: python scripts/audit_phase9_2_models.py --db var/phase9.db --out artifacts/phase9_2_model_audit.json
+      - name: Independent Phase 9.1 audit
+        run: python scripts/audit_phase9_1_models.py --db var/phase9.db --out artifacts/phase9_1_model_audit.json
+
+  frontend:
+    name: Frontend test, typecheck and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install frontend dependencies
+        run: npm ci
+      - name: Unit tests
+        run: npm test -- --run
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Production build
+        run: npm run build
+
+  database-integrity:
+    name: Database migration integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e '.[dev]'
+      - name: Fresh install, populated upgrade, rollback and concurrency
+        run: python -m pytest tests/test_phase9_2_migrations.py tests/test_storage.py
+
+  research-integrity:
+    name: Research and market-evidence integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e '.[dev,terminal]'
+      - name: Provider conflict, rights, ticker identity and bank arithmetic
+        run: >-
+          python -m pytest
+          tests/test_phase9_2_1_market_integrity.py
+          tests/test_phase9_2_institutions.py
+          tests/test_phase9_2_migrations.py
+          tests/test_phase9_1_models.py
+      - name: Deterministic application reproduction
+        run: python scripts/reproduce_phase9_2.py

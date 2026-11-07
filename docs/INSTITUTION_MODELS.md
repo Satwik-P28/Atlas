@@ -9,12 +9,18 @@ Equity value = BV0 + Σ (NI_t - CoE·BV_t-1)/(1+CoE)^t + PV(terminal residual)
 BV_t       = BV_t-1 + NI_t - dividends
 NI_t       = sustainable ROE · BV_t-1
 BV0        = SEC StockholdersEquity − same-period SEC preferred stock
+g_exp      = sustainable ROE · (1 − explicit payout)
 ```
 
 - JPM opens on **$324.708B** common equity after deducting $20.050B preferred; GS opens on **$108.743B** after deducting $13.253B. Each bank uses its own filed SEC tag.
 - Book value, preferred stock, net income and share counts are reported SEC facts with evidence ids. Preferred is GAAP, not CET1.
 - Cost of equity, sustainable ROE, payout, horizon and terminal growth are explicit
-  assumptions, echoed in the output and the package.
+  assumptions, echoed in the output and the package. `growth` is not accepted as an
+  independent driver: explicit book growth is implied by ROE and retention, and a supplied
+  `growth` is reported as a rejected assumption.
+- ROE means net income to common divided by average common equity. The ending-equity ROE,
+  average common ROE and any company-reported ROE are distinct fields; a missing company
+  disclosure remains `null`.
 - Sensitivity covers cost of equity ±1 pp, ROE ±2 pp, terminal growth 1.5–3.5% and both
   period-end and weighted-average diluted share counts. Common-basis book value per share
   and common ROE are emitted separately from total equity.

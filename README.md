@@ -43,9 +43,13 @@ gate is closed, but master-spec conformance and Phase 9 completion are not claim
 
 **Phase 9.2 corrects the bank starting book:** SEC `StockholdersEquity` minus same-period
 SEC preferred stock, both GAAP basis. JPM opens at **$324.708B** common equity (not
-$344.758B total equity); GS opens at **$108.743B**. Book value per common share and ROE are
-computed on that common basis, and the portable package reproduces **$287.9196/share** at
-17% ROE and 9.5% cost of equity. See [PHASE9_2_FINAL_ACCEPTANCE.md](PHASE9_2_FINAL_ACCEPTANCE.md).
+$344.758B total equity); GS opens at **$108.743B**. Phase 9.2.1 moves ROE to average common
+equity (JPM **18.1925%**, ending-equity proxy 17.5136%) and removes free `growth`. The
+corrected reference value is **$295.4644/share** for JPM at the default 10% cost of equity;
+the explicit 17% ROE / 9.5% CoE case remains **$287.9196**. Regulatory stress is
+**GAAP equity/assets**, not Tier 1 leverage. See
+[PHASE9_2_FINAL_ACCEPTANCE.md](PHASE9_2_FINAL_ACCEPTANCE.md) and
+[docs/PHASE9_2_1_INTEGRITY_AUDIT.md](docs/PHASE9_2_1_INTEGRITY_AUDIT.md).
 
 ```
 Terminal demo: 5 issuers · 8 securities · 14,977 filings · 23,583 evidence records
@@ -54,8 +58,8 @@ Phase 7 economic demo: 365 public days · 1,095 observations · 12 evidence edge
 Phase 8 package: 47,270 bytes · 6 declarative files · deterministic · unsigned
 Phase 9 real universe: 20 issuers · 489 filings · 26,440 evidence records
 Phase 9 readiness: 16 valid financial coverage · 17 DCF executions · 3 institutions refused · 4 restricted prices
-Phase 9 bank valuation: JPM common book $324.708B · GS common book $108.743B · package $287.9196 reproduced
-Phase 9 audit: 28/28 independent checks · 446 backend tests · 4 frontend tests
+Phase 9 bank valuation: JPM common book $324.708B · average common ROE 18.1925% · default $295.4644
+Phase 9.2.1 integrity: append-only multi-source bars · 29/29 independent checks · package $295.4644 reproduced
 Public-domain EIA-930 and NOAA GHCN · two Dallas stations · spatial representativeness
 Observed weather is not a forecast · current archive is not a historical vintage
 Association, not causation · test R² −0.8935 retained · hypothetical firm exposure
