@@ -24,10 +24,34 @@ from ..core.temporal import iso, iso_date, parse_date, utcnow
 from ..entities.master import SecurityMaster
 from ..market.bars import ADJUSTMENT_RAW, Bar, BarStore
 from ..storage.db import Database
+from .observations import (
+    PIN_STATUS_EXACT,
+    observation_from_row,
+    pin_from_row,
+    resolve_pinned,
+)
 
 PRICE_SCHEMA = "atlas.market_price.summary.v1"
 IMPORT_SCHEMA = "atlas.market_price.import.v2"
-SOURCE_SELECTION_POLICY = "atlas.market_price.selection.v1"
+
+#: Version of the canonical-selection contract. v2 makes the *basis* of the choice
+#: explicit (latest session, latest imported revision, explicit source, or a saved pin),
+#: records the observation identity, and never mixes providers inside one series.
+SOURCE_SELECTION_POLICY = "atlas.market_price.selection.v2"
+LEGACY_SOURCE_SELECTION_POLICIES = {"atlas.market_price.selection.v1"}
+SELECTION_POLICIES = {"latest_session", "latest_revision", "explicit_source", "pinned"}
+POLICY_LABELS = {
+    "latest_session": (
+        "Latest market session at or before the requested date, newest revision of that "
+        "session, then deterministic source/mic ordering"
+    ),
+    "latest_revision": (
+        "Most recently imported observation first (ingestion order), then session; this is "
+        "'latest import', not 'latest market information'"
+    ),
+    "explicit_source": "Latest session from one explicitly requested provider",
+    "pinned": "The exact revision recorded by a saved observation pin",
+}
 
 ALLOWED_REDISTRIBUTION = {"public_domain", "user_responsibility", "restricted", "private"}
 EXPORTABLE_REDISTRIBUTION = {"public_domain"}
@@ -165,6 +189,86 @@ def _resolve_security(
     )
 
 
+def _validate_batch_sessions(
+    master: SecurityMaster,
+    *,
+    ticker: str,
+    security_id: str,
+    mic: str,
+    listing: Mapping[str, Any],
+    sessions: Iterable[str],
+) -> dict[str, Any]:
+    """Confirm every observation belongs to the intended security for its own session.
+
+    Resolving a ticker once at a declared ``as_of`` date is not enough for a multi-session
+    batch: a ticker can be reused, an issuer can migrate venue, or a listing can end in the
+    middle of the requested range. Each distinct session is re-resolved, and a batch whose
+    sessions do not all belong to exactly one security and venue is rejected rather than
+    having its rows distributed across guessed identities.
+    """
+    days = sorted({str(item)[:10] for item in sessions})
+    valid_from = str(listing.get("valid_from") or "")[:10]
+    valid_to = str(listing.get("valid_to") or "")[:10]
+    problems: list[dict[str, Any]] = []
+    advisories: list[dict[str, Any]] = []
+    unassigned: list[str] = []
+    for day in days:
+        # A listing record created after the sessions it describes is common for a
+        # backfill; that is reported, not fatal. What *is* fatal is a session that does
+        # not resolve to the declared security at all (reuse, migration, delisting).
+        if valid_from and day < valid_from:
+            advisories.append(
+                {"session": day, "reason": "session_before_listing_valid_from",
+                 "listing_valid_from": valid_from}
+            )
+        if valid_to and day > valid_to:
+            advisories.append(
+                {"session": day, "reason": "session_after_listing_valid_to",
+                 "listing_valid_to": valid_to}
+            )
+        resolution = master.resolve_ticker(ticker, as_of=day)
+        matches = [
+            candidate for candidate in resolution.candidates
+            if candidate.security_id == security_id
+            and (candidate.mic or "").upper() == mic.upper()
+        ]
+        if len(matches) == 1:
+            continue
+        # A session that resolves to a *different* security is cross-identity
+        # contamination: those rows would be filed against the wrong issuer, so the batch
+        # is rejected. A session with no active assignment window at all is a historical
+        # backfill against a record created later; that is reported explicitly rather than
+        # silently accepted or silently reassigned.
+        other = {candidate.security_id for candidate in resolution.candidates} - {security_id}
+        if other:
+            problems.append(
+                {
+                    "session": day,
+                    "reason": "session_resolves_to_a_different_security",
+                    "other_security_ids": sorted(other),
+                    "candidates": [candidate.to_dict() for candidate in resolution.candidates],
+                }
+            )
+        else:
+            unassigned.append(day)
+    if problems:
+        raise PriceImportError(
+            f"price batch spans {len(problems)} session(s) that do not resolve to the requested "
+            f"security {security_id} on {mic.upper()}; split the batch by identity or pin "
+            f"security_id and mic explicitly: {problems[0]}"
+        )
+    return {
+        "sessions_checked": len(days),
+        "first_session": days[0],
+        "last_session": days[-1],
+        "security_id": security_id,
+        "mic": mic.upper(),
+        "identity_basis": "per_session_ticker_resolution",
+        "listing_validity_advisories": advisories,
+        "unassigned_sessions": unassigned,
+    }
+
+
 def import_price_series(
     db: Database,
     *,
@@ -290,6 +394,15 @@ def import_price_series(
     if not prepared:
         raise PriceImportError("import contains no usable observations")
 
+    session_identity = _validate_batch_sessions(
+        SecurityMaster(db),
+        ticker=identity["ticker"],
+        security_id=identity["security_id"],
+        mic=resolved_mic,
+        listing=listing,
+        sessions=[bar.ts_utc for bar in prepared],
+    )
+
     content_hash = hashlib.sha256(
         json.dumps(
             {
@@ -407,6 +520,7 @@ def import_price_series(
             "retrieved_at": retrieved,
         },
         "adjustment_semantics": adjustment,
+        "session_identity": session_identity,
         "authorization": {
             "automated_access_authorized": bool(automated_access_authorized),
             "authorization_basis": authorization_basis,
@@ -421,6 +535,111 @@ def import_price_series(
     }
 
 
+def _resolve_policy(
+    policy: str,
+    *,
+    source_id: str | None,
+    pin: Mapping[str, Any] | None,
+) -> str:
+    """Normalise a policy name and reject combinations it cannot answer."""
+    if policy in LEGACY_SOURCE_SELECTION_POLICIES:
+        # Legacy callers asked for "the canonical quote"; v2 states that basis as
+        # latest_session explicitly instead of implying it.
+        policy = "latest_session"
+    if policy == SOURCE_SELECTION_POLICY:
+        # v2 states the basis: an explicit source filter *is* the explicit_source policy.
+        policy = "explicit_source" if source_id else "latest_session"
+    if policy not in SELECTION_POLICIES:
+        raise PriceImportError(f"unknown market-price selection policy {policy!r}")
+    if policy == "explicit_source" and not source_id:
+        raise PriceImportError("the explicit_source policy requires a source_id")
+    if policy == "pinned" and not pin:
+        raise PriceImportError("the pinned policy requires a stored observation pin")
+    return policy
+
+
+def _pinned_row(
+    db: Database,
+    security_id: str,
+    pin: Mapping[str, Any],
+    *,
+    mic: str | None,
+) -> tuple[Any | None, dict[str, Any]]:
+    """Resolve a saved pin to its exact revision, never to the latest price."""
+    replay = resolve_pinned(db, pin)
+    if replay["status"] != PIN_STATUS_EXACT or replay["observation"] is None:
+        selection = {
+            "policy": SOURCE_SELECTION_POLICY,
+            "requested_policy": "pinned",
+            "policy_label": POLICY_LABELS["pinned"],
+            "selected_source_id": pin.get("source_id"),
+            "price_date": pin.get("session_date"),
+            "revision_seq": pin.get("revision_seq"),
+            "observation_id": pin.get("observation_id"),
+            "content_hash": pin.get("content_hash"),
+            "observation": dict(pin),
+            "pinned": True,
+            "exact_replay": False,
+            "selection_status": replay["status"],
+            "reason": replay["reason"],
+            "conflict_resolution": "saved_observation_pin",
+            "alternatives": [],
+            "conflict": False,
+        }
+        return None, selection
+    observation = replay["observation"]
+    if mic and str(mic).upper() != str(observation["mic"]).upper():
+        raise PriceImportError(
+            f"pinned observation is on {observation['mic']}, not the requested venue {mic.upper()}"
+        )
+    if observation["security_id"] != security_id:
+        raise PriceImportError(
+            "pinned observation belongs to a different security; refusing to re-use it"
+        )
+    row = {
+        "security_id": observation["security_id"],
+        "mic": observation["mic"],
+        "interval": observation["interval"],
+        "ts_utc": observation["session"],
+        "close": observation["close"],
+        "currency": observation["currency"],
+        "adjustment_status": observation["adjustment"],
+        "source_id": observation["source_id"],
+        "observed_at": observation["observed_at"],
+        "ingested_at": observation["ingested_at"],
+        "revision_seq": observation["revision_seq"],
+        "name": pin.get("source_name"),
+        "licence": pin.get("licence"),
+        "redistribution": pin.get("redistribution"),
+    }
+    selection = {
+        "policy": SOURCE_SELECTION_POLICY,
+        "requested_policy": "pinned",
+        "policy_label": POLICY_LABELS["pinned"],
+        "requested_source_id": observation["source_id"],
+        "selected_source_id": observation["source_id"],
+        "price_date": observation["session_date"],
+        "revision_seq": observation["revision_seq"],
+        "observation_id": observation["observation_id"],
+        "content_hash": observation["content_hash"],
+        "observation": observation,
+        "pinned": True,
+        "exact_replay": True,
+        "selection_status": PIN_STATUS_EXACT,
+        "conflict_resolution": "saved_observation_pin",
+        "dimensions": {
+            "market_session": "pinned_session",
+            "provider": "pinned_provider",
+            "revision": "pinned_revision",
+            "adjustment": "raw_observation_only",
+        },
+        "alternatives": [],
+        "conflict": False,
+        "provider_consistency": "single_provider",
+    }
+    return row, selection
+
+
 def _selected_row(
     db: Database,
     security_id: str,
@@ -429,9 +648,17 @@ def _selected_row(
     source_id: str | None = None,
     mic: str | None = None,
     policy: str = SOURCE_SELECTION_POLICY,
+    pin: Mapping[str, Any] | None = None,
 ) -> tuple[Any | None, dict[str, Any]]:
-    if policy != SOURCE_SELECTION_POLICY:
-        raise PriceImportError(f"unknown market-price selection policy {policy!r}")
+    resolved_policy = _resolve_policy(policy, source_id=source_id, pin=pin)
+    if resolved_policy == "pinned":
+        assert pin is not None
+        return _pinned_row(db, security_id, pin, mic=mic)
+    ordering = {
+        "latest_session": "b.ts_utc DESC, b.revision_seq DESC, b.source_id ASC, b.mic ASC",
+        "latest_revision": "b.ingested_at DESC, b.ts_utc DESC, b.revision_seq DESC, b.source_id ASC",
+        "explicit_source": "b.ts_utc DESC, b.revision_seq DESC, b.mic ASC",
+    }[resolved_policy]
     where = [
         "b.security_id=?", "b.interval='1d'", "substr(b.ts_utc,1,10)<=?",
         "b.revision_seq=(SELECT MAX(b2.revision_seq) FROM bar b2 WHERE "
@@ -449,21 +676,58 @@ def _selected_row(
         "SELECT b.*, s.name, s.licence, s.redistribution FROM bar b "
         "LEFT JOIN source s ON s.source_id=b.source_id WHERE "
         + " AND ".join(where)
-        + " ORDER BY b.ts_utc DESC, b.ingested_at DESC, b.source_id ASC, b.mic ASC LIMIT 1",
+        + f" ORDER BY {ordering} LIMIT 1",
         params,
     )
+    observation = (
+        observation_from_row(
+            row,
+            source_name=row["name"],
+            dataset=row["name"],
+            licence=row["licence"],
+            redistribution=row["redistribution"],
+        )
+        if row is not None else None
+    )
+    cutoff = str(date_text)[:10]
     selection: dict[str, Any] = {
-        "policy": policy,
+        "policy": SOURCE_SELECTION_POLICY,
+        "requested_policy": resolved_policy,
+        "policy_label": POLICY_LABELS[resolved_policy],
         "requested_source_id": source_id,
         "selected_source_id": row["source_id"] if row else None,
         "price_date": row["ts_utc"][:10] if row else None,
+        "session": row["ts_utc"] if row else None,
         "ingested_at": row["ingested_at"] if row else None,
+        "revision_seq": row["revision_seq"] if row else None,
+        "observation_id": observation["observation_id"] if observation else None,
+        "content_hash": observation["content_hash"] if observation else None,
+        "observation": observation,
+        "pinned": False,
+        "exact_replay": None,
+        "information_cutoff": None if cutoff >= "2999-12-31" else cutoff,
+        "dimensions": {
+            "market_session": (
+                "explicitly_requested_source_latest_session" if source_id else
+                "latest_session_at_or_before_cutoff"
+            ),
+            "provider": (
+                "explicit_source" if source_id else
+                "single_provider_selected_then_held_constant"
+            ),
+            "revision": (
+                "latest_ingested_revision" if resolved_policy == "latest_revision"
+                else "latest_revision_of_selected_session"
+            ),
+            "adjustment": "raw_observation_only",
+        },
         "conflict_resolution": (
             "explicit_source_filter" if source_id else
-            "latest_session_then_latest_ingestion_then_source_id"
+            "latest_session_then_latest_revision_then_source_id"
         ),
         "alternatives": [],
         "conflict": False,
+        "provider_consistency": "single_provider",
     }
     if row is not None:
         alternatives = [
@@ -633,13 +897,28 @@ def price_on_or_before(
     source_id: str | None = None,
     mic: str | None = None,
     policy: str = SOURCE_SELECTION_POLICY,
+    pin: Mapping[str, Any] | None = None,
 ) -> dict[str, Any] | None:
-    """Return the selected source's last observation at or before a comparison date."""
+    """Return the selected observation at or before a comparison date.
+
+    The result carries the observation identity (``observation_id``, ``content_hash``,
+    revision and retrieval metadata) as well as the value, so a caller can pin exactly
+    what it used.
+    """
     row, selection = _selected_row(
-        db, security_id, date_text, source_id=source_id, mic=mic, policy=policy
+        db, security_id, date_text, source_id=source_id, mic=mic, policy=policy, pin=pin
     )
     if row is None:
         return None
+    pin_payload = None
+    if selection.get("requested_policy") != "pinned":
+        pin_payload = pin_from_row(
+            row,
+            source_name=row["name"],
+            dataset=row["name"],
+            licence=row["licence"],
+            redistribution=row["redistribution"],
+        )
     return {
         "date": row["ts_utc"][:10],
         "close": float(row["close"]),
@@ -650,7 +929,50 @@ def price_on_or_before(
         "observed_at": row["observed_at"],
         "ingested_at": row["ingested_at"],
         "revision_seq": row["revision_seq"],
+        "observation_id": (selection.get("observation") or {}).get("observation_id"),
+        "content_hash": (selection.get("observation") or {}).get("content_hash"),
+        "observation": selection.get("observation"),
+        "exact_replay": selection.get("exact_replay"),
+        "pin": pin_payload,
         "source_selection": selection,
+    }
+
+
+def price_for_pin(
+    db: Database,
+    pin: Mapping[str, Any],
+    *,
+    information_cutoff: str | None = None,
+) -> dict[str, Any]:
+    """Replay a saved observation pin, or say plainly that exact replay is unavailable."""
+    replay = resolve_pinned(db, pin)
+    if replay["status"] != PIN_STATUS_EXACT:
+        return {
+            "schema": "atlas.market_price.replay.v1",
+            "status": replay["status"],
+            "exact_replay": False,
+            "reason": replay["reason"],
+            "pin": dict(pin) if isinstance(pin, Mapping) else None,
+            "price": None,
+        }
+    price = replay["price"]
+    cutoff = (information_cutoff or "")[:10]
+    lookahead_safe = not cutoff or price["date"] <= cutoff
+    return {
+        "schema": "atlas.market_price.replay.v1",
+        "status": "exact",
+        "exact_replay": True,
+        "lookahead_safe": lookahead_safe,
+        "information_cutoff": cutoff or None,
+        "pin": dict(pin),
+        "observation": replay["observation"],
+        "price": {**price, "lookahead_safe": lookahead_safe},
+        "reason": (
+            "Exact pinned revision replayed. A later correction to this session does not "
+            "change this result." if lookahead_safe else
+            "The pinned price is after the information cutoff; the replay is reported but "
+            "must not be used as a point-in-time comparison."
+        ),
     }
 
 

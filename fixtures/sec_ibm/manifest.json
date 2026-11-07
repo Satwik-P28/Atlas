@@ -13,24 +13,24 @@
       "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000051143.json",
       "bytes": 5719403,
       "sha256": "10fa1fafa25440b2159e2054dfe47628ba4ed353a258f526704cf9beda432bb8"
-    },
+    }
+  ],
+  "removed_documents": [
     {
       "path": "fixtures/market/ibm_daily_alphavantage.json",
-      "url": "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&outputsize=full&apikey=demo",
-      "bytes": 1421320,
-      "sha256": "0ef21bcd5ecd45750bca961b66e1f40f4cd69961e44108b67ef2a4b9ffb0afbc"
+      "former_url": "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&outputsize=full&apikey=demo",
+      "reason": "Vendor-derived price history with no redistribution grant; removed from the tracked tree in Phase 9.2.2. See docs/DATA_RIGHTS_AUDIT.md."
     },
     {
       "path": "fixtures/market/ibm_dividends_alphavantage.json",
-      "url": "https://www.alphavantage.co/query?function=DIVIDENDS&symbol=IBM&apikey=demo",
-      "bytes": 23645,
-      "sha256": "80d757b7a00fd118339caebe2edf39c387cd1c13b613228ef0503a1930b5a92f"
+      "former_url": "https://www.alphavantage.co/query?function=DIVIDENDS&symbol=IBM&apikey=demo",
+      "reason": "Vendor-derived corporate-action history with no redistribution grant; removed in Phase 9.2.2."
     },
     {
       "path": "fixtures/market/ibm_splits_alphavantage.json",
-      "url": "https://www.alphavantage.co/query?function=SPLITS&symbol=IBM&apikey=demo",
-      "bytes": 247,
-      "sha256": "e2c0de31a1b0c5ceab7ea037c0dd7d5292bbc502184519373777cd2f1652d2dd"
+      "former_url": "https://www.alphavantage.co/query?function=SPLITS&symbol=IBM&apikey=demo",
+      "reason": "Vendor-derived corporate-action history with no redistribution grant; removed in Phase 9.2.2."
     }
-  ]
+  ],
+  "note": "Only SEC public-domain documents remain. Market-path coverage now uses the project-authored synthetic fixture in fixtures/market/."
 }

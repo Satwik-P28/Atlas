@@ -34,7 +34,7 @@
     {
       "name": "click",
       "type": "library",
-      "version": "8.5.0"
+      "version": "8.5.1"
     },
     {
       "name": "cloudpickle",
@@ -69,7 +69,7 @@
     {
       "name": "hypothesis",
       "type": "library",
-      "version": "6.170.14"
+      "version": "6.170.15"
     },
     {
       "name": "idna",
@@ -124,12 +124,12 @@
     {
       "name": "pydantic",
       "type": "library",
-      "version": "2.14.2"
+      "version": "2.14.3"
     },
     {
       "name": "pydantic_core",
       "type": "library",
-      "version": "2.50.2"
+      "version": "2.50.4"
     },
     {
       "name": "Pygments",
@@ -215,11 +215,11 @@
     "properties": [
       {
         "name": "atlas:revision",
-        "value": "3a33e97bbaaf46516643ca6b8992fa8421c5ead8"
+        "value": "ed327d10695dc9981b97ae6c30e1fd070f894e93"
       },
       {
         "name": "atlas:dirty_worktree",
-        "value": "false"
+        "value": "true"
       },
       {
         "name": "atlas:phase8_package",
@@ -227,7 +227,7 @@
       }
     ]
   },
-  "serialNumber": "urn:atlas:sha256:db96f37e972f3e0dd9fb6354b22c208a",
+  "serialNumber": "urn:atlas:sha256:109bd5118c9a96c41acb98d858e626e2",
   "specVersion": "1.5",
   "version": 1
 }

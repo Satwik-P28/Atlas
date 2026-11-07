@@ -35,3 +35,25 @@ prices, personal data or executable code.
 - The fixture's compact facts are a derived extract; downstream redistribution of a
   reconstructed database should still be reviewed against SEC terms.
 - Ticker identity curation is Atlas metadata, not an SEC statement, and is labelled as such.
+
+## Phase 9.2.2 remediation: vendor market history removed
+
+**Finding.** `fixtures/market/` tracked five Nasdaq quote-history CSVs whose own manifest
+recorded `redistribution: restricted`, plus three archived Alpha Vantage demo responses with
+no established redistribution grant. They were used as ordinary CI fixtures, which made an
+unlicensed vendor history a build dependency of a private repository.
+
+**Action.** All eight files and the Alpha Vantage manifest were removed from the tracked
+tree. `fixtures/market/` now contains only project-authored synthetic data with an explicit
+`synthetic: true` / `contains_vendor_data: false` declaration and a SHA-256 hash manifest.
+CI no longer requires any vendor history: the reference database is bootstrapped with the
+synthetic fixture, and `scripts/verify_distributable_fixtures.py` fails if vendor files
+reappear.
+
+**Residual exposure.** The removed bytes remain reachable in earlier commits
+(`ed327d1` and its ancestors). Removing them from history requires a coordinated rewrite of
+published commits, which was not authorized for this checkpoint. Recommended remediation if
+the maintainers want it: coordinate a `git filter-repo` rewrite with a published notice,
+re-issue the affected branch, and rotate any credential that ever sat beside the data. Until
+then, the exposure is limited to the repository's own readers, not to packaged artefacts:
+research packages, reports and exports never contained these series.

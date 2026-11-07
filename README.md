@@ -219,7 +219,7 @@ the real 2023 panel, carries its limitations and scenario, and is **unsigned**.
 
 | Capability | Where | Notes |
 |---|---|---|
-| Real IBM market data | company → Charts | 6,793 Alpha Vantage bars, 114 actions, `reported`, archived with SHA-256 provenance |
+| IBM market fixture | company → Charts | 10 synthetic bars and 2 synthetic actions from `fixtures/market/`, source `synthetic-demo`, badged SYNTHETIC |
 | Independent validation | company → Research | recomputes margins, ratios, valuations, split adjustment and total return; IBM **233/233** |
 | Financial history | company → Research | annual, evidence-linked, no interpolation |
 | Peer comparison | company → Research | local universe only, medians over reporting issuers |
@@ -281,10 +281,12 @@ asserts they are identical.
 ## 4. Data honesty
 
 * Fundamentals are real, public-domain SEC EDGAR data archived in `fixtures/sec`.
-* **IBM market prices are real vendor observations** from the Alpha Vantage demo source,
-  registered as `reported`, with retrieval provenance and 114 corporate actions. They are
-  raw observations, not proof of the vendor's 2015 display vintage; the Time Capsule reports
-  `external_provider_only` because exact source bytes are not archived.
+* **No vendor market history is bundled.** The Nasdaq CSVs and Alpha Vantage demo responses
+  that earlier revisions tracked were removed in Phase 9.2.2 because no redistribution grant
+  existed (see `docs/DATA_RIGHTS_AUDIT.md`). IBM's provider-shaped market path now runs on the
+  project-authored synthetic fixture in `fixtures/market/`, registered under source
+  `synthetic-demo` (kind `synthetic`) and badged SYNTHETIC. A user with a licensed feed imports
+  their own file with `scripts/import_phase9_2_prices.py`.
 * **Phase 6 uses a separate real vendor demo panel** (AAPL, MSFT, TSLA, VTI, AMZN) with
   3,760 observed bars. It is registered `restricted`, cached only under `var/`, and never
   committed. The window starts after the sample's last split; dividends are excluded.
@@ -425,9 +427,8 @@ never the reverse. The kernel does not know HTTP exists.
 
 ## 9. Known limitations
 
-* IBM prices are real vendor demo observations; the other four issuers are synthetic. Phase
-  6 adds five separate real vendor demo histories. No licensed feed or survivorship-free
-  universe is present.
+* No market history is bundled: every tracked market series is synthetic, and the demo
+  issuers use generated paths. No licensed feed or survivorship-free universe is present.
 * Phase 5's multi-asset panel is **synthetic**, with one delisted path. It is not a real
   market universe and is not survivorship-bias-free.
 * Phase 6's five real demo names are selected by current availability, cover 2023–2025, and
@@ -556,3 +557,26 @@ business models instead of being left unvalued.
 
 See `docs/PHASE9_1_IMPLEMENTATION.md`, `docs/VALUATION_ELIGIBILITY_CONTRACT.md`,
 `docs/INSTITUTION_MODELS.md` and `docs/MARKET_DATA_AND_RIGHTS.md`.
+
+## Phase 9.2.2 — release integrity and exact replay
+
+Phase 9.2.2 is a verification checkpoint rather than a new feature phase. It removes
+restricted vendor market history from the tracked tree, replaces it with project-authored
+synthetic fixtures, and pins market observations to an immutable identity so a saved analysis
+replays the exact revision it used.
+
+- Every selected observation carries `observation_id`, `content_hash`, source, MIC, session,
+  revision, adjustment convention and retrieval metadata. A saved research object stores that
+  pin; a later provider correction appends a revision and does not change the replay.
+- `atlas.market_price.selection.v2` names its basis: `latest_session`, `latest_revision`,
+  `explicit_source` or `pinned`. A series is never assembled from two providers, and the
+  alternatives stay inspectable.
+- A multi-session import re-resolves the ticker for every session. A batch that would file
+  rows under a different security is rejected; unassigned backfill sessions are reported
+  explicitly instead of being guessed.
+- The independent audit no longer needs a restricted price to pass: it verifies cutoff safety
+  when a lawful observation exists and verifies explicit unavailability when none does.
+- The master specification gate stays **blocked**; CI run status is not claimed from this
+  environment.
+
+See `docs/PHASE9_2_2_RELEASE_INTEGRITY.md`.

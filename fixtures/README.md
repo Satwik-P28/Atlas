@@ -58,3 +58,22 @@ the table above so their construction can be audited by reading them.
   therefore compares against `companyfacts`, which is SEC's own derived view. See
   `docs/VALIDATION.md` §Limits.
 * No pre-1994 filings (EDGAR's submissions API does not provide them).
+
+## Market fixtures (Phase 9.2.2)
+
+`fixtures/market/` now contains **only project-authored synthetic data**. The Nasdaq
+quote-history CSVs and the archived Alpha Vantage demo responses were removed because their
+terms did not permit redistribution in a repository; a private repository is not a licence.
+Their bytes remain in Git history, and no published history was rewritten.
+
+| File | Purpose |
+|---|---|
+| `synthetic_prices.csv` | 10 deterministic daily bars for the fictional issuer `ATLS` |
+| `synthetic_daily_bars.json` | the same values in a vendor-shaped payload, labelled synthetic |
+| `synthetic_splits.json`, `synthetic_dividends.json` | generated corporate actions for the adjustment path |
+| `manifest.json` | declares `synthetic: true`, `contains_vendor_data: false`, public-domain terms |
+| `synthetic_manifest.json` | SHA-256 of every tracked market fixture |
+
+A user who holds a licensed feed imports their own file with
+`python scripts/import_phase9_2_prices.py --csv ... --ticker ... --licence ...`; Atlas never
+fetches it, never guesses its terms, and never exports it unless redistribution was granted.

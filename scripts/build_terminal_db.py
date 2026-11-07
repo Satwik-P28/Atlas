@@ -55,10 +55,11 @@ ISSUERS = (
     {"name": "Microsoft", "cik": "0000789019", "fixture": "fixtures/sec_msft", "seed": 23, "price": 180.0, "volume": 3_500_000},
     {"name": "Walmart", "cik": "0000104169", "fixture": "fixtures/sec_wmt", "seed": 37, "price": 120.0, "volume": 2_500_000},
     {"name": "Alphabet", "cik": "0001652044", "fixture": "fixtures/sec_googl", "seed": 53, "price": 75.0, "volume": 4_000_000},
-    # IBM is the real-market observation path: SEC fundamentals plus the archived,
-    # authorized Alpha Vantage demo series (see fixtures/market/alphavantage_manifest.json).
+    # IBM exercises the provider-shaped market path: SEC fundamentals plus the
+    # project-authored synthetic fixture in fixtures/market/ (no vendor archive is
+    # tracked; a user with a licensed feed imports their own file).
     {"name": "IBM", "cik": "0000051143", "fixture": "fixtures/sec_ibm", "seed": 0,
-     "price": 0.0, "volume": 0, "market": "alphavantage"},
+     "price": 0.0, "volume": 0, "market": "synthetic_fixture"},
 )
 
 START = "2019-01-02"
@@ -157,8 +158,8 @@ def ingest_market(db: Database) -> dict:
     inserted = 0
     action_count = 0
     for spec in ISSUERS:
-        if spec.get("market") == "alphavantage":
-            continue  # real observations are ingested by ingest_real_market
+        if spec.get("market") == "synthetic_fixture":
+            continue  # the fixture series is ingested by ingest_fixture_market
         issuer = master.require_issuer_by_cik(spec["cik"])
         securities = master.securities_for_issuer(issuer["issuer_id"])
         if not securities:
@@ -239,9 +240,14 @@ def ingest_market(db: Database) -> dict:
     }
 
 
-def ingest_real_market(db: Database) -> dict:
-    """Ingest the archived Alpha Vantage IBM series with explicit source metadata."""
-    from atlas.ingestion.market_alphavantage import load_archived, register_source
+def ingest_fixture_market(db: Database) -> dict:
+    """Ingest the distributable synthetic market fixture for IBM.
+
+    This runs the provider-shaped parsing, ingestion and corporate-action paths on values
+    Atlas authored. It is labelled SYNTHETIC everywhere and carries no vendor terms,
+    because a repository may not redistribute a vendor's price history.
+    """
+    from atlas.ingestion.market_alphavantage import load_synthetic_fixture
 
     master = SecurityMaster(db)
     issuer = master.require_issuer_by_cik("0000051143")
@@ -254,20 +260,25 @@ def ingest_real_market(db: Database) -> dict:
         raise SystemExit("IBM security has no listing; cannot attach market observations")
     primary = next((item for item in listings if item.get("is_primary")), listings[0])
     mic = str(primary["mic"])
-    source_id = register_source(db)
-    payload = load_archived(ROOT / "fixtures" / "market", security_id=security["security_id"], mic=mic)
-    observed_at = "2026-11-04T19:00:00Z"
+    source_id = register_synthetic_source(db)
+    payload = load_synthetic_fixture(
+        ROOT / "fixtures" / "market",
+        security_id=security["security_id"],
+        mic=mic,
+        source_id=source_id,
+    )
+    observed_at = "2024-12-13T21:00:00Z"
     for bar in payload["bars"]:
         bar.observed_at = observed_at
     summary = BarStore(db).ingest(payload["bars"], observed_at=observed_at)
     actions = ActionStore(db)
     action_count = 0
     for action in payload["actions"]:
-        ex_date = action.ex_date or "2026-11-04"
+        ex_date = action.ex_date or "2024-12-13"
         actions.add(
             action,
             availability=availability_from_instant(
-                f"{ex_date}T21:00:00Z", "vendor.effective_date"
+                f"{ex_date}T21:00:00Z", "synthetic.generated"
             ),
         )
         action_count += 1
@@ -277,7 +288,8 @@ def ingest_real_market(db: Database) -> dict:
         "source_id": source_id,
         "mic": mic,
         "ticker": (payload["meta"] or {}).get("2. Symbol"),
-        "notice": "REAL vendor observations (Alpha Vantage IBM demo); not exchange data",
+        "synthetic": True,
+        "notice": "SYNTHETIC market fixture - generated values, not observed prices",
     }
 
 
@@ -304,7 +316,7 @@ def main() -> int:
     print(f"building {path} (schema v{db.schema_version()}, applied {applied or 'no'} migration(s))", flush=True)
     issuers = ingest_sec(db)
     market = ingest_market(db)
-    real_market = ingest_real_market(db)
+    fixture_market = ingest_fixture_market(db)
     settings = SettingsStore(db)
     settings.set("theme", "dark")
     settings.set("mode", "standard")
@@ -315,7 +327,7 @@ def main() -> int:
         "evidence_total": int(db.scalar("SELECT COUNT(*) FROM evidence", default=0) or 0),
         "filings_total": int(db.scalar("SELECT COUNT(*) FROM filing", default=0) or 0),
         "market": market,
-        "real_market": real_market,
+        "fixture_market": fixture_market,
     }
     print(json.dumps(summary, indent=2))
     db.close()

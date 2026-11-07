@@ -1,45 +1,46 @@
 {
- "source": "Nasdaq quote history endpoint",
- "retrieved_at": "2026-11-06T04:13:56Z",
- "licence": "Nasdaq.com public quote pages - personal, non-commercial use; redistribution not granted",
- "redistribution": "restricted",
- "adjustment_semantics": "unadjusted",
- "series": [
-  {
-   "ticker": "JPM",
-   "rows": 463,
-   "first": "2025-01-02",
-   "last": "2026-11-05",
-   "path": "fixtures/market/nasdaq_JPM.csv"
-  },
-  {
-   "ticker": "GS",
-   "rows": 463,
-   "first": "2025-01-02",
-   "last": "2026-11-05",
-   "path": "fixtures/market/nasdaq_GS.csv"
-  },
-  {
-   "ticker": "UNH",
-   "rows": 463,
-   "first": "2025-01-02",
-   "last": "2026-11-05",
-   "path": "fixtures/market/nasdaq_UNH.csv"
-  },
-  {
-   "ticker": "AAPL",
-   "rows": 463,
-   "first": "2025-01-02",
-   "last": "2026-11-05",
-   "path": "fixtures/market/nasdaq_AAPL.csv"
-  },
-  {
-   "ticker": "AMZN",
-   "rows": 463,
-   "first": "2025-01-02",
-   "last": "2026-11-05",
-   "path": "fixtures/market/nasdaq_AMZN.csv"
-  }
- ],
- "note": "Observed daily OHLCV as displayed by Nasdaq. Not split/dividend adjusted; verify against a licensed feed before production use."
+  "schema": "atlas.market_fixture.manifest.v2",
+  "synthetic": true,
+  "contains_vendor_data": false,
+  "source": "Atlas synthetic market fixture generator (hand-authored, deterministic)",
+  "retrieved_at": null,
+  "licence": "Apache-2.0 - fixtures authored by the Atlas project; no third-party market data",
+  "redistribution": "public_domain",
+  "authorization_basis": "Project-authored synthetic values; not derived from any vendor feed and not presented as observed market data.",
+  "adjustment_semantics": "unadjusted",
+  "series": [
+    {
+      "ticker": "ATLS",
+      "security_name": "Atlas Synthetic Markets Corp",
+      "rows": 10,
+      "first": "2024-12-02",
+      "last": "2024-12-13",
+      "path": "fixtures/market/synthetic_prices.csv",
+      "synthetic": true
+    }
+  ],
+  "documents": [
+    {
+      "path": "fixtures/market/synthetic_daily_bars.json",
+      "shape": "vendor-shaped TIME_SERIES_DAILY payload for parser tests",
+      "synthetic": true
+    },
+    {
+      "path": "fixtures/market/synthetic_splits.json",
+      "shape": "vendor-shaped SPLITS payload for parser tests",
+      "synthetic": true
+    },
+    {
+      "path": "fixtures/market/synthetic_dividends.json",
+      "shape": "vendor-shaped DIVIDENDS payload for parser tests",
+      "synthetic": true
+    },
+    {
+      "path": "fixtures/market/aapl_split_bars.csv",
+      "shape": "eight bars around a 4:1 split",
+      "synthetic": true
+    }
+  ],
+  "note": "These values are deterministic and synthetic. They are safe to redistribute because Atlas authored them, and they must never be described, labelled or exported as real market observations. Users who hold a licensed feed import their own files; see scripts/import_phase9_2_prices.py.",
+  "historical_note": "Earlier revisions of this repository tracked Nasdaq quote-history CSVs and Alpha Vantage demo responses. Those records were restricted vendor data and have been removed from the tracked tree. They remain reachable in Git history; see docs/DATA_RIGHTS_AUDIT.md."
 }

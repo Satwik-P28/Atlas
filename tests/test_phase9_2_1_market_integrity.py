@@ -11,6 +11,7 @@ import pytest
 
 from atlas.entities.master import SecurityMaster
 from atlas.research.prices import (
+    SOURCE_SELECTION_POLICY,
     PriceImportError,
     import_price_series,
     price_history,
@@ -43,9 +44,9 @@ def _row(close: float, *, day: str = "2025-01-02"):
 
 def _import(db, *, close: float, source: str, licence: str, ticker: str = "TST",
             redistribution: str = "restricted", adjustment_semantics: str = "unadjusted",
-            **kwargs):
+            rows=None, **kwargs):
     return import_price_series(
-        db, ticker=ticker, rows=[_row(close)], source_name=source,
+        db, ticker=ticker, rows=[_row(close)] if rows is None else rows, source_name=source,
         licence=licence, redistribution=redistribution,
         adjustment_semantics=adjustment_semantics, **kwargs,
     )
@@ -103,7 +104,8 @@ def test_saved_source_selection_reproduces_after_a_new_provider_arrives(db):
         db, security, "2025-01-02", source_id=original["source_id"]
     )
     assert replay["close"] == original["close"] == 10.0
-    assert replay["source_selection"]["policy"] == "atlas.market_price.selection.v1"
+    assert replay["source_selection"]["policy"] == SOURCE_SELECTION_POLICY
+    assert replay["source_selection"]["requested_policy"] == "explicit_source"
 
 
 def test_explicit_source_change_selects_the_new_provider(db):
@@ -188,8 +190,11 @@ def test_ticker_reuse_does_not_reassign_historical_observations(db):
         first_listing, "TST", valid_from="2020-01-01", valid_to="2024-12-31",
         confidence=1.0, status="confirmed", source_id="sec-edgar",
     )
+    # The observation's own session must fall inside the assignment window it was
+    # resolved under; Phase 9.2.2 rejects a batch that straddles an identity change.
     first = _import(
-        db, close=10.0, source="Provider A", licence="A restricted", as_of="2024-12-31"
+        db, close=10.0, source="Provider A", licence="A restricted", as_of="2024-12-31",
+        rows=[_row(10.0, day="2024-12-30")],
     )
     second_security = master.ensure_security(
         issuer, class_designation="new common stock", currency="USD"

@@ -1,0 +1,39 @@
+{
+  "schema": "atlas.market_fixture.hash_manifest.v1",
+  "synthetic": true,
+  "contains_vendor_data": false,
+  "generated_at": "2026-11-07",
+  "note": "SHA-256 of every tracked market fixture. All values are project-authored synthetic data; no vendor history is tracked.",
+  "files": [
+    {
+      "path": "fixtures/market/synthetic_prices.csv",
+      "bytes": 501,
+      "sha256": "70de9687c10fe554d9f4fe1544f3800a7a0c65baa84e84dc9cae9e55649054b7",
+      "synthetic": true
+    },
+    {
+      "path": "fixtures/market/synthetic_daily_bars.json",
+      "bytes": 2095,
+      "sha256": "35c1413e0906eb42983a5e0dd8e7cac446f6351d38dd04106a3907dd7a841e12",
+      "synthetic": true
+    },
+    {
+      "path": "fixtures/market/synthetic_splits.json",
+      "bytes": 210,
+      "sha256": "37737bfeb1e6db3403f705c899988973df5a3c2c5bc4e5802ba09aafae334329",
+      "synthetic": true
+    },
+    {
+      "path": "fixtures/market/synthetic_dividends.json",
+      "bytes": 316,
+      "sha256": "51af268749f8b9ad4956815adf91ce16c7e672686683768977024894387c62ea",
+      "synthetic": true
+    },
+    {
+      "path": "fixtures/market/aapl_split_bars.csv",
+      "bytes": 408,
+      "sha256": "bce0571339a676b09d35439f0af4bb3c15dffdc65e8c7f9d6cf66d0b23366558",
+      "synthetic": true
+    }
+  ]
+}

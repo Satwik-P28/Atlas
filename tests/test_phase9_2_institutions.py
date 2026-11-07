@@ -7,7 +7,11 @@ from atlas.applications.contracts import read_package
 from atlas.applications.service import ApplicationService
 from atlas.research import institutions, regulatory
 from atlas.research.equity import EquityResearchService
-from atlas.research.prices import import_price_series, price_on_or_before
+from atlas.research.prices import (
+    SOURCE_SELECTION_POLICY,
+    import_price_series,
+    price_on_or_before,
+)
 from atlas.storage.db import Database
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -257,5 +261,5 @@ def test_saved_package_records_the_selected_market_source(live):
     selection = state["market_price_selection"]
     assert selection["selected_source_id"]
     assert selection["price_date"] == "2025-12-31"
-    assert selection["policy"] == "atlas.market_price.selection.v1"
+    assert selection["policy"] == SOURCE_SELECTION_POLICY
     assert state["price_included"] is False

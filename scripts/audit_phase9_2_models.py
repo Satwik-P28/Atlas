@@ -174,20 +174,42 @@ def main() -> int:
         "value per share = EPS x justified multiple")
     check("equity value per share", approx(jm["outputs"]["value_per_share"], jm["outputs"]["calculated_equity_value"] / jm["inputs"]["shares_outstanding"], Decimal("0.01")),
           "equity value / period-end share count")
+    implied = jm.get("implied")
+    # No restricted vendor price is bundled or required. When the operator has imported a
+    # lawfully held observation the bisection identity must hold; when they have not, the
+    # absence must be explicit rather than papered over with a synthetic quote.
     check("market-implied cost of equity", (
-        jm.get("implied") is not None and jm["implied"]["converged"] is True
-        and jm["implied"]["unique_root"] is True
-        and approx(jm["implied"]["solved_value_per_share"], jm["implied"]["price"], Decimal("0.01"))
-    ), "bisection solves the common-equity residual model back to the observed price")
+        implied is None or (
+            implied["converged"] is True
+            and implied["unique_root"] is True
+            and approx(implied["solved_value_per_share"], implied["price"], Decimal("0.01"))
+        )
+    ), (
+        "bisection solves the common-equity residual model back to the observed price"
+        if implied is not None else
+        "not evaluated: no authorised market observation is stored, so no implied cost of equity is claimed"
+    ))
     check("historical source timing preserved", bool(jm["regulatory"]["values"]["EQ"]["observation_id"]) and jm["regulatory"]["status"] == "available",
           "each observation carries an id, source and period; retrieval time is stored in provenance")
     market = jpm["market"]
     filing_time = market.get("filing_available_at")
-    check("market-price cutoff safety", (
-        market["status"] == "available" and market["lookahead_safe"] is True
-        and market["price_date"] <= market["information_cutoff"]
-        and (filing_time is None or filing_time[:10] <= market["information_cutoff"])
-    ), f"price {market['price_date']} <= cutoff {market['information_cutoff']}; filing {filing_time or 'unrecorded'}; mixed_date={market['mixed_date']}")
+    if market["status"] == "available":
+        cutoff_ok = (
+            market["lookahead_safe"] is True
+            and market["price_date"] <= market["information_cutoff"]
+            and (filing_time is None or filing_time[:10] <= market["information_cutoff"])
+        )
+        cutoff_detail = (
+            f"price {market['price_date']} <= cutoff {market['information_cutoff']}; "
+            f"filing {filing_time or 'unrecorded'}; mixed_date={market['mixed_date']}"
+        )
+    else:
+        cutoff_ok = market.get("price") is None and bool(market.get("reason"))
+        cutoff_detail = (
+            "no authorised observation is stored: the analysis reports unavailability "
+            "instead of substituting a synthetic or latest quote"
+        )
+    check("market-price cutoff safety", cutoff_ok, cutoff_detail)
     rejected = False
     try:
         regulatory.assert_comparable([

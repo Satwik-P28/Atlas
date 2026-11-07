@@ -1,36 +1,6 @@
 {
   "companies": [
     {
-      "cik": "0000320193",
-      "concepts": 31,
-      "evidence": 1543,
-      "filings": 35,
-      "identity_note": "primary ticker declared by coverage manifest (SEC lists multiple instruments)",
-      "issuer_id": "ISS-CIK0000320193",
-      "legal_name": "Apple Inc.",
-      "ticker": "AAPL"
-    },
-    {
-      "cik": "0001652044",
-      "concepts": 29,
-      "evidence": 1253,
-      "filings": 13,
-      "identity_note": "primary ticker declared by coverage manifest (SEC lists multiple instruments)",
-      "issuer_id": "ISS-CIK0001652044",
-      "legal_name": "Alphabet Inc.",
-      "ticker": "GOOGL"
-    },
-    {
-      "cik": "0001018724",
-      "concepts": 25,
-      "evidence": 1595,
-      "filings": 24,
-      "identity_note": "primary ticker declared by coverage manifest (SEC lists multiple instruments)",
-      "issuer_id": "ISS-CIK0001018724",
-      "legal_name": "AMAZON COM INC",
-      "ticker": "AMZN"
-    },
-    {
       "cik": "0000019617",
       "concepts": 22,
       "evidence": 969,
@@ -49,12 +19,22 @@
       "issuer_id": "ISS-CIK0000886982",
       "legal_name": "GOLDMAN SACHS GROUP INC",
       "ticker": "GS"
+    },
+    {
+      "cik": "0000731766",
+      "concepts": 28,
+      "evidence": 1234,
+      "filings": 24,
+      "identity_note": "primary ticker declared by coverage manifest (SEC lists multiple instruments)",
+      "issuer_id": "ISS-CIK0000731766",
+      "legal_name": "UNITEDHEALTH GROUP INC",
+      "ticker": "UNH"
     }
   ],
   "coverage_note": "Retained SEC facts begin in 2018; all annual/10-K observations and the 24 most recent sub-annual observations per unit are kept. Filing metadata is retained only for accessions that support those facts; pre-2018 filing archive files are not included. Market prices are absent. Ticker/exchange metadata in this manifest is a curated CIK-to-listing map; it is not a market feed, and SEC submissions remain the financial-fact source. This is a documented research window, not a claim of complete SEC history.",
-  "evidence": 6504,
-  "filings": 80,
-  "issuers": 5,
+  "evidence": 3266,
+  "filings": 32,
+  "issuers": 3,
   "price_coverage": "none",
   "schema": "atlas.phase9.coverage_build.v1",
   "source": "SEC EDGAR public domain",

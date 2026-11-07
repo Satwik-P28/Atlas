@@ -44,6 +44,8 @@ jobs:
         run: python scripts/audit_phase9_2_models.py --db var/phase9.db --out artifacts/phase9_2_model_audit.json
       - name: Independent Phase 9.1 audit
         run: python scripts/audit_phase9_1_models.py --db var/phase9.db --out artifacts/phase9_1_model_audit.json
+      - name: Portability of the committed fixtures
+        run: python scripts/verify_distributable_fixtures.py
 
   frontend:
     name: Frontend test, typecheck and build
@@ -83,7 +85,7 @@ jobs:
         run: python -m pytest tests/test_phase9_2_migrations.py tests/test_storage.py
 
   research-integrity:
-    name: Research and market-evidence integrity
+    name: Research, market-evidence and rights integrity
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -97,8 +99,99 @@ jobs:
         run: >-
           python -m pytest
           tests/test_phase9_2_1_market_integrity.py
+          tests/test_phase9_2_2_market_observations.py
+          tests/test_phase9_2_2_data_rights_fixtures.py
           tests/test_phase9_2_institutions.py
           tests/test_phase9_2_migrations.py
           tests/test_phase9_1_models.py
       - name: Deterministic application reproduction
         run: python scripts/reproduce_phase9_2.py
+      - name: No restricted market data is tracked
+        run: |
+          python - <<'PY'
+          import pathlib, sys
+          banned = ("nasdaq_", "alphavantage")
+          hits = [p.as_posix() for p in pathlib.Path("fixtures").rglob("*")
+                  if p.is_file() and any(token in p.name for token in banned)]
+          if hits:
+              print("restricted vendor market fixtures are tracked:", hits)
+              sys.exit(1)
+          print("no restricted vendor market fixtures are tracked")
+          PY
+
+  distributable-fixtures:
+    name: Clean-checkout reproducibility (committed fixtures only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e '.[dev,terminal]'
+      - name: Build the demo database from committed fixtures only
+        run: python scripts/build_terminal_db.py --db var/atlas.db --force
+      - name: Verify the distributable fixture contract
+        run: python scripts/verify_distributable_fixtures.py --require-demo-db
+      - name: Export and reproduce a research package on a second clean database
+        run: python scripts/verify_clean_install.py --demo-db var/atlas.db
+
+  browser-e2e:
+    name: Browser acceptance (Playwright, Ubuntu runner)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ATLAS_BASE: http://127.0.0.1:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install backend and frontend dependencies
+        run: |
+          python -m pip install -e '.[dev,terminal]'
+          cd web && npm ci
+      - name: Provision the reference database from committed fixtures
+        run: |
+          python scripts/build_phase9_db.py --db var/phase9.db --force
+          python scripts/fetch_phase9_2_regulatory.py --db var/phase9.db
+          python scripts/import_fr_y9c.py --db var/phase9.db --cik 19617 --entity REG-JPM-PARENT --retrieved-at 2026-11-06T20:00:00Z
+          python scripts/import_phase9_2_prices.py --db var/phase9.db
+      - name: Build the terminal
+        run: cd web && npm run build
+      - name: Install Chromium
+        run: cd web && npx playwright install --with-deps chromium
+      - name: Start the API and static terminal
+        run: |
+          python -m atlas.cli --db var/phase9.db serve --port 3000 > /tmp/atlas-serve.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3000/api/health > /dev/null; then
+              echo "server ready after ${attempt}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "server did not become ready"; cat /tmp/atlas-serve.log; exit 1
+      - name: Run the Phase 9.2 browser journeys (desktop and 390x844)
+        run: |
+          cd web
+          node e2e/phase9_2.mjs 2>&1 | tee /tmp/phase9_2_browser.log
+      - name: Upload browser artifacts and server log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-failure
+          path: |
+            artifacts/phase9_2_browser.json
+            artifacts/phase9_2_failure.png
+            artifacts/phase9_2_final_mobile.png
+            /tmp/phase9_2_browser.log
+            /tmp/atlas-serve.log
+          if-no-files-found: ignore

@@ -1,0 +1,13 @@
+{
+  "synthetic": true,
+  "note": "Generated fixture for dividend-action tests. Not a real corporate action.",
+  "data": [
+    {
+      "ex_dividend_date": "2024-12-06",
+      "amount": "0.2500",
+      "declaration_date": "2024-11-20",
+      "record_date": "2024-12-09",
+      "payment_date": "2024-12-20"
+    }
+  ]
+}

@@ -177,15 +177,64 @@ def parse_dividends(
     return actions
 
 
-def load_archived(directory: str | Path, *, security_id: str, mic: str) -> dict[str, Any]:
-    """Load the three archived Alpha Vantage documents from ``directory``."""
+def load_archived(
+    directory: str | Path,
+    *,
+    security_id: str,
+    mic: str,
+    source_id: str = ALPHAVANTAGE_SOURCE,
+    daily_filename: str = "daily_bars_alphavantage.json",
+    dividends_filename: str = "dividends_alphavantage.json",
+    splits_filename: str = "splits_alphavantage.json",
+) -> dict[str, Any]:
+    """Load three archived vendor documents that the *caller* retained lawfully.
+
+    Atlas no longer ships vendor market archives: redistribution of a vendor feed is not
+    ours to grant. A user who holds an entitlement points this adapter at their own files;
+    the filenames are explicit so nothing is discovered by guesswork.
+    """
     base = Path(directory)
-    daily = json.loads((base / "ibm_daily_alphavantage.json").read_text())
-    dividends = json.loads((base / "ibm_dividends_alphavantage.json").read_text())
-    splits = json.loads((base / "ibm_splits_alphavantage.json").read_text())
+    daily = json.loads((base / daily_filename).read_text())
+    dividends = json.loads((base / dividends_filename).read_text())
+    splits = json.loads((base / splits_filename).read_text())
     return {
-        "bars": parse_daily(daily, security_id=security_id, mic=mic),
-        "actions": parse_splits(splits, security_id=security_id)
-        + parse_dividends(dividends, security_id=security_id),
+        "bars": parse_daily(daily, security_id=security_id, mic=mic, source_id=source_id),
+        "actions": parse_splits(splits, security_id=security_id, source_id=source_id)
+        + parse_dividends(dividends, security_id=security_id, source_id=source_id),
         "meta": daily.get("Meta Data", {}),
+        "synthetic": False,
+    }
+
+
+def load_synthetic_fixture(
+    directory: str | Path,
+    *,
+    security_id: str,
+    mic: str,
+    source_id: str = "synthetic-market-fixture",
+) -> dict[str, Any]:
+    """Load the project-authored synthetic fixture through the provider-shaped parsers.
+
+    The values are generated, not observed. The loader refuses a payload that is not
+    explicitly labelled synthetic so a real vendor file can never be relabelled by
+    accident, and the returned payload says ``synthetic: True`` so callers can label the
+    UI and any export.
+    """
+    base = Path(directory)
+    daily = json.loads((base / "synthetic_daily_bars.json").read_text())
+    dividends = json.loads((base / "synthetic_dividends.json").read_text())
+    splits = json.loads((base / "synthetic_splits.json").read_text())
+    meta = daily.get("Meta Data") or {}
+    if str(meta.get("6. Synthetic", "")).lower() != "true":
+        raise ValidationError(
+            "synthetic fixture is not labelled synthetic; refusing to ingest it as generated data"
+        )
+    if (dividends.get("synthetic") is not True) or (splits.get("synthetic") is not True):
+        raise ValidationError("synthetic corporate-action fixtures must declare synthetic=true")
+    return {
+        "bars": parse_daily(daily, security_id=security_id, mic=mic, source_id=source_id),
+        "actions": parse_splits(splits, security_id=security_id, source_id=source_id)
+        + parse_dividends(dividends, security_id=security_id, source_id=source_id),
+        "meta": meta,
+        "synthetic": True,
     }
