@@ -24,6 +24,7 @@ from ..core.temporal import iso, iso_date, parse_date, utcnow
 from ..entities.master import SecurityMaster
 from ..market.bars import ADJUSTMENT_RAW, Bar, BarStore
 from ..storage.db import Database
+from . import rights as data_rights
 from .observations import (
     PIN_STATUS_EXACT,
     observation_from_row,
@@ -53,9 +54,18 @@ POLICY_LABELS = {
     "pinned": "The exact revision recorded by a saved observation pin",
 }
 
-ALLOWED_REDISTRIBUTION = {"public_domain", "user_responsibility", "restricted", "private"}
-EXPORTABLE_REDISTRIBUTION = {"public_domain"}
+ALLOWED_REDISTRIBUTION = set(data_rights.INGESTIBLE)
+EXPORTABLE_REDISTRIBUTION = set(data_rights.EXPORTABLE)
 SUPPORTED_ADJUSTMENT_SEMANTICS = {"unadjusted", "raw"}
+
+#: Historical-identity states for a session inside a price batch. A session is only
+#: trusted market history when one of the two positive states applies.
+IDENTITY_VERIFIED = "verified_assignment"
+IDENTITY_BACKFILL = "source_backfill"
+IDENTITY_AMBIGUOUS = "ambiguous"
+IDENTITY_CONFLICT = "known_conflicting_identity"
+IDENTITY_UNSUPPORTED = "unsupported_identity"
+TRUSTED_IDENTITY_STATES = {IDENTITY_VERIFIED, IDENTITY_BACKFILL}
 
 
 class PriceImportError(ValueError):
@@ -189,6 +199,50 @@ def _resolve_security(
     )
 
 
+def _backfill_verdict(
+    basis: Mapping[str, Any] | None,
+    *,
+    security_id: str,
+    mic: str,
+    day: str,
+) -> tuple[dict[str, Any] | None, str]:
+    """Validate an operator's source-backed historical identity basis.
+
+    A backfill is only credible when it names the same security and venue, supplies a
+    permanent identifier that equals the stored security identity, cites the source record
+    that establishes the mapping, names who established it, and covers the session. A
+    current ticker is never accepted as evidence about the past.
+    """
+    if not isinstance(basis, Mapping) or not basis:
+        return None, "no_verified_identity_basis"
+    if str(basis.get("security_id") or "") != security_id:
+        return None, "backfill_basis_names_another_security"
+    if str(basis.get("venue") or "").upper() != mic.upper():
+        return None, "backfill_basis_names_another_venue"
+    permanent = str(basis.get("permanent_identifier") or "").strip()
+    if not permanent or permanent != security_id:
+        return None, "backfill_basis_lacks_a_matching_permanent_identifier"
+    if not str(basis.get("evidence") or "").strip():
+        return None, "backfill_basis_cites_no_source_record"
+    if not str(basis.get("established_by") or "").strip():
+        return None, "backfill_basis_has_no_accountable_author"
+    applies = basis.get("applies_to")
+    if isinstance(applies, (list, tuple, set)) and applies and str(sorted(applies)[0]) not in {"all", "*"}:
+        covered = {str(item)[:10] for item in applies}
+        if day not in covered:
+            return None, "backfill_basis_does_not_cover_this_session"
+    return {
+        "state": IDENTITY_BACKFILL,
+        "permanent_identifier": permanent,
+        "venue": mic.upper(),
+        "evidence": str(basis["evidence"]).strip(),
+        "established_by": str(basis["established_by"]).strip(),
+        "established_at": str(basis.get("established_at") or "").strip() or None,
+        "mapping_basis": "source_backed_historical_backfill",
+        "distinct_from_live_assignment": True,
+    }, ""
+
+
 def _validate_batch_sessions(
     master: SecurityMaster,
     *,
@@ -197,25 +251,34 @@ def _validate_batch_sessions(
     mic: str,
     listing: Mapping[str, Any],
     sessions: Iterable[str],
+    backfill_basis: Mapping[str, Any] | None = None,
+    identity_pinned: bool = False,
 ) -> dict[str, Any]:
-    """Confirm every observation belongs to the intended security for its own session.
+    """Classify the historical identity of every session in a price batch.
 
-    Resolving a ticker once at a declared ``as_of`` date is not enough for a multi-session
-    batch: a ticker can be reused, an issuer can migrate venue, or a listing can end in the
-    middle of the requested range. Each distinct session is re-resolved, and a batch whose
-    sessions do not all belong to exactly one security and venue is rejected rather than
-    having its rows distributed across guessed identities.
+    Resolving a ticker once at a declared ``as_of`` date cannot establish what a ticker
+    meant on an arbitrary past session. Each distinct session is re-resolved and classified:
+
+    ``verified_assignment``
+        The session falls inside this security's active listing/ticker assignment.
+    ``source_backfill``
+        No live assignment covers the session, but the operator supplied a verifiable
+        source-backed basis (permanent identifier, venue, evidence record, author).
+    ``ambiguous``
+        No assignment and no verified basis. The rows are quarantined, not stored.
+    ``known_conflicting_identity``
+        The session resolves to a different security altogether. The batch is rejected as a
+        cross-identity contamination rather than split by guesswork.
     """
     days = sorted({str(item)[:10] for item in sessions})
     valid_from = str(listing.get("valid_from") or "")[:10]
     valid_to = str(listing.get("valid_to") or "")[:10]
-    problems: list[dict[str, Any]] = []
     advisories: list[dict[str, Any]] = []
-    unassigned: list[str] = []
+    verified: list[str] = []
+    backfills: list[dict[str, Any]] = []
+    quarantined: list[dict[str, Any]] = []
+    conflicts: list[dict[str, Any]] = []
     for day in days:
-        # A listing record created after the sessions it describes is common for a
-        # backfill; that is reported, not fatal. What *is* fatal is a session that does
-        # not resolve to the declared security at all (reuse, migration, delisting).
         if valid_from and day < valid_from:
             advisories.append(
                 {"session": day, "reason": "session_before_listing_valid_from",
@@ -232,42 +295,78 @@ def _validate_batch_sessions(
             if candidate.security_id == security_id
             and (candidate.mic or "").upper() == mic.upper()
         ]
-        if len(matches) == 1:
-            continue
-        # A session that resolves to a *different* security is cross-identity
-        # contamination: those rows would be filed against the wrong issuer, so the batch
-        # is rejected. A session with no active assignment window at all is a historical
-        # backfill against a record created later; that is reported explicitly rather than
-        # silently accepted or silently reassigned.
-        other = {candidate.security_id for candidate in resolution.candidates} - {security_id}
-        if other:
-            problems.append(
+        others = {candidate.security_id for candidate in resolution.candidates} - {security_id}
+        if matches and others and not identity_pinned:
+            conflicts.append(
+                {
+                    "session": day,
+                    "reason": "ticker_is_assigned_to_more_than_one_security",
+                    "other_security_ids": sorted(others),
+                    "candidates": [candidate.to_dict() for candidate in resolution.candidates],
+                }
+            )
+        elif len(matches) == 1:
+            verified.append(day)
+        elif others:
+            conflicts.append(
                 {
                     "session": day,
                     "reason": "session_resolves_to_a_different_security",
-                    "other_security_ids": sorted(other),
+                    "other_security_ids": sorted(others),
                     "candidates": [candidate.to_dict() for candidate in resolution.candidates],
                 }
             )
         else:
-            unassigned.append(day)
-    if problems:
+            basis, reason = _backfill_verdict(
+                backfill_basis, security_id=security_id, mic=mic.upper(), day=day
+            )
+            if basis is not None:
+                backfills.append({"session": day, **basis})
+            else:
+                quarantined.append(
+                    {
+                        "session": day,
+                        "state": IDENTITY_AMBIGUOUS,
+                        "reason": reason,
+                        "required": (
+                            "supply backfill_basis naming the permanent identifier, venue and "
+                            "source record that establish this session's security"
+                        ),
+                    }
+                )
+    if conflicts:
         raise PriceImportError(
-            f"price batch spans {len(problems)} session(s) that do not resolve to the requested "
-            f"security {security_id} on {mic.upper()}; split the batch by identity or pin "
-            f"security_id and mic explicitly: {problems[0]}"
+            f"price batch spans {len(conflicts)} session(s) whose ticker resolves to a "
+            f"different security than {security_id} on {mic.upper()}; split the batch by "
+            f"identity or pin security_id and mic explicitly: {conflicts[0]}"
         )
+    states = {
+        IDENTITY_VERIFIED: len(verified),
+        IDENTITY_BACKFILL: len(backfills),
+        IDENTITY_AMBIGUOUS: len(quarantined),
+        IDENTITY_CONFLICT: len(conflicts),
+        IDENTITY_UNSUPPORTED: 0,
+    }
     return {
         "sessions_checked": len(days),
         "first_session": days[0],
         "last_session": days[-1],
         "security_id": security_id,
         "mic": mic.upper(),
-        "identity_basis": "per_session_ticker_resolution",
+        "identity_basis": "per_session_ticker_resolution_with_source_backfill",
+        "identity_states": states,
+        "trusted_sessions": len(verified) + len(backfills),
+        "verified_sessions": verified,
+        "backfill_sessions": backfills,
+        "quarantined_sessions": quarantined,
+        "unassigned_sessions": [item["session"] for item in quarantined],
         "listing_validity_advisories": advisories,
-        "unassigned_sessions": unassigned,
+        "policy": (
+            "A session enters trusted market history only inside a live assignment window or "
+            "under a source-backed historical backfill. An unverified session is quarantined; "
+            "its rows are not stored, and no current ticker is assumed to describe the past."
+        ),
     }
-
 
 def import_price_series(
     db: Database,
@@ -286,6 +385,7 @@ def import_price_series(
     security_id: str | None = None,
     mic: str | None = None,
     as_of: str | None = None,
+    backfill_basis: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Import observed closes for one security without destroying other sources.
 
@@ -294,10 +394,16 @@ def import_price_series(
     Identical replay is idempotent, while a changed value for the same source and session
     is appended as a new revision with ``supersedes_bar`` pointing to its predecessor.
     """
-    if redistribution not in ALLOWED_REDISTRIBUTION:
+    rights_decision = data_rights.classify(
+        redistribution, copyright_licence=licence, copyright_holder=source_name
+    )
+    if not rights_decision["trusted"]:
         raise PriceImportError(
-            "redistribution terms must be one of " + ", ".join(sorted(ALLOWED_REDISTRIBUTION))
+            "market data rights must be a known redistribution class ("
+            + ", ".join(sorted(data_rights.INGESTIBLE))
+            + f"); an unknown or incomplete grant fails closed: {redistribution!r}"
         )
+    redistribution = rights_decision["redistribution"]
     if not str(source_name or "").strip() or not str(licence or "").strip():
         raise PriceImportError("a price import requires a source name and a licence")
     adjustment = str(adjustment_semantics or "").strip().lower()
@@ -401,7 +507,25 @@ def import_price_series(
         mic=resolved_mic,
         listing=listing,
         sessions=[bar.ts_utc for bar in prepared],
+        backfill_basis=backfill_basis,
+        identity_pinned=bool(security_id and mic),
     )
+    quarantined_days = {
+        item["session"] for item in session_identity["quarantined_sessions"]
+    }
+    if quarantined_days:
+        keep = [
+            index for index, bar in enumerate(prepared)
+            if str(bar.ts_utc)[:10] not in quarantined_days
+        ]
+        prepared = [prepared[index] for index in keep]
+        canonical_rows = [canonical_rows[index] for index in keep]
+        if not prepared:
+            raise PriceImportError(
+                "no session in this batch has a verified historical identity: "
+                + ", ".join(sorted(quarantined_days))
+                + "; supply a source-backed backfill basis or correct the batch"
+            )
 
     content_hash = hashlib.sha256(
         json.dumps(
@@ -521,6 +645,8 @@ def import_price_series(
         },
         "adjustment_semantics": adjustment,
         "session_identity": session_identity,
+        "quarantined": len(quarantined_days),
+        "rights": rights_decision,
         "authorization": {
             "automated_access_authorized": bool(automated_access_authorized),
             "authorization_basis": authorization_basis,

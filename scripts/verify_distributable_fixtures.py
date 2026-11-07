@@ -77,8 +77,22 @@ def check_market_manifest() -> dict:
     manifest = json.loads((MARKET / "manifest.json").read_text(encoding="utf-8"))
     if manifest.get("synthetic") is not True or manifest.get("contains_vendor_data") is not False:
         fail("fixtures/market/manifest.json must declare a synthetic, vendor-free dataset")
-    if manifest.get("redistribution") != "public_domain":
-        fail("the synthetic fixture must be redistributable as project-authored data")
+    from atlas.research import rights as data_rights
+
+    decision = data_rights.classify(
+        manifest.get("redistribution"),
+        copyright_licence=manifest.get("copyright_licence"),
+        copyright_holder=manifest.get("copyright_holder"),
+    )
+    if decision["redistribution"] != data_rights.PROJECT_AUTHORED:
+        fail(
+            "the synthetic fixture must be classified project_authored, not public_domain: "
+            "project authorship is a copyright licence, not a public-domain dedication"
+        )
+    if not decision["export_allowed"]:
+        fail("project-authored original fixtures must remain exportable")
+    if not manifest.get("copyright_licence"):
+        fail("project-authored fixtures must declare their copyright licence")
     if not manifest.get("authorization_basis"):
         fail("a redistributable fixture must state its authorization basis")
     for series in manifest["series"]:

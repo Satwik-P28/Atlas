@@ -1,12 +1,15 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
 import { useAsync } from '../state'
+import ObservationProvenance from '../components/ObservationProvenance'
 import { fmtCompact, fmtDate, fmtSignedPct, toneForNumber } from '../format'
 import Sparkline from '../components/Sparkline'
 import { Badge, DataStatusBadge, ErrorState, Loading, SectionHeader } from '../components/ui'
 
 export default function Markets() {
   const { data, error, loading, reload } = useAsync(() => api.markets(), [])
+  const [provenance, setProvenance] = useState<{ security_id: string; issuer_id: string; ticker: string | null } | null>(null)
 
   return (
     <div className="page">
@@ -40,6 +43,7 @@ export default function Markets() {
                   <th className="numeric">Volume</th>
                   <th>Session</th>
                   <th>Source</th>
+                  <th>Provenance</th>
                 </tr>
               </thead>
               <tbody>
@@ -71,6 +75,21 @@ export default function Markets() {
                     <td>
                       <DataStatusBadge status={item.data_status} source={item.data_status === 'reported' ? 'sec' : null} />
                     </td>
+                    <td>
+                      <button
+                        className="button secondary"
+                        data-testid={`markettop-provenance-${item.ticker ?? item.security_id}`}
+                        onClick={() =>
+                          setProvenance({
+                            security_id: item.security_id,
+                            issuer_id: item.issuer_id,
+                            ticker: item.ticker,
+                          })
+                        }
+                      >
+                        Inspect
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -80,6 +99,15 @@ export default function Markets() {
               <span className="muted small">as of {fmtDate(data.as_of)}</span>
             </div>
           </div>
+
+          {provenance && (
+            <div style={{ marginTop: 12 }}>
+              <ObservationProvenance
+                securityId={provenance.security_id}
+                issuerId={provenance.issuer_id}
+              />
+            </div>
+          )}
 
           <div className="card-grid">
             {data.sources

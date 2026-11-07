@@ -1,4 +1,4 @@
-"""Immutable market-observation identity and exact-revision pinning.
+"""Immutable market-observation identity, provenance inspection and exact-revision pinning.
 
 A market observation is a *specific provider's* statement about one security, one
 listing venue and one trading session, at one revision. Provider, dataset, session and
@@ -40,6 +40,17 @@ PIN_STATUS_EXACT = "exact"
 PIN_STATUS_MISSING = "exact_revision_unavailable"
 PIN_STATUS_CONTENT_MISMATCH = "exact_revision_content_mismatch"
 PIN_STATUS_INVALID = "pin_invalid"
+
+DETAIL_SCHEMA = "atlas.market_observation.detail.v1"
+
+_OBSERVATION_SELECT = (
+    "SELECT b.security_id, b.mic, b.interval, b.ts_utc, b.revision_seq, b.open, b.high, "
+    "b.low, b.close, b.volume, b.currency, b.adjustment_status, b.source_id, b.observed_at, "
+    "b.ingested_at, b.supersedes_bar, s.name AS source_name, s.licence AS licence, "
+    "s.redistribution AS redistribution, s.kind AS source_kind "
+    "FROM bar b LEFT JOIN source s ON s.source_id = b.source_id "
+    "WHERE b.interval = '1d'"
+)
 
 
 def _canonical(payload: Mapping[str, Any]) -> str:
@@ -213,6 +224,117 @@ def pin_from_row(
         pin["close"] = observation["close"]
         pin["currency"] = observation["currency"]
     return pin
+
+
+def _row_observation(row: Mapping[str, Any]) -> dict[str, Any]:
+    record = dict(row)
+    return observation_from_row(
+        record,
+        source_name=record.get("source_name"),
+        dataset=record.get("source_name"),
+        licence=record.get("licence"),
+        redistribution=record.get("redistribution"),
+    )
+
+
+def observations_for_security(db: Database, security_id: str, *, limit: int = 200) -> list[dict[str, Any]]:
+    """Every stored revision for a security, newest session first.
+
+    Round-tripping the browse endpoint through :func:`observation_detail` exercises the
+    same identity computation, so a listed id always resolves back to its own row.
+    """
+    rows = db.query(
+        _OBSERVATION_SELECT + " AND b.security_id = ? ORDER BY b.ts_utc DESC, b.revision_seq DESC, b.source_id ASC LIMIT ?",
+        (security_id, int(limit)),
+    )
+    return [_row_observation(row) for row in rows]
+
+
+def observation_detail(db: Database, observation_id: str) -> dict[str, Any] | None:
+    """Return one observation's provenance, its revision chain and provider conflicts.
+
+    The lookup recomputes identity from the stored row rather than trusting a supplied id,
+    so the detail can never describe a different row than the one it names.
+    """
+    target = None
+    for row in db.query(_OBSERVATION_SELECT):
+        candidate = _row_observation(row)
+        if candidate["observation_id"] == observation_id:
+            target = (candidate, row)
+            break
+    if target is None:
+        return None
+    observation, row = target
+    revisions = [
+        _row_observation(item)
+        for item in db.query(
+            _OBSERVATION_SELECT + " AND b.security_id = ? AND b.mic = ? AND b.ts_utc = ? "
+            "AND b.source_id = ? ORDER BY b.revision_seq DESC",
+            (observation["security_id"], observation["mic"], observation["session"], observation["source_id"]),
+        )
+    ]
+    conflicts = [
+        _row_observation(item)
+        for item in db.query(
+            _OBSERVATION_SELECT + " AND b.security_id = ? AND b.ts_utc = ? "
+            "AND b.revision_seq = (SELECT MAX(b2.revision_seq) FROM bar b2 WHERE "
+            "b2.security_id = b.security_id AND b2.mic = b.mic AND b2.interval = b.interval "
+            "AND b2.ts_utc = b.ts_utc AND b2.source_id = b.source_id) "
+            "ORDER BY b.source_id, b.mic",
+            (observation["security_id"], observation["session"]),
+        )
+        if item["source_id"] != observation["source_id"]
+    ]
+    closes = {round(float(observation["close"]), 10)} | {round(float(item["close"]), 10) for item in conflicts}
+    redistribution = str(observation.get("redistribution") or "unknown")
+    return {
+        "schema": DETAIL_SCHEMA,
+        "observation": observation,
+        "security": {
+            "security_id": observation["security_id"],
+            "mic": observation["mic"],
+            "listing_identity": f"{observation['security_id']}@{observation['mic']}",
+        },
+        "source": {
+            "source_id": observation["source_id"],
+            "name": observation.get("source_name"),
+            "dataset": observation.get("dataset"),
+            "kind": dict(row).get("source_kind"),
+            "licence": observation.get("licence"),
+            "redistribution": redistribution,
+            "export_allowed": redistribution in {"public_domain", "project_authored", "permitted"},
+        },
+        "session": {
+            "session": observation["session"],
+            "session_date": observation["session_date"],
+            "adjustment": observation["adjustment"],
+            "revision_seq": observation["revision_seq"],
+            "observed_at": observation["observed_at"],
+            "ingested_at": observation["ingested_at"],
+            "supersedes_seq": observation["supersedes_seq"],
+        },
+        "identity": {
+            "observation_id": observation["observation_id"],
+            "content_hash": observation["content_hash"],
+            "recomputable": True,
+        },
+        "revisions": revisions,
+        "conflicts": conflicts,
+        "conflict_count": max(0, len(conflicts)),
+        "providers_disagree": len(closes) > 1,
+        "pin": pin_from_row(
+            row,
+            source_name=observation.get("source_name"),
+            dataset=observation.get("dataset"),
+            licence=observation.get("licence"),
+            redistribution=observation.get("redistribution"),
+        ),
+        "caveat": (
+            "This is one provider's stored end-of-day observation for one session, not an "
+            "exchange tick and not a point-in-time vendor vintage. A later correction is a "
+            "new revision; pinning preserves this one exactly."
+        ),
+    }
 
 
 def resolve_pinned(db: Database, pin: Mapping[str, Any]) -> dict[str, Any]:

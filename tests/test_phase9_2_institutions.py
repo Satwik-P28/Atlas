@@ -28,8 +28,19 @@ def live(tmp_path_factory):
         regulatory.ingest_fdic_payload(db, json.loads(fixture.read_text()))
     rows = [{"date": "2025-12-31", "open": 300, "high": 330, "low": 300, "close": 322.22, "volume": 1000},
             {"date": "2026-11-05", "open": 330, "high": 340, "low": 330, "close": 335.0, "volume": 1000}]
+    from atlas.entities.master import SecurityMaster
+    jpm_security = SecurityMaster(db).resolve_ticker("JPM").candidates[0].security_id
     import_price_series(db, ticker="JPM", rows=rows, source_name="test feed", licence="restricted test",
-                        redistribution="restricted", adjustment_semantics="unadjusted")
+                        redistribution="restricted", adjustment_semantics="unadjusted",
+                        security_id=jpm_security, mic="XNYS",
+                        backfill_basis={
+                            "security_id": jpm_security,
+                            "permanent_identifier": jpm_security,
+                            "venue": "XNYS",
+                            "evidence": "tests/test_phase9_2_institutions.py synthetic price fixture",
+                            "established_by": "Atlas test suite",
+                            "applies_to": "all",
+                        })
     yield db, path
     db.close()
 

@@ -35,5 +35,12 @@
       "sha256": "bce0571339a676b09d35439f0af4bb3c15dffdc65e8c7f9d6cf66d0b23366558",
       "synthetic": true
     }
-  ]
+  ],
+  "rights": {
+    "copyright_licence": "Apache-2.0",
+    "copyright_holder": "Atlas project authors",
+    "redistribution": "project_authored",
+    "public_domain_dedication": false,
+    "note": "Atlas authored these files and licenses them permissively; that is not a public-domain dedication."
+  }
 }

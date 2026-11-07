@@ -215,7 +215,7 @@
     "properties": [
       {
         "name": "atlas:revision",
-        "value": "ed327d10695dc9981b97ae6c30e1fd070f894e93"
+        "value": "96a398bbd2c68d8a7363efb4323958bb67afa7ec"
       },
       {
         "name": "atlas:dirty_worktree",
@@ -227,7 +227,7 @@
       }
     ]
   },
-  "serialNumber": "urn:atlas:sha256:109bd5118c9a96c41acb98d858e626e2",
+  "serialNumber": "urn:atlas:sha256:10cb8e0b48ac0b41594c1638816c9ed6",
   "specVersion": "1.5",
   "version": 1
 }

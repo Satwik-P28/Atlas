@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../api'
 import '../equity.css'
+import ObservationProvenance from '../components/ObservationProvenance'
 import { Badge, EmptyState, ErrorState, Loading, SectionHeader } from '../components/ui'
 
 type Row = Record<string, any>
@@ -313,6 +314,10 @@ export default function EquityResearch() {
             source_id: market.source_id ?? null,
             export_allowed: Boolean(market.export_allowed),
             price_included: false,
+            observation_pin: market.pin ?? null,
+            observation_id: market.observation_id ?? market.source_selection?.observation_id ?? null,
+            pin_status: market.pin_status ?? null,
+            exact_replay: market.exact_replay ?? null,
           } : null,
         },
       }
@@ -615,6 +620,25 @@ export default function EquityResearch() {
                 </div>
               )}                  <div className="card" data-testid="equity-market-context">
                     <h3>Market price and model comparison</h3>
+                    {(() => {
+                      const securityId =
+                        report?.valuation?.market?.pin?.security_id ??
+                        report?.valuation?.market?.source_selection?.observation?.security_id
+                      if (!securityId) return null
+                      return (
+                        <ObservationProvenance
+                          securityId={String(securityId)}
+                          issuerId={report?.company?.issuer?.issuer_id ?? selected}
+                          asOf={cutoff || undefined}
+                          replay={(pin) =>
+                            api.equityReport(selected ?? '', {
+                              as_of: cutoff || undefined,
+                              observation_pin: pin,
+                            })
+                          }
+                        />
+                      )
+                    })()}
                     {report?.valuation?.market?.status === 'available' ? (
                       <>
                         <p className="small">

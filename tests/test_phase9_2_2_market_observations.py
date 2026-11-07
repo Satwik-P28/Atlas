@@ -248,7 +248,7 @@ def test_batch_spanning_a_ticker_reassignment_is_rejected(db):
         second_listing, "TST", valid_from="2025-01-01", confidence=1.0,
         status="confirmed", source_id="sec-edgar",
     )
-    with pytest.raises(PriceImportError, match="do not resolve to the requested"):
+    with pytest.raises(PriceImportError, match="different security"):
         _import(
             db, close=10.0, as_of="2024-12-30",
             rows=[_row(10.0, day="2024-12-30"), _row(10.5, day="2025-01-02")],
@@ -256,20 +256,53 @@ def test_batch_spanning_a_ticker_reassignment_is_rejected(db):
     assert db.scalar("SELECT COUNT(*) FROM bar") == 0
 
 
-def test_session_outside_every_assignment_window_is_reported_not_reassigned(db):
-    """A backfill session with no assignment window is flagged, never given an identity."""
+def test_session_outside_every_assignment_window_is_quarantined(db):
+    """A session with no assignment window is never promoted into trusted history."""
     ensure_default_sources(db)
     master, _, security, first_listing = _identity(db)
     master.assign_ticker(
         first_listing, "TST", valid_from="2020-01-01", valid_to="2024-12-31",
         confidence=1.0, status="confirmed", source_id="sec-edgar",
     )
-    imported = _import(db, close=10.0, as_of="2024-12-31", rows=[_row(10.0, day="2026-06-01")])
-    assert imported["security_id"] == security
-    assert imported["session_identity"]["unassigned_sessions"] == ["2026-06-01"]
-    # The row still belongs to the declared security; no other identity was invented.
+    with pytest.raises(PriceImportError, match="no session in this batch has a verified"):
+        _import(db, close=10.0, as_of="2024-12-31", rows=[_row(10.0, day="2026-06-01")])
+    assert db.scalar("SELECT COUNT(*) FROM bar") == 0
+
+    basis = {
+        "security_id": security,
+        "permanent_identifier": security,
+        "venue": "XNYS",
+        "evidence": "tests: source-recorded listing history",
+        "established_by": "Atlas test suite",
+        "applies_to": "all",
+    }
+    imported = _import(
+        db, close=10.0, as_of="2024-12-31", rows=[_row(10.0, day="2026-06-01")],
+        backfill_basis=basis,
+    )
+    identity = imported["session_identity"]
+    assert identity["identity_states"]["source_backfill"] == 1
+    assert identity["backfill_sessions"][0]["session"] == "2026-06-01"
+    assert identity["backfill_sessions"][0]["distinct_from_live_assignment"] is True
     stored = db.query("SELECT security_id FROM bar")
     assert [row["security_id"] for row in stored] == [security]
+
+
+def test_unverified_sessions_are_dropped_while_verified_sessions_import(db):
+    ensure_default_sources(db)
+    master, _, security, first_listing = _identity(db)
+    master.assign_ticker(
+        first_listing, "TST", valid_from="2020-01-01", valid_to="2024-12-31",
+        confidence=1.0, status="confirmed", source_id="sec-edgar",
+    )
+    imported = _import(
+        db, close=10.0, as_of="2024-12-31",
+        rows=[_row(10.0, day="2024-12-30"), _row(10.5, day="2026-06-01")],
+    )
+    assert imported["written"] == 1
+    assert imported["quarantined"] == 1
+    assert imported["session_identity"]["quarantined_sessions"][0]["session"] == "2026-06-01"
+    assert db.scalar("SELECT COUNT(*) FROM bar") == 1
 
 
 def test_session_identity_is_recorded_on_a_successful_import(db):
@@ -282,5 +315,6 @@ def test_session_identity_is_recorded_on_a_successful_import(db):
     assert identity["sessions_checked"] == 2
     assert identity["first_session"] == DAY_ONE
     assert identity["last_session"] == DAY_TWO
-    assert identity["identity_basis"] == "per_session_ticker_resolution"
+    assert identity["identity_basis"] == "per_session_ticker_resolution_with_source_backfill"
+    assert identity["identity_states"]["verified_assignment"] == 2
     assert price_summary(db, security)["latest_session"] == DAY_TWO

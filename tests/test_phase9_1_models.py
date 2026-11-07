@@ -218,10 +218,23 @@ def test_price_import_requires_rights_and_produces_multiples(phase9):
         {"date": "2025-01-02", "close": 200.0},
         {"date": "2025-01-03", "close": 210.0},
     ]
+    from atlas.entities.master import SecurityMaster
+
+    master = SecurityMaster(phase9)
+    security_id = master.resolve_ticker(ticker).candidates[0].security_id
+    mic = str(master.listings(security_id)[0]["mic"])
     imported = import_price_series(
         phase9, ticker=ticker, rows=rows, source_name="Test feed",
         licence="test-only", redistribution="user_responsibility",
-        adjustment_semantics="unadjusted",
+        adjustment_semantics="unadjusted", security_id=security_id, mic=mic,
+        backfill_basis={
+            "security_id": security_id,
+            "permanent_identifier": security_id,
+            "venue": mic,
+            "evidence": "tests/test_phase9_1_models.py fixture series",
+            "established_by": "Atlas test suite",
+            "applies_to": "all",
+        },
     )
     assert imported["written"] == 2
     assert imported["source"]["export_allowed"] is False

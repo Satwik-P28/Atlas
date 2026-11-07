@@ -138,6 +138,12 @@ class ScenarioRequest(DcfRequest):
     custom: dict[str, dict[str, Any]] | None = None
 
 
+class MarketReplayRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    pin: dict[str, Any]
+    information_cutoff: str | None = None
+
+
 class EquityReportRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     assumptions: dict[str, Any] = Field(default_factory=dict)
@@ -145,6 +151,7 @@ class EquityReportRequest(BaseModel):
     mode: str | None = None
     target_price: float | None = Field(default=None, gt=0)
     method: str | None = Field(default=None, max_length=80)
+    observation_pin: dict[str, Any] | None = None
 
 
 class EquityPackageRequest(EquityReportRequest):
@@ -819,6 +826,60 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
             "as_of": as_of,
             "schema": read_models.TERMINAL_SCHEMA,
         }
+
+    @app.get("/api/securities/{security_id}/observations", tags=["market"])
+    def security_observations(
+        security_id: str,
+        limit: int = Query(default=100, ge=1, le=500),
+        db: Database = Depends(get_db),
+    ) -> dict[str, Any]:
+        from ..research.observations import observations_for_security
+
+        items = observations_for_security(db, security_id, limit=limit)
+        return {
+            "schema": "atlas.market_observation.list.v1",
+            "security_id": security_id,
+            "count": len(items),
+            "items": items,
+        }
+
+    @app.post("/api/market/replay", tags=["market"])
+    def market_replay(body: MarketReplayRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
+        from ..research.prices import price_for_pin
+
+        return price_for_pin(
+            db, body.pin, information_cutoff=body.information_cutoff
+        )
+
+    @app.get("/api/market/observations/{observation_id}/replay", tags=["market"])
+    def market_observation_replay(
+        observation_id: str,
+        as_of: str | None = None,
+        db: Database = Depends(get_db),
+    ) -> dict[str, Any]:
+        from ..research.observations import observation_detail
+        from ..research.prices import price_for_pin
+
+        detail = observation_detail(db, observation_id)
+        if detail is None:
+            raise HTTPException(
+                status_code=404, detail=f"no stored market observation {observation_id}"
+            )
+        return price_for_pin(db, detail["pin"], information_cutoff=as_of)
+
+    @app.get("/api/market/observations/{observation_id}", tags=["market"])
+    def market_observation(
+        observation_id: str, db: Database = Depends(get_db)
+    ) -> dict[str, Any]:
+        from ..research.observations import observation_detail
+
+        detail = observation_detail(db, observation_id)
+        if detail is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"no stored market observation {observation_id}",
+            )
+        return detail
 
     # -------------------------------------------------------------- indicators
     @app.get("/api/indicators", tags=["indicators"])
@@ -1560,6 +1621,7 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
         return EquityResearchService(db).analyse(
             identifier, assumptions=body.assumptions, as_of=body.as_of, mode=body.mode,
             target_price=body.target_price, method=body.method,
+            observation_pin=body.observation_pin,
         )
 
     @app.get("/api/equity/{identifier}/valuation", tags=["equity"])

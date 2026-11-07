@@ -1,11 +1,11 @@
 {
   "dirty_worktree": true,
-  "file_count": 481,
+  "file_count": 485,
   "files": [
     {
-      "bytes": 7222,
+      "bytes": 7855,
       "path": ".github/workflows/ci.yml",
-      "sha256": "a08abbace0059baa2463ec10efbb73af75c524a5f5db153c1df229aa76f31a85"
+      "sha256": "ac8457c9ccc0096ae3d1722a95558e08224d49296e47dc732a6407c4da24532a"
     },
     {
       "bytes": 342,
@@ -868,9 +868,9 @@
       "sha256": "bce0571339a676b09d35439f0af4bb3c15dffdc65e8c7f9d6cf66d0b23366558"
     },
     {
-      "bytes": 2020,
+      "bytes": 2542,
       "path": "fixtures/market/manifest.json",
-      "sha256": "3a73e14cdd08973e1065124f89f987db5819b4c7f6754479ac175ecc1fcac061"
+      "sha256": "288a1aa972dce308b351d617c7d73170d811f8dda9277f133e6f3fae40ac6c11"
     },
     {
       "bytes": 2095,
@@ -883,9 +883,9 @@
       "sha256": "51af268749f8b9ad4956815adf91ce16c7e672686683768977024894387c62ea"
     },
     {
-      "bytes": 1276,
+      "bytes": 1577,
       "path": "fixtures/market/synthetic_manifest.json",
-      "sha256": "6429bdd1ed0e59a2cd4d79c43db876ef48ae1417b6af62ec5b2f379d2c256b8b"
+      "sha256": "b4ce9b8d316cbd6dc2d3061a3fd40c79e8343baf918b5b75a4fac1291e766d2f"
     },
     {
       "bytes": 501,
@@ -1358,9 +1358,9 @@
       "sha256": "96a2e448fe4045263e99ac1713565f35346016c0e92ce2fb80676f4be8b70d8d"
     },
     {
-      "bytes": 14347,
+      "bytes": 14350,
       "path": "scripts/build_terminal_db.py",
-      "sha256": "444ac947df3bf2d5c491f98c26f0bfc784cbb915ff0876e0a79810393b9d5c1c"
+      "sha256": "ca509eae55ee5cf08d684c35509a5bbd5353f98be7470b61fcb9aed5cba8a547"
     },
     {
       "bytes": 4492,
@@ -1388,9 +1388,9 @@
       "sha256": "4c3a7c0ecfe8a03df87eef5714283a7a2ff4735f12357633fabdec171268c1f6"
     },
     {
-      "bytes": 8091,
+      "bytes": 8154,
       "path": "scripts/import_phase9_2_prices.py",
-      "sha256": "4e38cf25f3076245a0822b16f0a1ca843f42a0a45d572160394c23ca446e4d8a"
+      "sha256": "7b43eeddebbbc2780a418738142fe394787c3d385432e8f482b3b98f68387798"
     },
     {
       "bytes": 4093,
@@ -1408,9 +1408,9 @@
       "sha256": "afd381947ea68fdd0c0e8384cebc5b697e54a7e7510ba56883444551273983b8"
     },
     {
-      "bytes": 7208,
+      "bytes": 7830,
       "path": "scripts/verify_distributable_fixtures.py",
-      "sha256": "88d786a8f7c68bc2809d2db7f4ff03638c3c6f527a0e56ef13f16444d0b13c60"
+      "sha256": "1a2dadc2c399d427dfae395c8487ba2cbb9c915ed72e987f62e4f3c82f819574"
     },
     {
       "bytes": 1217,
@@ -1833,9 +1833,9 @@
       "sha256": "ef8959bc155a87573b2b02fd81b3d1396a56f5406d4e9ec017f31f770d722837"
     },
     {
-      "bytes": 119288,
+      "bytes": 123496,
       "path": "src/atlas/research/equity.py",
-      "sha256": "af6ee9e5a55cbd6efb7c372d790ea4cde306436b90551db5ea9c236e8303baf7"
+      "sha256": "71be46279cd5e6578968252e9218e4055b97158f37b162d180c63f570c4d65e2"
     },
     {
       "bytes": 28206,
@@ -1853,19 +1853,24 @@
       "sha256": "6478d38793d3454e89a02d51767f2a2e88c13f8c0c9afa22b2e2e831eef63f1a"
     },
     {
-      "bytes": 11520,
+      "bytes": 16798,
       "path": "src/atlas/research/observations.py",
-      "sha256": "6a549184e384f5b6445ef1eacda327bca971efb99ce5a213e5be618c0708b2ed"
+      "sha256": "67c21fdebf59d0f62da6d4c3f5f0cc73781445e7851b096bcee37244547b26e7"
     },
     {
-      "bytes": 46123,
+      "bytes": 51648,
       "path": "src/atlas/research/prices.py",
-      "sha256": "f09729bc28d63d1fcc5168eb583e7538ecf54a529a8484999c355237ff4fdd0c"
+      "sha256": "e4bde09e0b4d5f655928911ef679506b95b8cdfe6e3633206a68384f2ae4e466"
     },
     {
       "bytes": 23841,
       "path": "src/atlas/research/regulatory.py",
       "sha256": "8744973d4ba8cecda5c99fc31544f15e38549714cc581d81aa452f50fcedcc21"
+    },
+    {
+      "bytes": 5592,
+      "path": "src/atlas/research/rights.py",
+      "sha256": "31bd6a11ca84bc81be796a13cbe752707cba7c7198758b06116f65288032ac8d"
     },
     {
       "bytes": 13033,
@@ -1908,9 +1913,9 @@
       "sha256": "a26709f7de0d9967ffafcf3b82ebe46d77219eee7b4870b4b6acecd4bae1369b"
     },
     {
-      "bytes": 81632,
+      "bytes": 83949,
       "path": "src/atlas/terminal/api.py",
-      "sha256": "b0019d3a9ac50c345eaa2745ed2b6bdcefb22bbc447b1f1d975111e7c3816b86"
+      "sha256": "12d04e3d30b6c08da39fcd1737b68767997225a757d0111f0d28f575c54c4d81"
     },
     {
       "bytes": 4149,
@@ -2088,9 +2093,9 @@
       "sha256": "237fb49ae561065733abbe452757e55fc8436020da53f36113f4ecee313fe114"
     },
     {
-      "bytes": 12135,
+      "bytes": 12693,
       "path": "tests/test_phase9_1_models.py",
-      "sha256": "2a307737b5a0a95656e4d441cf3d8db4feaf2272d5bea150bda1f70477ef8cd7"
+      "sha256": "ecb6fd9ba537cd2796cca2ad08ed6614ae8dd449aa476c3d0bc6e76055ad01e5"
     },
     {
       "bytes": 9601,
@@ -2098,14 +2103,19 @@
       "sha256": "e9bd34dd537851f4bff0ef497d6ca8ada70ded977d7763bd6bf0e8226ca6b849"
     },
     {
-      "bytes": 6527,
+      "bytes": 6627,
       "path": "tests/test_phase9_2_2_data_rights_fixtures.py",
-      "sha256": "f9051d2f1e25fab95660361d1fc3270a96f803ea4b5494f27875c4fa57b3f765"
+      "sha256": "9b9080aa296e918432ca49c51f7778fa72ecfd1f47e21dd0e4420e13da3186e6"
     },
     {
-      "bytes": 12740,
+      "bytes": 14098,
       "path": "tests/test_phase9_2_2_market_observations.py",
-      "sha256": "22145aa2ae952beb7a5dd3cb6ba6ebc83096efa69c7e2e71e388ecfb93d112d4"
+      "sha256": "1a66a721b70a22d590309327566693205a72ea3ffa22bd1ededcae0edd530bbc"
+    },
+    {
+      "bytes": 13636,
+      "path": "tests/test_phase9_2_3_acceptance.py",
+      "sha256": "812341ea9cbdd229a73238017eff3b174801fa46058799610ab607d56180f765"
     },
     {
       "bytes": 7890,
@@ -2113,9 +2123,9 @@
       "sha256": "076065314b10298a6ef0918706dfc8c6316ccb8fd8da7e52c3fcd00a783e8582"
     },
     {
-      "bytes": 12383,
+      "bytes": 13038,
       "path": "tests/test_phase9_2_institutions.py",
-      "sha256": "96543cf2c76cea7b9878dcd5277203f19dd320676e1a548f617eaf0e06df8aaa"
+      "sha256": "6626e5215fc829d5a9fed7e37d28dcf08c88df46a318de94637c700d2b716d0f"
     },
     {
       "bytes": 3836,
@@ -2198,9 +2208,14 @@
       "sha256": "4db78f933a905cbc6a8836918111ca0e5e4ab0b62028832ba27b3c286a97c27b"
     },
     {
-      "bytes": 17961,
-      "path": "web/e2e/phase9_2.mjs",
-      "sha256": "a3c59b77fdba15f683aa8b23c91dd616e9a5014674a4c849ccdd8ddd91ab3b8d"
+      "bytes": 14825,
+      "path": "web/e2e/phase9_2_jpm.mjs",
+      "sha256": "d3485218625203ed84e7d9626332dcb733ac3e8bd21ffd899895b8da0a72a4c1"
+    },
+    {
+      "bytes": 10603,
+      "path": "web/e2e/phase9_2_market.mjs",
+      "sha256": "f6198ba89168979401ae03a69e38e8a208b938f954117c358c39b88849c05f49"
     },
     {
       "bytes": 7575,
@@ -2228,9 +2243,9 @@
       "sha256": "1b5123a3c595b7c45034cfcfc357dc4a3fa6d6e4fc2ffed40420f20dc2e8686b"
     },
     {
-      "bytes": 20744,
+      "bytes": 21290,
       "path": "web/src/api.ts",
-      "sha256": "1e947f933b64b49deee4cea3e991f996c874555b762e961b785b59a9ae88a31c"
+      "sha256": "6300b3cce1561238ab880840d05dca6d1fe4caaf250d3d64348d00faf97ce8ce"
     },
     {
       "bytes": 5820,
@@ -2256,6 +2271,11 @@
       "bytes": 3885,
       "path": "web/src/components/MetricGrid.tsx",
       "sha256": "7339703b1b8d9aa366b03ae6ae6d3626721b5d58b731fa2660dabdd675ff97ed"
+    },
+    {
+      "bytes": 14827,
+      "path": "web/src/components/ObservationProvenance.tsx",
+      "sha256": "5ad9bf9bbf2b6b6c77abd5ac0f3ded5ae3b07042a02e15f6c2cdfb71b9598fe3"
     },
     {
       "bytes": 8532,
@@ -2323,9 +2343,9 @@
       "sha256": "d9b01ff8d9981b314bd37cf9d6e4744d1c3303afbb54f83b2e76c8e93087ec33"
     },
     {
-      "bytes": 39428,
+      "bytes": 40669,
       "path": "web/src/pages/EquityResearch.tsx",
-      "sha256": "9cde88258e8d776a15be0784f03865217abdf2dab55ca6529b939c39ff4e93d6"
+      "sha256": "f4f748cb18ebb2a5e37d3b85e2ea0ca04507ac86423a5179777977f79aa26908"
     },
     {
       "bytes": 39757,
@@ -2343,9 +2363,9 @@
       "sha256": "e3acb6264084720efba1737d044c835ff18182f82f920d30f9b5fcc7b95cfcdf"
     },
     {
-      "bytes": 4658,
+      "bytes": 5803,
       "path": "web/src/pages/Markets.tsx",
-      "sha256": "8d50849b9714af0ebe50ed515ef8164d4c863f085af5f8e9e08f959e0226a32d"
+      "sha256": "9e24e5d3e23fdedb61358d5bd402c66cc1a07dfd29876dc04d9bfceaf32b1ba5"
     },
     {
       "bytes": 6228,
@@ -2413,8 +2433,8 @@
   "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
   "project": "atlas-quant",
   "python": "3.12.3",
-  "revision": "ed327d10695dc9981b97ae6c30e1fd070f894e93",
+  "revision": "96a398bbd2c68d8a7363efb4323958bb67afa7ec",
   "schema": "atlas.release_manifest.v1",
   "signature": null,
-  "total_bytes": 33414996
+  "total_bytes": 33481593
 }

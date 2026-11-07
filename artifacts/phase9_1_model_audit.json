@@ -86,7 +86,7 @@
     },
     {
       "check": "package_deterministic",
-      "model": "038b5125f0b3aaf0",
+      "model": "ecea881fb9f63d70",
       "passed": true,
       "ticker": "JPM"
     },
@@ -98,7 +98,7 @@
     },
     {
       "check": "package_deterministic",
-      "model": "9442e01e31fab73f",
+      "model": "d70e953f49f7ab47",
       "passed": true,
       "ticker": "UNH"
     },

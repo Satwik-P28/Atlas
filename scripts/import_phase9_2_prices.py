@@ -10,7 +10,7 @@ Two modes:
    Nothing about them is real and the source row says so.
 
 2. **User-supplied licensed data.** ``--csv PATH --ticker T --source-name NAME
-   --licence TERMS --redistribution {restricted,user_responsibility,private,public_domain}``
+   --licence TERMS --redistribution {public_domain,project_authored,permitted,user_responsibility,restricted,private}``
    imports a file the operator is entitled to use. Atlas never fetches it, never guesses
    its licence, and never exports it unless the declared terms permit redistribution.
 
@@ -49,7 +49,7 @@ def ensure_synthetic_identity(db: Database) -> str:
         "Atlas synthetic identity registry",
         kind="synthetic",
         licence="Apache-2.0 (project-authored identity record)",
-        redistribution="public_domain",
+        redistribution="project_authored",
         notes=(
             "Registers the synthetic issuer/security used by the distributable market "
             "fixture. Not an exchange assignment and not a claim about any real issuer."
@@ -135,7 +135,7 @@ def main() -> int:
     parser.add_argument(
         "--redistribution",
         default="restricted",
-        choices=["public_domain", "user_responsibility", "restricted", "private"],
+        choices=["public_domain", "project_authored", "permitted", "user_responsibility", "restricted", "private"],
     )
     parser.add_argument("--authorization-basis")
     parser.add_argument("--adjustment-semantics", default="unadjusted")

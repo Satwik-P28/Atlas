@@ -46,7 +46,9 @@ def test_market_manifest_declares_synthetic_and_vendor_free():
     manifest = json.loads((MARKET / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["synthetic"] is True
     assert manifest["contains_vendor_data"] is False
-    assert manifest["redistribution"] == "public_domain"
+    assert manifest["redistribution"] == "project_authored"
+    assert manifest["copyright_licence"] == "Apache-2.0"
+    assert manifest["copyright_holder"]
     assert manifest["authorization_basis"]
     assert manifest["retrieved_at"] is None, "synthetic data has no provider retrieval instant"
     for series in manifest["series"]:

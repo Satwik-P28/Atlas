@@ -407,6 +407,15 @@ export const api = {
     if (!response.ok) throw new ApiError(response.status, 'download_failed', 'Research package download failed')
     return response.blob()
   },
+  securityObservations: (securityId: string, limit = 100) =>
+    request<Record<string, any>>(`/api/securities/${enc(securityId)}/observations${qs({ limit })}`),
+  marketObservation: (observationId: string) =>
+    request<Record<string, any>>(`/api/market/observations/${enc(observationId)}`),
+  marketReplay: (pin: Record<string, any>, informationCutoff?: string | null) =>
+    request<Record<string, any>>('/api/market/replay', {
+      method: 'POST',
+      body: JSON.stringify({ pin, information_cutoff: informationCutoff ?? null }),
+    }),
   domainPacks: () => request<Record<string, any>>('/api/domain-packs'),
 } satisfies Record<string, unknown>
 

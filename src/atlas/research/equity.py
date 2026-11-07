@@ -764,7 +764,8 @@ class EquityResearchService:
                          value_per_share: float | None,
                          implied: dict[str, Any] | None = None,
                          cutoff: str | None = None,
-                         market_source_id: str | None = None) -> dict[str, Any]:
+                         market_source_id: str | None = None,
+                         observation_pin: dict[str, Any] | None = None) -> dict[str, Any]:
         """Compare the model with a price known at the information cutoff.
 
         The price is the last observation on or before the cutoff, never the latest
@@ -782,6 +783,11 @@ class EquityResearchService:
                 tuple(ids), default=None,
             )
         securities = self.master.securities_for_issuer(issuer_id)
+        if observation_pin:
+            return self._pinned_market_analysis(
+                issuer_id, observation_pin, metrics, value_per_share,
+                implied=implied, cutoff=cutoff_day, filing_available_at=filing_available,
+            )
         for security in securities:
             chosen = (
                 prices.price_on_or_before(
@@ -807,12 +813,90 @@ class EquityResearchService:
             information_cutoff=cutoff_day, filing_available_at=filing_available,
         )
 
+    def _pinned_market_analysis(self, issuer_id: str, pin: dict[str, Any],
+                                metrics: dict[str, Any], value_per_share: float | None,
+                                *, implied: dict[str, Any] | None,
+                                cutoff: str | None,
+                                filing_available_at: str | None) -> dict[str, Any]:
+        """Replay one saved observation, or report that exact replay is unavailable."""
+        allowed = {
+            security["security_id"] for security in self.master.securities_for_issuer(issuer_id)
+        }
+        if str(pin.get("security_id")) not in allowed:
+            return {
+                "schema": "atlas.market_analysis.v1",
+                "status": "unavailable",
+                "reason": "The pinned observation belongs to a different security than this issuer.",
+                "pin": dict(pin),
+                "pin_status": "pin_security_mismatch",
+                "exact_replay": False,
+                "implied": None,
+            }
+        replay = prices.price_for_pin(self.db, pin, information_cutoff=cutoff)
+        if replay["status"] != "exact":
+            return {
+                "schema": "atlas.market_analysis.v1",
+                "status": "unavailable",
+                "reason": replay["reason"],
+                "pin": dict(pin),
+                "pin_status": replay["status"],
+                "exact_replay": False,
+                "pin_required": (
+                    "Reconnect the permitted source that holds this revision, or explicitly "
+                    "update the analysis to a newer observation."
+                ),
+                "implied": None,
+            }
+        pinned = dict(replay["price"])
+        history = prices.price_history(
+            self.db, str(pin["security_id"]), end_date=cutoff,
+            source_id=str(pin["source_id"]),
+        )
+        analysis = prices.market_analysis(
+            price=pinned, history=history, value_per_share=value_per_share,
+            accounting_period_end=metrics.get("period_end"), implied=implied,
+            information_cutoff=cutoff, filing_available_at=filing_available_at,
+        )
+        analysis.update({
+            "pin": dict(pin),
+            "pin_status": "exact",
+            "exact_replay": True,
+            "pin_note": (
+                "This analysis replays the exact observation revision it recorded. A later "
+                "correction to the same session is a separate revision and does not change it."
+            ),
+        })
+        return analysis
+
     def _comparison_price(self, issuer_id: str, cutoff: str | None,
-                          market_source_id: str | None = None) -> dict[str, Any] | None:
-        """Return a selected price observable at the cutoff, or no price."""
+                          market_source_id: str | None = None,
+                          observation_pin: dict[str, Any] | None = None) -> dict[str, Any] | None:
+        """Return a selected price observable at the cutoff, or no price.
+
+        A saved pin is resolved to its exact revision. If that revision cannot be
+        replayed, no price is returned: the latest quote is never substituted.
+        """
         day = str(cutoff or "")[:10]
         if not day:
             return None
+        if observation_pin:
+            allowed = {
+                security["security_id"] for security in self.master.securities_for_issuer(issuer_id)
+            }
+            if str(observation_pin.get("security_id")) not in allowed:
+                return None
+            replay = prices.price_for_pin(self.db, observation_pin, information_cutoff=day)
+            if replay["status"] != "exact":
+                return None
+            pinned = dict(replay["price"])
+            pinned["source_selection"] = {
+                "policy": prices.SOURCE_SELECTION_POLICY,
+                "requested_policy": "pinned",
+                "pinned": True,
+                "exact_replay": True,
+                "observation_id": observation_pin.get("observation_id"),
+            }
+            return pinned
         for security in self.master.securities_for_issuer(issuer_id):
             chosen = prices.price_on_or_before(
                 self.db, security["security_id"], day, source_id=market_source_id
@@ -841,7 +925,8 @@ class EquityResearchService:
                    as_of: str | None, mode: str | None,
                    target_price: float | None, stress: bool = True,
                    method: str | None = None,
-                   market_source_id: str | None = None) -> dict[str, Any]:
+                   market_source_id: str | None = None,
+                   observation_pin: dict[str, Any] | None = None) -> dict[str, Any]:
         issuer = read_models.resolve_company(self.db, identifier)
         metrics = get_issuer_metrics(self.db, issuer["issuer_id"], as_of=as_of, mode=mode)
         coverage = self._issuer_coverage(issuer)
@@ -858,7 +943,8 @@ class EquityResearchService:
         )
         cutoff_day = str(as_of or iso(utcnow()))[:10]
         selected_price = self._comparison_price(
-            issuer["issuer_id"], cutoff_day, market_source_id=market_source_id
+            issuer["issuer_id"], cutoff_day, market_source_id=market_source_id,
+            observation_pin=observation_pin,
         )
         observed_price = float(selected_price["close"]) if selected_price else None
         base: dict[str, Any] = {
@@ -891,7 +977,7 @@ class EquityResearchService:
                 ),
                 "market": self._market_analysis(
                     issuer["issuer_id"], metrics, None, cutoff=as_of,
-                    market_source_id=market_source_id,
+                    market_source_id=market_source_id, observation_pin=observation_pin,
                 ),
                 "eligibility": {
                     **eligibility,
@@ -926,7 +1012,7 @@ class EquityResearchService:
                 "market": self._market_analysis(
                     issuer["issuer_id"], metrics, value_per_share,
                     implied=model.get("implied"), cutoff=as_of,
-                    market_source_id=market_source_id,
+                    market_source_id=market_source_id, observation_pin=observation_pin,
                 ),
                 "eligibility": {
                     **eligibility,
@@ -1275,14 +1361,15 @@ class EquityResearchService:
                 as_of: str | None = None, mode: str | None = None,
                 target_price: float | None = None,
                 method: str | None = None,
-                market_source_id: str | None = None) -> dict[str, Any]:
+                market_source_id: str | None = None,
+                observation_pin: dict[str, Any] | None = None) -> dict[str, Any]:
         workspace = self.workspace(
             identifier, as_of=as_of, mode=mode, market_source_id=market_source_id
         )
         valuation = self._valuation(
             identifier, assumptions=assumptions, as_of=workspace["as_of"],
             mode=workspace["mode"], target_price=target_price, method=method,
-            market_source_id=market_source_id,
+            market_source_id=market_source_id, observation_pin=observation_pin,
         )
         report = self._render_report(workspace, valuation)
         digest = hashlib.sha256(report.encode("utf-8")).hexdigest()

@@ -101,6 +101,7 @@ jobs:
           tests/test_phase9_2_1_market_integrity.py
           tests/test_phase9_2_2_market_observations.py
           tests/test_phase9_2_2_data_rights_fixtures.py
+          tests/test_phase9_2_3_acceptance.py
           tests/test_phase9_2_institutions.py
           tests/test_phase9_2_migrations.py
           tests/test_phase9_1_models.py
@@ -164,6 +165,7 @@ jobs:
           python scripts/fetch_phase9_2_regulatory.py --db var/phase9.db
           python scripts/import_fr_y9c.py --db var/phase9.db --cik 19617 --entity REG-JPM-PARENT --retrieved-at 2026-11-06T20:00:00Z
           python scripts/import_phase9_2_prices.py --db var/phase9.db
+          python scripts/verify_distributable_fixtures.py --require-demo-db
       - name: Build the terminal
         run: cd web && npm run build
       - name: Install Chromium
@@ -179,19 +181,29 @@ jobs:
             sleep 1
           done
           echo "server did not become ready"; cat /tmp/atlas-serve.log; exit 1
-      - name: Run the Phase 9.2 browser journeys (desktop and 390x844)
+      - name: Scenario A - real JPM evidence without a bundled market price
         run: |
           cd web
-          node e2e/phase9_2.mjs 2>&1 | tee /tmp/phase9_2_browser.log
+          node e2e/phase9_2_jpm.mjs 2>&1 | tee /tmp/phase9_2_jpm_browser.log
+      - name: Scenario B - synthetic ATLS market data, provenance and pin replay
+        run: |
+          cd web
+          node e2e/phase9_2_market.mjs 2>&1 | tee /tmp/phase9_2_market_browser.log
       - name: Upload browser artifacts and server log on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: browser-failure
           path: |
-            artifacts/phase9_2_browser.json
-            artifacts/phase9_2_failure.png
-            artifacts/phase9_2_final_mobile.png
-            /tmp/phase9_2_browser.log
+            artifacts/phase9_2_jpm_browser.json
+            artifacts/phase9_2_market_browser.json
+            artifacts/phase9_2_jpm_failure.png
+            artifacts/phase9_2_market_failure.png
+            artifacts/phase9_2_jpm_mobile.png
+            artifacts/phase9_2_market_mobile.png
+            artifacts/phase9_2_jpm_desktop.png
+            artifacts/phase9_2_market_desktop.png
+            /tmp/phase9_2_jpm_browser.log
+            /tmp/phase9_2_market_browser.log
             /tmp/atlas-serve.log
           if-no-files-found: ignore
