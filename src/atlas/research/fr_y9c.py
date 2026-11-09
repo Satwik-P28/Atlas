@@ -149,18 +149,39 @@ def _parse_number(value: str) -> tuple[float | None, str | None]:
         return None, text
 
 
+# Official BHCF quarterly archives are tens of megabytes; the dictionary workbook is small.
+# Both ceilings exist so a hostile or corrupt archive cannot inflate without limit.
+_MAX_QUARTER_ARCHIVE_BYTES = 512 * 1024 * 1024
+_MAX_DICTIONARY_MEMBER_BYTES = 64 * 1024 * 1024
+
+
+def _member_bytes(archive: zipfile.ZipFile, name: str, *, limit: int) -> bytes:
+    """Read one archive member with a bound on its expanded size."""
+    info = archive.getinfo(name)
+    if int(info.file_size) > limit:
+        raise FrY9CError(f"archive member {name} exceeds the size limit")
+    with archive.open(name) as handle:
+        data = handle.read(limit + 1)
+    if len(data) > limit:
+        raise FrY9CError(f"archive member {name} exceeds the size limit")
+    return data
+
+
 def _dictionary_rows(path: str | Path) -> dict[str, dict[str, str]]:
     """Read the FFIEC Financial Download Dictionary without a spreadsheet dependency."""
     with zipfile.ZipFile(path) as archive:
         names = set(archive.namelist())
         shared: list[str] = []
         if "xl/sharedStrings.xml" in names:
-            root = ET.fromstring(archive.read("xl/sharedStrings.xml"))
+            root = ET.fromstring(_member_bytes(archive, "xl/sharedStrings.xml",
+                                              limit=_MAX_DICTIONARY_MEMBER_BYTES))
             ns = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
             for item in root.findall(f"{ns}si"):
                 shared.append("".join(node.text or "" for node in item.iter(f"{ns}t")))
-        workbook = ET.fromstring(archive.read("xl/workbook.xml"))
-        rels = ET.fromstring(archive.read("xl/_rels/workbook.xml.rels"))
+        workbook = ET.fromstring(_member_bytes(archive, "xl/workbook.xml",
+                                               limit=_MAX_DICTIONARY_MEMBER_BYTES))
+        rels = ET.fromstring(_member_bytes(archive, "xl/_rels/workbook.xml.rels",
+                                           limit=_MAX_DICTIONARY_MEMBER_BYTES))
         targets = {rel.get("Id"): rel.get("Target") for rel in rels}
         sheets = list(workbook.find("{http://schemas.openxmlformats.org/spreadsheetml/2006/main}sheets"))
         if not sheets:
@@ -175,7 +196,7 @@ def _dictionary_rows(path: str | Path) -> dict[str, dict[str, str]]:
         target = target.lstrip("/")
         if not target.startswith("xl/"):
             target = "xl/" + target
-        root = ET.fromstring(archive.read(target))
+        root = ET.fromstring(_member_bytes(archive, target, limit=_MAX_DICTIONARY_MEMBER_BYTES))
         ns = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
         parsed: list[dict[str, str]] = []
         for row in root.iter(f"{ns}row"):
@@ -261,7 +282,7 @@ def read_archive(
                 f"expected exactly one quarterly TXT member in the archive, found {len(members)}"
             )
         member = members[0]
-        data = archive.read(member)
+        data = _member_bytes(archive, member, limit=_MAX_QUARTER_ARCHIVE_BYTES)
     text_sha256 = hashlib.sha256(data).hexdigest()
     try:
         decoded = data.decode("latin-1")

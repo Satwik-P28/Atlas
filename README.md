@@ -611,3 +611,44 @@ Enterprise evidence: no bundled JPM price · exact pin replay · synthetic label
 Clean install: package 38ed19e7 · value \$101.2158 reproduced · differences none
 Backend: 507 tests · audits 29/29 and 16/16 · schema 13
 ```
+
+## Phase 9.2.5 — transport integrity, release-security audit and beta preparation
+
+Phase 9.2.5 closes engineering gaps that were reachable without the master
+specification, and records the rest as blocked instead of approximating it.
+
+- **Truncated compressed responses were accepted as complete.** `_inflate` stopped when its
+  input ran out without requiring the decompressor's end-of-stream marker, so a response
+  cut short by a proxy was stored and parsed as a full SEC document. It now requires
+  `inflater.eof` (which also verifies the gzip CRC/trailer), decodes concatenated gzip
+  members, refuses trailing bytes and invalid headers, bounds the compressed input as well
+  as the expanded output, and refuses an interrupted read after bounded retries.
+- **Release-security review** covered HTTP handling, archive decompression, ZIP package
+  parsing, path validation, rights enforcement, resource exhaustion and service exposure.
+  Fixes: unsupported/encrypted ZIP entries could surface as unhandled exceptions; FR Y-9C
+  archive members had no expansion bound; request bodies had no size ceiling; a
+  non-loopback bind exposed an unauthenticated API silently. Eleven findings are tabulated
+  in the acceptance record; no security rewrite was performed.
+- **Build hygiene:** `src/atlas_quant.egg-info/` was tracked build metadata. It is now
+  ignored and untracked, and an editable install regenerates it without dirtying the tree.
+- **Architecture:** `docs/ATLAS_ARCHITECTURE_GAP_ANALYSIS.md` inventories 108 modules,
+  distinguishes implemented systems from named-but-absent ones (UROS has no code), and
+  records the missing contracts most likely to force a rewrite — starting with the untyped
+  market-evidence dict shared by three consumers.
+- **Beta:** `docs/ATLAS_BETA_USER_TEST_PLAN.md` is a runnable eleven-step external-user
+  protocol. It has **not** been executed by anyone outside the implementer.
+- Master-spec gate **blocked** (file absent, verifier exit 1); GitHub Actions **unobserved**
+  (private repository, no credential); historical restricted bytes still reachable in
+  earlier commits, with a remediation proposal and no rewrite performed.
+
+See `docs/PHASE9_2_5_ENGINEERING_ACCEPTANCE.md`, `docs/ATLAS_ARCHITECTURE_GAP_ANALYSIS.md`
+and `docs/HISTORICAL_DATA_REMEDIATION.md`.
+
+```
+Phase 9.2.5: 529 backend tests · 4 frontend tests · typecheck and build pass
+Audits: 29/29 and 16/16 · reproduction value 295.4643539226478 · differences none
+Security: 29 adversarial transport/archive/body-limit tests · schema 13
+Browser: JPM 8/8 and ATLS 7/7 re-run at this revision · desktop + 390×844 · no console errors
+Clean install: package f1cae8fa · value $101.2158 reproduced · differences none
+Blocked: master specification absent · hosted CI unobservable
+```

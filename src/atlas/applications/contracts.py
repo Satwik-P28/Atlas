@@ -15,6 +15,7 @@ import os
 import re
 import sys
 import zipfile
+import zlib
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -571,11 +572,21 @@ def read_package(payload: bytes) -> dict[str, Any]:
                     raise PackageValidationError("symlink entries are forbidden", path=info.filename)
                 if info.flag_bits & 0x1:
                     raise PackageValidationError("encrypted package entries are unsupported", path=info.filename)
+                if info.compress_type not in {zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED}:
+                    # Refusing unsupported methods explicitly avoids relying on zipfile to
+                    # raise `NotImplementedError` while reading a member.
+                    raise PackageValidationError("unsupported ZIP compression method",
+                                                 path=info.filename, method=info.compress_type)
                 if info.filename != "manifest.json":
                     validate_relative_path(info.filename)
+                if "\x00" in info.filename:
+                    raise PackageValidationError("package path contains a NUL byte",
+                                                 path=repr(info.filename))
                 if info.filename in names:
                     raise PackageIntegrityError("duplicate ZIP entry", path=info.filename)
                 names.add(info.filename)
+                if int(info.file_size) < 0:
+                    raise PackageIntegrityError("invalid ZIP entry size", path=info.filename)
                 total += int(info.file_size)
                 if total > MAX_UNCOMPRESSED_BYTES:
                     raise PackageValidationError("uncompressed package size exceeds the limit",
@@ -584,7 +595,12 @@ def read_package(payload: bytes) -> dict[str, Any]:
                 if len(data) != int(info.file_size):
                     raise PackageIntegrityError("short ZIP entry", path=info.filename)
                 files[info.filename] = data
-    except zipfile.BadZipFile as exc:
+    except (zipfile.BadZipFile, zlib.error, EOFError, RuntimeError, NotImplementedError,
+            OSError, KeyError) as exc:
+        # A malformed archive must be reported as an integrity failure, never surface as
+        # an unhandled exception. `RuntimeError` covers an encrypted member reached without
+        # the header flag, and `zlib.error`/`EOFError` cover a corrupt deflate stream or a
+        # body truncated after its central directory.
         raise PackageIntegrityError("package is not a valid ZIP archive") from exc
     if "manifest.json" not in files:
         raise PackageIntegrityError("manifest.json is missing")

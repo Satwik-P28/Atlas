@@ -85,6 +85,13 @@ jobs:
         run: python -c "import numpy; from atlas.applications.contracts import read_package; from atlas.economic.model import run_weather_demand"
       - name: Declared dependencies are sufficient for this job
         run: python -m pytest tests/test_packaging_contract.py tests/test_phase9_2_migrations.py tests/test_storage.py
+      - name: No generated packaging metadata is tracked
+        run: |
+          tracked=$(git ls-files '*.egg-info/*')
+          if [ -n "$tracked" ]; then
+            echo "generated packaging metadata is tracked:"; echo "$tracked"; exit 1
+          fi
+          echo "no generated packaging metadata is tracked"
 
   research-integrity:
     name: Research, market-evidence and rights integrity
@@ -108,6 +115,7 @@ jobs:
           tests/test_phase9_2_3_acceptance.py
           tests/test_phase9_2_4_acceptance.py
           tests/test_packaging_contract.py
+          tests/test_release_security_9_2_5.py
           tests/test_sec_transport_limits.py
           tests/test_phase9_2_institutions.py
           tests/test_phase9_2_migrations.py

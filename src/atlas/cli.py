@@ -605,6 +605,12 @@ def cmd_serve(db: Database, args: argparse.Namespace) -> int:
     from .terminal.api import create_app
 
     app = create_app(db.path, web_dist=args.web_dist)
+    if args.host not in {"127.0.0.1", "::1", "localhost"}:
+        print(
+            f"WARNING: binding {args.host} exposes the terminal beyond loopback. The API "
+            "has no authentication and accepts write requests; only do this on a trusted network.",
+            file=sys.stderr,
+        )
     if not args.json:
         print(f"Atlas terminal on http://{args.host}:{args.port} (database: {db.path})", file=sys.stderr)
     uvicorn.run(app, host=args.host, port=args.port, log_level="info")

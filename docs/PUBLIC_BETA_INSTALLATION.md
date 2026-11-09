@@ -27,6 +27,13 @@ npm --prefix web run build                      # production bundle served by th
 
 The audit must print `"status": "pass"` before you treat the database as reconciled.
 
+## External beta walkthrough
+
+The full eleven-step acceptance path (install → issuer → model → assumptions →
+provenance → save/reopen → export → second-install reproduction) and the evaluation
+protocol are in [ATLAS_BETA_USER_TEST_PLAN.md](ATLAS_BETA_USER_TEST_PLAN.md). Nothing
+there has been executed by an external participant yet.
+
 ## What the beta includes
 
 - The 20-company SEC fixture and the terminal.
@@ -36,7 +43,9 @@ The audit must print `"status": "pass"` before you treat the database as reconci
 
 ## What it does not include
 
-- Market prices. Anything price-dependent reports a missing input.
+- Market prices. Anything price-dependent reports a missing input. The demonstration
+database contains **synthetic** series, labelled `synthetic` in provenance; they are not
+observed prices.
 - Financial-institution valuation.
 - Signatures, a marketplace or executable plug-ins.
 - A server deployment story: no authentication, no multi-tenant isolation.

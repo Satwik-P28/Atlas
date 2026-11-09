@@ -21,6 +21,7 @@ Unauthenticated, undocumented endpoints are not used. Only ``data.sec.gov`` and
 from __future__ import annotations
 
 import gzip
+import http.client
 import json
 import random
 import time
@@ -46,6 +47,11 @@ SEC_DATA_HOST = "data.sec.gov"
 SEC_WWW_HOST = "www.sec.gov"
 _ALLOWED_HOSTS = {SEC_DATA_HOST, SEC_WWW_HOST}
 _MAX_BODY_BYTES = 64 * 1024 * 1024
+# Compression cannot be trusted to shrink: the compressed input is bounded separately so
+# a multi-gigabyte body is refused before it is read into memory or deflated.
+_MAX_COMPRESSED_BYTES = 64 * 1024 * 1024
+_GZIP_MAGIC = b"\x1f\x8b"
+_READ_CHUNK_BYTES = 64 * 1024
 
 
 @dataclass(slots=True)
@@ -191,7 +197,10 @@ class SecClient:
                 status, response_headers, body = self._transport(request, self.timeout)
             except urllib.error.HTTPError as exc:  # pragma: no cover - transport dependent
                 status, response_headers, body = exc.code, dict(exc.headers or {}), b""
-            except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException) as exc:
+                # ``IncompleteRead`` (an ``HTTPException``, not an ``OSError``) means the
+                # connection closed mid-body. That is a transport failure to retry, never a
+                # short document to hand back as if it were complete.
                 if attempts > self.max_retries:
                     raise ProviderUnavailable(
                         "SEC request failed after retries", url=url, attempts=attempts, error=str(exc)
@@ -322,30 +331,63 @@ def _host_of(url: str) -> str:
 
 
 def _inflate(payload: bytes, *, gzip_header: bool) -> bytes:
-    """Decode a compressed body without ever materialising more than the size limit.
+    """Decode a compressed body completely, or refuse it.
 
-    ``gzip.decompress``/``zlib.decompress`` expand the whole stream before the caller
-    can apply ``_MAX_BODY_BYTES``, so a small compressed response could exhaust memory
-    before the post-decompression check ran. Deflating with an explicit output budget
-    keeps the limit enforceable on hostile or corrupt payloads.
+    Three properties are enforced rather than assumed:
+
+    * **Bounded output.** ``gzip.decompress``/``zlib.decompress`` expand the whole stream
+      before a post-hoc size check can run, so deflation uses an explicit output budget and
+      an expansion bomb is refused while it is being decoded.
+    * **Bounded input.** The compressed payload is capped by ``_MAX_COMPRESSED_BYTES``
+      before any deflation work, so a huge body is rejected on its own size.
+    * **Completeness.** A stream that ends without the decompressor's end-of-stream marker
+      is truncated, not merely short: everything decoded so far is discarded and the
+      response is refused. zlib verifies the gzip CRC-32 and length trailer at that marker,
+      so a corrupt trailer is refused too.
+
+    Concatenated gzip members are legitimate (RFC 1952) and are decoded in order. For
+    ``deflate`` (RFC 1950 zlib framing) anything after the final block is unexpected and is
+    refused rather than ignored.
     """
-    inflater = zlib.decompressobj(16 + zlib.MAX_WBITS) if gzip_header else zlib.decompressobj()
+    if len(payload) > _MAX_COMPRESSED_BYTES:
+        raise ProviderPayloadError(
+            "compressed response exceeds input size limit",
+            limit=_MAX_COMPRESSED_BYTES,
+            received=len(payload),
+        )
+    if not payload:
+        raise ProviderPayloadError("empty compressed response")
+    wbits = 16 + zlib.MAX_WBITS if gzip_header else zlib.MAX_WBITS
+    encoding = "gzip" if gzip_header else "deflate"
     chunks: list[bytes] = []
     total = 0
     data = payload
     while True:
-        remaining = _MAX_BODY_BYTES + 1 - total
-        chunk = inflater.decompress(data, remaining)
-        total += len(chunk)
-        chunks.append(chunk)
-        if total > _MAX_BODY_BYTES:
-            raise ProviderPayloadError("decompressed response exceeds size limit",
-                                       limit=_MAX_BODY_BYTES)
-        if inflater.eof:
-            break
-        data = inflater.unconsumed_tail
+        inflater = zlib.decompressobj(wbits)
+        while True:
+            budget = _MAX_BODY_BYTES + 1 - total
+            chunk = inflater.decompress(data, budget)
+            total += len(chunk)
+            chunks.append(chunk)
+            if total > _MAX_BODY_BYTES:
+                raise ProviderPayloadError("decompressed response exceeds size limit",
+                                           limit=_MAX_BODY_BYTES)
+            data = inflater.unconsumed_tail
+            if inflater.eof:
+                break
+            if not data:
+                raise ProviderPayloadError("compressed response is truncated",
+                                           encoding=encoding,
+                                           note="end-of-stream marker was never reached")
+        data = inflater.unused_data
         if not data:
             break
+        if not gzip_header:
+            raise ProviderPayloadError("compressed response has trailing bytes",
+                                       encoding=encoding, trailing_bytes=len(data))
+        if not data.startswith(_GZIP_MAGIC):
+            raise ProviderPayloadError("compressed response has trailing bytes",
+                                       encoding=encoding, trailing_bytes=len(data))
     return b"".join(chunks)
 
 
@@ -365,6 +407,37 @@ def _decompress(body: bytes, headers: Mapping[str, str] | None) -> bytes:
     return body
 
 
+def _read_bounded(response: Any, limit: int) -> bytes:
+    """Read a response body without exceeding ``limit`` bytes.
+
+    ``response.read()`` buffers whatever the server sends. A declared
+    ``Content-Length`` larger than the limit is refused before any body is read, and the
+    body itself is consumed in chunks so an undeclared or understated length cannot
+    exhaust memory before the size check runs.
+    """
+    declared = (response.headers or {}).get("Content-Length")
+    if declared is not None:
+        try:
+            size = int(str(declared).strip())
+        except ValueError:
+            size = None
+        if size is not None and size > limit:
+            raise ProviderPayloadError("response exceeds compressed size limit",
+                                       limit=limit, declared=size)
+    chunks: list[bytes] = []
+    total = 0
+    while True:
+        chunk = response.read(min(_READ_CHUNK_BYTES, limit + 1 - total))
+        if not chunk:
+            break
+        total += len(chunk)
+        if total > limit:
+            raise ProviderPayloadError("response exceeds compressed size limit",
+                                       limit=limit, read=total)
+        chunks.append(chunk)
+    return b"".join(chunks)
+
+
 def _urllib_transport(request: urllib.request.Request, timeout: float) -> tuple[int, Mapping[str, str], bytes]:
     with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310 - allowlisted hosts
-        return response.status, dict(response.headers), response.read()
+        return response.status, dict(response.headers), _read_bounded(response, _MAX_COMPRESSED_BYTES)

@@ -7,7 +7,7 @@
     "A2 price-relative analysis is unavailable without an authorised observation",
     "A3 model reproduction 295.4600 -> 287.9200",
     "A4 FCFF rejected for a bank; cutoff preserved",
-    "A5 URO-APP-71bf04aac955 saved and reopened at 287.9200",
+    "A5 URO-APP-4c54bbb5eb21 saved and reopened at 287.9200",
     "A6 exported equity-research.atlas",
     "A7 research surfaces render",
     "A8 390x844 no overflow, no clipped values, tables reachable"
@@ -18,7 +18,7 @@
     "report_sha256": "63c8237fd0ec419de01eb91d92e970dfbd0e796aa27e1e9ab45440ac5a82d147",
     "market_status": "unavailable"
   },
-  "saved_object_id": "URO-APP-71bf04aac955",
+  "saved_object_id": "URO-APP-4c54bbb5eb21",
   "package_path": "artifacts/phase9_2_jpm_application.atlas",
   "routes": [
     {
@@ -29,7 +29,7 @@
     {
       "route": "/studio",
       "heading": "Studio",
-      "text_length": 2780
+      "text_length": 3010
     },
     {
       "route": "/lab",
@@ -39,7 +39,7 @@
     {
       "route": "/lab/learning",
       "heading": "Learning Lab",
-      "text_length": 2599
+      "text_length": 2687
     },
     {
       "route": "/lab/economic",
@@ -88,7 +88,7 @@
   "health": {
     "status": "ok",
     "database": "var/phase9.db",
-    "as_of": "2026-11-09T02:08:44Z",
+    "as_of": "2026-11-09T15:30:35Z",
     "terminal_schema": "atlas.terminal.v1",
     "schema_version": 13,
     "supported_schema": 13,
@@ -107,5 +107,5 @@
       "url": "http://127.0.0.1:3000/api/economic/panel?mode=public_available"
     }
   ],
-  "browser_workflow_ms": 46735
+  "browser_workflow_ms": 44428
 }

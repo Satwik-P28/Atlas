@@ -85,6 +85,10 @@ DEFAULT_DB = os.environ.get("ATLAS_DB", "var/atlas.db")
 DEFAULT_ORIGINS = os.environ.get(
     "ATLAS_TERMINAL_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
 ).split(",")
+# Largest accepted request body. Every write endpoint takes a small JSON document; the
+# ceiling exists so an unauthenticated loopback client (or a malformed client) cannot make
+# the process buffer an arbitrary amount of memory before validation runs.
+MAX_REQUEST_BYTES = int(os.environ.get("ATLAS_MAX_REQUEST_BYTES", str(8 * 1024 * 1024)))
 
 STATUS_BY_ERROR: tuple[tuple[type[BaseException], int], ...] = (
     (UnknownEntity, 404),
@@ -533,6 +537,77 @@ def _error_payload(code: str, message: str, context: Any = None) -> dict[str, An
     return {"error": {"code": code, "message": message, "context": context or {}}}
 
 
+class _BodyTooLarge(Exception):
+    """Raised while receiving a request body that exceeds ``MAX_REQUEST_BYTES``."""
+
+
+class RequestBodyLimitMiddleware:
+    """Refuse oversized request bodies before a handler buffers them.
+
+    A declared ``Content-Length`` is checked first; the body is also counted as it is
+    received, because a chunked request declares no length. The limit is a resource guard,
+    not an authorization boundary: the terminal is loopback-only by default and has no user
+    accounts.
+    """
+
+    def __init__(self, app: Any, *, limit: int) -> None:
+        self.app = app
+        self.limit = limit
+
+    async def __call__(self, scope: Any, receive: Any, send: Any) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        headers = {key.lower(): value for key, value in (scope.get("headers") or [])}
+        declared = headers.get(b"content-length")
+        if declared is not None:
+            try:
+                size = int(declared.decode("ascii").strip())
+            except (ValueError, UnicodeDecodeError):
+                size = None
+            if size is not None and size > self.limit:
+                await self._reject(send)
+                return
+        received = 0
+        started = False
+
+        async def limited_receive() -> Any:
+            nonlocal received
+            message = await receive()
+            if message.get("type") == "http.request":
+                received += len(message.get("body", b""))
+                if received > self.limit:
+                    raise _BodyTooLarge
+            return message
+
+        async def tracking_send(message: Any) -> None:
+            nonlocal started
+            if message.get("type") == "http.response.start":
+                started = True
+            await send(message)
+
+        try:
+            await self.app(scope, limited_receive, tracking_send)
+        except _BodyTooLarge:
+            if started:  # pragma: no cover - a handler already replied; nothing to add
+                raise
+            await self._reject(send)
+
+    async def _reject(self, send: Any) -> None:
+        body = json.dumps(_error_payload(
+            "request_too_large",
+            "request body exceeds the configured limit",
+            {"limit_bytes": self.limit, "hint": "reduce the document size"},
+        )).encode("utf-8")
+        await send({
+            "type": "http.response.start",
+            "status": 413,
+            "headers": [(b"content-type", b"application/json"),
+                        (b"content-length", str(len(body)).encode("ascii"))],
+        })
+        await send({"type": "http.response.body", "body": body})
+
+
 def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None = None) -> FastAPI:
     app = FastAPI(
         title="Atlas Quant Terminal API",
@@ -557,6 +632,7 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
         allow_headers=["content-type"],
         max_age=600,
     )
+    app.add_middleware(RequestBodyLimitMiddleware, limit=MAX_REQUEST_BYTES)
 
     @app.exception_handler(AtlasError)
     async def atlas_error_handler(request: Request, exc: AtlasError) -> JSONResponse:

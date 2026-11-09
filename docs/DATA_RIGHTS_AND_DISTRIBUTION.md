@@ -34,3 +34,13 @@ reproducible from source bytes.
 The `atlas-assumption` registry is used only for explicitly hypothetical company exposures and is
 not packaged as observed evidence. No private-location, real-estate, vendor-licensed or
 credentialed data is included.
+
+## Historical exposure
+
+Restricted vendor market files were removed from the current tree, but they remain
+reachable in earlier commits (`6920d0a` nasdaq series, `d0e4540` Alpha Vantage manifest).
+That is a distribution exposure for anyone with repository access. CI refuses newly tracked
+files matching `nasdaq_*`/`alphavantage`, and the remediation options — retain-and-restrict
+or rewrite history with full coordination — are recorded in
+[HISTORICAL_DATA_REMEDIATION.md](HISTORICAL_DATA_REMEDIATION.md). No rewrite has been
+authorized or attempted.

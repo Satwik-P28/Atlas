@@ -22,7 +22,7 @@
   "health": {
     "status": "ok",
     "database": "var/phase9.db",
-    "as_of": "2026-11-09T02:13:09Z",
+    "as_of": "2026-11-09T15:31:25Z",
     "terminal_schema": "atlas.terminal.v1",
     "schema_version": 13,
     "supported_schema": 13,
@@ -35,5 +35,5 @@
     "application_installations": 0,
     "domain_packs": 0
   },
-  "browser_workflow_ms": 3631
+  "browser_workflow_ms": 2941
 }

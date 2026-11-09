@@ -39,6 +39,34 @@ the tracked documentation and executable checks — not master-spec clauses.
 | CI execution | workflow runs on a hosted runner | `.github/workflows/ci.yml` | not observed (private repository, no Actions credential) | Blocked |
 | Master specification conformance | every clause mapped and verified | — | — | Blocked |
 
+## Phase 9.2.5 re-check
+
+The document is still absent (`find / -name 'ATLAS_MASTER_SPEC*'` returns nothing), so the
+status is unchanged: **zero clauses mapped**, no 34-section review, no ICB mapping. The
+only ICB identifiers defined anywhere in this repository are ICB-04 and ICB-09, referenced
+in `docs/PHASE7_READINESS.md`; ICB-01…ICB-20 cannot be mapped without inventing eighteen
+definitions, which this project will not do.
+
+Implementation coverage below is therefore **repository-verifiable capability**, not
+specification conformance. It is stated by subsystem so a later clause review has a
+starting point that is already honest.
+
+| Subsystem | Implemented capability | Evidence | State |
+| --- | --- | --- | --- |
+| Temporal evidence | immutable raw documents, point-in-time selection, supersession, provenance | 26,440 evidence rows; differential Python/SQL test; `tests/test_evidence.py` | implemented locally tested |
+| Identity | issuer → security → listing → ticker with ambiguity refusal | `tests/test_entities.py`, `tests/test_multi_issuer.py` | implemented locally tested |
+| Market data | revisions, calendars, adjustments, observation pins, rights | `tests/test_market.py`, `tests/test_phase9_2_3_acceptance.py` | implemented locally tested |
+| Equity research | DCF with eight component checks; bank residual income v3 | audits 29/29 and 16/16; browser A1–A5 | implemented independently audited |
+| Financial institution evidence | FR Y-9C parent consolidated, FDIC subsidiary separated | `tests/test_phase9_2_fr_y9c.py` | implemented locally tested |
+| Model runtime | allowlisted FEC operators, versioned graphs, execution refusal on mismatch | `tests/test_fec.py`, `tests/test_phase9_1_models.py` | implemented locally tested |
+| Learning | dataset eligibility (60-session minimum), experiments, audit | `tests/test_phase6_learning.py` | implemented locally tested |
+| Economic case study | EIA/NOAA panel, weather-demand model, scenarios | `tests/test_phase7_economic.py` | implemented locally tested |
+| Applications | declarative packages, install/execute/fork, domain packs, rights | `tests/test_phase8_applications.py`, clean-install reproduction | implemented locally tested |
+| Terminal | typed API, workspaces, provenance panel | browser journeys at `481cd58`; not re-run in 9.2.5 | implemented browser verified (9.2.4) |
+| Transport hardening | bounded/complete compressed responses, bounded bodies | `tests/test_release_security_9_2_5.py` | implemented locally tested |
+| Hosted CI | workflow committed, never observed | — | blocked |
+| Master specification | — | — | blocked |
+
 ## Unblocking requirements
 
 1. The genuine `ATLAS_MASTER_SPEC.md` bytes (155,419 bytes, SHA-256
