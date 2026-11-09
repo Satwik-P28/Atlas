@@ -74,7 +74,7 @@ export default function Learning() {
         setCatalog(cat)
         setRuns(runPayload.items)
         setApplications(appPayload.items)
-        const first = cat.datasets?.[0]?.dataset_id ?? ''
+        const first = (cat.datasets ?? []).find((item: Row) => item.eligible !== false)?.dataset_id ?? ''
         setDataset(first)
       })
       .catch((caught: Error) => setError(caught.message))
@@ -183,7 +183,10 @@ export default function Learning() {
             <label htmlFor="learning-dataset">Dataset</label>
             <select id="learning-dataset" className="field" value={dataset} onChange={(event) => setDataset(event.target.value)}>
               {(catalog?.datasets ?? []).map((item: Row) => (
-                <option key={item.dataset_id} value={item.dataset_id}>{item.name} · {item.securities} securities</option>
+                <option key={item.dataset_id} value={item.dataset_id} disabled={item.eligible === false}>
+                  {item.name} · {item.securities} securities
+                  {item.eligible === false ? ` · needs ${item.min_sessions} sessions` : ''}
+                </option>
               ))}
             </select>
           </div>

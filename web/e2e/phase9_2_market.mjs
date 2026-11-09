@@ -119,7 +119,7 @@ try {
   await page.screenshot({ path: path.join(OUT, 'phase9_2_market_desktop.png'), fullPage: true })
 
   // Save and reopen a research object that carries the exact observation dependency.
-  const saved = await (await page.request.post(`${BASE}/api/research/objects`, {
+  const saveResponse = await page.request.post(`${BASE}/api/research/objects`, {
     data: {
       document: {
         schema_version: 'atlas.research_object.v1',
@@ -135,8 +135,17 @@ try {
         spec: { universe: ['ATLS'], fields: ['close'], frequency: 'daily', adjustment: 'raw', observation_pin: detail.pin },
       },
     },
-  })).json()
-  const reopened = await (await page.request.get(`${BASE}/api/research/objects/${saved.object_id}`)).json()
+  })
+  const saved = await saveResponse.json()
+  // The object is content-addressed: a repeated run re-opens the identical version instead
+  // of failing on the duplicate, so the journey proves idempotent persistence.
+  let objectId = saved.object_id
+  if (!saveResponse.ok()) {
+    assert(saveResponse.status() === 422, `saving the pinned object failed: ${JSON.stringify(saved)}`)
+    objectId = saved?.error?.context?.object_id
+    assert(objectId, `the duplicate response does not name the existing object: ${JSON.stringify(saved)}`)
+  }
+  const reopened = await (await page.request.get(`${BASE}/api/research/objects/${objectId}`)).json()
   const storedPin = reopened.document.spec.observation_pin
   assert(storedPin.observation_id === detail.pin.observation_id, 'the saved object lost the pin')
   const replayed = await (await page.request.post(`${BASE}/api/market/replay`, {
@@ -144,8 +153,8 @@ try {
   })).json()
   assert(replayed.exact_replay === true, 'the reopened object no longer replays exactly')
   assert(replayed.price.close === apiItem.close, 'reopened replay changed the observation')
-  evidence.saved_object_id = saved.object_id
-  evidence.assertions.push(`B6 ${saved.object_id} saved and reopened on the pinned revision`)
+  evidence.saved_object_id = objectId
+  evidence.assertions.push(`B6 ${objectId} saved and reopened on the pinned revision`)
 
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(`${BASE}/markets`, { waitUntil: 'networkidle' })
@@ -164,7 +173,9 @@ try {
   })
   assert(mobile.scrollWidth <= mobile.innerWidth + 1, `mobile page overflows: ${mobile.scrollWidth}`)
   assert(mobile.clipped.length === 0, `mobile provenance content clipped: ${mobile.clipped.join(' | ')}`)
-  assert(await page.getByTestId('provenance-pin').isVisible(), 'mobile pin action is not visible')
+  // The panel mounts before its observation resolves; wait for the action itself rather
+  // than sampling visibility while the loading state is still rendered.
+  await page.getByTestId('provenance-pin').waitFor({ state: 'visible', timeout: 30000 })
   await page.screenshot({ path: path.join(OUT, 'phase9_2_market_mobile.png'), fullPage: true })
   evidence.mobile = mobile
   evidence.assertions.push('B7 390x844 provenance panel fits without document overflow')

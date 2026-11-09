@@ -545,6 +545,13 @@ def import_price_series(
     series_id = "MPS-" + hashlib.sha256(
         f"{identity['security_id']}|{source_id}|{adjustment}".encode("utf-8")
     ).hexdigest()[:24]
+    # A project-authored synthetic series must never register as an observed market
+    # source: read models label ``market_data`` as reported, which would present a
+    # synthetic fixture as exchange data. The collection method decides the source kind.
+    source_kind = (
+        "synthetic" if collection_method.strip().lower() == "synthetic_fixture"
+        else "market_data"
+    )
     with db.transaction():
         existing_source = db.query_one("SELECT * FROM source WHERE source_id=?", (source_id,))
         if existing_source is None:
@@ -552,7 +559,7 @@ def import_price_series(
                 "INSERT INTO source (source_id, name, kind, homepage, licence, redistribution, notes, created_at) "
                 "VALUES (?,?,?,?,?,?,?,?)",
                 (
-                    source_id, source_name.strip(), "market_data", None, licence.strip(),
+                    source_id, source_name.strip(), source_kind, None, licence.strip(),
                     redistribution,
                     f"identity_sha256={source_hash}; dataset={source_name.strip()}; "
                     f"collection={collection_method}; authorization={authorization_basis or 'none'}",
@@ -1114,10 +1121,17 @@ def market_analysis(
 ) -> dict[str, Any]:
     """Compare a model value with an observed price without hiding the date gap."""
     if not price:
+        # The comparison fields stay present and explicitly null: a caller must be able to
+        # distinguish "no accounting period because there is no price" from a missing key,
+        # and no period end may be asserted for a comparison that did not happen.
         return {
             "schema": "atlas.market_analysis.v1",
             "status": "unavailable",
             "reason": "No observed price exists on or before the comparison date.",
+            "price": None,
+            "price_date": None,
+            "accounting_period_end": None,
+            "information_cutoff": (information_cutoff or "")[:10] or None,
             "implied": None,
         }
     price_date = price["date"]

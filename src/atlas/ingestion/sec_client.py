@@ -321,6 +321,34 @@ def _host_of(url: str) -> str:
     return (urlparse(url).hostname or "").lower()
 
 
+def _inflate(payload: bytes, *, gzip_header: bool) -> bytes:
+    """Decode a compressed body without ever materialising more than the size limit.
+
+    ``gzip.decompress``/``zlib.decompress`` expand the whole stream before the caller
+    can apply ``_MAX_BODY_BYTES``, so a small compressed response could exhaust memory
+    before the post-decompression check ran. Deflating with an explicit output budget
+    keeps the limit enforceable on hostile or corrupt payloads.
+    """
+    inflater = zlib.decompressobj(16 + zlib.MAX_WBITS) if gzip_header else zlib.decompressobj()
+    chunks: list[bytes] = []
+    total = 0
+    data = payload
+    while True:
+        remaining = _MAX_BODY_BYTES + 1 - total
+        chunk = inflater.decompress(data, remaining)
+        total += len(chunk)
+        chunks.append(chunk)
+        if total > _MAX_BODY_BYTES:
+            raise ProviderPayloadError("decompressed response exceeds size limit",
+                                       limit=_MAX_BODY_BYTES)
+        if inflater.eof:
+            break
+        data = inflater.unconsumed_tail
+        if not data:
+            break
+    return b"".join(chunks)
+
+
 def _decompress(body: bytes, headers: Mapping[str, str] | None) -> bytes:
     encoding = ""
     for key, value in (headers or {}).items():
@@ -329,10 +357,10 @@ def _decompress(body: bytes, headers: Mapping[str, str] | None) -> bytes:
             break
     try:
         if "gzip" in encoding:
-            return gzip.decompress(body)
+            return _inflate(body, gzip_header=True)
         if "deflate" in encoding:
-            return zlib.decompress(body)
-    except (OSError, zlib.error) as exc:  # pragma: no cover - transport dependent
+            return _inflate(body, gzip_header=False)
+    except (OSError, zlib.error) as exc:
         raise ProviderPayloadError("cannot decompress SEC response", error=str(exc)) from exc
     return body
 

@@ -580,3 +580,34 @@ replays the exact revision it used.
   environment.
 
 See `docs/PHASE9_2_2_RELEASE_INTEGRITY.md`.
+
+## Phase 9.2.4 — verified CI dependencies, browser acceptance and beta readiness
+
+Phase 9.2.4 proves the platform from a clean checkout instead of adding to it.
+
+- The two integrity jobs could not import the code they test: NumPy was declared only in
+  the optional `learning` extra, while `atlas.economic.model` imports it at module scope.
+  NumPy is now a core dependency, declared once, and `tests/test_packaging_contract.py`
+  fails if an eagerly imported package is not installed by the job that needs it. Both jobs
+  were re-run in clean virtual environments holding only their declared extras.
+- Both browser journeys now execute end to end. Running them exposed three real defects,
+  all fixed: synthetic fixtures were registered as `market_data` and therefore shown as
+  *reported* prices; an unavailable market comparison dropped its accounting-period and
+  price fields instead of stating `null`; and observation prices were strings while replay
+  prices were numbers. Two journey defects were repaired without relaxing an assertion.
+- The SEC transport now bounds decompression to the declared body limit, closing a
+  decompression-bomb path that expanded the full stream before the size check.
+- The master-spec gate is still **blocked**: `ATLAS_MASTER_SPEC.md` is absent, so no
+  conformance is claimed. GitHub Actions execution could not be observed from the build
+  environment and is reported as unverified, never as passing.
+- Readiness: **closed technical beta**. CI observation, master-spec verification and the
+  restricted vendor bytes that remain in published history block a public beta.
+
+See `docs/PHASE9_2_4_FINAL_VERIFICATION.md` and `docs/MASTER_SPEC_TRACEABILITY.md`.
+
+```
+Phase 9.2.4 browser: 2 journeys · JPM 8/8 assertions · ATLS 7/7 assertions
+Enterprise evidence: no bundled JPM price · exact pin replay · synthetic labelled synthetic
+Clean install: package 38ed19e7 · value \$101.2158 reproduced · differences none
+Backend: 507 tests · audits 29/29 and 16/16 · schema 13
+```

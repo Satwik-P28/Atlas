@@ -114,7 +114,8 @@ try {
     data: { as_of: '2025-06-30' },
   })).json()
   assert(reference.metadata.as_of === '2025-06-30T00:00:00Z', 'reference report ignored cutoff')
-  assert(reference.valuation.market.accounting_period_end === '2024-12-31', 'accounting period changed')
+  assert(reference.valuation.market.accounting_period_end === null,
+    'an unavailable market comparison must not claim an accounting period')
   assert(close(baseline, reference.valuation.institution.outputs.value_per_share), 'rendered baseline differs from API')
 
   // The critical change: no authorised JPM price exists, and the surface says so.

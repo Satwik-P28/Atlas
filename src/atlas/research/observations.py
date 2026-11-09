@@ -168,7 +168,10 @@ def observation_from_row(
         "revision_seq": int(row["revision_seq"]),
         "supersedes_seq": row["supersedes_bar"],
         "currency": row["currency"],
-        "close": close,
+        # A price is a JSON number here, matching the replay endpoint that returns the
+        # same revision. Serialising it as a string made an exact-replay comparison
+        # fail on type alone; the canonical decimal text still feeds the content hash.
+        "close": float(close),
         "observed_at": row["observed_at"],
         "ingested_at": row["ingested_at"],
     }

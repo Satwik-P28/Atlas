@@ -248,7 +248,7 @@ def test_observation_detail_exposes_identity_revisions_and_conflicts(db):
     assert detail["conflict_count"] >= 1
     assert detail["providers_disagree"] is True
     assert len(detail["conflicts"]) == 1
-    assert detail["conflicts"][0]["close"] == "11.5"
+    assert detail["conflicts"][0]["close"] == 11.5
     assert detail["pin"]["observation_id"] == target["observation_id"]
     assert "not a point-in-time vendor vintage" in detail["caveat"]
 

@@ -32,6 +32,11 @@ DATA_CLASSES = (
     "hypothetical",
 )
 
+# Minimum number of daily sessions a dataset needs before a learning panel can be
+# built. The learning catalog reports it so the interface never offers a dataset that
+# the panel loader will reject.
+MIN_SESSIONS = 60
+
 PROVIDERS: tuple[dict[str, Any], ...] = (
     {
         "provider": "eodhd-demo",
@@ -161,6 +166,10 @@ def catalog(db: Database) -> list[dict[str, Any]]:
             "data_class": "synthetic" if synthetic else "observed",
             "securities": row["securities"],
             "sessions": row["sessions"],
+            # A dataset below the panel minimum cannot load: advertising it as
+            # selectable produced a 422 on every page visit instead of a clear state.
+            "min_sessions": MIN_SESSIONS,
+            "eligible": int(row["sessions"]) >= MIN_SESSIONS,
             "start": row["first"],
             "end": row["last"],
             "rights": source["redistribution"],
@@ -194,7 +203,7 @@ def load_panel(
     source_id: str | None = None,
     start: str | date | None = None,
     end: str | date | None = None,
-    min_sessions: int = 60,
+    min_sessions: int = MIN_SESSIONS,
 ) -> dict[str, Any]:
     """Build an aligned close/volume panel from immutable bars.
 
