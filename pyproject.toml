@@ -7,7 +7,10 @@ name = "atlas-quant"
 version = "0.2.0"
 description = "Atlas Quant - point-in-time financial data, evidence kernel and research terminal"
 requires-python = ">=3.11"
-dependencies = []
+# Economic-model execution is imported by the application runtime, including
+# clean-install and database workflows that do not request the learning extra.
+# NumPy is therefore a core runtime dependency, not only a training dependency.
+dependencies = ["numpy>=2.5,<3"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "hypothesis>=6", "httpx>=0.27"]

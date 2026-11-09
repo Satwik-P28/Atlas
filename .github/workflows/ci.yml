@@ -81,6 +81,8 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: python -m pip install -e '.[dev]'
+      - name: Verify core runtime dependency imports
+        run: python -c "import numpy; from atlas.applications.contracts import read_package; from atlas.economic.model import run_weather_demand"
       - name: Fresh install, populated upgrade, rollback and concurrency
         run: python -m pytest tests/test_phase9_2_migrations.py tests/test_storage.py
 
@@ -95,6 +97,8 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: python -m pip install -e '.[dev,terminal]'
+      - name: Verify research import contracts
+        run: python -c "import numpy; from atlas.applications.contracts import read_package; from atlas.economic.model import run_weather_demand"
       - name: Provider conflict, rights, ticker identity and bank arithmetic
         run: >-
           python -m pytest
@@ -165,6 +169,7 @@ jobs:
           python scripts/fetch_phase9_2_regulatory.py --db var/phase9.db
           python scripts/import_fr_y9c.py --db var/phase9.db --cik 19617 --entity REG-JPM-PARENT --retrieved-at 2026-11-06T20:00:00Z
           python scripts/import_phase9_2_prices.py --db var/phase9.db
+          python scripts/build_terminal_db.py --db var/atlas.db --force
           python scripts/verify_distributable_fixtures.py --require-demo-db
       - name: Build the terminal
         run: cd web && npm run build
@@ -189,11 +194,11 @@ jobs:
         run: |
           cd web
           node e2e/phase9_2_market.mjs 2>&1 | tee /tmp/phase9_2_market_browser.log
-      - name: Upload browser artifacts and server log on failure
-        if: failure()
+      - name: Upload browser artifacts and server log
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: browser-failure
+          name: browser-evidence
           path: |
             artifacts/phase9_2_jpm_browser.json
             artifacts/phase9_2_market_browser.json
@@ -206,4 +211,4 @@ jobs:
             /tmp/phase9_2_jpm_browser.log
             /tmp/phase9_2_market_browser.log
             /tmp/atlas-serve.log
-          if-no-files-found: ignore
+          if-no-files-found: warn
