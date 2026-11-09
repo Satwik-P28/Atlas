@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from typing import Any, Iterable
 
+from ..research import rights as research_rights
 from ..storage.db import Database
 from .contracts import (
     REDISTRIBUTION_ALLOWED,
@@ -17,9 +18,8 @@ from .contracts import (
     SOURCE_ACTIONS,
 )
 
-_RESTRICTED_ALLOWED = {"ingest", "local_storage", "analysis"}
-_USER_RESPONSIBILITY_ALLOWED = {"ingest", "local_storage", "analysis"}
-_LOCAL_ASSUMPTION_ALLOWED = {"ingest", "local_storage", "analysis"}
+#: Actions a locally usable but non-redistributable source may be used for.
+_LOCAL_ONLY_ALLOWED = {"ingest", "local_storage", "analysis"}
 
 
 def _source_metadata(source: Any) -> dict[str, Any]:
@@ -40,13 +40,20 @@ class DataRightsEngine:
             source_id = str(source.get("source_id") or source.get("id") or "").strip()
             if not source_id:
                 raise RightsViolation("source rights record is missing source_id")
-            redistribution = str(source.get("redistribution") or "restricted").strip().lower()
+            declared = str(source.get("redistribution") or "").strip().lower()
             licence = source.get("license") or source.get("licence") or source.get("rights") or "unspecified"
+            # One classification decides; the two engines differ only in where they
+            # enforce it (ingestion/analysis here, package export in contracts).
+            classification = research_rights.classify(
+                declared,
+                copyright_licence=str(licence),
+                copyright_holder=str(source.get("name") or ""),
+            )
+            redistribution = classification["redistribution"]
             allowed_actions = (
-                set(SOURCE_ACTIONS) if redistribution in REDISTRIBUTION_ALLOWED
-                else _RESTRICTED_ALLOWED if redistribution == "restricted"
-                else _USER_RESPONSIBILITY_ALLOWED if redistribution == "user_responsibility"
-                else _LOCAL_ASSUMPTION_ALLOWED
+                set(SOURCE_ACTIONS) if classification["export_allowed"]
+                else _LOCAL_ONLY_ALLOWED if classification["trusted"]
+                else set()
             )
             actions = {}
             for action in SOURCE_ACTIONS:
@@ -59,6 +66,8 @@ class DataRightsEngine:
                     )
                 elif redistribution == "user_responsibility":
                     reason = "a user grant is required; the package does not contain one"
+                elif not classification["trusted"]:
+                    reason = "rights are unknown or incomplete; no action is permitted"
                 else:
                     reason = "provider terms restrict this action"
                 actions[action] = {"allowed": allowed, "reason": reason}

@@ -28,6 +28,7 @@ from ..evidence.kernel import EvidenceKernel, SELECTION_POLICY
 from ..market.actions import ActionStore
 from ..market.adjust import MODE_SPLIT, MODE_TOTAL_RETURN, split_adjust, total_return
 from ..market.bars import Bar, BarStore
+from ..market import evidence as market_evidence
 from ..storage.db import Database
 from .indicators import compute_many
 
@@ -118,7 +119,10 @@ def _security_summary(master: SecurityMaster, db: Database, security: dict[str, 
     bars = BarStore(db)
     mic = _default_mic(master, security["security_id"])
     coverage = bars.coverage(security["security_id"], mic) if mic else {"sessions": 0}
-    latest = bars.latest_close(security["security_id"], mic, iso_date(utcnow())) if mic else None
+    latest = (
+        market_evidence.latest_observation(db, security["security_id"], mic=mic).observation
+        if mic else None
+    )
     return {
         "security_id": security["security_id"],
         "issuer_id": security["issuer_id"],
@@ -213,7 +217,10 @@ def _batch_security_summaries(db: Database, securities: list[dict[str, Any]]) ->
         rows = listing_by_security.get(security_id, [])
         primary = next((row for row in rows if row.get("is_primary")), rows[0] if rows else None)
         mic = str(primary["mic"]) if primary else None
-        latest = bars.latest_close(security_id, mic, today) if mic else None
+        latest = (
+            market_evidence.latest_observation(db, security_id, mic=mic).observation
+            if mic else None
+        )
         ticker = ticker_by_security.get(security_id)
         summaries[security_id] = {
             "security_id": security_id,
@@ -573,11 +580,13 @@ def issuer_metrics(
     master = SecurityMaster(db)
     security = (master.securities_for_issuer(issuer["issuer_id"]) or [None])[0]
     mic = _default_mic(master, security["security_id"]) if security else None
-    latest_bar = (
-        BarStore(db).latest_close(security["security_id"], mic, iso_date(utcnow()))
+    price_selection = (
+        market_evidence.latest_observation(db, security["security_id"], mic=mic)
         if security and mic
         else None
     )
+    # The same immutable observation the Markets page shows, not a second query.
+    latest_bar = price_selection.observation if price_selection else None
 
     metrics: dict[str, dict[str, Any]] = {}
 
@@ -761,6 +770,7 @@ def issuer_metrics(
             "formula": DERIVED_FORMULAS["market_cap"],
             "period_end": reference_end,
             "price_as_of": latest_bar.session_date,
+            "price_observation_id": latest_bar.observation_id,
             "evidence_ids": metrics["shares_outstanding"]["evidence_ids"],
             "note": (
                 f"current price ({latest_bar.session_date}) applied to the share count reported for "
@@ -782,6 +792,7 @@ def issuer_metrics(
                     "formula": DERIVED_FORMULAS[key],
                     "period_end": reference_end,
                     "price_as_of": latest_bar.session_date,
+                    "price_observation_id": latest_bar.observation_id,
                     "evidence_ids": metrics["shares_outstanding"]["evidence_ids"] + metrics[concept]["evidence_ids"],
                     "note": f"trailing {concept.replace('_', ' ')} for FY ending {reference_end}",
                 }
@@ -807,6 +818,7 @@ def issuer_metrics(
                 "formula": DERIVED_FORMULAS[key],
                 "period_end": reference_end,
                 "price_as_of": latest_bar.session_date,
+                "price_observation_id": latest_bar.observation_id,
                 "evidence_ids": metrics["shares_outstanding"]["evidence_ids"]
                 + metrics[concept]["evidence_ids"],
                 "note": (
@@ -829,6 +841,7 @@ def issuer_metrics(
                 "formula": DERIVED_FORMULAS["ev"],
                 "period_end": reference_end,
                 "price_as_of": latest_bar.session_date,
+                "price_observation_id": latest_bar.observation_id,
                 "evidence_ids": metrics["shares_outstanding"]["evidence_ids"]
                 + metrics["total_debt"]["evidence_ids"]
                 + metrics["cash_and_equivalents"]["evidence_ids"],
@@ -845,6 +858,7 @@ def issuer_metrics(
                     "formula": DERIVED_FORMULAS["ev_revenue"],
                     "period_end": reference_end,
                     "price_as_of": latest_bar.session_date,
+                    "price_observation_id": latest_bar.observation_id,
                     "evidence_ids": metrics["ev"]["evidence_ids"] + metrics["revenue"]["evidence_ids"],
                 }
 
@@ -858,6 +872,8 @@ def issuer_metrics(
         "price_as_of": latest_bar.session_date if latest_bar else None,
         "price": float(latest_bar.close) if latest_bar else None,
         "price_source": _source_status(db, latest_bar.source_id) if latest_bar else None,
+        "price_observation_id": latest_bar.observation_id if latest_bar else None,
+        "price_source_selection": (price_selection.to_legacy() if price_selection else None),
         "completeness": result.completeness,
         "metrics": metrics,
         "missing": [

@@ -86,6 +86,16 @@ exist under different names; one has no implementation at all.
 6. **Two execution paths for models**: the canonical FEC runtime and the economic
    scenario service. Both are allowlisted; they do not share an execution contract.
 
+### 4.1 Resolved in Phase 9.2.6
+
+`src/atlas/market/evidence.py` now owns observation selection. The three independent price
+queries (`prices._selected_row`, two `BarStore.latest_close` call sites and the inline equity
+coverage query) were replaced by `select_price` / `latest_observation`, and the terminal
+routes were left untouched because no route changed shape. The remaining untyped boundary is
+not market evidence but the FEC value tuple; the operator registry is typed
+(`FinType`-checked) and now has a compatibility policy, so that boundary is narrower than it
+appeared.
+
 ## 5. Foundational capabilities versus downstream features
 
 **Foundational (everything else depends on them):** identifiers and units

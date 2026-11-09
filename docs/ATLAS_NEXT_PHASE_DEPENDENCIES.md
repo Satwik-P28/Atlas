@@ -57,6 +57,14 @@ No later item may be described as specification-conformant until the first gate 
 * **Why:** packages embed objects; an unregistered schema change silently breaks reopen.
 * **Acceptance:** central registry with versions, read paths validated against it.
 
+### 2.1 Delivered in Phase 9.2.6
+
+The typed market-evidence contract, the migration of its consumers, the single rights
+decision contract, the explicit non-loopback acknowledgement and the operator-version
+compatibility policy are implemented. What remains from the original list is the split of
+presentation shaping out of `terminal/api.py`: the contract made it safe to do, but it was
+not required to close the duplication and is not included in this checkpoint.
+
 ## 3. Dependencies that require the specification
 
 | Area | Depends on | Cannot start because |

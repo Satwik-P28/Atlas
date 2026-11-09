@@ -275,9 +275,13 @@ def dependency_diagnostics(application: dict[str, Any]) -> list[dict[str, Any]]:
     runtime = application.get("runtime", {}).get("kind")
     if runtime not in RUNTIMES:
         errors.append({"code": "missing_runtime", "runtime": runtime})
-    for item in dependencies.get("operators", []):
-        name = item.get("name")
-        expected = str(item.get("version"))
+    # Operator resolution is owned by :mod:`atlas.fec.compatibility`; the package
+    # diagnostics map its verdict onto the codes saved applications already carry.
+    operator_versions_declared = {
+        str(item.get("name")): str(item.get("version"))
+        for item in dependencies.get("operators", [])
+    }
+    for name, expected in operator_versions_declared.items():
         operator = REGISTRY.get(name)
         if operator is None:
             errors.append({"code": "missing_operator", "operator": name, "required": expected})

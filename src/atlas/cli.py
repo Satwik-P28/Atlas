@@ -604,13 +604,17 @@ def cmd_serve(db: Database, args: argparse.Namespace) -> int:
 
     from .terminal.api import create_app
 
+    from .terminal.exposure import assess_bind
+
+    decision = assess_bind(
+        args.host, allow_non_loopback=bool(getattr(args, "allow_non_loopback", False))
+    )
+    if not decision["permitted"]:
+        print(str(decision["reason"]), file=sys.stderr)
+        return 2
+    if decision["warning"]:
+        print(str(decision["warning"]), file=sys.stderr)
     app = create_app(db.path, web_dist=args.web_dist)
-    if args.host not in {"127.0.0.1", "::1", "localhost"}:
-        print(
-            f"WARNING: binding {args.host} exposes the terminal beyond loopback. The API "
-            "has no authentication and accepts write requests; only do this on a trusted network.",
-            file=sys.stderr,
-        )
     if not args.json:
         print(f"Atlas terminal on http://{args.host}:{args.port} (database: {db.path})", file=sys.stderr)
     uvicorn.run(app, host=args.host, port=args.port, log_level="info")
@@ -1075,6 +1079,13 @@ def build_parser() -> argparse.ArgumentParser:
     serve.add_argument("--host", default="127.0.0.1", help="bind address (default 127.0.0.1)")
     serve.add_argument("--port", type=int, default=8000, help="port (default 8000)")
     serve.add_argument("--web-dist", default=None, help="built frontend directory (default web/dist)")
+    serve.add_argument(
+        "--allow-non-loopback", action="store_true",
+        help=(
+            "acknowledge that the unauthenticated API will be reachable beyond loopback; "
+            "an acknowledgement is not authentication (env: ATLAS_ALLOW_NON_LOOPBACK=1)"
+        ),
+    )
     serve.set_defaults(func=cmd_serve)
     return parser
 

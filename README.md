@@ -652,3 +652,51 @@ Browser: JPM 8/8 and ATLS 7/7 re-run at this revision · desktop + 390×844 · n
 Clean install: package f1cae8fa · value $101.2158 reproduced · differences none
 Blocked: master specification absent · hosted CI unobservable
 ```
+
+## Phase 9.2.6 — one market-evidence contract
+
+- **The duplication is gone.** Four independent queries decided "the price": the price
+  module's selection engine, two `BarStore.latest_close` call sites in the read models, and
+  an inline newest-row query in the equity coverage report. They agreed most of the time and
+  disagreed exactly when it mattered — two providers on one session, a provider correction, a
+  second venue, a saved pin. `src/atlas/market/evidence.py` now owns selection and every
+  consumer calls it.
+- **Typed, immutable records.** `MarketObservation` carries one provider's session with its
+  raw `Decimal` OHLCV, adjustment convention, rights class and the unchanged `MOB-` identity.
+  `PriceSelection` records the policy **and its version**, the information cutoff, the applied
+  constraints, the rejected alternatives, the rationale, the missing-data state and replay
+  eligibility — it never claims "latest price". `MarketComparison` records the date gap,
+  currency, model version and uncertainty, and refuses look-ahead.
+- **Numerical and API compatibility.** Observation hashes and saved pins are unchanged
+  (canonical decimal text still feeds the hash), JSON number types are unchanged, and the two
+  additive fields that link a value to its observation (`price_observation_id`,
+  `price_source_selection`) are the only response changes.
+- **Differential tests.** 31 new tests compare independent public paths — Markets read model,
+  X-Ray metrics, price summary, explicit-provider selection, saved pin, two venues, synthetic
+  and restricted sources — on meaning, not field presence.
+- **Rights are one decision.** `applications/rights` now consumes `research/rights.classify`.
+  An unknown redistribution class previously permitted local actions in one engine and not the
+  other; it now permits nothing.
+- **Service exposure is explicit.** `serve` refuses a non-loopback bind unless
+  `--allow-non-loopback` (or `ATLAS_ALLOW_NON_LOOPBACK=1`) acknowledges that the API has no
+  authentication. The acknowledgement is not authentication and the diagnostics say so.
+- **Model compatibility.** `src/atlas/fec/compatibility.py` resolves a recorded operator
+  version or fails closed; a saved model is never reinterpreted with a newer implementation.
+- **Measured, not claimed.** On the 10-row synthetic dataset, canonical selection costs
+  0.099 ms median versus 0.017 ms for the bare `latest_close` query; `price_summary` 0.194 ms,
+  `issuer_metrics` 0.347 ms. No speedup is claimed.
+- Master-spec gate **blocked** (file absent, verifier exit 1); GitHub Actions **unobserved**
+  (private repository, no credential); browser journeys **not re-executed** in this phase —
+  the last executed evidence is the 9.2.5 run at `af4e184`.
+
+See `docs/MARKET_EVIDENCE_CONTRACT.md`, `docs/MODEL_VERSION_COMPATIBILITY.md` and
+`docs/PHASE9_2_6_MARKET_CONTRACT_ACCEPTANCE.md`.
+
+```
+Phase 9.2.6: 560 backend tests · 4 frontend tests · typecheck and build pass
+Audits: 29/29 and 16/16 · reproduction 295.4643539226478 · differences none
+Contract: one selection engine · observation ids and saved pins unchanged
+Rights: unknown now fails closed · exposure: non-loopback requires acknowledgement
+Clean install: value 101.21579153430544 reproduced · differences none
+Blocked: master specification absent · hosted CI unobservable · browser not re-run
+```

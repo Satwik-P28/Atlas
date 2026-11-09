@@ -28,6 +28,7 @@ from ..core.temporal import AsOfMode, iso, utcnow
 from ..entities.master import SecurityMaster
 from ..fec import valuation as fec_valuation
 from ..fec.compiler import COMPILER_VERSION
+from ..market import evidence as market_evidence
 from . import institutions, prices, regulatory
 from .eligibility import (
     DCF,
@@ -322,13 +323,11 @@ class EquityResearchService:
             bars = int(self.db.scalar(
                 "SELECT COUNT(*) FROM bar WHERE security_id = ?", (security["security_id"],), 0
             ) or 0)
-            latest = self.db.query_one(
-                "SELECT b.source_id, s.kind FROM bar b JOIN source s ON s.source_id=b.source_id "
-                "WHERE b.security_id=? ORDER BY b.ts_utc DESC LIMIT 1",
-                (security["security_id"],),
-            )
-            if latest:
-                price_source = latest["kind"]
+            baseline = market_evidence.latest_observation(
+                self.db, security["security_id"]
+            ).observation
+            if baseline is not None:
+                price_source = baseline.source_kind
         missing = [key for key in CORE_METRICS if key not in concepts]
         coverage_missing = [key for key in CORE_VALUATION_CONCEPTS if key not in concepts]
         share_concepts = [
