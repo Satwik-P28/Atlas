@@ -102,8 +102,10 @@ def _default_mic(master: SecurityMaster, security_id: str) -> str | None:
     return str(listings[0]["mic"]) if listings else None
 
 
-def _ticker(master: SecurityMaster, security_id: str) -> dict[str, Any] | None:
-    current = master.current_ticker(security_id)
+def _ticker(
+    master: SecurityMaster, security_id: str, *, as_of: str | None = None
+) -> dict[str, Any] | None:
+    current = master.current_ticker(security_id, as_of=as_of)
     if current is None:
         return None
     return {
@@ -1392,8 +1394,25 @@ def market_series(
     return base
 
 
-def market_overview(db: Database) -> dict[str, Any]:
+def market_overview(
+    db: Database, *, projection: str = "bulk", as_of: str | None = None
+) -> dict[str, Any]:
     """Every row is one canonical series, not the union of whatever providers exist.
+
+    The response contract is fixed; only its execution plan is selectable.
+    ``projection="bulk"`` (the default, and what the HTTP route uses) builds the same
+    items with a bounded number of set-based statements, and
+    ``projection="scalar"`` runs the per-security reference loop below. The two must
+    return identical documents; ``tests/test_phase9_2_8_bulk_overview.py`` compares them
+    differentially over adversarial fixtures and generated ones.
+    """
+    from . import market_projection
+
+    return market_projection.overview(db, plan=projection, as_of=as_of)
+
+
+def market_overview_scalar(db: Database, *, as_of: str | None = None) -> dict[str, Any]:
+    """Reference implementation: one canonical series per security, selected one at a time.
 
     Before Phase 9.2.7 this function read the raw bar table and took ``series[-1]``,
     ``series[-2]`` and ``series[-252]``. Those positions were raw rows: two providers on
@@ -1401,11 +1420,14 @@ def market_overview(db: Database) -> dict[str, Any]:
     provider on the same day, and a correction could silently rewrite a historical point.
     The row now comes from the canonical series (one provider, one observation per
     session) and the changes are computed on a stated basis over actual selected dates.
+
+    Kept as the executable definition of the contract: it is deliberately the slow, obvious
+    path, so a performance change can be proven equivalent instead of asserted.
     """
     master = SecurityMaster(db)
     actions = ActionStore(db)
     rows = db.query("SELECT security_id FROM security ORDER BY security_id")
-    today = iso_date(utcnow())
+    today = str(as_of or iso_date(utcnow()))[:10]
     items = []
     for row in rows:
         security_id = row["security_id"]
@@ -1438,7 +1460,7 @@ def market_overview(db: Database) -> dict[str, Any]:
                 "security_id": security_id,
                 "issuer_id": security["issuer_id"],
                 "legal_name": issuer.get("legal_name"),
-                "ticker": (_ticker(master, security_id) or {}).get("ticker"),
+                "ticker": (_ticker(master, security_id, as_of=today) or {}).get("ticker"),
                 "mic": mic,
                 "last_close": float(latest.close),
                 "last_bar_date": latest.session_date,

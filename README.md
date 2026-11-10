@@ -37,9 +37,17 @@ inadmissible model. See [docs/PHASE9_IMPLEMENTATION.md](docs/PHASE9_IMPLEMENTATI
 [docs/PHASE9_FINANCIAL_RECONCILIATION.md](docs/PHASE9_FINANCIAL_RECONCILIATION.md) and
 [docs/PHASE9_READINESS.md](docs/PHASE9_READINESS.md).
 
-The supplied `ATLAS_MASTER_SPEC.md` v1.2.0 is still **not present** in the checkout. This
-is documented as a blocker; no substitute file was invented. The Phase 9.2 common-equity
-gate is closed, but master-spec conformance and Phase 9 completion are not claimed.
+**The canonical Atlas Master Specification v3.0.0 is present and byte-verified.**
+`ATLAS_MASTER_SPEC.md` at the repository root is 289,963 bytes with SHA-256
+`c1228db93e66a04fb211bea85f6c978289a6040b1f655f934da76498c8c4752d`, confirmed by
+`scripts/verify_master_spec.py` and by an independent `sha256sum`. It is the authoritative
+desired-state document for all subsequent Atlas work. Its presence proves document identity,
+not implementation conformance: the per-requirement status is recorded in
+[docs/MASTER_SPEC_TRACEABILITY.md](docs/MASTER_SPEC_TRACEABILITY.md) (61 sections),
+[docs/MASTER_SPEC_V3_IMPLEMENTATION_GAPS.md](docs/MASTER_SPEC_V3_IMPLEMENTATION_GAPS.md) and
+[docs/INSTITUTIONAL_CAPABILITY_SCOREBOARD.md](docs/INSTITUTIONAL_CAPABILITY_SCOREBOARD.md)
+(ICB-01 to ICB-48). Earlier checkpoints correctly reported that the then-expected v1.2.0
+document was absent; those historical records are preserved unchanged.
 
 **Phase 9.2 corrects the bank starting book:** SEC `StockholdersEquity` minus same-period
 SEC preferred stock, both GAAP basis. JPM opens at **$324.708B** common equity (not
@@ -453,7 +461,9 @@ never the reverse. The kernel does not know HTTP exists.
   or notification delivery. The scenario is not a company forecast or investment advice.
 * Phase 7 does not implement event markets, real-estate underwriting, live orders, credit
   modeling, forward power curves or a general equilibrium simulator.
-* `ATLAS_MASTER_SPEC.md` v1.2.0 is absent from the checkout; no substitute was generated.
+* `ATLAS_MASTER_SPEC.md` v3.0.0 is present and byte-verified (289,963 bytes, SHA-256
+  `c1228db9…c4752d`); conformance is unproven and tracked per section. The v1.2.0 document
+  expected by earlier checkpoints was absent at those checkpoints.
   The Phase 9.2 common-equity correction is complete, but master-spec conformance remains
   blocked. See `docs/MASTER_SPEC_GATE.md`.
 * No news, transcripts, estimates or analyst data; events are filings and actions only.
@@ -737,4 +747,55 @@ Returns: price / split-adjusted / total return, with dates and limitations
 Historical: point-in-time price cutoff enforced; vendor vintage labelled unknown
 API: 139 routes unchanged after the market router extraction
 Blocked: master specification absent · hosted CI unobservable
+```
+
+## Phase 9.2.8 — Master Specification v3, bulk market projection, release verification
+
+- **The specification is here and verified.** `ATLAS_MASTER_SPEC.md` v3.0.0 (2026-11-09)
+  is 289,963 bytes with SHA-256 `c1228db9…c4752d`, confirmed by
+  `scripts/verify_master_spec.py` and an independent `sha256sum`. Status is
+  `received_integrity_verified`: identity proven, conformance not claimed.
+- **Traceability is generated, not narrated.** 61 section requirements
+  (`artifacts/master_spec_requirements.json`, `MS3-01`…`MS3-61`) and all 48 institutional
+  benchmarks (`artifacts/icb_registry.json`, ICB-01…ICB-48) are built by committed scripts
+  and rendered into the docs, so the readable matrix cannot drift from the record. A
+  validation test fails on a missing section, a duplicate id, an outdated version, an
+  invented status or a referenced path that does not exist. Current benchmark split:
+  **17 prototype-verified, 31 vision-only**; nothing is accepted, because acceptance needs
+  an executed, reproducible benchmark test rather than a green arithmetic audit.
+- **The N+1 query problem is gone, and equivalence is proven.**
+  `src/atlas/terminal/market_projection.py` is an *execution plan* for the unchanged
+  selection contract: `market_overview(projection="bulk"|"scalar")` dispatches, and the
+  original per-security loop is retained verbatim as the reference implementation. The plan
+  costs **9 SQL statements regardless of universe size** — 133.6× fewer at 100 securities
+  and 1,333.6× fewer at 1,000 — with 25 differential and property tests asserting exact
+  equality of source ids, observation ids, selected revisions, policy versions and
+  missingness.
+- **Measured, including what did not improve.** 1,000 securities: scalar 4,829.6 ms and
+  12,002 statements versus bulk 4,294.3 ms and 9 statements (1.12× latency, peak traced
+  memory 3.95 MB → 5.05 MB, i.e. higher). The sub-second target is **not met**: the cost is
+  per-point materialisation of ~260,000 observations, not SQL. The frontier is documented in
+  `docs/MARKET_OVERVIEW_SCALABILITY.md` rather than assumed away, and nothing is omitted to
+  gain speed.
+- **The workflow gap is named.** Section 59.1's flagship sequence works through statement
+  inspection and saved workspaces, but nothing leaves the application as a professional
+  artefact and therefore nothing can be monitored. The proposed next milestone is a grounded
+  report export whose citations resolve to stored evidence and model-version ids.
+- **Hosted CI is still unobservable** (private repository, no Actions credential) and this
+  checkpoint did not re-run the browser journeys, so no browser or mobile result is claimed
+  here. See `docs/PHASE9_2_8_ACCEPTANCE.md`.
+
+See `docs/MARKET_OVERVIEW_SCALABILITY.md`, `docs/MASTER_SPEC_TRACEABILITY.md`,
+`docs/MASTER_SPEC_V3_IMPLEMENTATION_GAPS.md`, `docs/MASTER_SPEC_V3_PRIORITY_ROADMAP.md`,
+`docs/INSTITUTIONAL_CAPABILITY_SCOREBOARD.md` and
+`docs/RESEARCH_AND_COMPRESSION_INTEGRATION.md`.
+
+```
+Phase 9.2.8: 615 backend tests · 4 frontend tests · typecheck and build pass
+Spec: v3.0.0 · 289,963 bytes · SHA-256 c1228db9…c4752d · received_integrity_verified
+Registry: 61 requirements · 48 ICB (17 prototype-verified, 31 vision-only) · validated
+Overview 1,000 securities: 4,829.6 ms / 12,002 stmts → 4,294.3 ms / 9 stmts · parity true
+Overview 100 securities: 432.7 ms / 1,202 stmts → 430.5 ms / 9 stmts · parity true
+Audits: 29/29 and 16/16 · reproduction 295.4643539226478 · differences none
+Blocked: sub-second 1,000-security target unmet · hosted CI unobservable · browser not re-run
 ```

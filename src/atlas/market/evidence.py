@@ -1074,14 +1074,24 @@ def series_changes(
     if not series.points:
         return empty
 
-    from .adjust import split_adjust, total_return
-
-    bars = [point.to_bar() for point in series.points]
     if basis == "price":
         closes = [point.close for point in series.points]
+    elif basis == "split_adjusted" and not actions:
+        # Exact shortcut, not a second convention: with no corporate action there is no
+        # split factor and no dividend, so ``split_adjust`` would divide every close by
+        # ``Decimal(1)`` and return the same values in the same order. Skipping the
+        # materialisation is therefore the identical computation, and it is the common
+        # case for a Markets overview where most securities have no action in the window.
+        closes = [point.close for point in series.points]
     elif basis == "split_adjusted":
+        from .adjust import split_adjust
+
+        bars = [point.to_bar() for point in series.points]
         closes = [bar.close for bar in split_adjust(bars, actions, include_dividends=False).bars]
     else:
+        from .adjust import total_return
+
+        bars = [point.to_bar() for point in series.points]
         closes = [Decimal(value) for _, value in total_return(bars, actions).total_return_index]
 
     limitations: list[str] = [RETURN_LABELS[basis]]
