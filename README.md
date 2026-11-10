@@ -800,6 +800,29 @@ Audits: 29/29 and 16/16 · reproduction 295.4643539226478 · differences none
 Blocked: sub-second 1,000-security target unmet · hosted CI unobservable · browser not re-run
 ```
 
+## Repository state: `main`
+
+`main` carries the complete verified Atlas history — Phases 1–9, the Phase 9.2 market and
+evidence corrections, the v3.0.0 master specification, the 61 section requirements, ICB-01…48,
+and the Phase 9.3 claim-verification and research-memo work. It was promoted by fast-forward
+from the verified development branch; see `docs/MAIN_BRANCH_PROMOTION.md`.
+
+```bash
+git clone https://github.com/Satwik-P28/Atlas.git
+cd Atlas
+python -m venv .venv && . .venv/bin/activate
+pip install -e '.[dev,terminal,learning,columnar]'
+python scripts/verify_master_spec.py          # spec integrity, 289,963 bytes
+python -m pytest                              # 658 tests
+cd web && npm ci && npm test -- --run && npm run build && cd ..
+python scripts/build_phase9_db.py --db var/phase9.db --force
+python -m atlas.cli --db var/phase9.db serve --port 3000
+```
+
+Promotion is not production readiness: the terminal API is unauthenticated, browser and
+mobile certification is still open, and memo export is refused for sources without a
+redistribution grant.
+
 ## Phase 9.3 — evidence-grounded memos, claim verification, versioning and change detection
 
 - **The report is now a research object, not a string.** `atlas.research_memo.v1` is built
