@@ -26,7 +26,7 @@ from ..core.temporal import AsOfMode, iso, iso_date, utcnow
 from ..storage.db import Database
 from . import read_models
 
-MODEL_VERSION = "atlas.materialized_metrics.v1"
+MODEL_VERSION = "atlas.materialized_metrics.v2"
 
 
 def normalize_as_of(as_of: str | None) -> str:
@@ -80,7 +80,13 @@ def get_issuer_metrics(
         return json.loads(existing["payload_json"])
 
     payload = read_models.issuer_metrics(
-        db, issuer_id, as_of=instant, mode=resolved_mode
+        db,
+        issuer_id,
+        as_of=instant,
+        mode=resolved_mode,
+        # The cache key always carries an instant; the *question* is still "current"
+        # when the caller supplied no as-of date.
+        market_basis=None if as_of else "current",
     )
     evidence_ids = sorted(
         {

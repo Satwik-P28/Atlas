@@ -147,3 +147,15 @@ The boundary is real: no downstream module writes SQL against `evidence` directl
 It is not a master-specification conformance assessment. It does not propose creating
 modules to complete a diagram: the four "partial/vision only" systems stay described as
 such until the genuine specification states what they must do.
+
+### Phase 9.2.7 update — remaining gaps
+
+- **Introducing gap: Markets Overview scaling.** The overview now builds one canonical
+  series per security. Measured at 1,000 securities: ~7.6 s cold, 24 SQL statements per row.
+  The per-point identity cost was removed; the remaining cost is per-security series
+  construction. A bulk projection of the same contract is the next step, not a rewrite.
+- **Introducing gap: route module size.** The market group is extracted; ~90 routes still
+  live in `terminal/api.py`. Each further group should move only with its own contract test.
+- **Persisting gap: master specification.** Still absent from the workspace.
+- **Persisting gap: unauthenticated API.** The exposure guard makes a non-loopback bind
+  explicit; it does not add authentication.

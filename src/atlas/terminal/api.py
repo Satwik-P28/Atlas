@@ -79,6 +79,12 @@ from ..fec import valuation as fec_valuation
 from ..fec.operators import REGISTRY, operator_versions
 from ..fec.runtime import ExecutionEngine
 from . import indicators, read_models, screener, workspaces
+from .routes.market import (
+    IndicatorRequest,
+    MarketReplayRequest,
+    MarketRequest,
+    build_market_router,
+)
 from .store import SettingsStore, WatchlistStore, WorkspaceStore
 
 DEFAULT_DB = os.environ.get("ATLAS_DB", "var/atlas.db")
@@ -142,12 +148,6 @@ class ScenarioRequest(DcfRequest):
     custom: dict[str, dict[str, Any]] | None = None
 
 
-class MarketReplayRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    pin: dict[str, Any]
-    information_cutoff: str | None = None
-
-
 class EquityReportRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     assumptions: dict[str, Any] = Field(default_factory=dict)
@@ -205,22 +205,6 @@ class ItemBody(BaseModel):
 class OrderBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
     security_ids: list[str]
-
-
-class IndicatorRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    key: str
-    params: dict[str, Any] = Field(default_factory=dict)
-
-
-class MarketRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    range: str = "1Y"
-    start: str | None = None
-    end: str | None = None
-    view: Literal["raw", "split", "total_return"] = "split"
-    indicators: list[IndicatorRequest] = Field(default_factory=list, max_length=6)
-    as_of: str | None = None
 
 
 class IndicatorPreview(BaseModel):
@@ -860,102 +844,7 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
         return research_validation.run(db, identifier, as_of=as_of, mode=mode)
 
     # ------------------------------------------------------------------ market
-    @app.get("/api/markets/overview", tags=["market"])
-    def markets(db: Database = Depends(get_db)) -> dict[str, Any]:
-        return read_models.market_overview(db)
-
-    @app.get("/api/securities/{security_id}/market", tags=["market"])
-    def market_get(
-        security_id: str,
-        range: str = "1Y",
-        start: str | None = None,
-        end: str | None = None,
-        view: Literal["raw", "split", "total_return"] = "split",
-        as_of: str | None = None,
-        db: Database = Depends(get_db),
-    ) -> dict[str, Any]:
-        return read_models.market_series(
-            db, security_id, range_key=range, start=start, end=end, view=view, as_of=as_of
-        )
-
-    @app.post("/api/securities/{security_id}/market", tags=["market"])
-    def market_post(security_id: str, body: MarketRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
-        return read_models.market_series(
-            db,
-            security_id,
-            range_key=body.range,
-            start=body.start,
-            end=body.end,
-            view=body.view,
-            indicators=[item.model_dump() for item in body.indicators],
-            as_of=body.as_of,
-        )
-
-    @app.get("/api/securities/{security_id}/actions", tags=["market"])
-    def security_actions(security_id: str, as_of: str | None = None,
-                         db: Database = Depends(get_db)) -> dict[str, Any]:
-        from ..market.actions import ActionStore
-
-        return {
-            "security_id": security_id,
-            "items": [a.to_dict() for a in ActionStore(db).list(security_id, knowledge_as_of=as_of)],
-            "as_of": as_of,
-            "schema": read_models.TERMINAL_SCHEMA,
-        }
-
-    @app.get("/api/securities/{security_id}/observations", tags=["market"])
-    def security_observations(
-        security_id: str,
-        limit: int = Query(default=100, ge=1, le=500),
-        db: Database = Depends(get_db),
-    ) -> dict[str, Any]:
-        from ..research.observations import observations_for_security
-
-        items = observations_for_security(db, security_id, limit=limit)
-        return {
-            "schema": "atlas.market_observation.list.v1",
-            "security_id": security_id,
-            "count": len(items),
-            "items": items,
-        }
-
-    @app.post("/api/market/replay", tags=["market"])
-    def market_replay(body: MarketReplayRequest, db: Database = Depends(get_db)) -> dict[str, Any]:
-        from ..research.prices import price_for_pin
-
-        return price_for_pin(
-            db, body.pin, information_cutoff=body.information_cutoff
-        )
-
-    @app.get("/api/market/observations/{observation_id}/replay", tags=["market"])
-    def market_observation_replay(
-        observation_id: str,
-        as_of: str | None = None,
-        db: Database = Depends(get_db),
-    ) -> dict[str, Any]:
-        from ..research.observations import observation_detail
-        from ..research.prices import price_for_pin
-
-        detail = observation_detail(db, observation_id)
-        if detail is None:
-            raise HTTPException(
-                status_code=404, detail=f"no stored market observation {observation_id}"
-            )
-        return price_for_pin(db, detail["pin"], information_cutoff=as_of)
-
-    @app.get("/api/market/observations/{observation_id}", tags=["market"])
-    def market_observation(
-        observation_id: str, db: Database = Depends(get_db)
-    ) -> dict[str, Any]:
-        from ..research.observations import observation_detail
-
-        detail = observation_detail(db, observation_id)
-        if detail is None:
-            raise HTTPException(
-                status_code=404,
-                detail=f"no stored market observation {observation_id}",
-            )
-        return detail
+    app.include_router(build_market_router(get_db))
 
     # -------------------------------------------------------------- indicators
     @app.get("/api/indicators", tags=["indicators"])

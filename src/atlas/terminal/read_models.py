@@ -547,7 +547,12 @@ def _fact_for(facts: Sequence[Any], concept: str, period_end: str | None) -> Any
 
 
 def issuer_metrics(
-    db: Database, issuer_identifier: str, *, as_of: str | None = None, mode: str | None = None
+    db: Database,
+    issuer_identifier: str,
+    *,
+    as_of: str | None = None,
+    mode: str | None = None,
+    market_basis: str | None = None,
 ) -> dict[str, Any]:
     issuer = resolve_company(db, issuer_identifier)
     instant = _as_of(as_of)
@@ -580,8 +585,34 @@ def issuer_metrics(
     master = SecurityMaster(db)
     security = (master.securities_for_issuer(issuer["issuer_id"]) or [None])[0]
     mic = _default_mic(master, security["security_id"]) if security else None
+    # Two different questions, kept distinguishable:
+    #
+    # * no ``as_of`` — a *current* comparison: the most recent price against the most
+    #   recently available accounting evidence, with both dates reported;
+    # * with ``as_of`` — a *point-in-time* comparison: the price must satisfy the same
+    #   cutoff as the accounting evidence, so a July price can never enter a June run.
+    # ``market_basis`` lets a caller that always has an instant (the materialized-metrics
+    # cache) still ask the *current* question. Without it, every cached read would be
+    # labelled point-in-time with a cutoff of today, which is true but misleading.
+    requested_basis = (market_basis or "").strip().lower() or None
+    if requested_basis not in {None, "current", "current_market", "point_in_time"}:
+        raise ValidationError(
+            "unknown market basis",
+            market_basis=market_basis,
+            supported=["current_market", "point_in_time"],
+        )
+    point_in_time = requested_basis == "point_in_time" or (
+        requested_basis is None and as_of is not None
+    )
+    market_basis = "point_in_time" if point_in_time else "current_market"
+    market_cutoff = iso_date(instant) if point_in_time else None
     price_selection = (
-        market_evidence.latest_observation(db, security["security_id"], mic=mic)
+        market_evidence.select_price(
+            db,
+            security["security_id"],
+            market_cutoff or market_evidence.NO_CUTOFF,
+            mic=mic,
+        )
         if security and mic
         else None
     )
@@ -874,6 +905,8 @@ def issuer_metrics(
         "price_source": _source_status(db, latest_bar.source_id) if latest_bar else None,
         "price_observation_id": latest_bar.observation_id if latest_bar else None,
         "price_source_selection": (price_selection.to_legacy() if price_selection else None),
+        "market_basis": market_basis,
+        "market_cutoff": market_cutoff,
         "completeness": result.completeness,
         "metrics": metrics,
         "missing": [
@@ -884,6 +917,15 @@ def issuer_metrics(
         "notes": [
             "ratios are computed at read time and are not stored as evidence",
             "a metric whose inputs are missing is omitted rather than estimated",
+            *(
+                [
+                    f"point-in-time run: the price must be dated on or before {market_cutoff}. "
+                    "Atlas cannot prove the vendor revision available on that date matched the one "
+                    "stored now; revision history is preserved, vendor vintage is not."
+                ]
+                if market_basis == "point_in_time"
+                else []
+            ),
         ],
         "schema": TERMINAL_SCHEMA,
     }
@@ -1167,7 +1209,14 @@ def market_series(
     start_date, end_date = _parse_range(range_key, start, end, default_end=effective_end)
     end_date = min(end_date, effective_end)
 
-    bars = BarStore(db).query(security_id, mic, start_date, end_date)
+    # One canonical series: one provider, one selected observation per session, at or
+    # before the knowledge cutoff. The chart, its indicators and its last bar all come
+    # from the same selection, so a displayed point cannot come from a different provider
+    # than the price the page says it is showing.
+    series_selection = market_evidence.select_series(
+        db, security_id, mic=mic, start=start_date, end=end_date
+    )
+    bars = [point.to_bar() for point in series_selection.points]
     actions = ActionStore(db).list(security_id, knowledge_as_of=knowledge)
     issuer = master.issuer(security["issuer_id"]) or {}
     base = {
@@ -1196,9 +1245,10 @@ def market_series(
         ),
         "actions": [action.to_dict() for action in actions],
         "sources": _sources(db),
+        "series": series_selection.summary(),
         "schema": TERMINAL_SCHEMA,
         "truncated": False,
-        "warnings": [],
+        "warnings": list(series_selection.limitations),
     }
     if not bars:
         base.update(
@@ -1343,9 +1393,19 @@ def market_series(
 
 
 def market_overview(db: Database) -> dict[str, Any]:
+    """Every row is one canonical series, not the union of whatever providers exist.
+
+    Before Phase 9.2.7 this function read the raw bar table and took ``series[-1]``,
+    ``series[-2]`` and ``series[-252]``. Those positions were raw rows: two providers on
+    one session produced two rows for one date, so the "previous" row could be the same
+    provider on the same day, and a correction could silently rewrite a historical point.
+    The row now comes from the canonical series (one provider, one observation per
+    session) and the changes are computed on a stated basis over actual selected dates.
+    """
     master = SecurityMaster(db)
-    bars = BarStore(db)
+    actions = ActionStore(db)
     rows = db.query("SELECT security_id FROM security ORDER BY security_id")
+    today = iso_date(utcnow())
     items = []
     for row in rows:
         security_id = row["security_id"]
@@ -1355,16 +1415,24 @@ def market_overview(db: Database) -> dict[str, Any]:
         mic = _default_mic(master, security_id)
         if mic is None:
             continue
-        series = bars.query(security_id, mic, "1990-01-01", iso_date(utcnow()))
-        if not series:
+        anchor = market_evidence.latest_observation(db, security_id, mic=mic, as_of=today)
+        if anchor.observation is None:
             continue
-        latest = series[-1]
-        previous = series[-2] if len(series) > 1 else None
-        year_ago = series[-252] if len(series) > 252 else None
-        change_1d = (float(latest.close) / float(previous.close) - 1) if previous else None
-        change_1y = (float(latest.close) / float(year_ago.close) - 1) if year_ago else None
+        # A bounded window: the one-year comparison plus a buffer for sessions, not the
+        # security's entire history.
+        window_start = (
+            parse_date(anchor.observation.session_date) - timedelta(days=400)
+        ).isoformat()
+        series = market_evidence.select_series(
+            db, security_id, mic=mic, start=window_start, end=today, anchor=anchor
+        )
+        if not series.points:
+            continue
+        change = market_evidence.series_changes(
+            series, actions.list(security_id, computable_only=True)
+        )
+        latest = series.points[-1]
         issuer = master.issuer(security["issuer_id"]) or {}
-        issuer_metrics_data = None
         items.append(
             {
                 "security_id": security_id,
@@ -1374,14 +1442,28 @@ def market_overview(db: Database) -> dict[str, Any]:
                 "mic": mic,
                 "last_close": float(latest.close),
                 "last_bar_date": latest.session_date,
-                "change_1d": change_1d,
-                "change_1y": change_1y,
+                "change_1d": change.one_day,
+                "change_1y": change.one_year,
+                "change_basis": change.basis,
+                "change_1d_dates": (
+                    [change.one_day_from["session_date"], change.one_day_to["session_date"]]
+                    if change.one_day_from and change.one_day_to else None
+                ),
+                "change_1y_dates": (
+                    [change.one_year_from["session_date"], change.one_year_to["session_date"]]
+                    if change.one_year_from and change.one_year_to else None
+                ),
+                "change_1y_target": change.one_year_target,
+                "change_1y_span_days": change.one_year_span_days,
                 "volume": float(latest.volume) if latest.volume is not None else None,
-                "sparkline": [float(b.close) for b in series[-30:]],
-                "sessions": len(series),
+                "sparkline": [float(point.close) for point in series.points[-30:]],
+                "sessions": series.sessions,
                 "data_status": _source_status(db, latest.source_id),
                 "currency": security.get("currency"),
-                "issuer_metrics": issuer_metrics_data,
+                "price_observation_id": latest.observation_id,
+                "series_policy": series.policy,
+                "series_limitations": list(series.limitations),
+                "issuer_metrics": None,
             }
         )
     items.sort(key=lambda item: item["ticker"] or "")

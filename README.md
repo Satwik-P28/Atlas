@@ -700,3 +700,41 @@ Rights: unknown now fails closed · exposure: non-loopback requires acknowledgem
 Clean install: value 101.21579153430544 reproduced · differences none
 Blocked: master specification absent · hosted CI unobservable · browser not re-run
 ```
+
+## Phase 9.2.7 — one market series, honest returns, split API
+
+- **The series is now one selection.** `market_overview` and the chart both read raw
+  `bar` rows: two providers on one session produced two rows for one date, `series[-2]`
+  could be a different provider's statement about the same day, and `series[-252]` is
+  neither a calendar year nor one provider's year. `select_series` now returns one
+  immutable observation per session, from one provider held constant across the window,
+  with excluded providers, missing sessions and revisions reported.
+- **Returns are stated, not implied.** `series_changes` computes one-day and one-year
+  changes on `price`, `split_adjusted` or `total_return`; one year means the session at or
+  before the same calendar date a year earlier, and the response reports the dates it used.
+  A short series returns `null` instead of inventing a comparison.
+- **Historical metrics respect their cutoff.** `issuer_metrics(as_of=...)` is explicitly
+  `point_in_time`: the price must be dated on or before the cutoff. Without `as_of` it is
+  `current_market`, and both dates are reported. Vendor vintage is stated as unknowable
+  rather than reconstructed.
+- **Measured, then optimized.** Per-point identity hashing was 8.5 ms of a 10.3 ms series
+  read; making identity lazy took the 260-session series to 4.2 ms and the one-year chart
+  from ~15 ms to ~9.7 ms. `latest_close` remains ~0.025 ms because it does not identify
+  anything.
+- **The market routes moved out of the 1,950-line API module** into
+  `terminal/routes/market.py`, with the OpenAPI document captured before the move and
+  required to match afterwards: 139 routes across 125 paths, identical.
+- Master-spec gate **blocked** (file absent, verifier exit 1); GitHub Actions
+  **unobserved** (404, no credential).
+
+See `docs/MARKET_SERIES_SELECTION_CONTRACT.md`, `docs/TERMINAL_API_ARCHITECTURE.md` and
+`docs/PHASE9_2_7_SERIES_AND_API_ACCEPTANCE.md`.
+
+```
+Phase 9.2.7: 577 backend tests · 4 frontend tests · typecheck and build pass
+Series: one provider, one observation per session, no splices
+Returns: price / split-adjusted / total return, with dates and limitations
+Historical: point-in-time price cutoff enforced; vendor vintage labelled unknown
+API: 139 routes unchanged after the market router extraction
+Blocked: master specification absent · hosted CI unobservable
+```

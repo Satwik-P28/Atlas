@@ -94,3 +94,14 @@ not required to close the duplication and is not included in this checkpoint.
   must not be changed to fit a future narrative.
 - Clean installation does not depend on hosted CI; the local rehearsal is the evidence,
   and the CI gate stays separately blocked.
+
+## Phase 9.2.7 dependency update
+
+The canonical series contract (`MarketSeriesSelection`, `series_changes`) is now the only
+way a consumer reads more than one observation. Any new market consumer — a chart, a
+screener column, a risk factor — depends on it rather than on `BarStore.query`, which stays
+a storage primitive for range/coverage work.
+
+Before Phase 10, the measured dependency is bulk projection of the overview: the contract is
+correct at 1,000 securities but slow, and the same policy can be applied to many securities
+in one query with a differential test against the per-security result.

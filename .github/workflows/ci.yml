@@ -117,6 +117,7 @@ jobs:
           tests/test_packaging_contract.py
           tests/test_release_security_9_2_5.py
           tests/test_phase9_2_6_market_contract.py
+          tests/test_phase9_2_7_market_series.py
           tests/test_sec_transport_limits.py
           tests/test_phase9_2_institutions.py
           tests/test_phase9_2_migrations.py
