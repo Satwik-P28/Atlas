@@ -1,0 +1,206 @@
+{
+  "schema": "atlas.research_memo_benchmark.v1",
+  "measured_at": "2026-11-10T20:40:44Z",
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+    "processor": "x86_64"
+  },
+  "method": {
+    "iterations": 5,
+    "statistics": "median and nearest-rank p95 of wall-clock milliseconds",
+    "statements": "database helper calls per iteration",
+    "memory": "tracemalloc peak per iteration",
+    "warm_definition": "a new service instance over the same database and caches",
+    "caveat": "no earlier memo implementation exists, so this is not a speedup claim"
+  },
+  "dataset": {
+    "db": "var/phase9_export.db",
+    "evidence_records": 26440,
+    "schema_version": 13
+  },
+  "results": [
+    {
+      "ticker": "JPM",
+      "claims": 36,
+      "evidence_dependencies": 9,
+      "model_fingerprints": 0,
+      "sections": 20,
+      "memo_content_hash": "d273a2592266bd62268d6741d7167af7168360295f8032a5cea3167b1997beab",
+      "object_id": "URO-MEM-574fe76b70f9",
+      "build_cold": {
+        "median_ms": 4023.165,
+        "p95_ms": 4332.829,
+        "min_ms": 3737.75,
+        "max_ms": 4332.829,
+        "sql_statements": 31670,
+        "peak_mib": 5.163,
+        "iterations": 5
+      },
+      "build_warm": {
+        "median_ms": 4130.109,
+        "p95_ms": 4429.582,
+        "min_ms": 3875.538,
+        "max_ms": 4429.582,
+        "sql_statements": 31586,
+        "peak_mib": 5.07,
+        "iterations": 5
+      },
+      "save_repeat": {
+        "median_ms": 15.429,
+        "p95_ms": 15.687,
+        "min_ms": 15.233,
+        "max_ms": 15.687,
+        "sql_statements": 38,
+        "peak_mib": 0.24,
+        "iterations": 5
+      },
+      "reopen": {
+        "median_ms": 2.252,
+        "p95_ms": 2.476,
+        "min_ms": 2.112,
+        "max_ms": 2.476,
+        "sql_statements": 22,
+        "peak_mib": 0.252,
+        "iterations": 5
+      },
+      "export": {
+        "markdown": {
+          "median_ms": 3.209,
+          "p95_ms": 3.24,
+          "min_ms": 3.136,
+          "max_ms": 3.24,
+          "sql_statements": 22,
+          "peak_mib": 0.252,
+          "iterations": 5,
+          "bytes": 16168,
+          "content_sha256": "c6361c2a8dc623d978ee12ee040e52d9e8f429d5f5300c37a37e549032b1b055"
+        },
+        "html": {
+          "median_ms": 3.315,
+          "p95_ms": 3.381,
+          "min_ms": 3.264,
+          "max_ms": 3.381,
+          "sql_statements": 22,
+          "peak_mib": 0.274,
+          "iterations": 5,
+          "bytes": 20897,
+          "content_sha256": "e6d01a3ceb25da201ea6a80e5a3b9fd496c014cff1aaf8ee0389691947fa101a"
+        },
+        "json": {
+          "median_ms": 12.213,
+          "p95_ms": 12.656,
+          "min_ms": 12.149,
+          "max_ms": 12.656,
+          "sql_statements": 22,
+          "peak_mib": 0.538,
+          "iterations": 5,
+          "bytes": 88224,
+          "content_sha256": "44a23cdafe6f6217daf052801cf46336cd4dae80a5c01eabb5cfa90ca4abf792"
+        }
+      },
+      "change_check": {
+        "median_ms": 3.043,
+        "p95_ms": 4.705,
+        "min_ms": 3.018,
+        "max_ms": 4.705,
+        "sql_statements": 28,
+        "peak_mib": 0.255,
+        "iterations": 5,
+        "status": "unchanged",
+        "findings": 0
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "claims": 48,
+      "evidence_dependencies": 12,
+      "model_fingerprints": 4,
+      "sections": 20,
+      "memo_content_hash": "f04ce70646d8af2f457394c2f110d87fb6001ba9d79a949ae473631fb78e3517",
+      "object_id": "URO-MEM-3b06f0907df3",
+      "build_cold": {
+        "median_ms": 4542.922,
+        "p95_ms": 5010.894,
+        "min_ms": 4347.784,
+        "max_ms": 5010.894,
+        "sql_statements": 36674,
+        "peak_mib": 5.137,
+        "iterations": 5
+      },
+      "build_warm": {
+        "median_ms": 4423.177,
+        "p95_ms": 4913.408,
+        "min_ms": 4272.638,
+        "max_ms": 4913.408,
+        "sql_statements": 35065,
+        "peak_mib": 5.133,
+        "iterations": 5
+      },
+      "save_repeat": {
+        "median_ms": 20.661,
+        "p95_ms": 23.518,
+        "min_ms": 19.742,
+        "max_ms": 23.518,
+        "sql_statements": 47,
+        "peak_mib": 0.337,
+        "iterations": 5
+      },
+      "reopen": {
+        "median_ms": 3.137,
+        "p95_ms": 3.498,
+        "min_ms": 2.796,
+        "max_ms": 3.498,
+        "sql_statements": 28,
+        "peak_mib": 0.349,
+        "iterations": 5
+      },
+      "export": {
+        "markdown": {
+          "median_ms": 4.339,
+          "p95_ms": 4.451,
+          "min_ms": 4.253,
+          "max_ms": 4.451,
+          "sql_statements": 28,
+          "peak_mib": 0.358,
+          "iterations": 5,
+          "bytes": 23131,
+          "content_sha256": "b4070e86ecd32c79c2cf6b9212b07e90acd2fc9b188c0191ff8b6c32137742b0"
+        },
+        "html": {
+          "median_ms": 4.492,
+          "p95_ms": 4.625,
+          "min_ms": 4.404,
+          "max_ms": 4.625,
+          "sql_statements": 28,
+          "peak_mib": 0.395,
+          "iterations": 5,
+          "bytes": 30979,
+          "content_sha256": "1cf5481a422c20f73cea1d62da8218eaedc9129c2d0f5bfb4841c64e0d4e4a08"
+        },
+        "json": {
+          "median_ms": 16.807,
+          "p95_ms": 31.406,
+          "min_ms": 16.606,
+          "max_ms": 31.406,
+          "sql_statements": 28,
+          "peak_mib": 0.76,
+          "iterations": 5,
+          "bytes": 126294,
+          "content_sha256": "f2cac8d48f4855722c3dcd209b1e228368e46d422181e3c0f6b342f5d91a8fa5"
+        }
+      },
+      "change_check": {
+        "median_ms": 4.247,
+        "p95_ms": 7.063,
+        "min_ms": 4.066,
+        "max_ms": 7.063,
+        "sql_statements": 34,
+        "peak_mib": 0.334,
+        "iterations": 5,
+        "status": "unchanged",
+        "findings": 0
+      }
+    }
+  ]
+}

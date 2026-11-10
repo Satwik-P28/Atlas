@@ -835,7 +835,30 @@ Blocked: sub-second 1,000-security target unmet · hosted CI unobservable · bro
 - **Still not done:** narrative evidence retrieval (Section 49), scheduled monitoring and
   notifications, PDF export, and any ICB acceptance. ICB-48 remains `vision_only`.
 
-See `docs/PHASE9_3_RESEARCH_MEMO_ACCEPTANCE.md`,
+### Phase 9.3.1 — reviewed-hash saves, change visibility and measurements
+
+- **Preview and save cannot diverge.** `save()` now takes `expected_content_hash`; when a
+  rebuild no longer matches the memo the analyst reviewed, the save is refused with
+  `memo_content_changed` and both hashes, and nothing is persisted. The interface sends the
+  reviewed hash and asks for a review instead of storing a different research object.
+- **Change results are visible.** The memo panel shows the change status, `Review required:
+  yes/no`, each finding with its category, the affected claims and the original → replacement
+  values.
+- **Measured cost** (26,440 evidence records, 5 iterations): memo build 4.0 s (JPM) / 4.5 s
+  (AAPL), save 15–21 ms, reopen 2–3 ms, change check 3–4 ms, exports 3–13 ms / 17 ms. Peak
+  build memory 5.2 MiB. No speedup is claimed; the bulk overview path is untouched.
+- **Exports are refused on the reference database.** The imported price source is
+  `user_responsibility`, so JPM and AAPL memos are not redistributable there and the API
+  returns 422 naming the blocked source. Byte-level export verification therefore used a
+  dedicated database whose `csv-import` source carries an operator-declared `permitted`
+  grant.
+- **Browser certification is still open.** Local Chromium cannot start here (missing
+  `libnspr4`, no privilege to install dependencies) and the cloud bridge failed, so the
+  committed journey `web/e2e/phase9_3_memo.mjs` has not been run. Desktop and 390×844 are
+  reported as blocked, not passed.
+
+See `docs/PHASE9_3_1_BROWSER_AND_RELEASE_ACCEPTANCE.md`,
+`docs/PHASE9_3_RESEARCH_MEMO_ACCEPTANCE.md`,
 `docs/RESEARCH_CLAIM_AND_CITATION_CONTRACT.md`, `docs/RESEARCH_MEMO_FORMAT.md`,
 `docs/RESEARCH_CHANGE_DETECTION.md` and `docs/RESEARCH_INTEGRITY_EVALUATION.md`.
 

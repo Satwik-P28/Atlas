@@ -465,6 +465,54 @@ def test_saved_memo_version_is_immutable(db):
     assert service.get(second["object_id"])["content_hash"] != original["content_hash"]
 
 
+def test_same_evidence_produces_the_same_memo_hash(db):
+    """The preview/save guard is only meaningful if a rebuild is deterministic."""
+    _seed(db)
+    first = _memo(db)
+    second = _memo(db)
+    assert first["content_hash"] == second["content_hash"]
+    assert [claim["claim_id"] for claim in first["claims"]] == [
+        claim["claim_id"] for claim in second["claims"]
+    ]
+
+
+def test_save_refuses_a_memo_that_differs_from_the_reviewed_preview(db):
+    """A stale preview must never persist a different research object than was reviewed."""
+    _seed(db)
+    preview = _memo(db)
+    service = ResearchMemoService(db)
+    changed = _claims(db)
+    _by_key(changed, "revenue")["statement"] = "Revenue changed after the review."
+    rebuilt = _memo(db, claims=changed)
+    assert rebuilt["content_hash"] != preview["content_hash"]
+    with pytest.raises(ValidationError) as failure:
+        service.save(rebuilt, expected_content_hash=preview["content_hash"])
+    context = failure.value.context
+    assert context.get("code") == "memo_content_changed"
+    assert context.get("expected_content_hash") == preview["content_hash"]
+    assert context.get("actual_content_hash") == rebuilt["content_hash"]
+    assert service.list() == [], "a refused save must not persist anything"
+
+
+def test_save_accepts_the_reviewed_hash_and_keeps_it(db):
+    _seed(db)
+    preview = _memo(db)
+    service = ResearchMemoService(db)
+    saved = service.save(preview, expected_content_hash=preview["content_hash"])
+    stored = service.get(saved["object_id"])
+    assert stored["memo"]["content_hash"] == preview["content_hash"]
+    assert [claim["claim_id"] for claim in stored["memo"]["claims"]] == [
+        claim["claim_id"] for claim in preview["claims"]
+    ]
+
+
+def test_save_without_a_reviewed_hash_remains_supported(db):
+    _seed(db)
+    service = ResearchMemoService(db)
+    saved = service.save(_memo(db), version="1.0.0")
+    assert saved["object_id"].startswith("URO-")
+
+
 def test_compare_reports_changed_claims(db):
     _seed(db)
     service = ResearchMemoService(db)

@@ -553,7 +553,24 @@ class ResearchMemoService:
 
     # ------------------------------------------------------------------ persistence
     def save(self, memo: dict[str, Any], *, version: str = "1.0.0",
-             name: str | None = None) -> dict[str, Any]:
+             name: str | None = None,
+             expected_content_hash: str | None = None) -> dict[str, Any]:
+        """Persist a reviewed memo, refusing to store a different one silently.
+
+        The caller reviews a preview and must save exactly that memo. If evidence, an
+        assumption, an observation revision or a rights declaration changed between the
+        preview and the save, the rebuild has a different content hash and the save is
+        refused with both hashes, so the analyst reviews the new memo instead of learning
+        later that a different research object was stored than the one they approved.
+        """
+        if expected_content_hash and memo.get("content_hash") != expected_content_hash:
+            raise ValidationError(
+                "the reviewed memo no longer matches the current evidence; review the "
+                "rebuilt memo before saving it",
+                code="memo_content_changed",
+                expected_content_hash=expected_content_hash,
+                actual_content_hash=memo.get("content_hash"),
+            )
         document = {
             "schema_version": "atlas.research_object.v1",
             "kind": "memo",

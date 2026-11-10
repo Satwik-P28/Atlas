@@ -1725,6 +1725,7 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
         return service.save(
             memo, version=str(payload.get("version") or "1.0.0"),
             name=payload.get("name"),
+            expected_content_hash=payload.get("expected_content_hash"),
         )
 
     @app.get("/api/research/memos", tags=["research"])

@@ -247,11 +247,23 @@ export default function EquityResearch() {
         assumptions: memoAssumptions(),
         as_of: cutoff || undefined,
         method: report?.valuation?.method ?? undefined,
+        expected_content_hash: String(memo.content_hash ?? ''),
       })
       setMemoSaved(savedMemo)
       setMessage(`Saved memo ${savedMemo.object_id} v${savedMemo.version}. The version is immutable.`)
     } catch (caught) {
-      setError((caught as Error).message)
+      const failure = caught as { code?: string; message?: string; context?: Row }
+      if (failure.code === 'memo_content_changed') {
+        setMemoSaved(null)
+        setError(
+          'Evidence changed after this memo was built, so it was not saved. ' +
+            `Reviewed hash ${String(failure.context?.expected_content_hash ?? '').slice(0, 12)}…, ` +
+            `current hash ${String(failure.context?.actual_content_hash ?? '').slice(0, 12)}…. ` +
+            'Build the memo again and review the new claims before saving.',
+        )
+        return
+      }
+      setError(failure.message ?? 'Saving the memo failed.')
     } finally {
       setBusy(null)
     }
@@ -1007,12 +1019,34 @@ export default function EquityResearch() {
                 {memoChange ? (
                   <div className="small" data-testid="equity-memo-change">
                     <p>
-                      <strong>{memoChange.status}</strong> · {(memoChange.categories ?? []).join(', ') || 'no findings'}
+                      <strong data-testid="equity-memo-change-status">{memoChange.status}</strong> ·{' '}
+                      {(memoChange.categories ?? []).join(', ') || 'no findings'}
+                    </p>
+                    <p className="muted small" data-testid="equity-memo-change-review">
+                      Review required: {memoChange.review_required ? 'yes' : 'no'} · the saved memo is not rewritten
                     </p>
                     {(memoChange.findings ?? []).slice(0, 6).map((finding: Row, index: number) => (
-                      <p key={`${finding.category}-${index}`} className="muted small">
-                        <strong>{finding.category}</strong>: {finding.detail}
-                      </p>
+                      <div key={`${finding.category}-${index}`} data-testid="equity-memo-change-finding">
+                        <p className="muted small">
+                          <strong>{finding.category}</strong>: {finding.detail}
+                        </p>
+                        {(finding.affected_claims ?? []).length > 0 ? (
+                          <ul className="equity-integrity-list">
+                            {(finding.affected_claims as Row[]).map((claim: Row) => (
+                              <li key={String(claim.claim_id)} data-testid="equity-memo-change-claim">
+                                <span className="mono">{String(claim.claim_id)}</span> · {String(claim.key)} ·{' '}
+                                {String(claim.statement)}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+                        {finding.original_value !== undefined ? (
+                          <p className="muted small" data-testid="equity-memo-change-values">
+                            Original {String(finding.original_value)} → replacement{' '}
+                            {String(finding.replacement_value)} ({String(finding.revision_kind)})
+                          </p>
+                        ) : null}
+                      </div>
                     ))}
                   </div>
                 ) : null}
