@@ -51,6 +51,9 @@ export default function EquityResearch() {
   const [priceCsv, setPriceCsv] = useState('')
   const [saved, setSaved] = useState<Row[]>([])
   const [savedRevision, setSavedRevision] = useState(0)
+  const [memo, setMemo] = useState<Row | null>(null)
+  const [memoSaved, setMemoSaved] = useState<Row | null>(null)
+  const [memoChange, setMemoChange] = useState<Row | null>(null)
 
   useEffect(() => {
     api
@@ -195,6 +198,100 @@ export default function EquityResearch() {
       })
       setMessage(`Imported ${imported.import?.written ?? 0} observations. Export allowed: ${imported.import?.source?.export_allowed ? 'yes' : 'no (restricted)'}.`)
       setWorkspace(await api.equityWorkspace(selected, { mode: 'public_available', asOf: cutoff || undefined }))
+    } catch (caught) {
+      setError((caught as Error).message)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  function memoAssumptions(): Row {
+    const assumptions: Row = {}
+    if (roe.trim()) assumptions.sustainable_roe = Number(roe) / 100
+    if (coe.trim()) assumptions.cost_of_equity = Number(coe) / 100
+    return assumptions
+  }
+
+  async function createMemo() {
+    if (!selected) return
+    setBusy('memo')
+    setError(null)
+    try {
+      const built = await api.equityMemo(selected, {
+        assumptions: memoAssumptions(),
+        as_of: cutoff || undefined,
+        method: report?.valuation?.method ?? undefined,
+      })
+      setMemo(built)
+      setMemoSaved(null)
+      setMemoChange(null)
+      setMessage(
+        `Research memo built · ${built.claims?.length ?? 0} claims · hash ${String(built.content_hash ?? '').slice(0, 12)}…`,
+      )
+    } catch (caught) {
+      setError((caught as Error).message)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  async function saveMemo() {
+    if (!selected || !memo) {
+      setError('Build the memo before saving it.')
+      return
+    }
+    setBusy('memo-save')
+    setError(null)
+    try {
+      const savedMemo = await api.equityMemoSave(selected, {
+        assumptions: memoAssumptions(),
+        as_of: cutoff || undefined,
+        method: report?.valuation?.method ?? undefined,
+      })
+      setMemoSaved(savedMemo)
+      setMessage(`Saved memo ${savedMemo.object_id} v${savedMemo.version}. The version is immutable.`)
+    } catch (caught) {
+      setError((caught as Error).message)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  async function downloadMemo(format: 'markdown' | 'html' | 'json') {
+    if (!memoSaved) {
+      setError('Save the memo before exporting it.')
+      return
+    }
+    setBusy(`memo-export-${format}`)
+    setError(null)
+    try {
+      const blob = await api.researchMemoDownload(String(memoSaved.object_id), format)
+      const suffix = format === 'markdown' ? 'md' : format
+      saveBlob(blob, `research-memo-${String(memoSaved.object_id)}.${suffix}`)
+      setMessage(
+        `${format} export downloaded. Its manifest carries the content hash and the evidence dependencies.`,
+      )
+    } catch (caught) {
+      setError((caught as Error).message)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  async function checkMemo() {
+    if (!memoSaved) {
+      setError('Save the memo before checking for evidence changes.')
+      return
+    }
+    setBusy('memo-check')
+    setError(null)
+    try {
+      const changeReport = await api.researchMemoCheck(String(memoSaved.object_id))
+      setMemoChange(changeReport)
+      setMessage(
+        `${changeReport.status}: ${(changeReport.categories ?? []).join(', ')} · ` +
+          `${(changeReport.findings ?? []).length} finding(s) · the saved memo is unchanged`,
+      )
     } catch (caught) {
       setError((caught as Error).message)
     } finally {
@@ -828,6 +925,97 @@ export default function EquityResearch() {
                 ) : (
                   <p className="muted small">No saved application exists for this company yet.</p>
                 )}
+              </div>
+
+              <div className="card" data-testid="equity-memo-panel">
+                <h3>Evidence-grounded research memo</h3>
+                <p className="muted small">
+                  Every factual and numeric statement in the memo is a claim that resolves to stored evidence or a
+                  reproducible transformation. Analyst assumptions and hypotheses stay separate from reported facts,
+                  and nothing is recalculated again for the export.
+                </p>
+                <div className="equity-actions">
+                  <button
+                    className="button secondary"
+                    data-testid="equity-memo-create"
+                    onClick={createMemo}
+                    disabled={busy !== null || !selected}
+                  >
+                    {busy === 'memo' ? 'Building…' : 'Create research memo'}
+                  </button>
+                  <button
+                    className="button secondary"
+                    data-testid="equity-memo-save"
+                    onClick={saveMemo}
+                    disabled={busy !== null || !memo}
+                  >
+                    {busy === 'memo-save' ? 'Saving…' : 'Save memo version'}
+                  </button>
+                  <button
+                    className="button secondary"
+                    data-testid="equity-memo-check"
+                    onClick={checkMemo}
+                    disabled={busy !== null || !memoSaved}
+                  >
+                    {busy === 'memo-check' ? 'Checking…' : 'Check for new evidence'}
+                  </button>
+                </div>
+                {memo ? (
+                  <div className="small" data-testid="equity-memo-summary">
+                    <p>
+                      <strong className="mono">{String(memo.memo_id ?? '')}</strong> · hash{' '}
+                      <span className="mono">{String(memo.content_hash ?? '').slice(0, 16)}…</span> ·{' '}
+                      {(memo.claims ?? []).length} claims · {memo.issuer?.valuation_method}
+                    </p>
+                    <ul className="equity-integrity-list">
+                      {Object.entries(memo.integrity?.dimensions ?? {}).map(([name, payload]) => (
+                        <li key={name} data-testid={`equity-memo-integrity-${name}`}>
+                          <strong>{name}</strong>: {(payload as Row).outcome} — {(payload as Row).detail}
+                        </li>
+                      ))}
+                    </ul>
+                    {memo.integrity?.failures?.length > 0 && (
+                      <p className="muted small">
+                        Failures are reported, not hidden: the memo keeps the failing claims and their diagnostics.
+                      </p>
+                    )}
+                    {!memo.rights?.redistributable && (
+                      <p className="small">
+                        Export is refused: {(memo.rights?.blocked_sources ?? []).map((item: Row) => item.source_id).join(', ')}{' '}
+                        does not permit redistribution.
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="muted small">No memo has been built for this issuer in this session.</p>
+                )}
+                {memoSaved ? (
+                  <div className="equity-actions">
+                    {(['markdown', 'html', 'json'] as const).map((format) => (
+                      <button
+                        key={format}
+                        className="button secondary small"
+                        data-testid={`equity-memo-export-${format}`}
+                        onClick={() => downloadMemo(format)}
+                        disabled={busy !== null}
+                      >
+                        {busy === `memo-export-${format}` ? 'Exporting…' : `Download ${format}`}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+                {memoChange ? (
+                  <div className="small" data-testid="equity-memo-change">
+                    <p>
+                      <strong>{memoChange.status}</strong> · {(memoChange.categories ?? []).join(', ') || 'no findings'}
+                    </p>
+                    {(memoChange.findings ?? []).slice(0, 6).map((finding: Row, index: number) => (
+                      <p key={`${finding.category}-${index}`} className="muted small">
+                        <strong>{finding.category}</strong>: {finding.detail}
+                      </p>
+                    ))}
+                  </div>
+                ) : null}
               </div>
 
               {valuation && valuation.status !== 'supported' && (

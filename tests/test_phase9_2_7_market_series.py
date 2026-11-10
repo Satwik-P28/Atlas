@@ -398,4 +398,9 @@ def test_openapi_contract_is_unchanged():
     app = create_app("var/does-not-exist.db")
     current = _project(app.openapi())
     assert current == expected
-    assert sum(len(methods) for methods in current["paths"].values()) == 139
+    # Phase 9.3 adds eight memo routes (create, save, list, get, export, check, compare,
+    # revise). Nothing existing changed: paths, operation ids, parameters, request bodies and
+    # responses are byte-identical to the Phase 9.2.7 capture, which is why the fixture was
+    # regenerated rather than loosened.
+    assert sum(len(methods) for methods in current["paths"].values()) == 147
+    assert len(current["paths"]) == 133

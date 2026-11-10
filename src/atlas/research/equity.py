@@ -192,6 +192,25 @@ def _valuation_eligibility(
     }
 
 
+def methodology_narrative(eligibility: dict[str, Any]) -> str:
+    """Describe the method honestly for the issuer that was actually analysed.
+
+    A bank valued with residual income must not be described as an operating company, and an
+    operating company must not be described with a bank model. The sentence is derived from
+    the classification that selected the method, not from a fixed string.
+    """
+    method = eligibility.get("method") or "no admissible method"
+    model = eligibility.get("business_model") or "unclassified"
+    sic = eligibility.get("sic") or "not reported"
+    if eligibility.get("financial_institution"):
+        rejected = eligibility.get("rejected_method") or VALUATION_METHOD
+        return (
+            f"- Method under evaluation: `{method}` for a {model} issuer (SIC {sic}); "
+            f"`{rejected}` is not applied to this issuer type."
+        )
+    return f"- Method under evaluation: `{method}` for a {model} issuer (SIC {sic})."
+
+
 def _without_timings(value: Any) -> Any:
     """Remove runtime timing fields before packaging.
 
@@ -1510,7 +1529,7 @@ class EquityResearchService:
         lines += [
             "## Valuation methodology and eligibility",
             "",
-            f"- Method under evaluation: `{eligibility['method']}` for a non-financial operating company.",
+            methodology_narrative(eligibility),
             f"- Eligibility status: **{eligibility['status']}**.",
         ]
         for reason in eligibility["reasons"]:
@@ -1538,10 +1557,12 @@ class EquityResearchService:
                     lines.append(f"- Prohibited: {item}")
         lines += ["", "## Valuation", ""]
         if valuation["status"] != "supported":
+            model_family = eligibility.get("rejected_method") or eligibility.get("method") or "valuation"
             label = (
-                "DCF rejected for this issuer type"
+                f"`{model_family}` rejected for a "
+                f"{eligibility.get('business_model') or 'this'} issuer"
                 if valuation["status"] == "unsupported_methodology"
-                else "DCF unavailable"
+                else f"`{eligibility.get('method') or 'valuation'}` unavailable"
             )
             lines += [
                 f"**{label}.** {_excerpt(valuation.get('reason'), 500)}",

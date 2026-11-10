@@ -1683,6 +1683,105 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
             headers={"content-disposition": f'attachment; filename="{filename}"'},
         )
 
+    # ------------------------------------------------------------ research memos
+    @app.post("/api/equity/{identifier}/memo", tags=["equity"])
+    def equity_memo(
+        identifier: str, body: dict[str, Any] | None = Body(default=None),
+        db: Database = Depends(get_db),
+    ) -> dict[str, Any]:
+        from ..research.memo import ResearchMemoService
+
+        payload = body or {}
+        return ResearchMemoService(db).build(
+            identifier,
+            as_of=payload.get("as_of"),
+            mode=payload.get("mode"),
+            assumptions=payload.get("assumptions"),
+            method=payload.get("method"),
+            workspace_id=payload.get("workspace_id"),
+            name=payload.get("name"),
+            observation_pin=payload.get("observation_pin"),
+        )
+
+    @app.post("/api/equity/{identifier}/memo/save", tags=["equity"], status_code=201)
+    def equity_memo_save(
+        identifier: str, body: dict[str, Any] | None = Body(default=None),
+        db: Database = Depends(get_db),
+    ) -> dict[str, Any]:
+        from ..research.memo import ResearchMemoService
+
+        payload = body or {}
+        service = ResearchMemoService(db)
+        memo = service.build(
+            identifier,
+            as_of=payload.get("as_of"),
+            mode=payload.get("mode"),
+            assumptions=payload.get("assumptions"),
+            method=payload.get("method"),
+            workspace_id=payload.get("workspace_id"),
+            name=payload.get("name"),
+            observation_pin=payload.get("observation_pin"),
+        )
+        return service.save(
+            memo, version=str(payload.get("version") or "1.0.0"),
+            name=payload.get("name"),
+        )
+
+    @app.get("/api/research/memos", tags=["research"])
+    def research_memos(limit: int = 50, db: Database = Depends(get_db)) -> dict[str, Any]:
+        from ..research.memo import ResearchMemoService
+
+        items = ResearchMemoService(db).list(limit=limit)
+        return {"items": items, "count": len(items)}
+
+    @app.get("/api/research/memos/{object_id}", tags=["research"])
+    def research_memo(object_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        from ..research.memo import ResearchMemoService
+
+        return ResearchMemoService(db).get(object_id)
+
+    @app.get("/api/research/memos/{object_id}/export", tags=["research"], response_class=Response)
+    def research_memo_export(
+        object_id: str, format: str = "markdown", db: Database = Depends(get_db),
+    ) -> Response:
+        from ..research.memo import ResearchMemoService
+
+        exported = ResearchMemoService(db).export(object_id, format=format)
+        return Response(
+            content=exported["content"],
+            media_type=exported["media_type"],
+            headers={
+                "content-disposition": f'attachment; filename="{exported["filename"]}"',
+                "x-atlas-content-sha256": exported["manifest"]["content_hash"],
+            },
+        )
+
+    @app.post("/api/research/memos/{object_id}/check", tags=["research"])
+    def research_memo_check(object_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        from ..research.memo import ResearchMemoService
+
+        return ResearchMemoService(db).check_changes(object_id)
+
+    @app.get("/api/research/memos/{object_id}/compare/{other_id}", tags=["research"])
+    def research_memo_compare(
+        object_id: str, other_id: str, db: Database = Depends(get_db)
+    ) -> dict[str, Any]:
+        from ..research.memo import ResearchMemoService
+
+        return ResearchMemoService(db).compare(object_id, other_id)
+
+    @app.post("/api/research/memos/{object_id}/revise", tags=["research"])
+    def research_memo_revise(
+        object_id: str, body: dict[str, Any] | None = Body(default=None),
+        db: Database = Depends(get_db),
+    ) -> dict[str, Any]:
+        from ..research.memo import ResearchMemoService
+
+        payload = body or {}
+        return ResearchMemoService(db).revise(
+            object_id, version=payload.get("version"), as_of=payload.get("as_of")
+        )
+
     # --------------------------------------------------------------- screeners
     @app.get("/api/screeners/metrics", tags=["screeners"])
     def screener_metrics() -> dict[str, Any]:

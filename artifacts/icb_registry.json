@@ -19,8 +19,8 @@
   "summary": {
     "total": 48,
     "counts_by_status": {
-      "prototype_verified": 17,
-      "vision_only": 31
+      "prototype_verified": 18,
+      "vision_only": 30
     }
   },
   "benchmarks": [
@@ -66,14 +66,14 @@
       "acceptance_criteria": "Match references within declared tolerances.",
       "existing_tests": [],
       "adversarial_cases": "Curve inversion, negative rates, distressed spread, day-count mismatch.",
-      "status": "vision_only",
-      "evidence_available": "No fixed income engine exists.",
-      "missing_implementation": "Curve construction, discounting, sensitivities, stress engine.",
+      "status": "prototype_verified",
+      "evidence_available": "Curve and bond pricing primitives exist in `atlas/institutional/service.py`; coverage is incomplete rather than absent.",
+      "missing_implementation": "Published-vector parity, derivative breadth, stress engine and day-count edge cases.",
       "priority": "P2",
       "dependencies": [
         "MS3-14"
       ],
-      "executed": false,
+      "executed": null,
       "verification_date": "2026-11-10",
       "commit_sha": "cf67cdf6a1bcc2f29b29dc71967d84263eaa6590"
     },
@@ -1224,12 +1224,13 @@
       "required_outputs": "Memo, evidence links, model, scenarios and monitoring record.",
       "acceptance_criteria": "Declared tool and data dependencies; verified memo.",
       "existing_tests": [
-        "tests/test_phase9_equity.py"
+        "tests/test_phase9_equity.py",
+        "tests/test_phase9_3_research_memo.py"
       ],
       "adversarial_cases": "Restatement mid-task; missing price date; conflicting sources.",
       "status": "vision_only",
-      "evidence_available": "The Phase 9 workflow covers the middle of this task only.",
-      "missing_implementation": "Narrative evidence retrieval, memo authoring and monitoring.",
+      "evidence_available": "Phase 9.3 supplies memo authoring, claim verification, exports and deterministic change detection; the benchmark is not accepted.",
+      "missing_implementation": "An independently produced analyst baseline, licensed price feed, narrative retrieval and notification delivery.",
       "priority": "P0",
       "dependencies": [
         "MS3-59",

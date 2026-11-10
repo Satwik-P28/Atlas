@@ -217,10 +217,11 @@
       ],
       "tests": [
         "tests/test_phase21_research.py",
-        "tests/test_properties.py"
+        "tests/test_properties.py",
+        "tests/test_phase9_3_research_memo.py"
       ],
-      "implementation_evidence": "Versioned research objects with manifests and lineage exist for research and application paths.",
-      "unimplemented_dependencies": "The full object-family catalogue (models, apps, portfolios, memos) is not implemented.",
+      "implementation_evidence": "Versioned research objects with manifests and lineage exist for research and application paths; the `memo` kind was added in Phase 9.3 with immutable versions.",
+      "unimplemented_dependencies": "Portfolio, order and instrument objects are not implemented; the memo kind is the first professional artefact.",
       "status": "prototype_verified",
       "internally_partial": true,
       "severity": "high",
@@ -961,10 +962,11 @@
       ],
       "tests": [
         "tests/test_phase9_equity.py",
-        "tests/test_reconcile.py"
+        "tests/test_reconcile.py",
+        "tests/test_phase9_3_research_memo.py"
       ],
-      "implementation_evidence": "SEC XBRL statements, restatement handling and derived metrics with provenance are tested.",
-      "unimplemented_dependencies": "Segments, leases and accounting-policy notes are absent.",
+      "implementation_evidence": "SEC XBRL statements, restatement handling and derived metrics with provenance are tested; Phase 9.3 adds claim-level verification, a memo artefact and exports.",
+      "unimplemented_dependencies": "Segments, leaks and accounting-policy notes are absent; memo export is Markdown/HTML/JSON only.",
       "status": "prototype_verified",
       "internally_partial": true,
       "severity": "high",
@@ -1212,8 +1214,8 @@
         "tests/test_phase9_2_1_market_integrity.py",
         "tests/test_phase9_1_models.py"
       ],
-      "implementation_evidence": "Model Auditor and independent financial audits produce per-check findings.",
-      "unimplemented_dependencies": "Statistical-validity and decision-level checks are not part of a unified report.",
+      "implementation_evidence": "Phase 9.3 adds `atlas.research_integrity.v1`: evidence, computational, statistical and decision dimensions reported separately per memo, with named failures and no trust score.",
+      "unimplemented_dependencies": "Statistical integrity is `not_applicable` because no empirical forecast evaluation exists; no section-level acceptance.",
       "status": "prototype_verified",
       "internally_partial": true,
       "severity": "high",
@@ -1254,7 +1256,7 @@
         "tests/test_phase9_2_2_market_observations.py",
         "tests/test_phase9_2_8_bulk_overview.py"
       ],
-      "implementation_evidence": "Source status, synthetic labelling, missing-session counts and coverage blocks are surfaced.",
+      "implementation_evidence": "Source status, synthetic labelling, missing-session counts and coverage blocks are surfaced; the memo states coverage and rights as disclosure claims.",
       "unimplemented_dependencies": "No unified coverage, freshness and conflict dashboard; no historical universe reporting.",
       "status": "prototype_verified",
       "internally_partial": true,
@@ -1288,10 +1290,14 @@
       "section_title": "Workflow Portability, Migration and Professional Deliverables",
       "requirement": "Let users import and export professional workflows and artefacts without silent differences.",
       "subsystem": "Portability",
-      "source_modules": [],
-      "tests": [],
-      "implementation_evidence": "Application packages are portable; spreadsheets and documents are not.",
-      "unimplemented_dependencies": "No spreadsheet, notebook or document import or export.",
+      "source_modules": [
+        "atlas/research/memo.py"
+      ],
+      "tests": [
+        "tests/test_phase9_3_research_memo.py"
+      ],
+      "implementation_evidence": "Application packages and evidence-grounded memos are portable (Markdown/HTML/JSON with a hashed manifest); spreadsheets and notebooks are not.",
+      "unimplemented_dependencies": "No spreadsheet, notebook or document import; no PDF renderer.",
       "status": "vision_only",
       "internally_partial": false,
       "severity": "medium",
@@ -1353,8 +1359,8 @@
         "tests/test_phase9_equity.py",
         "tests/test_phase9_2_4_acceptance.py"
       ],
-      "implementation_evidence": "Company, statements, model, scenarios, provenance and saved workspace run end to end; see docs/MASTER_SPEC_V3_IMPLEMENTATION_GAPS.md.",
-      "unimplemented_dependencies": "Narrative evidence retrieval, professional export and monitoring are missing; this is the smallest blocking gap.",
+      "implementation_evidence": "Company, statements, model, scenarios, provenance, saved workspace, verified memo, export and deterministic change detection run end to end; see docs/PHASE9_3_RESEARCH_MEMO_ACCEPTANCE.md.",
+      "unimplemented_dependencies": "Narrative evidence retrieval, scheduled monitoring and notification delivery are missing; no licensed price feed.",
       "status": "prototype_verified",
       "internally_partial": true,
       "severity": "critical",
@@ -1376,8 +1382,8 @@
       "tests": [
         "tests/test_phase9_2_8_master_spec_registry.py"
       ],
-      "implementation_evidence": "ICB-01..48 registry built with statuses and evidence gaps; no v3 benchmark has been executed.",
-      "unimplemented_dependencies": "ICB-33..48 are specified only.",
+      "implementation_evidence": "ICB-01..48 registry built with statuses and evidence gaps; no v3 benchmark is accepted. Phase 9.3 supplies ICB-39 and ICB-48 prerequisites without promoting either.",
+      "unimplemented_dependencies": "ICB-33..48 are specified only; ICB-48 needs an independent analyst baseline.",
       "status": "vision_only",
       "internally_partial": false,
       "severity": "high",

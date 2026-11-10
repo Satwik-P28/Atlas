@@ -54,21 +54,21 @@ a professional artefact → save a thesis → monitor relevant evidence changes.
 | 4 | Configure a model | **API/script only** | DCF and bank residual income run through the FEC with versioned graphs; Studio exposes parameters | No in-UI model configuration for arbitrary models |
 | 5 | Run scenarios | **Partial** | Scenario parameters and sensitivities exist for the supported models | No scenario comparison artefact or saved scenario set |
 | 6 | Challenge assumptions and coverage | **Partial** | Coverage-vs-valuation readiness, model audit findings, rights warnings | No adversarial challenge workflow tied to a saved thesis |
-| 7 | Export a professional artefact | **Unsupported** | Application packages and CSV exports exist; the workspace can be exported as a package | No memo/report artefact grounded in evidence ids |
+| 7 | Export a professional artefact | **Working in the UI** (Phase 9.3) | Evidence-grounded memo with Markdown, sanitized HTML and JSON export, each carrying a hashed manifest and resolvable citations | No PDF renderer; no document import |
 | 8 | Save a thesis | **Working in the UI** | Workspaces persist research state | A thesis is a workspace, not a versioned thesis object with an evidence set |
-| 9 | Monitor relevant evidence changes | **Unsupported** | Phase 7 monitoring is manual and deterministic; no scheduler or notification delivery | Dependency-aware invalidation and change reporting on a saved thesis |
+| 9 | Monitor relevant evidence changes | **Partial** (Phase 9.3) | On-demand deterministic change check names the affected claims, original and replacement evidence, and replay feasibility; the saved memo is never rewritten | No scheduler, background agent or notification delivery |
 
-**The smallest missing component that prevents an external user from completing the
-workflow** is step 7: a grounded research artefact. Steps 1–6 produce verified evidence and
-supported model output, and step 8 stores state, but nothing leaves the application as a
-professional deliverable, and step 9 has nothing to monitor because no artefact is bound to
-an evidence set.
+**The step 7 gap was closed in Phase 9.3**, and step 9 now has an artefact to monitor: a
+memo whose every claim, number and citation resolves to stored evidence, an observation or a
+model version, bound to the workspace it was created from, with a deterministic change
+report that names affected claims and never rewrites the saved version.
 
-The next milestone is therefore deliberately small: export a report whose every claim,
-number and citation resolves to a stored evidence, observation or model-version id, bind it
-to the saved workspace, and let a later revision mark it stale with the affected items
-listed. That is ICB-48's prerequisite and it requires no new retrieval engine, no new
-database and no new evidence store.
+The smallest missing component for an external user is now **narrative evidence retrieval**:
+steps 2–9 work over structured XBRL facts and model output, but the memo cannot cite the
+filing's own prose, so the qualitative half of a professional memo still cannot be produced
+from source. Scheduling and notification delivery are the second gap and are deliberately
+out of scope until retrieval exists. This is ICB-48's remaining work and it requires no new
+evidence store or database.
 
 ## 4. What this analysis does not claim
 

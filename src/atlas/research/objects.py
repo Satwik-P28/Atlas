@@ -26,7 +26,7 @@ from ..dependencies import DependencyIndex
 from ..storage.db import Database
 
 SCHEMA_VERSION = "atlas.research_object.v1"
-KINDS = ("dataset", "financial_metric", "model", "experiment", "strategy", "application")
+KINDS = ("dataset", "financial_metric", "model", "experiment", "strategy", "application", "memo")
 STATUSES = ("draft", "validated", "deprecated")
 REQUIRED_FIELDS = (
     "schema_version",
@@ -49,6 +49,9 @@ SPEC_FIELDS = {
     "experiment": ("hypothesis", "method", "metrics"),
     "strategy": ("signal", "universe", "rebalance", "constraints"),
     "application": ("purpose", "views"),
+    # A memo is a saved research artefact, not a computation: it carries the claim register,
+    # the integrity findings and the reproduction manifest it was exported from.
+    "memo": ("issuer_id", "cutoff", "sections", "claims", "integrity", "manifest"),
 }
 FORBIDDEN_KEYS = {"code", "sql", "python", "javascript", "executable", "script", "lambda"}
 SEMVER = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")

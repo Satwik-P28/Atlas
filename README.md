@@ -799,3 +799,53 @@ Overview 100 securities: 432.7 ms / 1,202 stmts → 430.5 ms / 9 stmts · parity
 Audits: 29/29 and 16/16 · reproduction 295.4643539226478 · differences none
 Blocked: sub-second 1,000-security target unmet · hosted CI unobservable · browser not re-run
 ```
+
+## Phase 9.3 — evidence-grounded memos, claim verification, versioning and change detection
+
+- **The report is now a research object, not a string.** `atlas.research_memo.v1` is built
+  from the existing equity service and stored through the versioned research-object store as
+  kind `memo`. Markdown, sanitized HTML and JSON are views of the same claim register, so a
+  screen and a download cannot disagree about a number.
+- **Every factual statement is a typed claim.** `atlas.research_claim.v1` distinguishes
+  observed facts, derived metrics, model output, analyst assumptions, hypotheses,
+  methodology disclosures and unsupported claims. An observed fact must match a stored record
+  on issuer, period, unit, currency, value and availability; a derived metric is recomputed
+  from its inputs with a recorded operator version; a model output must pass the independent
+  component audit and a compiler-version check. A failing claim is kept and named, never
+  deleted and never softened.
+- **Analyst opinion cannot become fact.** Hypotheses and assumptions carry an explicit
+  `not_applicable` verification marker instead of borrowing a factual outcome, and the
+  report narrative is now derived from the issuer classification: a bank memo says residual
+  income, an operating company says FCFF DCF. The hard-coded "non-financial operating
+  company" sentence is gone and pinned by a test.
+- **Integrity has four independent dimensions** (evidence, computational, statistical,
+  decision) with `pass` / `fail` / `insufficient_evidence` / `not_applicable` / `not_run`.
+  Statistical integrity is `not_applicable` because a deterministic valuation is not an
+  empirical test, and there is no aggregate trust percentage.
+- **Versioning and exports are immutable and hashed.** Saving creates a new version, the old
+  memo stays retrievable, `compare()` reports added, removed and changed claims, and every
+  export carries a manifest with the content hash and evidence dependencies. Export is
+  refused when a cited source is not redistributable. HTML escapes all source and analyst
+  text; a tampered manifest is detectable.
+- **Change detection is deterministic and on demand.** The check separates
+  `superseded_evidence`, `new_relevant_evidence`, `revised_market_observation`,
+  `missing_dependency`, `model_version_incompatible` and `rights_changed`, lists the affected
+  claims with original and replacement values, and never rewrites the saved memo. An
+  unrelated new filing does not require review.
+- **Still not done:** narrative evidence retrieval (Section 49), scheduled monitoring and
+  notifications, PDF export, and any ICB acceptance. ICB-48 remains `vision_only`.
+
+See `docs/PHASE9_3_RESEARCH_MEMO_ACCEPTANCE.md`,
+`docs/RESEARCH_CLAIM_AND_CITATION_CONTRACT.md`, `docs/RESEARCH_MEMO_FORMAT.md`,
+`docs/RESEARCH_CHANGE_DETECTION.md` and `docs/RESEARCH_INTEGRITY_EVALUATION.md`.
+
+```
+Phase 9.3: backend and frontend suites green · typecheck and build pass
+Claims: observed / derived / model / assumption / hypothesis / disclosure · 7 outcomes
+Memo: atlas.research_memo.v1 · 20 sections · Markdown + sanitized HTML + JSON manifest
+JPM: residual_income_equity · 36 claims · decision integrity fail (not economically supported)
+AAPL: unlevered_fcff_dcf · 48 claims · evidence, computational and decision integrity pass
+Exports: immutable versions · hashed manifests · restricted source refuses export
+Changes: supersession, new evidence, revised observations, missing deps, compiler drift
+Blocked: ICB acceptance · narrative retrieval · scheduled monitoring · hosted CI unobservable
+```

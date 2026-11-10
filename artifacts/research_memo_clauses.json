@@ -1,0 +1,130 @@
+{
+  "schema": "atlas.research_memo_clauses.v1",
+  "spec_version": "3.0.0",
+  "scope_note": "Clause-level traceability only for the clauses this phase actually implements. The 61-section registry remains section-level and is not a decomposition of the whole specification.",
+  "clauses": [
+    {
+      "clause_id": "MS3C-6.1",
+      "section": 6,
+      "clause": "A research asset carries a stable identity, type, version, lineage and time semantics.",
+      "status": "prototype_verified",
+      "implemented_by": ["atlas.research.objects (kind `memo`)", "atlas.research.memo.MEMO_SCHEMA"],
+      "tests": ["tests/test_phase9_3_research_memo.py::test_saved_memo_version_is_immutable"],
+      "gap": "Portfolio and order objects do not exist."
+    },
+    {
+      "clause_id": "MS3C-6.2",
+      "section": 6,
+      "clause": "Every cited evidence id on an object must resolve in the evidence store.",
+      "status": "implemented_verified",
+      "implemented_by": ["atlas.research.objects.ResearchObjectStore.create"],
+      "tests": ["tests/test_phase9_3_research_memo.py::test_saved_memo_version_is_immutable"],
+      "gap": null
+    },
+    {
+      "clause_id": "MS3C-39.1",
+      "section": 39,
+      "clause": "A factual statement in a research artefact resolves to stored evidence with the same issuer, period, unit, currency and value.",
+      "status": "prototype_verified",
+      "implemented_by": ["atlas.research.claims.verify_claim"],
+      "tests": [
+        "tests/test_phase9_3_research_memo.py::test_observed_fact_resolves_to_stored_evidence",
+        "tests/test_phase9_3_research_memo.py::test_claim_citing_another_issuer_is_rejected"
+      ],
+      "gap": "Verification covers SEC XBRL facts and model outputs, not narrative text."
+    },
+    {
+      "clause_id": "MS3C-39.2",
+      "section": 39,
+      "clause": "A derived metric is recomputed independently from its recorded inputs and operator version.",
+      "status": "prototype_verified",
+      "implemented_by": ["atlas.research.claims._compute", "atlas.research.claims.ARITHMETIC_VERSION"],
+      "tests": ["tests/test_phase9_3_research_memo.py::test_derived_metric_reproduces_from_its_inputs"],
+      "gap": "Only the ratio and cash-flow formulas in FORMULAS are recomputed."
+    },
+    {
+      "clause_id": "MS3C-39.3",
+      "section": 39,
+      "clause": "An analyst assumption or hypothesis is never presented as an observed fact.",
+      "status": "implemented_verified",
+      "implemented_by": ["atlas.research.claims.CLAIM_TYPES", "atlas.research.claims.verify_claim"],
+      "tests": [
+        "tests/test_phase9_3_research_memo.py::test_analyst_hypothesis_is_never_a_verified_fact",
+        "tests/test_phase9_3_research_memo.py::test_assumptions_and_disclosures_are_not_factual_claims"
+      ],
+      "gap": null
+    },
+    {
+      "clause_id": "MS3C-52.1",
+      "section": 52,
+      "clause": "Evidence, computational, statistical and decision integrity are reported separately without a single trust score.",
+      "status": "prototype_verified",
+      "implemented_by": ["atlas.research.memo.integrity_report"],
+      "tests": [
+        "tests/test_phase9_3_research_memo.py::test_statistical_integrity_is_never_passed_by_a_model",
+        "tests/test_phase9_3_research_memo.py::test_integrity_failure_is_named"
+      ],
+      "gap": "Statistical integrity has no empirical test to run; it reports not_applicable."
+    },
+    {
+      "clause_id": "MS3C-54.1",
+      "section": 54,
+      "clause": "A report states its coverage, cutoff, source rights and missing inputs rather than implying completeness.",
+      "status": "prototype_verified",
+      "implemented_by": ["atlas.research.claims._disclosure_claims"],
+      "tests": ["tests/test_phase9_3_research_memo.py::test_coverage_disclosure_states_the_fixture_is_incomplete"],
+      "gap": "No freshness or conflict dashboard."
+    },
+    {
+      "clause_id": "MS3C-56.1",
+      "section": 56,
+      "clause": "A professional artefact exports without silently inserting newer evidence or changing a number.",
+      "status": "prototype_verified",
+      "implemented_by": ["atlas.research.memo.render_markdown", "render_html", "render_json", "verify_export"],
+      "tests": [
+        "tests/test_phase9_3_research_memo.py::test_export_formats_agree_on_the_same_claims",
+        "tests/test_phase9_3_research_memo.py::test_export_manifest_detects_tampering"
+      ],
+      "gap": "No PDF renderer; no spreadsheet or notebook import."
+    },
+    {
+      "clause_id": "MS3C-59.1a",
+      "section": 59,
+      "clause": "The analyst can export a professional artefact from a saved research workspace.",
+      "status": "prototype_verified",
+      "implemented_by": ["atlas.research.memo.ResearchMemoService.save", "ResearchMemoService.export", "web/src/pages/EquityResearch.tsx"],
+      "tests": ["tests/test_phase9_3_research_memo.py::test_saved_memo_version_is_immutable"],
+      "gap": "The export is Markdown/HTML/JSON; no PDF; the workspace link is recorded but not enforced as a foreign key."
+    },
+    {
+      "clause_id": "MS3C-59.1b",
+      "section": 59,
+      "clause": "A saved artefact is monitored for source changes without rewriting it.",
+      "status": "prototype_verified",
+      "implemented_by": ["atlas.research.changes.check"],
+      "tests": [
+        "tests/test_phase9_3_research_memo.py::test_superseding_evidence_names_the_affected_claim",
+        "tests/test_phase9_3_research_memo.py::test_unrelated_new_evidence_does_not_require_review"
+      ],
+      "gap": "On-demand only; no scheduler, notification delivery or automatic re-run."
+    },
+    {
+      "clause_id": "MS3C-60.1",
+      "section": 60,
+      "clause": "ICB-39 and ICB-48 gain verified prerequisites without being accepted.",
+      "status": "prototype_verified",
+      "implemented_by": ["artifacts/icb_registry.json"],
+      "tests": ["tests/test_phase9_2_8_master_spec_registry.py"],
+      "gap": "No independent analyst baseline; ICB-48 remains vision_only."
+    },
+    {
+      "clause_id": "MS3C-49.1",
+      "section": 49,
+      "clause": "Narrative evidence retrieval with grounded spans and abstention.",
+      "status": "vision_only",
+      "implemented_by": [],
+      "tests": [],
+      "gap": "No chunking, index, retriever or grounded-QA evaluation; contract only in docs/RESEARCH_AND_COMPRESSION_INTEGRATION.md."
+    }
+  ]
+}

@@ -407,6 +407,33 @@ export const api = {
     if (!response.ok) throw new ApiError(response.status, 'download_failed', 'Research package download failed')
     return response.blob()
   },
+  equityMemo: (identifier: string, body: Record<string, unknown> = {}) =>
+    request<Record<string, any>>(`/api/equity/${enc(identifier)}/memo`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  equityMemoSave: (identifier: string, body: Record<string, unknown> = {}) =>
+    request<Record<string, any>>(`/api/equity/${enc(identifier)}/memo/save`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  researchMemos: () => request<Record<string, any>>('/api/research/memos'),
+  researchMemo: (objectId: string) =>
+    request<Record<string, any>>(`/api/research/memos/${enc(objectId)}`),
+  researchMemoCheck: (objectId: string) =>
+    request<Record<string, any>>(`/api/research/memos/${enc(objectId)}/check`, { method: 'POST' }),
+  researchMemoCompare: (objectId: string, otherId: string) =>
+    request<Record<string, any>>(`/api/research/memos/${enc(objectId)}/compare/${enc(otherId)}`),
+  researchMemoRevise: (objectId: string, body: Record<string, unknown> = {}) =>
+    request<Record<string, any>>(`/api/research/memos/${enc(objectId)}/revise`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  researchMemoDownload: async (objectId: string, format: string): Promise<Blob> => {
+    const response = await fetch(`${BASE}/api/research/memos/${enc(objectId)}/export${qs({ format })}`)
+    if (!response.ok) throw new ApiError(response.status, 'download_failed', 'Research memo export failed')
+    return response.blob()
+  },
   securityObservations: (securityId: string, limit = 100) =>
     request<Record<string, any>>(`/api/securities/${enc(securityId)}/observations${qs({ limit })}`),
   marketObservation: (observationId: string) =>

@@ -23,8 +23,8 @@ Total benchmarks: 48.
 
 | Status | Count |
 | --- | --- |
-| `vision_only` | 31 |
-| `prototype_verified` | 17 |
+| `vision_only` | 30 |
+| `prototype_verified` | 18 |
 
 ## Priority order
 
@@ -63,7 +63,7 @@ Total benchmarks: 48.
 
 | Field | Value |
 | --- | --- |
-| Status | `vision_only` |
+| Status | `prototype_verified` |
 | Priority | P2 |
 | Specification | v3.0.0, Section 22 |
 | Objective | Build a curve, value bonds and vanilla rate instruments, compute sensitivities and stress. |
@@ -74,10 +74,10 @@ Total benchmarks: 48.
 | Acceptance criteria | Match references within declared tolerances. |
 | Existing tests | none |
 | Adversarial cases | Curve inversion, negative rates, distressed spread, day-count mismatch. |
-| Evidence available | No fixed income engine exists. |
-| Missing implementation | Curve construction, discounting, sensitivities, stress engine. |
+| Evidence available | Curve and bond pricing primitives exist in `atlas/institutional/service.py`; coverage is incomplete rather than absent. |
+| Missing implementation | Published-vector parity, derivative breadth, stress engine and day-count edge cases. |
 | Dependencies | MS3-14 |
-| Executed | no |
+| Executed | not recorded |
 | Recorded | 2026-11-10 at `cf67cdf6a1bcc2f29b29dc71967d84263eaa6590` |
 
 ### ICB-03 — Quant ML
@@ -1038,10 +1038,10 @@ Total benchmarks: 48.
 | Independent baseline | An analyst memo produced independently. |
 | Required outputs | Memo, evidence links, model, scenarios and monitoring record. |
 | Acceptance criteria | Declared tool and data dependencies; verified memo. |
-| Existing tests | `tests/test_phase9_equity.py` |
+| Existing tests | `tests/test_phase9_equity.py`, `tests/test_phase9_3_research_memo.py` |
 | Adversarial cases | Restatement mid-task; missing price date; conflicting sources. |
-| Evidence available | The Phase 9 workflow covers the middle of this task only. |
-| Missing implementation | Narrative evidence retrieval, memo authoring and monitoring. |
+| Evidence available | Phase 9.3 supplies memo authoring, claim verification, exports and deterministic change detection; the benchmark is not accepted. |
+| Missing implementation | An independently produced analyst baseline, licensed price feed, narrative retrieval and notification delivery. |
 | Dependencies | MS3-59, MS3-49 |
 | Executed | no |
 | Recorded | 2026-11-10 at `cf67cdf6a1bcc2f29b29dc71967d84263eaa6590` |
