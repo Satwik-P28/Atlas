@@ -11,8 +11,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / "ATLAS_MASTER_SPEC.md"
-EXPECTED_BYTES = 155_419
-EXPECTED_SHA256 = "e54c59737f48a2faf6e62bddf76f0292efd634cda03bc7a6a5c2aed4ed4ba5c9"
+EXPECTED_BYTES = 289_963
+EXPECTED_SHA256 = "c1228db93e66a04fb211bea85f6c978289a6040b1f655f934da76498c8c4752d"
 
 
 def main() -> int:
