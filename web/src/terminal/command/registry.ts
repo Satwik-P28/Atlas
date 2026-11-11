@@ -27,6 +27,7 @@ export type PanelKind =
   | 'statements'
   | 'metrics'
   | 'evidence'
+  | 'filing'
   | 'memo'
   | 'model'
   | 'diagnostics'

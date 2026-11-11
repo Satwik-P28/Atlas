@@ -76,8 +76,106 @@ const qs = (params: Record<string, string | number | boolean | null | undefined>
 
 const enc = encodeURIComponent
 
+export interface KnowledgePassage {
+  unit_id: string
+  document_id: string
+  issuer_id: string
+  accession: string
+  form_type: string
+  is_amendment: boolean
+  section_path: string
+  heading: string | null
+  unit_kind: string
+  excerpt: string
+  char_start: number
+  char_end: number
+  availability_time: string
+  availability_precision: string
+  filed_date: string
+  acceptance_time: string | null
+  rights: string
+  relevance: number
+  resolve_original: string
+  localization: string
+}
+
+export interface KnowledgeSearch {
+  schema: string
+  query: string
+  count: number
+  results: KnowledgePassage[]
+  abstained: boolean
+  abstention_reason: string | null
+  excluded: { later_than_cutoff: number }
+  latency_ms: number
+  plan: { retriever: string; policy: string; cutoff: string | null; issuer_id: string | null }
+}
+
+export interface KnowledgeUnit {
+  unit_id: string
+  body: string
+  char_start: number
+  char_end: number
+  section_path: string
+  accession: string
+  form_type: string
+  availability_time: string
+  rights: string
+  resolve_original: string
+}
+
+export interface KnowledgeClaim {
+  claim_id: string
+  epistemic_status: string
+  statement: string
+  statement_kind: string
+  citations: Array<{
+    unit_id: string
+    accession: string
+    section_path: string
+    char_start: number
+    char_end: number
+  }>
+  counter_evidence: Array<{ unit_id: string; section_path: string; matched: string }>
+  limitations: string[]
+  verification: {
+    outcome: string
+    export_allowed: boolean
+    diagnostics: Array<{ code: string }>
+  }
+}
+
 export const api = {
   health: () => request<Record<string, unknown>>('/api/health'),
+  knowledgeSearch: (body: {
+    query: string
+    issuer_id?: string
+    cutoff?: string
+    policy?: string
+    limit?: number
+    forms?: string[]
+  }) =>
+    request<KnowledgeSearch>('/api/knowledge/search', { method: 'POST', body: JSON.stringify(body) }),
+  knowledgeUnit: (unitId: string) => request<KnowledgeUnit>(`/api/knowledge/units/${enc(unitId)}`),
+  knowledgeClaim: (body: {
+    issuer_id: string
+    cutoff: string
+    key: string
+    question: string
+    epistemic_status?: string
+  }) =>
+    request<KnowledgeClaim>('/api/knowledge/claims', { method: 'POST', body: JSON.stringify(body) }),
+  knowledgeDocuments: (issuerId?: string) =>
+    request<{
+      items: Array<{
+        document_id: string
+        accession: string
+        form_type: string
+        availability_time: string
+        unit_count: number
+        table_count: number
+      }>
+    }>(`/api/knowledge/documents${qs({ issuer_id: issuerId })}`),
   schema: () => request<Record<string, unknown>>('/api/schema'),
   companies: (q?: string) => request<{ items: CompanySummary[]; count: number }>(`/api/companies${qs({ q })}`),
   company: (identifier: string) => request<CompanyDetail>(`/api/companies/${enc(identifier)}`),

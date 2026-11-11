@@ -82,9 +82,9 @@ def _rezip(entries: dict[str, bytes]) -> bytes:
 
 def test_schema_10_and_application_tables(tmp_path):
     db = Database(tmp_path / "schema.db")
-    assert db.migrate() == list(range(1, 14))
-    assert LATEST_VERSION == 13
-    assert db.schema_version() == 13
+    assert db.migrate() == list(range(1, 15))
+    assert LATEST_VERSION == 14
+    assert db.schema_version() == 14
     tables = {row["name"] for row in db.query("SELECT name FROM sqlite_master WHERE type = 'table'")}
     assert {"application_installation", "application_execution", "domain_pack_installation"} <= tables
     db.close()
@@ -308,9 +308,9 @@ def test_migration_safety_backs_up_and_upgrades(tmp_path):
     try:
         result = migrate_safely(upgraded, backup_dir=tmp_path / "backups")
         assert result["status"] == "migrated"
-        assert result["from_version"] == 9 and result["to_version"] == 13
+        assert result["from_version"] == 9 and result["to_version"] == 14
         assert result["backup_path"] and Path(result["backup_path"]).exists()
-        assert upgraded.schema_version() == 13
+        assert upgraded.schema_version() == 14
         assert upgraded.scalar("SELECT value FROM app_setting WHERE key = 'keep'") == '"me"'
         assert upgraded.integrity_check() == "ok"
     finally:
@@ -380,7 +380,7 @@ def test_application_api_base64_roundtrip(flagship, tmp_path):
     db.close()
     client = TestClient(create_app(path))
     health = client.get("/api/health").json()
-    assert health["schema_version"] == 13
+    assert health["schema_version"] == 14
     assert health["application_installations"] == 0
     assert client.get("/api/applications").json()["count"] == 0
     installed = client.post("/api/applications/install", json={

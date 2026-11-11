@@ -402,5 +402,5 @@ def test_openapi_contract_is_unchanged():
     # revise). Nothing existing changed: paths, operation ids, parameters, request bodies and
     # responses are byte-identical to the Phase 9.2.7 capture, which is why the fixture was
     # regenerated rather than loosened.
-    assert sum(len(methods) for methods in current["paths"].values()) == 147
-    assert len(current["paths"]) == 133
+    assert sum(len(methods) for methods in current["paths"].values()) == 156
+    assert len(current["paths"]) == 142

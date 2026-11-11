@@ -1144,6 +1144,98 @@ CREATE INDEX idx_fr_y9c_field ON fr_y9c_observation (field_code, period_end DESC
 CREATE INDEX idx_fr_y9c_archive ON fr_y9c_observation (archive_id);
 """
 
+_MIGRATION_014 = """
+-- ===========================================================================
+-- Phase 9.5 Financial Knowledge Engine
+-- ===========================================================================
+
+CREATE TABLE knowledge_document (
+    document_id            TEXT PRIMARY KEY,
+    issuer_id              TEXT NOT NULL REFERENCES issuer(issuer_id),
+    source_id              TEXT NOT NULL REFERENCES source(source_id),
+    accession              TEXT NOT NULL UNIQUE,
+    form_type              TEXT NOT NULL,
+    is_amendment           INTEGER NOT NULL DEFAULT 0,
+    amends_accession       TEXT,
+    period_of_report       TEXT,
+    filed_date             TEXT NOT NULL,
+    acceptance_time        TEXT,
+    availability_time      TEXT NOT NULL,
+    availability_precision TEXT NOT NULL
+        CHECK (availability_precision IN ('exact', 'date', 'unknown')),
+    availability_basis     TEXT NOT NULL,
+    primary_document_url   TEXT NOT NULL,
+    media_type             TEXT NOT NULL,
+    sha256                 TEXT NOT NULL,
+    byte_size              INTEGER NOT NULL,
+    rights                 TEXT NOT NULL,
+    retention_policy       TEXT NOT NULL,
+    parser_version         TEXT NOT NULL,
+    ingested_at            TEXT NOT NULL,
+    section_count          INTEGER NOT NULL DEFAULT 0,
+    unit_count             INTEGER NOT NULL DEFAULT 0,
+    table_count            INTEGER NOT NULL DEFAULT 0,
+    status                 TEXT NOT NULL DEFAULT 'indexed'
+        CHECK (status IN ('indexed', 'text_unavailable', 'rejected')),
+    notes                  TEXT
+);
+CREATE INDEX idx_knowledge_document_issuer
+    ON knowledge_document (issuer_id, availability_time DESC);
+CREATE INDEX idx_knowledge_document_accession ON knowledge_document (accession);
+
+CREATE TABLE knowledge_unit (
+    unit_id      TEXT PRIMARY KEY,
+    document_id  TEXT NOT NULL REFERENCES knowledge_document(document_id) ON DELETE CASCADE,
+    ordinal      INTEGER NOT NULL,
+    unit_kind    TEXT NOT NULL CHECK (unit_kind IN ('heading', 'paragraph', 'table')),
+    section_path TEXT NOT NULL,
+    heading      TEXT,
+    body         TEXT NOT NULL,
+    char_start   INTEGER NOT NULL,
+    char_end     INTEGER NOT NULL,
+    sha256       TEXT NOT NULL,
+    UNIQUE (document_id, ordinal)
+);
+CREATE INDEX idx_knowledge_unit_document ON knowledge_unit (document_id, ordinal);
+
+CREATE TABLE knowledge_table (
+    table_id     TEXT PRIMARY KEY,
+    document_id  TEXT NOT NULL REFERENCES knowledge_document(document_id) ON DELETE CASCADE,
+    unit_id      TEXT NOT NULL REFERENCES knowledge_unit(unit_id) ON DELETE CASCADE,
+    section_path TEXT NOT NULL,
+    caption      TEXT,
+    periods_json TEXT NOT NULL,
+    units        TEXT,
+    footnotes    TEXT,
+    rows_json    TEXT NOT NULL,
+    cell_locator TEXT,
+    sha256       TEXT NOT NULL
+);
+CREATE INDEX idx_knowledge_table_document ON knowledge_table (document_id);
+
+CREATE VIRTUAL TABLE knowledge_fts USING fts5(
+    body,
+    heading,
+    section_path,
+    unit_id UNINDEXED,
+    document_id UNINDEXED,
+    tokenize = 'unicode61 remove_diacritics 2'
+);
+
+CREATE TABLE knowledge_query_log (
+    query_id       TEXT PRIMARY KEY,
+    query_text     TEXT NOT NULL,
+    issuer_id      TEXT,
+    cutoff         TEXT,
+    policy         TEXT NOT NULL,
+    plan_json      TEXT NOT NULL,
+    result_count   INTEGER NOT NULL,
+    abstained      INTEGER NOT NULL,
+    latency_ms     REAL NOT NULL,
+    created_at     TEXT NOT NULL
+);
+"""
+
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=1, name="phase1_foundation", sql=_MIGRATION_001),
     Migration(version=2, name="phase1_1_history_and_dependencies", sql=_MIGRATION_002),
@@ -1158,6 +1250,7 @@ MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=11, name="phase9_2_regulatory_evidence", sql=_MIGRATION_011),
     Migration(version=12, name="phase9_2_market_price_rights", sql=_MIGRATION_012),
     Migration(version=13, name="phase9_2_fr_y9c_consolidated", sql=_MIGRATION_013),
+    Migration(version=14, name="phase9_5_financial_knowledge_engine", sql=_MIGRATION_014),
 )
 
 LATEST_VERSION = max(m.version for m in MIGRATIONS)

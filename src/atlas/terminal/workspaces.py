@@ -97,6 +97,15 @@ PANEL_TYPES: dict[str, PanelType] = {
         min_mode="standard",
         default_config={"limit": 12, "forms": []},
     ),
+    "filing": PanelType(
+        key="filing",
+        label="Document evidence",
+        description="Passages retrieved from archived filings under the desk information cutoff.",
+        requires=(),
+        config_keys=("query", "forms", "limit"),
+        min_mode="advanced",
+        default_config={"query": "risk factors", "forms": [], "limit": 5},
+    ),
     "company-header": PanelType(
         key="company-header",
         label="Company header",

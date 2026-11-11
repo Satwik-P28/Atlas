@@ -22,6 +22,7 @@ const Watchlists = lazy(() => import('./pages/Watchlists'))
 const Workspaces = lazy(() => import('./pages/Workspaces'))
 const WorkspaceView = lazy(() => import('./pages/WorkspaceView'))
 const Workstation = lazy(() => import('./pages/Workstation'))
+const Filings = lazy(() => import('./pages/Filings'))
 
 function AtlasRoutes() {
   return (
@@ -37,6 +38,7 @@ function AtlasRoutes() {
         <Route path="/companies" element={<Companies />} />
         <Route path="/companies/:identifier" element={<Company />} />
         <Route path="/research" element={<Research />} />
+        <Route path="/filings" element={<Filings />} />
         <Route path="/equity" element={<EquityResearch />} />
         <Route path="/screeners" element={<Screener />} />
         <Route path="/studio" element={<Studio />} />

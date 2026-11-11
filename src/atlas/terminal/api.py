@@ -607,6 +607,9 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
     )
     app.state.db_path = str(db_path or DEFAULT_DB)
     app.state.web_dist = Path(web_dist) if web_dist else Path(__file__).resolve().parents[3] / "web" / "dist"
+    from .knowledge_api import register_knowledge_routes
+
+    register_knowledge_routes(app, get_db)
 
     app.add_middleware(
         CORSMiddleware,

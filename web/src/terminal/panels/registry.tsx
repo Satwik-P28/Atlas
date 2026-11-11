@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { api } from '../../api'
 import Chart from '../../components/Chart'
 import StatementTable from '../../components/StatementTable'
@@ -63,6 +63,13 @@ export const PANEL_META: Record<PanelKind, PanelMeta> = {
     // `xray` panel (which requires an evidence id) still restores as this panel.
     backendType: 'evidence',
   },
+  filing: {
+    kind: 'filing',
+    title: 'Document evidence',
+    description: 'Passages from archived filings under the desk cutoff, with exact spans.',
+    accepts: ['instrument', 'cutoff'],
+    backendType: 'filing',
+  },
   memo: {
     kind: 'memo',
     title: 'Research memo',
@@ -92,6 +99,7 @@ export const PANEL_ORDER: PanelKind[] = [
   'statements',
   'metrics',
   'evidence',
+  'filing',
   'memo',
   'model',
   'diagnostics',
@@ -104,6 +112,7 @@ const BACKEND_TO_KIND: Record<string, PanelKind> = {
   metrics: 'metrics',
   xray: 'evidence',
   evidence: 'evidence',
+  filing: 'filing',
   memo: 'memo',
   model: 'model',
   diagnostics: 'diagnostics',
@@ -177,6 +186,8 @@ export function PanelView({
       return <MetricsPanel descriptor={descriptor} onEvidence={onEvidence} />
     case 'evidence':
       return <EvidencePanel evidenceId={selectedEvidence} />
+    case 'filing':
+      return <FilingPanel descriptor={descriptor} />
     case 'memo':
       return <MemoPanel descriptor={descriptor} />
     case 'model':
@@ -186,6 +197,96 @@ export function PanelView({
     default:
       return <div className="tp-empty">Unknown panel.</div>
   }
+}
+
+/* ------------------------------------------------------------------- filing */
+function FilingPanel({ descriptor }: { descriptor: PanelDescriptor }) {
+  const links = useLinks()
+  const instrument = resolveInstrument(links.state, descriptor.linkGroup)
+  const cutoff = links.state.asOf
+  const [draft, setDraft] = useState('customer concentration risk')
+  const [query, setQuery] = useState(draft)
+  const search = useAsync(
+    () =>
+      instrument.issuerId
+        ? api.knowledgeSearch({
+            query,
+            issuer_id: instrument.issuerId,
+            cutoff: cutoff ? `${cutoff}T23:59:59Z` : undefined,
+            limit: 6,
+          })
+        : Promise.resolve(null),
+    [query, instrument.issuerId, cutoff],
+  )
+  const [opened, setOpened] = useState<string | null>(null)
+  useEffect(() => {
+    setOpened(null)
+  }, [query, instrument.issuerId, cutoff])
+  if (!instrument.issuerId) {
+    return <div className="tp-empty">{missingLink(links.state, descriptor.linkGroup)}</div>
+  }
+  const data = search.data
+  return (
+    <PanelFrame
+      title="Document evidence"
+      meta={data ? `${data.count} passages · ${data.abstained ? 'abstained' : data.plan.policy}` : 'archived filings'}
+    >
+      <form
+        className="tp-form"
+        onSubmit={(event) => {
+          event.preventDefault()
+          setQuery(draft.trim() || draft)
+        }}
+      >
+        <input
+          value={draft}
+          onChange={(event) => setDraft(event.target.value)}
+          aria-label="Search archived filings"
+        />
+        <button className="button" type="submit">Search</button>
+      </form>
+      {search.loading && <Loading label="Retrieving passages" />}
+      {search.error && <ErrorState error={search.error} onRetry={search.reload} />}
+      {data?.abstained && (
+        <div className="tp-empty">
+          No supported passage at this cutoff ({data.abstention_reason?.replace(/_/g, ' ')}).
+        </div>
+      )}
+      {data && !data.abstained && (
+        <ul className="tp-list">
+          {data.results.map((row) => (
+            <li key={row.unit_id}>
+              <button
+                className="tp-passage"
+                aria-expanded={opened === row.unit_id}
+                onClick={() => setOpened(opened === row.unit_id ? null : row.unit_id)}
+              >
+                <span className="tp-passage-head">
+                  {row.form_type}
+                  {row.is_amendment ? ' /A' : ''} · {row.section_path}
+                </span>
+                <span className="tp-passage-meta">
+                  {row.accession} · {fmtDate(row.availability_time)} · chars {row.char_start}–{row.char_end}
+                </span>
+                <span className="tp-passage-text">{row.excerpt}</span>
+              </button>
+              {opened === row.unit_id && (
+                <div className="tp-passage-body">
+                  Exact span {row.char_start}–{row.char_end} · {row.availability_precision} availability ·{' '}
+                  {row.rights}
+                  <div>
+                    <a href={row.resolve_original} target="_blank" rel="noreferrer">
+                      open the original filing
+                    </a>
+                  </div>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </PanelFrame>
+  )
 }
 
 /* ------------------------------------------------------------------ monitor */

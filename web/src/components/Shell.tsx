@@ -13,7 +13,7 @@ interface SearchHit {
 
 const NAV = [
   { section: 'Market', items: [{ to: '/', label: 'Markets' }, { to: '/companies', label: 'Companies' }] },
-  { section: 'Research', items: [{ to: '/research', label: 'Time machine' }, { to: '/equity', label: 'Equity research' }, { to: '/screeners', label: 'Screeners' }] },
+  { section: 'Research', items: [{ to: '/research', label: 'Time machine' }, { to: '/filings', label: 'Filings' }, { to: '/equity', label: 'Equity research' }, { to: '/screeners', label: 'Screeners' }] },
   { section: 'Studio', items: [{ to: '/studio', label: 'Model studio' }, { to: '/lab', label: 'Quant lab' }, { to: '/lab/learning', label: 'Learning lab' }, { to: '/lab/economic', label: 'Economic lab' }] },
   { section: 'Platform', items: [{ to: '/applications', label: 'Applications' }] },
   { section: 'Saved', items: [{ to: '/watchlists', label: 'Watchlists' }] },

@@ -425,3 +425,60 @@
   .adv-head-actions { margin-left: auto; gap: var(--space-1); }
   .adv-command-trigger > span:first-of-type { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
+
+/* Narrow phones: keep the theme control reachable instead of clipped. */
+@media (max-width: 430px) {
+  .adv-command-trigger { max-width: 44vw; padding-inline: 6px; }
+  .adv-head-actions { gap: 2px; }
+}
+
+/* ------------------------------------------------------- document evidence */
+.tp-form {
+  display: flex; gap: 6px; padding: 6px 8px;
+  border-bottom: 1px solid var(--line, #2a2f3a);
+}
+.tp-form input {
+  flex: 1 1 auto; min-width: 0; padding: 4px 6px; font-size: 11px;
+  color: inherit; background: transparent;
+  border: 1px solid var(--line, #2a2f3a); border-radius: 3px;
+}
+.tp-list { list-style: none; margin: 0; padding: 0; overflow: auto; }
+.tp-passage {
+  display: block; width: 100%; text-align: left; cursor: pointer;
+  padding: 6px 8px; color: inherit; background: none; border: 0;
+  border-bottom: 1px solid var(--line, #2a2f3a);
+}
+.tp-passage:hover { background: var(--surface-2, rgba(255, 255, 255, 0.04)); }
+.tp-passage-head {
+  display: block; font-size: 10px; text-transform: uppercase;
+  letter-spacing: 0.04em; color: var(--accent, #6ee7d0);
+}
+.tp-passage-meta { display: block; font-size: 10px; opacity: 0.7; }
+.tp-passage-text { display: block; font-size: 11px; margin-top: 2px; }
+.tp-passage-body {
+  padding: 6px 10px; font-size: 11px;
+  background: var(--surface-2, rgba(255, 255, 255, 0.04));
+}
+
+/* --------------------------------------------------- standard filings page */
+.filing-controls {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px; align-items: end; margin-bottom: 12px;
+}
+.filing-controls label { display: flex; flex-direction: column; gap: 4px; }
+.filing-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.filing-meta {
+  display: flex; gap: 10px; align-items: center; justify-content: space-between;
+  margin-bottom: 8px; font-size: 12px;
+}
+.passage-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.passage {
+  display: flex; flex-direction: column; gap: 3px; width: 100%; text-align: left;
+  padding: 8px 10px; color: inherit; cursor: pointer; border-radius: 4px;
+  background: var(--surface-2, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--line, #2a2f3a);
+}
+.passage-head { font-weight: 600; font-size: 12px; }
+.passage-text { font-size: 12px; }
+.passage-opened { border-left: 2px solid var(--accent, #6ee7d0); padding: 6px 10px; margin-top: 4px; }
+
