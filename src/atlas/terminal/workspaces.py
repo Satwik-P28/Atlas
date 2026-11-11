@@ -29,6 +29,16 @@ WORKSPACE_ID = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 MODES = ("standard", "advanced")
 STATEMENTS = ("income", "balance", "cashflow")
 
+# v1 is the grid document (columns + spans). v2 adds an explicit split/tab layout
+# tree and panel link groups, so a workstation can dock, tab and maximize panels
+# without the client inventing structure the server cannot check.
+WORKSPACE_SCHEMAS = ("atlas.workspace.v1", "atlas.workspace.v2")
+LAYOUT_SCHEMA = "atlas.workspace.v2"
+LINK_GROUPS = ("A", "B", "C", "D")
+MAX_LAYOUT_DEPTH = 5
+MAX_LAYOUT_NODES = 40
+MAX_TABS_PER_GROUP = 8
+
 
 @dataclass(frozen=True, slots=True)
 class PanelType:
@@ -132,6 +142,33 @@ PANEL_TYPES: dict[str, PanelType] = {
         min_mode="advanced",
         default_config={"filters": [], "sort": None, "match": "AND"},
     ),
+    "memo": PanelType(
+        key="memo",
+        label="Research memo",
+        description="Saved memo versions, content hashes and change detection.",
+        requires=(),
+        config_keys=("limit",),
+        min_mode="advanced",
+        default_config={"limit": 5},
+    ),
+    "model": PanelType(
+        key="model",
+        label="Model registry",
+        description="Registered model and indicator versions read from the service contract.",
+        requires=(),
+        config_keys=(),
+        min_mode="advanced",
+        default_config={},
+    ),
+    "diagnostics": PanelType(
+        key="diagnostics",
+        label="Diagnostics",
+        description="Database, schema, integrity and desk context for this session.",
+        requires=(),
+        config_keys=(),
+        min_mode="advanced",
+        default_config={},
+    ),
 }
 
 
@@ -206,6 +243,9 @@ def _validate_config(panel_type: PanelType, config: Any) -> dict[str, Any]:
             raise ValidationError("screener match must be AND or OR")
         if not isinstance(merged["filters"], list):
             raise ValidationError("screener filters must be a list")
+    elif panel_type.key == "memo":
+        if not isinstance(merged["limit"], int) or not (1 <= merged["limit"] <= 20):
+            raise ValidationError("memo limit must be between 1 and 20")
     elif panel_type.key == "indicator-controls":
         if merged["indicator"] not in INDICATORS:
             raise ValidationError("unknown indicator", indicator=merged["indicator"])
@@ -219,12 +259,16 @@ def validate_workspace(payload: Any, *, workspace_id: str | None = None) -> dict
     """Validate and normalise a workspace document (strict, no unknown keys)."""
     if not isinstance(payload, dict):
         raise ValidationError("workspace must be an object")
-    allowed = {"name", "mode", "columns", "panels", "description", "schema"}
-    unknown = set(payload) - allowed
-    if "schema" in payload and payload["schema"] != "atlas.workspace.v1":
+    schema = payload.get("schema", WORKSPACE_SCHEMAS[0])
+    if schema not in WORKSPACE_SCHEMAS:
         raise ValidationError(
-            "unsupported workspace schema", schema=payload["schema"], supported="atlas.workspace.v1"
+            "unsupported workspace schema", schema=schema, supported=list(WORKSPACE_SCHEMAS)
         )
+    allows_layout = schema == LAYOUT_SCHEMA
+    allowed = {"name", "mode", "columns", "panels", "description", "schema"}
+    if allows_layout:
+        allowed.add("layout")
+    unknown = set(payload) - allowed
     if unknown:
         raise ValidationError("unknown workspace key", unknown=sorted(unknown), supported=sorted(allowed))
     name = payload.get("name")
@@ -245,6 +289,8 @@ def validate_workspace(payload: Any, *, workspace_id: str | None = None) -> dict
         if not isinstance(panel, dict):
             raise ValidationError("panel must be an object", index=index)
         panel_allowed = {"id", "type", "title", "span", "config"} | set(PANEL_TYPES.get(str(panel.get("type")), PANEL_TYPES["chart"]).requires)
+        if allows_layout:
+            panel_allowed.add("link_group")
         unknown_panel = set(panel) - panel_allowed
         if unknown_panel:
             raise ValidationError("unknown panel key", index=index, unknown=sorted(unknown_panel))
@@ -279,6 +325,14 @@ def validate_workspace(payload: Any, *, workspace_id: str | None = None) -> dict
             "span": span,
             "config": _validate_config(panel_type, panel.get("config")),
         }
+        if allows_layout:
+            link_group = panel.get("link_group")
+            if link_group is not None:
+                if link_group not in LINK_GROUPS:
+                    raise ValidationError(
+                        "unknown link group", panel=panel_id, link_group=link_group, supported=list(LINK_GROUPS)
+                    )
+                normalized["link_group"] = link_group
         for required in panel_type.requires:
             normalized[required] = panel[required]
         normalized_panels.append(normalized)
@@ -289,10 +343,148 @@ def validate_workspace(payload: Any, *, workspace_id: str | None = None) -> dict
         "description": (payload.get("description") or "").strip()[:400] or None,
         "panels": normalized_panels,
     }
+    if allows_layout:
+        layout = payload.get("layout")
+        if layout is None:
+            # A v2 document without a layout still has to render: derive the grid
+            # arrangement from columns and spans so nothing can be orphaned.
+            layout = derive_layout(normalized_panels, columns)
+        document["layout"] = validate_layout(layout, [panel["id"] for panel in normalized_panels])
     if workspace_id is not None:
         document["workspace_id"] = workspace_id
-    document["schema"] = "atlas.workspace.v1"
+    document["schema"] = schema
     return document
+
+
+def _tabs(panel_id: str) -> dict[str, Any]:
+    return {"type": "tabs", "active": panel_id, "panels": [panel_id]}
+
+
+def _validate_weights(weights: Any, count: int) -> list[float]:
+    if not isinstance(weights, list) or len(weights) != count:
+        raise ValidationError("split weights must match the number of children", expected=count)
+    numbers: list[float] = []
+    for weight in weights:
+        if isinstance(weight, bool) or not isinstance(weight, (int, float)):
+            raise ValidationError("split weight must be a number", weight=weight)
+        value = float(weight)
+        if not (0.05 <= value <= 0.95):
+            raise ValidationError("split weight must be between 0.05 and 0.95", weight=value)
+        numbers.append(value)
+    total = sum(numbers)
+    if abs(total - 1.0) > 1e-6:
+        raise ValidationError("split weights must sum to 1", total=round(total, 9))
+    rounded = [round(value / total, 6) for value in numbers]
+    rounded[-1] = round(1.0 - sum(rounded[:-1]), 6)
+    return rounded
+
+
+def validate_layout(layout: Any, panel_ids: list[str]) -> dict[str, Any]:
+    """Validate a split/tabs layout tree.
+
+    Every panel appears exactly once, ids and node shapes are checked, weights are
+    normalised, and unknown keys are refused. A layout can therefore describe any
+    docking arrangement without carrying anything the renderer would have to trust.
+    """
+    known = set(panel_ids)
+    placed: list[str] = []
+    nodes = 0
+
+    def walk(node: Any, depth: int) -> dict[str, Any]:
+        nonlocal nodes
+        if depth > MAX_LAYOUT_DEPTH:
+            raise ValidationError("layout is nested too deeply", limit=MAX_LAYOUT_DEPTH)
+        if not isinstance(node, dict):
+            raise ValidationError("layout node must be an object")
+        nodes += 1
+        if nodes > MAX_LAYOUT_NODES:
+            raise ValidationError("layout has too many nodes", limit=MAX_LAYOUT_NODES)
+        kind = node.get("type")
+        if kind == "tabs":
+            unknown = set(node) - {"type", "active", "panels"}
+            if unknown:
+                raise ValidationError("unknown tabs key", unknown=sorted(unknown))
+            panels = node.get("panels")
+            if not isinstance(panels, list) or not (1 <= len(panels) <= MAX_TABS_PER_GROUP):
+                raise ValidationError("tab group needs between 1 and 8 panels")
+            for panel_id in panels:
+                if not isinstance(panel_id, str) or panel_id not in known:
+                    raise ValidationError("layout references an unknown panel", panel=panel_id)
+                if panel_id in placed:
+                    raise ValidationError("panel appears twice in layout", panel=panel_id)
+                placed.append(panel_id)
+            if len(set(panels)) != len(panels):
+                raise ValidationError("tab group repeats a panel", panels=panels)
+            active = node.get("active", panels[0])
+            if active not in panels:
+                raise ValidationError("active tab is not in its group", active=active)
+            return {"type": "tabs", "active": active, "panels": list(panels)}
+        if kind == "split":
+            unknown = set(node) - {"type", "direction", "weights", "children"}
+            if unknown:
+                raise ValidationError("unknown split key", unknown=sorted(unknown))
+            direction = node.get("direction")
+            if direction not in {"row", "column"}:
+                raise ValidationError("split direction must be row or column", direction=direction)
+            children = node.get("children")
+            if not isinstance(children, list) or not (2 <= len(children) <= 6):
+                raise ValidationError("split needs between 2 and 6 children")
+            weights = _validate_weights(node.get("weights"), len(children))
+            return {
+                "type": "split",
+                "direction": direction,
+                "weights": weights,
+                "children": [walk(child, depth + 1) for child in children],
+            }
+        raise ValidationError("unknown layout node type", type=kind)
+
+    normalized = walk(layout, 1)
+    missing = known - set(placed)
+    if missing:
+        raise ValidationError("layout does not place every panel", missing=sorted(missing))
+    return normalized
+
+
+def derive_layout(panels: list[dict[str, Any]], columns: int) -> dict[str, Any]:
+    """Arrangement implied by a v1 grid: rows of panels, each row split by span."""
+    if not panels:
+        raise ValidationError("workspace needs at least one panel")
+    rows: list[list[tuple[str, int]]] = []
+    current: list[tuple[str, int]] = []
+    used = 0
+    for panel in panels:
+        span = max(1, min(int(panel.get("span", 1)), columns))
+        if current and used + span > columns:
+            rows.append(current)
+            current, used = [], 0
+        current.append((str(panel["id"]), span))
+        used += span
+        if used >= columns:
+            rows.append(current)
+            current, used = [], 0
+    if current:
+        rows.append(current)
+
+    def row_node(entries: list[tuple[str, int]]) -> dict[str, Any]:
+        if len(entries) == 1:
+            return _tabs(entries[0][0])
+        total = float(sum(span for _, span in entries))
+        return {
+            "type": "split",
+            "direction": "row",
+            "weights": [span / total for _, span in entries],
+            "children": [_tabs(panel_id) for panel_id, _ in entries],
+        }
+
+    if len(rows) == 1:
+        return row_node(rows[0])
+    weights = [float(len(row)) / float(sum(len(row) for row in rows)) for row in rows]
+    return {
+        "type": "split",
+        "direction": "column",
+        "weights": weights,
+        "children": [row_node(row) for row in rows],
+    }
 
 
 def fingerprint(document: dict[str, Any]) -> str:

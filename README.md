@@ -823,6 +823,32 @@ Promotion is not production readiness: the terminal API is unauthenticated, brow
 mobile certification is still open, and memo export is refused for sources without a
 redistribution grant.
 
+## Phase 9.4 — two interfaces, one research engine
+
+Standard is a research desk: top navigation, one guided workflow per page, comfortable density.
+Advanced is a workstation: command header, icon rail, dockable multi-panel desk, link groups,
+context inspector and a status bar that states the cut-off and data condition.
+
+- **Docking is a validated document.** `atlas.workspace.v2` adds a split/tab layout and panel link
+groups. The server and the client enforce the same grammar: unknown node types, unknown keys,
+  duplicate or orphaned panels, weights that do not sum to one and excessive nesting are refused.
+  `atlas.workspace.v1` documents still load.
+- **Commands act on real data.** `AAPL`, `JPM FIN`, `SET ASOF 2024-06-01`, `WORKSPACE <name>`,
+  `SAVE WORKSPACE`, `RESET LAYOUT`. An unknown symbol is an error with candidates, never a demo.
+- **Link groups A–D** carry an issuer and a security; the information cut-off and availability mode
+  are desk-wide because they decide which evidence may exist at all.
+- **Eight panels** read the existing API: universe monitor, price chart, statements, metrics,
+  evidence inspector, saved memos, model registry and diagnostics. Nothing is simulated; backtest
+  inspection and factor analytics are deferred rather than faked.
+- **Not browser-certified.** Chromium cannot start in the development environment (missing X11/GTK
+  libraries, no unprivileged install path), so no screenshot, console capture or viewport run exists.
+  The journey `web/e2e/phase9_4_workstation.mjs` is committed and runnable where a browser works.
+
+See `docs/PHASE9_4_FINAL_REPORT.md`, `docs/PHASE9_4_ARCHITECTURE.md`,
+`docs/PHASE9_4_ADVANCED_WORKSTATION.md`, `docs/PHASE9_4_STANDARD_INTERFACE.md`,
+`docs/PHASE9_4_DESIGN_SYSTEM.md`, `docs/PHASE9_4_TERMINAL_UI_RESEARCH.md`,
+`docs/PHASE9_4_PERFORMANCE.md` and `docs/PHASE9_4_BROWSER_ACCEPTANCE.md`.
+
 ## Phase 9.3 — evidence-grounded memos, claim verification, versioning and change detection
 
 - **The report is now a research object, not a string.** `atlas.research_memo.v1` is built

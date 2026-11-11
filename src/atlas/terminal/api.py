@@ -684,6 +684,9 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
         return {
             "terminal_schema": read_models.TERMINAL_SCHEMA,
             "workspace_schema": "atlas.workspace.v1",
+            "workspace_layout_schema": workspaces.LAYOUT_SCHEMA,
+            "workspace_schemas": list(workspaces.WORKSPACE_SCHEMAS),
+            "workspace_link_groups": list(workspaces.LINK_GROUPS),
             "selection_policy": SELECTION_POLICY,
             "as_of_modes": [{"value": m.value, "description": m.description} for m in AsOfMode],
             "indicator_versions": {key: spec.version for key, spec in indicators.REGISTRY.items()},

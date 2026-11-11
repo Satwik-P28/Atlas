@@ -347,6 +347,8 @@ export interface PanelConfig {
   title: string
   span: number
   config: Record<string, unknown>
+  /** Only present in `atlas.workspace.v2`: which linked instrument group the panel follows. */
+  link_group?: 'A' | 'B' | 'C' | 'D' | null
   issuer_id?: string
   security_id?: string
   evidence_id?: string
@@ -360,6 +362,8 @@ export interface WorkspaceDocument {
   description?: string | null
   panels: PanelConfig[]
   schema?: string
+  /** `atlas.workspace.v2` split/tab tree; validated by the same grammar as the server. */
+  layout?: unknown
 }
 
 export interface Workspace {
