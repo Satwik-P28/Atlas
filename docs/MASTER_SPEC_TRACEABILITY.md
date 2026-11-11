@@ -1,6 +1,6 @@
 # Master specification traceability
 
-Status: **received_integrity_verified** — the canonical v3.0.0 document is present and
+Status: **received_integrity_verified** — the canonical specification file is present and
 byte-verified. This proves the document's identity, not implementation conformance.
 
 ## Canonical specification
@@ -8,13 +8,13 @@ byte-verified. This proves the document's identity, not implementation conforman
 | Property | Verified value |
 | --- | --- |
 | File | `ATLAS_MASTER_SPEC.md` (repository root) |
-| Version | 3.0.0 |
-| Date | 2026-11-09 |
-| Size | 289,963 bytes |
-| SHA-256 | `c1228db93e66a04fb211bea85f6c978289a6040b1f655f934da76498c8c4752d` |
+| Version | 3.1.0 |
+| Date | 2026-11-11 |
+| Size | 333,547 bytes |
+| SHA-256 | `d1800cfea35d973e2ff2b3570f8bf564fd3a7aceabca2f623ec5de17931a1111` |
 | Sections | 1–61 (all present) |
-| Integrity verified | 2026-11-10 by `scripts/verify_master_spec.py` |
-| Verification commit | `cf67cdf6a1bcc2f29b29dc71967d84263eaa6590` |
+| Integrity verified | 2026-11-11 by `scripts/verify_master_spec.py` |
+| Verification commit | `8b094eb7434b75d461bf32543290fdfb47c21639` |
 
 Reproduce:
 
@@ -56,6 +56,8 @@ and operating gates for a named scope, and none has been run.
 ## Requirement matrix
 
 Machine-readable source: `artifacts/master_spec_requirements.json`.
+
+**Audit boundary:** Existing implementation statuses are inherited from earlier scoped code reviews; the v3.1 additions are proposals, not newly executed tests.
 
 | ID | § | Section | Subsystem | Status | Partial | Evidence | Unimplemented dependency | Sev | Pri |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -128,8 +130,8 @@ Earlier checkpoints (`docs/MASTER_SPEC_TRACEABILITY.md` before this revision and
 (155,419 bytes, SHA-256 `e54c59737f48a2faf6e62bddf76f0292efd634cda03bc7a6a5c2aed4ed4ba5c9`)
 was absent, and refused to map requirements from an invented copy. Those reports were
 accurate for their checkpoints and are not rewritten here. The current canonical document
-is v3.0.0 at the size and hash above; the v1.2 hash must not be presented as matching it.
+is v3.1.0 at the size and hash above; the v1.2/v3.0 hashes are historical snapshots.
 
 The earlier statement that "the only ICB identifiers defined anywhere in this repository are
-ICB-04 and ICB-09" was also correct at that time: ICB-01 through ICB-48 are now read from
+ICB-04 and ICB-09" was also correct at that time: ICB-01 through ICB-64 are now read from
 the canonical document and registered in `artifacts/icb_registry.json`.
