@@ -11,7 +11,7 @@ institutional execution fidelity.
 
 | Criterion | LEAN | NautilusTrader | Atlas reference simulator |
 |---|---|---|---|
-| License | Apache-2.0 | Apache-2.0 | project license |
+| License | Apache-2.0 | LGPL-3.0 (verify repository/version before integration) | project license |
 | Python integration | C# engine + Python API | native Python/Rust | native Python |
 | Atlas bar compatibility | requires custom data converter | requires custom data adapter | reads stored bars directly |
 | Event sequencing | complete engine clock | complete engine clock | session clock, explicit ordering |
@@ -24,6 +24,8 @@ institutional execution fidelity.
 | Test surface | broad | broad | small and independently asserted |
 | Install/maintenance | heavy runtime, data conversion | compiled dependency, data adapter | no new runtime |
 | License/runtime risk in this env | material | material | none beyond Python stdlib |
+
+The original Phase 4 comparison predated the November 2026 LGPL-3.0 license verification of NautilusTrader. Its earlier Apache-2.0 entry was incorrect. The engine remains an optional adapter candidate subject to distribution and linking review.
 
 Neither external engine could be integrated **reliably and verifiably** within this
 environment without a data-conversion layer and an unvalidated adapter. Installing a
