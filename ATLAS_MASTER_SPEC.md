@@ -1,10 +1,10 @@
 # ATLAS QUANT
 ## Master Product, Architecture, Research, and Execution Specification
 
-**Version:** 3.0.0  
-**Date:** 2026-11-09  
+**Version:** 3.1.0  
+**Date:** 2026-11-11  
 **Status:** Canonical desired-state specification; implementation claims require independent verification  
-**Document path:** `ATLAS_MASTER_SPEC.md` (distribution copy: `ATLAS_MASTER_SPEC_V3_FINAL.md`)  
+**Document path:** `ATLAS_MASTER_SPEC.md` (canonical repository copy; prior distribution snapshots are not authoritative)  
 **Product class:** Open-source universal financial research, modeling, market intelligence, decision and application operating system  
 **Design principle:** One verified financial substrate with progressive interface depth, universal model composition, professional end-to-end workflows and consumer accessibility
 
@@ -14,9 +14,13 @@
 
 **Version 3 scope rule:** The additions in Sections 49-60 are cross-cutting capability contracts implemented through the original eight systems. They do not require new permanent navigation tabs or a second system of evidence, financial computation or permissions. All compression and AI research results must be distinguished from verified production capabilities and independently replicated scientific findings.
 
+**Version 3.1 scope rule:** Appendices A-D strengthen existing Sections 1-61 without changing their numbering, established object identity, evidence authority, financial compiler, permissions, or eight-system taxonomy. Competitive capabilities are requirements for independent implementation/evaluation, not copied proprietary source or bundled licensed market data. Appendix D adds proposed ICB-49 through ICB-64. This amendment is a specification update, not deployment, legal clearance, test execution, publication, or an assertion of model profitability.
+
 **What this document is not:** A claim that the current code already implements everything below, a guarantee that Atlas will outperform a proprietary terminal, permission to redistribute commercial data, or an instruction to integrate every listed open-source project. This document deliberately distinguishes requirements, hypotheses, implementation reports, and proven performance.
 
 **Document precedence:** (1) laws, licenses, safety, source terms, and security obligations; (2) approved versioned contracts and ADRs for deployed components; (3) this master specification for product direction; (4) phase plans; (5) informal feature ideas. If a deployed contract conflicts with this vision, propose and verify a migration rather than silently breaking it. Amend this document through a reviewed change with an explicit rationale.
+
+**v3.1 change note (2026-11-11):** Completed a 61-section, specification-level cross-domain gap sweep and an inspected-source quant implementation review. Added quantitative platform capability parity, a no-paid-software research path, typed agent/MCP/tool and visual-editor contracts, multi-asset execution and microstructure fidelity, research-discovery integrity, an evidence/rights-aware provider interface, cross-domain research completeness gates, ICB-49..64 proposals and an explicit per-section disposition ledger in Appendices A-D. Preserved the original reference simulator, its tested scope and all earlier model, data, permission and historical-workflow invariants. No code or product capability is newly verified by this document amendment.
 
 **v3.0 change note (2026-11-09):** Retained the original eight-system platform and the complete v2.0 professional-and-consumer specification, including the 32 earlier ICB suites. Added a Financial Knowledge Engine; formal evidence-preserving compression/CDG research contracts; Intent-to-Research Compiler; Research Integrity Engine; Industrial Engineering Resource Optimization Engine; Data Coverage and Integrity Center; synchronized multi-view Model Experience System; professional migration and deliverable portability; scientific RAG/AI/operations-research experiments; a candidate repository adoption registry; staged product-and-adoption gates; and ICB-33 through ICB-48. Reorganized final charter as Section 61. New features are proposed requirements and hypotheses unless their implementation and evidence are independently verified.
 
@@ -89,6 +93,10 @@
 - [59. Product delivery sequence and cross-domain user adoption](#59-product-delivery-sequence-and-cross-domain-user-adoption)
 - [60. New Institutional Capability Benchmarks and acceptance matrix](#60-new-institutional-capability-benchmarks-and-acceptance-matrix)
 - [61. Final platform definition and strategic charter](#61-final-platform-definition-and-strategic-charter)
+- [Appendix A. Competitive quant capabilities and free implementation map](#appendix-a-competitive-quant-capabilities-and-free-implementation-map)
+- [Appendix B. Quant research runtime, strategy science and AI contracts](#appendix-b-quant-research-runtime-strategy-science-and-ai-contracts)
+- [Appendix C. Cross-domain gold-standard gap closure](#appendix-c-cross-domain-gold-standard-gap-closure)
+- [Appendix D. Full 61-section audit and ICB-49 through ICB-64](#appendix-d-full-61-section-audit-and-icb-49-through-icb-64)
 
 ---
 
@@ -677,6 +685,10 @@ Each experiment produces measured performance and a visible audit: annualized re
 
 
 Benchmark LEAN versus NautilusTrader for a small set of exact reference trades, market data formats, replay behavior, transaction/corporate-action handling, configuration, isolation and runtime. Use an adapter around the selected engine; allow a second backend later if it adds material value. Do not rewrite a mature order simulator to create the appearance of original infrastructure.
+
+### 13.7 Quant research parity and implementation boundaries (v3.1)
+
+Apply Appendix A's independently implemented capability map and Appendix B's typed quantitative runtime contract. Maintain three different claims: (a) correct local research and reference simulation, (b) validated multi-asset backtest and portfolio accounting, and (c) calibrated real-market microstructure execution. Passing (a) never certifies (b) or (c). Expose each claim's exact data entitlement, clock, sample, model-selection attempts, costs, coverage, historical-vintage precision, and reproducible manifest. The free local path must remain independently usable without any hosted subscription.
 
 ---
 
@@ -1891,6 +1903,10 @@ Include real market session calendars, market holidays, timezones, halt/auction 
 
 Reusable 0DTE research template: dated SPX and volatility context, exact expiration and settlement conventions, forecast distribution, strike-threshold probability, option bid/ask and size, implied versus modeled outcomes, spread/condor payoffs, fees and margin, filters, event-day constraints, Monte Carlo and similar-day methods, time-of-decision replay, selection-model tournament, and *stand aside* result. Never infer fills from midpoint history or market price as a calibrated physical probability.
 
+### 40.6 QuantPad-class workflow requirements, independently implemented (v3.1)
+
+Quant Lab must support reproducible parameter sweeps; vectorized triage separated from executable backtesting; factor/research-paper templates; uncertainty- and regime-aware simulations; versioned strategy reviews; scenario and sensitivity grids; safe user-defined research commands; structured SDK and optional MCP tools; workspace-level research memory with access controls; and a bounded local-first agent that generates **editable research plans**, not privileged orders. Market-data coverage, especially OPRA options quotes, CME futures ticks/depth and exchange data, must be displayed as an entitlement-dependent input, not a free-software feature. Full executable contracts and negative tests are in Appendix B.
+
 ---
 
 ## 41. Institutional portfolio management, risk and operations
@@ -2384,6 +2400,10 @@ research_integrity_manifest:
 
 Unexplained balance-sheet non-reconciliation, a time-traveling filing fact in a backtest, a derived credit spread using incompatible conventions, private-data leakage, an unbounded live order, and a citation pointing to a passage that does not support the claim must all block corresponding production-ready release claims.
 
+### 52.6 Strategy discovery and model-risk escalation (v3.1)
+
+A model's numerical verification, in-sample fit, out-of-sample predictive evidence, decision suitability and execution feasibility are separate approvals. The Research Integrity Engine must preserve all attempted models and searched parameters; embargo information with proper label horizon; disclose the effective test family or admit that it is unknown; and evaluate deflated Sharpe, probability of backtest overfitting, suitable bootstrap/reality-check alternatives or an explicit not-applicable explanation. Statistical diagnostics cannot certify an edge when the historical universe or market data are insufficient. See Appendix B and ICB-49..64.
+
 ---
 
 ## 53. Atlas Resource Optimization Engine: the industrial engineering core
@@ -2690,7 +2710,7 @@ Every proposed addition declares target user, unique problem, reused platform la
 
 ## 60. New Institutional Capability Benchmarks and acceptance matrix
 
-Version 3 retains ICB-01 through ICB-32. Add ICB-33 through ICB-48; each needs reproducible public or appropriately licensed fixtures, a clear independent baseline, dated code/data/environment versions, negative tests, quantitative pass conditions and an owner. These are **proposed requirements**, not completed results.
+Version 3 retains ICB-01 through ICB-32 and defines ICB-33 through ICB-48 below. Version 3.1 proposes ICB-49 through ICB-64 in Appendix D; they use the same fixture, independent baseline, dated code/data/environment, negative-test, quantitative-threshold and ownership rules. All are requirements, not completed results.
 
 | ID | Benchmark | Core test and failure gate |
 |---|---|---|
@@ -2738,7 +2758,7 @@ A test count, commit hash, screenshot, PR or agent report alone does not establi
 
 ## 61. Final platform definition and strategic charter
 
-**Version 3 expansion principle:** Atlas should make financial research more correct, accessible, reproducible and economical, rather than merely increasing its feature count. The Financial Knowledge Engine, resource optimizer, research integrity and user-intent layers strengthen the existing eight systems; they are shared capabilities rather than competing applications. AI and compression are evaluated on measured end-to-end outcomes and promoted only after independent benchmarks.
+**Version 3 / 3.1 expansion principle:** Atlas should make financial research more correct, accessible, reproducible and economical, rather than merely increasing its feature count. The Financial Knowledge Engine, resource optimizer, research integrity and user-intent layers strengthen the existing eight systems; they are shared capabilities rather than competing applications. AI and compression are evaluated on measured end-to-end outcomes and promoted only after independent benchmarks.
 
 **Atlas Quant is the proposed open-source universal financial operating system:** a source-aware environment for global markets, fundamental research, quantitative modeling, advanced strategy science, institutional portfolio and risk analysis, investment banking, private equity and venture capital, real estate, economic intelligence, and personal financial planning. Its core aspiration is to eliminate unnecessary movement among disconnected tools for *supported, validated, legally accessible workflows*, rather than pretend that proprietary market data and regulated infrastructure are free.
 
@@ -2746,6 +2766,292 @@ Its shared architecture combines the **Universal Research Object System, Tempora
 
 Atlas must offer a beginner understandable financial tasks through **Explore, Studio, Lab and Monitor**, while permitting a professional to inspect the mathematics, historical availability, compute plans, legal rights and complete experiment history beneath the same view. Personal information, client research and broker permissions are isolated; the research core is free and locally runnable where supported; authorized premium data and managed infrastructure remain optional and transparent.
 
-**Gold-standard status is not self-awarded.** Every claimed replacement advantage must be demonstrated using an external professional workflow, independent numerical references, realistic source entitlements, historical integrity, measured performance, accessibility and reproducibility. A reported implementation is not a passed benchmark; a forecast is not an investable edge; an application package is not legal authority to redistribute private data; a backtest is not a license to trade.
+**Gold-standard status is not self-awarded.** Every claimed replacement advantage must be demonstrated using an external professional workflow, independent numerical references, realistic source entitlements, historical integrity, measured performance, accessibility and reproducibility. A reported implementation is not a passed benchmark; a forecast is not an investable edge; an application package is not legal authority to redistribute private data; a backtest is not a license to trade. Version 3.1's Appendices A-D supply additional independent comparison, quantitative-method, cross-domain and per-section audit gates; they do not change this standard.
 
 > **One evidence foundation. One interoperable model language and execution contract. One research environment. Many professional and consumer workspaces. Unlimited compatible model invention, constrained by mathematics, evidence, uncertainty, rights, security and real-world testing.**
+---
+
+## Appendix A. Competitive quant capabilities and free implementation map
+
+**Version 3.1 addition, November 11, 2026. Status: desired-state research and engineering plan, not verified feature parity.** This appendix is normative for future quant work and subordinate to Sections 6-13, 19-20, 40, 49-59 and the existing ADRs. Every competitor description is a dated public-reference snapshot, not authorization to access its hosted service, duplicate restricted interfaces/code or redistribute commercial data.
+
+### A.1 What is being substituted
+
+The unit of competition is a **completed, reproducible research workflow** with equivalent user-authorized inputs, a valid decision clock, demonstrable numerical integrity and usable outputs. Atlas does not claim proprietary news speed, exchange data, paid analyst estimates, depth-of-book archives or institutional broker entitlements are free. The free core covers algorithms, editors, audits, local execution, reports, simulations on available data and adapters. Paid/permissioned data is a clearly marked optional input, never a software-feature prerequisite.
+
+| Reference | Publicly described strengths worth evaluating | Independently implemented Atlas contract | What cannot be presumed free |
+|---|---|---|---|
+| QuantPad | AI research assistant; hosted Python projects; historical futures/equities/options; trades/quotes/depth; parameter sweeps; review commands; optional SDK/MCP; workspaces | Intent-to-Research plan, local sandbox, typed data adapter, sweeps, credibility review, local commands, permissioned tool protocol | CME/OPRA/Nasdaq rights, historical tick/quote/depth archives, hosted compute, proprietary UI/source and service outputs |
+| QuantConnect + LEAN | Open event-driven backtesting; cross-asset instruments, universes, corporate actions, margin and execution models | Adapter candidate; exact reference-trade parity and independent Atlas portfolio ledger | Commercial datasets, hosted features and broker access |
+| QuantRocket | Historical universe and factor research, research/production workflows, data pipeline organization | Dated-universe operator, factor panel, traceable ETL and reproducible job graph | Bundled vendor data, paid deployment services |
+| Quantpedia | Published-strategy research, model comparisons, portfolio/strategy composition | Independently derived open-literature strategy library with paper-to-code provenance, ablations, negative replications | Subscription research, protected datasets, proprietary strategy text |
+| Portfolio123 | Historical stock screens, factor ranks, portfolio simulations | As-of cross-sectional factor ranking and investable/uninvestable-universe distinction | Point-in-time premium fundamentals and proprietary scores |
+| TrendSpider / Composer | Visual conditional strategy construction, scenarios, automated workflows | One typed model graph shared by visual/equation/code/SDK interfaces | Proprietary UI assets and hosted automation |
+| Option Alpha | Options construction, simulations and monitored bots | Contract-aware options payoffs, dated quote-side simulation, restricted paper-only templates | Historical OPRA options chains, broker entitlements |
+| Bookmap / options-flow vendors | Order flow, book heatmaps, footprint/liquidity and options exposure | Licensed replay adapters plus explicitly **synthetic-only** demonstrations for depth/flow analytics | Exchange depth, timestamped trade/quote histories, exchange redistribution rights |
+| Koyfin / TIKR and terminal incumbents | Fundamental comparison, custom analysis, reporting and end-to-end equity research | Source-backed financial statements, typed comps, screener formulas, scenario and evidence-grounded memo | Commercial consensus, premium estimates and entire global historical coverage |
+
+**Primary references inspected or previously researched (verify freshness before adoption):** https://quantpad.ai/ ; https://quantpad.ai/data ; https://quantpad.ai/license ; https://www.lean.io/ ; https://github.com/QuantConnect/Lean ; https://github.com/microsoft/qlib ; https://github.com/microsoft/RD-Agent ; https://github.com/QuantPad/pine-runner . Additional platform rows are *comparative design prompts*, not a claim of an exhaustive current feature or price audit. Do not hard-code transient competitor subscription prices into technical acceptance criteria.
+
+### A.2 Free software versus free data versus free infrastructure
+
+Track three independent gates:
+
+1. **Algorithms/software:** deterministic local computations, independent open-source implementations and legally compatible adapters. Essential quantitative mathematics, trials, model auditing and documentation stay free.
+2. **Information/data:** every provider, venue, instrument, date range, timestamp precision, historical-vintage proof, corporate action, survivorship coverage and redistribution permission is enumerated. Free public data includes appropriate SEC, FRED/ALFRED, Treasury, CFTC, EIA, NOAA and other authorized sources. Free-market-feed offerings are limited by feed coverage, history, API terms and redistribution. Never synthesize a historical quote, options chain or order book and call it observed.
+3. **Hardware/operations:** one documented **CPU-local reference profile** runs an end-to-end sample workflow offline after authorized inputs are installed; optional GPU/cloud paths must add measurable improvement rather than hidden necessity. Report total cost of ownership separately for storage, data access, inference, network, energy and ongoing support.
+
+Every claim of *free parity* names a concrete workflow, input dataset, covered instruments, hardware, legal usage class, output equivalence, missing capabilities, and any recurring fee. A BYO licensed feed is not falsely presented as zero-cost data.
+
+### A.3 Adopt/rewrite/reference decisions
+
+| Candidate | Current public-license observation (verify current commit and transitive terms) | Proposed treatment |
+|---|---|---|
+| LEAN | Apache-2.0 | Benchmarked event-driven adapter, with measured data conversion and independent accounting parity |
+| Microsoft Qlib and RD-Agent | MIT | Factor/ML and bounded research automation benchmark candidates |
+| Optuna | MIT | Optional parameter-search engine with all attempted trials logged |
+| HftBacktest | MIT | Microstructure replay candidate only with authenticated input semantics |
+| skfolio | BSD-3-Clause | Portfolio-risk/optimizer comparative cases |
+| NautilusTrader | LGPL-3.0 as inspected in repository and official February 2026 policy | Optional integration only after distribution/linking, compatibility and legal review; correct earlier documentation describing it as Apache-2.0 |
+| QuantPad Pine Runner | AGPL-3.0-only for published runner | Reference/isolated opt-in compatibility candidate, not copied into permissive core without license review |
+| QuantLib, statsmodels, arch, DuckDB, Arrow, Polars, llama.cpp | Mixed, version-specific | Evaluate narrow stable adapters on representative workloads; licenses, binaries/weights and data terms checked per release |
+
+QuantPad's published service terms are a legal **exclusion** for unauthorized service extraction or access designed to reconstruct a competitor. Competitive analysis here is based on public descriptions and the separately licensed open-source components with their own obligations. A permissively licensed replacement is built independently from general algorithms, published papers, test vectors and public code that permits reuse.
+
+### A.4 Competitive evaluation dimensions
+
+Benchmark workflow completion, correction burden, exact numerical/reference accuracy, dataset availability and proof of vintage, runtime/resources, local/offline viability, report portability, accessible novice-to-expert UI, agent safety, operational failures and **total subscription/data/cloud cost**. Report a capability **per task and scope**, not a single marketing replacement percentage. One dataset or one attractive screenshot cannot establish vendor parity.
+
+---
+
+## Appendix B. Quant research runtime, strategy science and AI contracts
+
+### B.1 Current implementation checkpoint and required status separation
+
+**Source-inspected reference, November 11, 2026, main commit e0b3119fca3a97c7fe5e9acc215a8975738ce576 (do not imply tests were rerun for this appendix):**
+
+- `13's baseline already has a typed long-only single-instrument strategy contract, point-in-time feature generation, versioned experiment storage, a vectorized **preview**, a next-session-open event-driven reference simulator, a cash/positions/corporate-action ledger, simple commission/slippage controls, and run replay. Relevant paths: `src/atlas/quant/contracts.py`, `features.py`, `lab.py`, `portfolio.py`, `simulator.py` and `vectorized.py`.
+- The reference simulator does **not** model partial fills, queues, true spread/impact, margin, borrowing, shorting, futures/options contract lifecycles, intraday auctions or a multi-instrument execution book. A vectorized preview is **not** an executable backtest.
+- The separately implemented institutional walk-forward protocol records candidate attempts, train/validation/test selection, embargo, cost sensitivity and limited bootstrap inference on controlled fixtures. Its presence is not evidence of universal integration, data vintage completeness, positive alpha or production eligibility.
+- The historical `docs/MASTER_SPEC_V3_IMPLEMENTATION_GAPS.md` text still describes cost-aware backtest accounting as entirely missing. That statement is **stale for the reference simulator's narrow scope** and must be reconciled against tests on any subsequent roadmap update. Do not silently overwrite the historical report.
+
+All acceptance below must state status as `vision_only`, `implemented_unverified`, `prototype_verified`, `implemented_verified` or `production_eligible` at a named contract and source revision.
+
+### B.2 A single typed quantitative research object family
+
+Extend, rather than duplicate, UROS/TEK/FEC/Quant Lab with these versioned domain contracts:
+
+| Object | Required fields and invariants |
+|---|---|
+| `InstrumentRef` | Time-bounded security identity, listings, venue, MIC, currency, price unit, contract multiplier/tick, settlement calendar, exchange timezone, asset class, corporate action/roll relationships |
+| `DataEntitlement` | Provider, dataset/version, coverage, quality, permitted use/export, latency, vintage/archive proof, cost, source lineage, revocation |
+| `UniverseSnapshot` | Membership determined from date-available identifiers/rules, include/exclude reasons, delisted and inactive security status, look-back/start eligibility, selection as-of timestamp and coverage warnings |
+| `FeatureSnapshot` | Source/vintage cutoffs, label horizon and availability delay, adjustment and missing-value policies, transforms, leak checks and feature matrix hash |
+| `StrategyDefinition` | Strategy family/parent, universe, signal/feature/model graph, decision clock, target allocator, limits, execution fidelity, baseline, budget and safety permissions |
+| `ExecutionAssumption` | Venue/session/tick/lot, market/limit/stop conditions, spreads, commissions, slippage, sizing, impact, borrow/funding, fills/latency, margin/settlement, data required, unknown policy |
+| `ExperimentFamily` | Hypothesis, related candidates, all trials including abandoned or failed attempts, hyperparameter search spaces, pre-registered folds, shared holdout/embargo policy, multiple-testing denominator/unknown flag |
+| `SimulationRun` | Frozen data source IDs, strategy/engine/seed versions, event order, orders/fills/cancels/rejections, cash/positions/P&L ledger, benchmark, risk, violations, data gaps and replay hash |
+| `ResearchVerdict` | Independent evidence/computation/statistical/decision statuses; declared fit for purpose, missing constraints, uncertainty and counterexamples; no uncalibrated numerical 'alpha confidence' |
+| `PaperOrderProposal` | Explicit non-live account, target/quantity, validation, idempotency, consent, risk and kill-switch controls; not implicitly executable from a strategy object |
+
+Schemas have stable version identifiers, migrations, bounded resource estimates and serializer round trips. Third-party engines remain adapters; no duplicate immutable source-of-truth database or privilege escalation.
+
+### B.3 Research from idea to verified artifact
+
+Reference workflow: `question -> inspect/edit typed plan -> prove source rights and historical data -> define frozen universe and baseline -> compose factors/signals -> run cheap preview -> pre-register search space and holdout -> train/tune -> event-driven simulation -> risk/cost/regime/robustness checks -> independent credibility verdict -> export signed-or-hashed manifest and report -> save a reproducible Time Capsule -> optional consented shadow/paper experiment`.
+
+The default path remains **research-only**. Every newly proposed strategy must compare against a market/appropriate portfolio benchmark, naive/no-action alternative and at least one simple model. Output includes failures and inconclusive results. Reports must state actual data windows, survivorship coverage, calendar, corporate actions, fees and fills. Public strategy libraries cite original papers and derivation decisions; research published behind paywalls is not copied.
+
+### B.4 Discovery, multiple tests and regime uncertainty
+
+1. Freeze universe, label horizon, decision clock, eligible information and objective **before** fitting. Prevent cross-sectional leakage, point-in-time restatement leakage, overlap leakage and look-ahead through adjustment factors.
+2. Track **all searched strategies**, family expansions, manual restarts, parameter trials, aborted searches and test-set peeks when known. Mark unknown research history as `unknown`; never infer effective test count from retained finalists alone.
+3. Use rolling/expanding walk-forward, purged/embargoed folds where labels overlap, independent untouched testing, and pre-registered forward/shadow trials. A single holdout reused repeatedly is no longer untouched.
+4. Where assumptions permit, report deflated Sharpe, probability of backtest overfitting (PBO/CSCV), block/bootstrap tests, reality-check or familywise discovery alternatives. Disclose small-sample, nonstationarity and method limitations; methods are optional diagnostics with explicit `not_applicable` states, not profit certifications.
+5. Regime analysis includes scenario-conditioned performance, stress episodes, chronological regime inference **trained only on allowable history**, volatility clustering and block-bootstrap/Monte Carlo variants. Disclose the estimated regime model, calibration set, number of paths, dependence assumptions, parameter uncertainty and tail coverage.
+6. Record capacity/ADV participation, liquidity/cost gradients, turnover, factor crowding where measurable, sector/theme exposure, correlated candidate families, implementation shortfall, opportunity frequency and approximate breakeven friction.
+7. Every optimization report includes a negative control and an adversarial dataset on which optimistic results are rejected. The final result may be `insufficient_evidence` or `stand_aside`.
+
+### B.5 Multi-asset and execution-fidelity contract
+
+**Tier A: research preview.** Vectorized hypothetical weights/returns, clearly not broker fills. **Tier B: event-driven portfolio.** Multi-instrument cash, tax-lot or cost-basis policy, dividends/splits, market/session clock, orders, fill/rejection events, price/FX translation, position/risk constraints, leverage/borrow as supported and independently reconciled accounts. **Tier C: microstructure.** Dated trades/quotes/depth, tick/lot/multiplier, queue/cancel logic, simulated latency and calibrated impact with executable-side assumptions. **Tier D: optional paper broker.** Read-only account reconciliation before limited paper orders, explicit consent, idempotency, kill switch, limits and order audit. **Tier E: live** is separate, permissioned and not required for research completeness.
+
+Subcontract requirements:
+
+- Equities/ETFs: delistings, splits, dividends, spin-offs/mergers/rights, ETF creation/redemption/holdings dates when used, stale-price events and total-return versus raw-price conventions.
+- Futures: contract identity, exchange calendar, expiry, delivery/first notice, tick/point value, funding/margin and a declared continuous-series roll/back/ratio adjustment policy. **A stitched adjusted series is not a directly tradable contract.**
+- Options: exact contract ID, underlying and corporate-action adjustments, strike/expiry/style/multiplier, settlement and exercise/assignment, quote bid/ask/size, fees, margin and recorded fill side. No historical synthetic midprice may justify an executable P&L claim.
+- FX, rates and credit: currency pair and base/quote units, timezone and trading-day policy, spot/forward curve, coupon/day-count/calendar/settlement, accrued interest, credit event and liquidity assumptions, source valuation semantics.
+- Cross-currency or multi-book portfolios: explicit FX conversion timing, collateral, exposure, fees, realized/unrealized convention and no double use of cash.
+
+LEAN, NautilusTrader and HftBacktest are candidate **adapter/benchmark** engines. First pass a minimal adversarial fixture suite for one asset type; expand only if the exact independent ledger and event logs agree within predeclared tolerances. Do not install a large dependency merely to display more strategies.
+
+### B.6 Agent, tool, local-first and visual interface contract
+
+Atlas Intelligence may create a bounded typed plan, propose code or hypotheses, route approved reads, inspect failures and compare candidates. The FEC, TEK, RIE and permission system remain authoritative. Require a full dry-run preview of plan, data access/cost, side effects, and compute budget. An LLM, plugin, notebook, research document or MCP tool output is untrusted; deny tool-instruction injection and cross-workspace exfiltration. Revalidate every side effect at execution; never accept a tool-generated 'approval'.
+
+- **Local-first:** core algorithms, reference research, deterministic reports, baseline factors and saved experiments must run without a SaaS account; local model inference is optional and availability/weights/licensing are disclosed.
+- **Commands/workspaces:** user-defined commands are typed templates with explicit data needs, capabilities, version, retry/cancel policy and resource limits; stored research memories are opt-in, inspectable, deletable and scoped; agents may not silently persist protected source text.
+- **SDK/MCP:** structured read-only by default; explicit tenant/workspace, as-of and rights controls; scoped capability tokens, quotas, audit log, pagination and deterministic error semantics; no inherited broker trading permissions.
+- **Visual strategy editor:** condition/branch/sizing/rebalance nodes compile to the **same typed graph** used by notebook, formula, SDK and agent workflows. Show compilation errors and unsupported operations. Under identical inputs all views must match fingerprints and numerical outputs within declared tolerances.
+- **No safety-by-UI:** API, plugin and scheduled execution all enforce the same access boundaries. A preview or export must not leak restricted raw feed bytes.
+
+### B.7 Free implementation and capability promotion gates
+
+**Gate Q0:** accurate metadata/rights/coverage with local documented sample dataset and no hidden subscription. **Q1:** complete reproducible one-instrument experiment with strong baseline, audit, failure cases and report. **Q2:** multi-asset ledger, historical universe, factor sweeps and robust validation on authorized dated data. **Q3:** safe typed agent + visual/SDK parity on the same experiment; a no-agent baseline is required. **Q4:** options/futures/market microstructure as **separately scored** adapters requiring real dated market inputs. **Q5:** optional broker paper service after security/permission/failure tests. None automatically unlocks live trade features.
+
+The default milestone is one **golden workflow**: “Build and evaluate a point-in-time long-only momentum/factor strategy over a historically valid equity universe; run a typed parameter search, embargoed validation and regime/cost stress tests; compare against no-action/buy-and-hold and simple factor baselines; export a report with independent ledger, full trial history and every data limitation.” It must run on locally available lawful inputs, or precisely refuse unavailable dataset fields, without pretending full US consolidated market history.
+
+---
+
+## Appendix C. Cross-domain gold-standard gap closure
+
+This appendix is the result of reviewing coverage across all 61 v3 sections. It contains **requirements and prioritized verification gaps**, not additional top-level applications. Each item uses existing TEK, UROS, FEC, ResearchOS, RIE, model adapters, rights enforcement and views.
+
+### C.1 Cross-domain gaps to close before general “all financial research” claims
+
+| Domain / highest remaining specification risk | Required contract and proof | Reference system |
+|---|---|---|
+| Global equities and reporting | Separate issuer, listing and security identities; IFRS/US GAAP mapping with period, segment, currency translation, inflation/ADR/domicile treatment; delistings and audited restatements | ``7-10, 35, 38-39 |
+| Fund, index and benchmark science | Effective-date constituent weights, reconstitution rules, dividends/distributions, fee drag, investability, tracking error, benchmark mapping and frozen methodology revisions | ``13, 35-36, 38, 41 |
+| Multi-asset valuation / accounting | Cross-currency cash and P&L, positions, margin, tax-lot policy, currencies, sessions and corporate/contract events, plus an independent complete ledger | ``10-14, 40-41 |
+| Sovereign, municipal and structured credit | Issuer guarantees/seniority, tax conventions, coupon/settlement/default/recovery assumptions, curves, security cash-flow waterfalls and comparable disclosure | ``14, 36, 41 |
+| Insurance, pensions and asset/liability management | Claims/reserve source versions, duration gaps, funded status, liability cash flow, economic capital, longevity/inflation scenarios and sector-specific accounting | ``14, 35-36, 41, 44 |
+| Commodities, FX and energy | Futures contract chains, forward/spot differences, delivery locations, seasonality, unit conversions, geopolitical/macro vintages and nontradable continuous-series disclosure | ``7, 14, 16, 38, 40 |
+| Private capital and transactions | Cap tables with rights seniority and dilution, equity waterfalls, ownership dates, missing private valuations, deal comparables, debt covenants and defensible confidences | ``35-36, 42-43 |
+| Real estate / geographic assets | Property and lease identity, debt and capital calls, changing geospatial hazard/source revisions, property-specific coverage gaps and transparent uncertainty | ``33, 41 |
+| Retail / household research | Authorized private holdings and expenses, taxes/jurisdictions only where sourced, insurance needs, liability constraints, suitability boundaries, transparent “do nothing” alternatives | ``35, 44-45 |
+| Events, policy and claims | Tradable versus merely forecastable event separation, settlement sources/rules, ex-ante calibration, causal/association distinction and non-exchange payout accounting | ``29-32 |
+| Research synthesis and narrative evidence | Correct-page/paragraph sourced qualitative conclusions with amendment-aware retrieval, table-aware numbers, citations, abstention and counter-evidence; no fabricated source quotes | ``17, 39, 49-52 |
+| Forecast/model governance | Model inventory, purpose/owner/use limits, challenger and drift policy, validation evidence, version promotion and retirement, human overrides and conflicts | ``15, 17, 36-37, 52 |
+| Publication and professional artifacts | Spreadsheet/notebook/presentation/memo interoperability; source-licensed exports, editable reproducible figures, formula parity and exact version/citation manifest | ``18-19, 47, 56 |
+| User-authorized local data and AI safety | Data residency, prompt injection, malicious documents and code, least privilege, private local inference, sandbox quotas, revocation and incident/recovery rehearsal | ``9, 15, 20, 47, 51 |
+| Data quality and no-cost viability | Dataset-specific freshness, gaps, vintage proofs, corrections, symbol mapping, costs, regional restrictions, user-supplied entitlements and CPU-only baseline | ``7, 9, 54, 58 |
+| Scientific benchmark reproducibility | Unseen tests, negative controls, reference outputs, independent grading, hardware/cost disclosure, dataset license, selection-trial logs and reproducible artifacts | ``22, 48, 57, 60 |
+
+**Cross-cutting priority rule:** A new instrument/sector model must pass entity identity, historical source, numerical agreement, experiment integrity, rights, privacy and useful report gates in that order. Domain-model breadth without these shared checks is not adoption progress.
+
+### C.2 Gold-standard feature readiness matrix
+
+Every capability must declare **four independent statuses**: (i) specification complete, (ii) implementation + test evidence, (iii) legally authorized data for the named scope, and (iv) task-level adoption/replacement evidence. A blank status is `not_assessed`, not success. No category becomes “institutional grade” because an adjacent algorithm works.
+
+**Mandatory demonstrator families:** fundamental global-company underwrite; public equity quant factor/portfolio experiment; fixed-income term-structure and credit scenario; derivatives quote-side risk study; policy/macro revision analysis; asset/liability retirement or institutional portfolio case; M&A or private-capital scenario; real estate underwriting; historical source revision and grounded narrative memo. Existing v3 user journeys and ICBs remain in force; these are connected evidence-to-deliverable tests.
+
+### C.3 Release safety and repository-history gate
+
+The November 10, 2026 `docs/MAIN_BRANCH_PROMOTION.md` states older repository commits contain restricted vendor market bytes. A fast-forward promotion did not cleanse that history. **Do not flip the present private repository to public** or distribute its complete history until a rights audit, secret scan, authorized clean-history or clean-source release plan, fixture replacement, license review, history-rewrite impact analysis and independent verification are completed. A clean artifact build must prove that licensed data do not leak through git history, bundled files, examples, model weights, generated reports, error responses or telemetry. Public open-source ambition is not current legal clearance.
+
+### C.4 Prioritization and “not now” decisions
+
+1. **P0 research completion:** source-backed issuer narratives, reliable full research memo and deterministic change impact, data-rights displays, a locally runnable sample case. Finish the first complete workflow before another surface.
+2. **P1 foundational correctness:** historical universe and multi-asset ledger, strategy experiment validation, factor baseline library, statement/curve model parity, auditable data coverage.
+3. **P2 usability and research depth:** typed agent planning, visual/SDK parity, portfolio and asset/liability research, professional imports/exports and global conventions.
+4. **P3 licensed data specializations:** intraday, OPRA-style options quotes, futures ticks and order-book microstructure, private estimates/transactions, regulated integrations.
+5. **Always non-goals:** guaranteed returns, universal free data entitlements, unsupervised unbounded live orders, hidden model-vetting scores, historical fills inferred from synthetic snapshots, new permanent product systems without independent workflow proof.
+
+### C.5 A genuinely useful replacement benchmark
+
+Compare Atlas against a documented incumbent task using the same **legally available** evidence and scope. Evaluate user success/corrections and time, data gap disclosures, independent financial correctness, numerical agreement, source/citation precision, historical leakage, candidate-selection transparency, reproducibility after a restart, accessibility, failure recovery and total actual cost. Publish failed tasks and the reason the incumbent still wins; benchmark success cannot be declared by self-scored agent output.
+
+---
+
+## Appendix D. Full 61-section audit and ICB-49 through ICB-64
+
+### D.1 Audit method and status semantics
+
+This is a **complete specification coverage sweep of Sections 1-61**, not a claim that every implementation was executed. Checked the canonical text for product contracts, gaps, duplication, proof obligations, security, data rights, developer feasibility and contradictions with source-inspected quant and roadmap modules. `Retain` means sufficient direction exists in the specification, **not** product verified. `Tighten` means Appendix A-C or an existing section adds a necessary contract. `Evidence gate` means the requirement is defined but cannot be claimed delivered without current tests, rights and user tasks. Every row names a next action; none implies feature completion.
+
+| Section | Audit disposition | Next proof or correction |
+|---|---|---|
+| 1 | Retain | Quantify successful research replacement and local cost |
+| 2 | Retain | Keep eight-system taxonomy; reject divergent engines |
+| 3 | Evidence gate | Task-based interface usability across novice/expert |
+| 4 | Tighten | Equivalence must be named-workflow/data-rights scoped (A.1/A.4) |
+| 5 | Retain | One TEK/FEC/UROS and permissions boundary |
+| 6 | Evidence gate | Complete typed quant object family and schema migrations (B.2) |
+| 7 | Tighten | Dated universe, feed/venue/vintage and adjustment contracts (B.2/B.5) |
+| 8 | Tighten | Global issuer/instrument, benchmark and contract identities (C.1) |
+| 9 | Tighten | Separate free algorithms from costly data/cloud; public-history blocker (A.2/C.3) |
+| 10 | Retain | Compiler numerical and type parity across engines |
+| 11 | Evidence gate | Local CPU baseline and measured optional hardware path |
+| 12 | Tighten | Visual/SDK/agent graph parity and failure diagnostics (B.6) |
+| 13 | Tighten | Anti-overfitting experiments and tiered simulation (B.3-B.5) |
+| 14 | Tighten | Multi-asset, sovereign/structured credit and ALM conventions (C.1) |
+| 15 | Tighten | Scoped AI memory, non-authoritative LLM and agent/tool permissions (B.6) |
+| 16 | Evidence gate | Source-backed public events and association/causality |
+| 17 | Tighten | Research trial lineage, full negative results and cited artifacts (B.3) |
+| 18 | Evidence gate | Exported apps reproduce validated licensed-source behavior |
+| 19 | Tighten | Bounded SDK/MCP/read-only tools and typed command templates (B.6) |
+| 20 | Tighten | Agent prompt injection, data exfiltration, release-history scan (B.6/C.3) |
+| 21 | Retain | ADR-based adoption after benchmarks, rollback plan |
+| 22 | Tighten | Add ICB-49..64 and independent failure fixtures |
+| 23 | Evidence gate | Gate milestones on user-task correctness, not phase numbers |
+| 24 | Retain | Review architectural and migration decisions |
+| 25 | Tighten | Free-data mismatch and false-alpha risks explicit (A/B) |
+| 26 | Evidence gate | Expand runnable quant and credit/allocation demonstrators |
+| 27 | Tighten | Correct Nautilus LGPL-3.0 license interpretation; add candidates (A.3) |
+| 28 | Retain | Require agent proof of exact code, dates, test and rights |
+| 29 | Retain | Opt-in domain packs; no new top-level OS |
+| 30 | Evidence gate | Venue event identity and settlement-source replay |
+| 31 | Retain | Hypothesis versus causal identification boundary |
+| 32 | Evidence gate | Repeatable adversarial domain-pack acceptance |
+| 33 | Evidence gate | Complete lease/debt/geospatial source and liability case |
+| 34 | Retain | Depth, breadth and available-data scores separate |
+| 35 | Tighten | Add global benchmarks, ALM and microstructure workflows (C.1) |
+| 36 | Tighten | Published paper-derived library with model family/efficacy labeling |
+| 37 | Tighten | Preserve trial family and independent model selection (B.4) |
+| 38 | Evidence gate | Exchange and data-rights coverage, not synthetic terminal breadth |
+| 39 | Evidence gate | Narratives, real peer comps, IFRS/GAAP statement parity |
+| 40 | Tighten | Execution-tier and QuantPad-class workflow specs (B.5-B.6) |
+| 41 | Tighten | Real holdings, cross-currency cash, benchmark/factor attribution, ALM |
+| 42 | Evidence gate | Reconciled transaction models and spreadsheet artifacts |
+| 43 | Tighten | Rights seniority, waterfall/accounting data scarcity and private rights |
+| 44 | Tighten | Suitability and liability research with private-data permissions |
+| 45 | Evidence gate | Keyboard, screen-reader, novice/expert parity and errors |
+| 46 | Retain | Quant Stack remains explicitly external/unverified |
+| 47 | Tighten | External agent/MCP permissions and private rights propagation |
+| 48 | Tighten | Replaceability per named task, with full TCO and data fees |
+| 49 | Evidence gate | Source-exact narrative retrieval and abstention under revisions |
+| 50 | Evidence gate | Compression remains experimental until independent study |
+| 51 | Tighten | Research plan and execution rights must be typed and auditable |
+| 52 | Tighten | Separate research validity, alpha evidence and implementation (B.4) |
+| 53 | Evidence gate | Demonstrate resource savings on matched-quality workload |
+| 54 | Tighten | Source license and local no-fee coverage visible per task |
+| 55 | Tighten | Same graph across visual, code, equation and agent output |
+| 56 | Evidence gate | Spreadsheet/notebook/report numerical migration parity |
+| 57 | Evidence gate | Independent publication-grade RAG/CDG replication |
+| 58 | Tighten | Verified license registry and bounded engine adapters (A.3) |
+| 59 | Retain | User workflow first; no broad menu of unfinished packs |
+| 60 | Tighten | ICB-49..64 below; tests independently scored |
+| 61 | Retain | Gold-standard must be externally demonstrated, never self-awarded |
+
+### D.2 Additional institutional capability benchmarks: ICB-49 through ICB-64
+
+These **16 proposed** acceptance benchmarks extend ICB-01..48. No benchmark status is changed by writing this appendix. Each receives an independent fixture and numeric thresholds set **before** seeing held-out results, a baseline, failure/adversarial case, data license/rights manifest, hardware/runtime details, named reviewer, and preserved pass/fail artifacts.
+
+| ID | Test case / reference outcome | Release-blocking failure |
+|---|---|---|
+| ICB-49 | Multi-instrument chronological execution and independent cash/position/FX/fee/dividend/P&L ledger over cross-currency scenarios | Double-allocated cash, missing fills, unreconciled identities or hidden price gaps |
+| ICB-50 | Dated equity/universe/ETF benchmark membership including dead, renamed, delisted and spun-off securities | Survivorship inclusion or later constituents leaked into prior tests |
+| ICB-51 | Parameter/factor research with all attempts, untouched evaluation, appropriate purging/embargo and multiple-testing accounting | Test-set peeking, unlogged search family or false discovery presented as validated |
+| ICB-52 | Regime and resampling sensitivity with dated fit, calibrated or disclosed process assumptions and simple reference | Full-history regime fit in an as-of run; unsupported certainty from paths |
+| ICB-53 | Friction/capacity and execution sensitivity versus independently replayed reference trades and liquidity cases | Midpoint-as-fill, no liquidity gap disclosure, unsupported market impact |
+| ICB-54 | QuantPad-class complete free local workflow from question to reproducible experiment and cited report | Hidden SaaS requirement, unavailable data silently invented, broken offline replay |
+| ICB-55 | Typed multi-view factor/strategy editor plus API/SDK/agent parity | Different effective strategy graphs or silent unsupported operators |
+| ICB-56 | Data rights, provenance, historical source vintages and provider revocation across imports/exports | Restricted vendor bytes shared, stale-vintage claim or invalid entitlement accepted |
+| ICB-57 | Contract-aware futures/options data/time/roll/settlement and quote-side replay on lawful snapshots | Adjusted continuous future treated as tradable or option midpoint treated as fill |
+| ICB-58 | Engine adapter bake-off on canonical event log and cash ledger against native baseline | Backend-specific accounting divergence hidden by formatting |
+| ICB-59 | Factor library reproducibility from published sources with simple strategies and null controls | Unverified proprietary strategy copied or negative replication omitted |
+| ICB-60 | Robust research agent/tool protocol with prompt-injection, privilege and resource tests | Unapproved side effect, private data exfiltration or tool result treated as instruction |
+| ICB-61 | Global company/FX/IFRS-GAAP and benchmark/time revision consistency | Unit/currency/period mismatch silently produces a research figure |
+| ICB-62 | Sovereign/structured credit and liability-driven research on independent cash-flow and stress vectors | Instrument/claim priority/day-count/discount conventions untraceable |
+| ICB-63 | Financial paper-to-code-to-report audit: citations, numerical tables, source versions, negative evidence and editable export | Unsupported citation, changing a baseline silently or non-replayable delivered report |
+| ICB-64 | Independent real-user workflow replacement and economics comparison for quant, equity, risk and at least one non-public-equity task | Unavailable legal data, incomplete job, unreported total cost or self-scored “parity” |
+
+### D.3 Coherent next engineering milestone and exit evidence
+
+**Milestone order:** (1) reconcile existing implementation scoreboard with actual narrow tested reference simulator and list dated rights/coverage; (2) complete a filing-to-memo narrative evidence path; (3) implement historical universe and multi-asset ledger; (4) unify selection-attempt ledger and robust validation; (5) add documented open-literature factor baselines, typed visual and agent plans; (6) extend to optional licensed order books, dated option chains and paper routing only as proven. Do not label roadmap items `implemented_verified` based on this document.
+
+**Required release packet:** tagged code commit, exact spec/ADR revisions, dataset/rights manifests, all experiment trials, reproducibility commands and checksums, numerical tolerances, reference outputs, adversarial failures, resource and cost profile, human review, clear remaining gap matrix and user-task recording. Evidence must be available to an independent reviewer with appropriate source entitlements.
+
+**Final audit verdict:** v3's 61 sections define unusually broad goals, but **coverage is not delivery**. Version 3.1's correction is to make competitive quant workflows, model-risk discipline, free-data feasibility, underserved institutional cases and falsifiable completion gates explicit within the existing common foundation. The next “gold standard” claim must be earned on a narrowly defined, externally reproduced user workflow rather than declared for the entire platform.

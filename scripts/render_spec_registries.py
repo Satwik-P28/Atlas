@@ -37,7 +37,7 @@ def render_traceability(payload: dict) -> str:
     lines = [
         "# Master specification traceability",
         "",
-        "Status: **received_integrity_verified** — the canonical v3.0.0 document is present and",
+        "Status: **received_integrity_verified** — the canonical specification file is present and",
         "byte-verified. This proves the document's identity, not implementation conformance.",
         "",
         "## Canonical specification",
@@ -122,10 +122,10 @@ def render_traceability(payload: dict) -> str:
         "(155,419 bytes, SHA-256 `e54c59737f48a2faf6e62bddf76f0292efd634cda03bc7a6a5c2aed4ed4ba5c9`)",
         "was absent, and refused to map requirements from an invented copy. Those reports were",
         "accurate for their checkpoints and are not rewritten here. The current canonical document",
-        "is v3.0.0 at the size and hash above; the v1.2 hash must not be presented as matching it.",
+        "is v3.1.0 at the size and hash above; the v1.2/v3.0 hashes are historical snapshots.",
         "",
         "The earlier statement that \"the only ICB identifiers defined anywhere in this repository are",
-        "ICB-04 and ICB-09\" was also correct at that time: ICB-01 through ICB-48 are now read from",
+        "ICB-04 and ICB-09\" was also correct at that time: ICB-01 through ICB-64 are now read from",
         "the canonical document and registered in `artifacts/icb_registry.json`.",
         "",
     ]
@@ -138,8 +138,8 @@ def render_scoreboard(icb: dict) -> str:
     lines = [
         "# Institutional capability scoreboard",
         "",
-        "ICB-01 through ICB-48 as defined by the canonical v3.0.0 specification (Sections 22, 48",
-        "and 60). Machine-readable source: `artifacts/icb_registry.json`.",
+        "ICB-01 through ICB-64 as defined by the canonical v3.1.0 specification (Sections 22, 48",
+        "and 60, and Appendix D). Machine-readable source: `artifacts/icb_registry.json`.",
         "",
         "## Acceptance rule",
         "",
@@ -151,7 +151,7 @@ def render_scoreboard(icb: dict) -> str:
         "  exercises the stated acceptance case; that still does not establish the professional",
         "  workflow was independently validated.",
         "- A model audit that checks arithmetic supports a benchmark; it does not accept it.",
-        "- No benchmark is marked executed in Phase 9.2.8. Nothing here is `production_eligible`.",
+        "- No benchmark is newly accepted or executed by the v3.1 specification refresh.",
         "- Suites that require licensed market data, exchange products or broker access are marked",
         "  `vision_only` and are blocked on entitlement, not on engineering alone.",
         "",
@@ -176,7 +176,7 @@ def render_scoreboard(icb: dict) -> str:
         ids = [entry["benchmark_id"] for entry in entries if entry["priority"] == priority]
         if ids:
             lines.append(f"| {priority} | {', '.join(ids)} |")
-    lines += ["", "## ICB-01 to ICB-48", ""]
+    lines += ["", "## ICB-01 to ICB-64", ""]
     for entry in entries:
         number = entry["benchmark_id"]
         lines += [

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Verify the supplied master specification against its declared size and hash.
+"""Verify the canonical v3.1.0 master specification against its pinned size and hash.
 
 The gate is intentionally strict: a truncated, regenerated or edited document fails.
 """
@@ -11,8 +11,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / "ATLAS_MASTER_SPEC.md"
-EXPECTED_BYTES = 289_963
-EXPECTED_SHA256 = "c1228db93e66a04fb211bea85f6c978289a6040b1f655f934da76498c8c4752d"
+EXPECTED_BYTES = 333_547
+EXPECTED_SHA256 = "d1800cfea35d973e2ff2b3570f8bf564fd3a7aceabca2f623ec5de17931a1111"
 
 
 def main() -> int:

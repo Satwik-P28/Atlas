@@ -1,5 +1,7 @@
 # Master Specification v3 implementation gaps
 
+**v3.1 corrective note (2026-11-11):** This v3.0 implementation audit is historical. Current `13 reference simulator and `src/atlas/quant/portfolio.py` contain basic cost-aware cash/positions accounting; do not label that narrow reference accounting absent, or treat it as multi-asset market-execution parity. The v3.1 spec adds proposed ICB-49..64; this document is not a fresh execution of those benchmarks.
+
 Companion to `docs/MASTER_SPEC_TRACEABILITY.md` (61 requirements, machine-readable in
 `artifacts/master_spec_requirements.json`) and
 `docs/INSTITUTIONAL_CAPABILITY_SCOREBOARD.md` (ICB-01..48).
@@ -16,7 +18,7 @@ is never evidence.
 | --- | --- | --- | --- |
 | Financial Terminal | `implemented_verified`, partial | Canonical market series, chart, provenance, screeners, workspaces, adapters over SEC facts, responsive web UI | Multi-asset coverage (funds, FX, options, rates), live feeds, watchlists beyond a stub |
 | Fundamental Research | `prototype_verified` | SEC XBRL statements, restatements, derived metrics with evidence ids, DCF and bank residual income | Three-statement build, comps bench, segment/lease/policy notes |
-| Quantitative Research OS | `prototype_verified` | Point-in-time features, calibrated learning, walk-forward experiments, audits | Cost-aware backtest accounting, execution research, tournaments |
+| Quantitative Research OS | `prototype_verified` | Point-in-time features, calibrated learning, walk-forward experiments, audits; narrow single-instrument next-open backtest with commissions/slippage and reconciling ledger | Broader multi-asset execution, partial fills, realistic impact/borrow, historical-universe validation, integrated tournaments |
 | Global OSINT Intelligence | `vision_only` | An energy/weather case study with a source-backed graph | Ingestion, entity resolution at scale, claim labelling, monitoring |
 | Economic Simulation | `prototype_verified` | EIA/NOAA panel, weather-demand model, scenarios with uncertainty | Macro vintages, general equilibrium, other domains |
 | Financial-Economic Compiler | `prototype_verified` | Typed IR, allowlisted operators, versioned graphs, compatibility refusal | Parsing frontends, planning/optimization passes, nested composition at scale |

@@ -10,7 +10,7 @@ believed:
   verification date and verification commit;
 * every referenced source module and test file must exist, so a renamed or deleted module
   cannot leave a requirement claiming evidence that is no longer there;
-* the ICB registry covers ICB-01 through ICB-48 exactly once with Section 60 fields, and
+* the ICB registry covers ICB-01 through ICB-64 exactly once with Section 60 fields, and
   the rendered documents cite every id they claim to carry.
 
 A green run proves the registries are internally consistent with the repository. It does
@@ -43,9 +43,9 @@ STATUS_VOCABULARY = [
     "deprecated_or_invalidated",
 ]
 STATUS_SET = set(STATUS_VOCABULARY)
-CURRENT_VERSION = "3.0.0"
-SPEC_BYTES = 289_963
-SPEC_SHA256 = "c1228db93e66a04fb211bea85f6c978289a6040b1f655f934da76498c8c4752d"
+CURRENT_VERSION = "3.1.0"
+SPEC_BYTES = 333_547
+SPEC_SHA256 = "d1800cfea35d973e2ff2b3570f8bf564fd3a7aceabca2f623ec5de17931a1111"
 SEVERITIES = {"critical", "high", "medium", "low"}
 REQUIREMENT_ID = re.compile(r"^MS3-\d{2}$")
 ICB_ID = re.compile(r"^ICB-\d{2}$")
@@ -112,7 +112,7 @@ def test_every_requirement_carries_the_required_fields(payload):
         assert entry["status"] in STATUS_SET, identifier
         assert entry["severity"] in SEVERITIES, identifier
         assert re.match(r"^P[0-4]$", entry["priority"]), identifier
-        assert entry["verification_date"] == "2026-11-10", identifier
+        assert entry["verification_date"] == "2026-11-11", identifier
         assert SHA.match(entry["commit_sha"]), identifier
         assert isinstance(entry["internally_partial"], bool), identifier
         assert isinstance(entry["source_modules"], list), identifier
@@ -138,11 +138,11 @@ def test_production_eligible_is_not_claimed_anywhere(payload):
 
 
 # -------------------------------------------------------------------- ICB
-def test_icb_registry_covers_all_forty_eight_benchmarks(icb):
+def test_icb_registry_covers_all_sixty_four_benchmarks(icb):
     identifiers = [entry["benchmark_id"] for entry in icb["benchmarks"]]
-    assert len(identifiers) == 48
+    assert len(identifiers) == 64
     assert len(set(identifiers)) == 48
-    assert sorted(identifiers) == [f"ICB-{number:02d}" for number in range(1, 49)]
+    assert sorted(identifiers) == [f"ICB-{number:02d}" for number in range(1, 65)]
     assert all(ICB_ID.match(identifier) for identifier in identifiers)
 
 
@@ -171,7 +171,7 @@ def test_icb_summary_matches_the_entries(icb):
     counts: dict[str, int] = {}
     for entry in icb["benchmarks"]:
         counts[entry["status"]] = counts.get(entry["status"], 0) + 1
-    assert icb["summary"]["total"] == 48
+    assert icb["summary"]["total"] == 64
     assert icb["summary"]["counts_by_status"] == dict(sorted(counts.items()))
 
 
@@ -196,4 +196,4 @@ def test_scoreboard_cites_every_benchmark(icb):
     text = SCOREBOARD.read_text()
     missing = [entry["benchmark_id"] for entry in icb["benchmarks"] if entry["benchmark_id"] not in text]
     assert missing == []
-    assert "ICB-01" in text and "ICB-48" in text
+    assert "ICB-01" in text and "ICB-64" in text
