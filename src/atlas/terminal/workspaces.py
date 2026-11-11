@@ -142,6 +142,15 @@ PANEL_TYPES: dict[str, PanelType] = {
         min_mode="advanced",
         default_config={"filters": [], "sort": None, "match": "AND"},
     ),
+    "evidence": PanelType(
+        key="evidence",
+        label="Evidence inspector",
+        description="Provenance inspector that shows whichever observation the analyst selects.",
+        requires=(),
+        config_keys=(),
+        min_mode="advanced",
+        default_config={},
+    ),
     "memo": PanelType(
         key="memo",
         label="Research memo",

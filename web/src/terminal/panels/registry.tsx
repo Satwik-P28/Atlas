@@ -59,7 +59,9 @@ export const PANEL_META: Record<PanelKind, PanelMeta> = {
     title: 'Evidence inspector',
     description: 'Source, availability, revision chain and limitations for one observation.',
     accepts: [],
-    backendType: 'xray',
+    // The inspector itself is persisted without a pinned observation; a saved
+    // `xray` panel (which requires an evidence id) still restores as this panel.
+    backendType: 'evidence',
   },
   memo: {
     kind: 'memo',
@@ -101,6 +103,7 @@ const BACKEND_TO_KIND: Record<string, PanelKind> = {
   statements: 'statements',
   metrics: 'metrics',
   xray: 'evidence',
+  evidence: 'evidence',
   memo: 'memo',
   model: 'model',
   diagnostics: 'diagnostics',
@@ -592,10 +595,20 @@ function MemoPanel({ descriptor }: { descriptor: PanelDescriptor }) {
             const id = String(item.object_id ?? item.id ?? `memo-${index}`)
             return (
               <tr key={id}>
-                <td className="tp-mono">{id.slice(0, 18)}</td>
+                <td className="tp-mono">
+                  <span className="tp-clip" title={id}>
+                    {id}
+                  </span>
+                </td>
                 <td className="tp-mono">{String(item.version ?? '—')}</td>
-                <td className="tp-mono">{String(item.content_hash ?? '—').slice(0, 12)}</td>
-                <td className="tp-mono">{fmtDate(String(item.created_at ?? item.saved_at ?? ''))}</td>
+                <td className="tp-mono">
+                  <span className="tp-clip" title={String(item.content_hash ?? '')}>
+                    {String(item.content_hash ?? '—')}
+                  </span>
+                </td>
+                <td className="tp-mono">
+                  <span className="tp-clip">{fmtDate(String(item.created_at ?? item.saved_at ?? ''))}</span>
+                </td>
                 <td>
                   <button
                     className="button"

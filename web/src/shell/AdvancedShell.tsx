@@ -133,6 +133,10 @@ function AdvancedShellInner({ children }: { children: ReactNode }) {
 
   const status = health.data as { status?: string; evidence?: number; bars?: number; schema_version?: number } | null
   const online = status?.status === 'ok'
+  // Before the first response arrives Atlas has not checked the database, so it must
+  // not assert "offline" or a count of zero: that would be an unverified claim.
+  const healthState = health.loading ? 'checking' : online ? 'online' : 'offline'
+  const healthClass = health.loading ? '' : online ? 'is-ok' : 'is-bad'
 
   return (
     <div className={`adv-shell ${inspectorOpen ? 'is-inspector-open' : ''}`}>
@@ -157,8 +161,8 @@ function AdvancedShellInner({ children }: { children: ReactNode }) {
           </div>
           <div className="adv-fact">
             <span>Data</span>
-            <strong className={online ? 'is-ok' : 'is-bad'}>
-              {online ? `${(status?.evidence ?? 0).toLocaleString()} ev` : 'offline'}
+            <strong className={healthClass}>
+              {health.loading ? 'checking…' : online ? `${(status?.evidence ?? 0).toLocaleString()} ev` : 'offline'}
             </strong>
           </div>
         </div>
@@ -322,9 +326,17 @@ function AdvancedShellInner({ children }: { children: ReactNode }) {
       </aside>
 
       <footer className="adv-status">
-        <span className={online ? 'is-ok' : 'is-bad'}>{online ? 'evidence online' : 'database unavailable'}</span>
-        <span>{(status?.evidence ?? 0).toLocaleString()} evidence</span>
-        <span>{(status?.bars ?? 0).toLocaleString()} bars</span>
+        <span className={healthClass}>
+          {healthState === 'checking'
+            ? 'checking database…'
+            : online
+              ? 'evidence online'
+              : health.error
+                ? 'database unavailable'
+                : 'database missing'}
+        </span>
+        {online && <span>{(status?.evidence ?? 0).toLocaleString()} evidence</span>}
+        {online && <span>{(status?.bars ?? 0).toLocaleString()} bars</span>}
         <span className="adv-status-spacer" />
         <span>{linkSummary(links.state)}</span>
       </footer>

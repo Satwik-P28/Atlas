@@ -17,7 +17,18 @@ import { mkdir } from 'node:fs/promises'
 import { chromium } from '@playwright/test'
 
 const BASE = process.env.ATLAS_BASE ?? 'http://127.0.0.1:3000'
-const OUT = 'artifacts'
+const OUT = process.env.ATLAS_ARTIFACTS ?? 'artifacts'
+// This container has no user namespaces, no shared memory and no GPU; containerised CI
+// images need the same flags. They relax isolation inside the test browser process only,
+// never in the application or in production.
+const LAUNCH_ARGS = [
+  '--no-sandbox',
+  '--disable-setuid-sandbox',
+  '--disable-dev-shm-usage',
+  '--disable-gpu',
+  '--single-process',
+  '--no-zygote',
+]
 const VIEWPORTS = [
   { name: '1920x1080', width: 1920, height: 1080 },
   { name: '1440x900', width: 1440, height: 900 },
@@ -45,7 +56,7 @@ async function shot(page, name) {
   await page.screenshot({ path: `${OUT}/phase9_4_${name}.png`, fullPage: false })
 }
 
-const browser = await chromium.launch()
+const browser = await chromium.launch({ args: LAUNCH_ARGS })
 const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, acceptDownloads: true })
 const page = await context.newPage()
 page.on('console', (message) => {
@@ -55,27 +66,47 @@ page.on('requestfailed', (request) => failedRequests.push(`${request.url()} ${re
 
 try {
   // ---------------------------------------------------------------- standard
-  await page.goto(`${BASE}/`, { waitUntil: 'networkidle' })
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+  // The interface mode is persisted server-side, so a previous run may have left
+  // Advanced active. Select Standard explicitly instead of assuming a default.
+  if (await page.locator('.adv-shell').count()) {
+    await page.getByRole('button', { name: 'Std', exact: true }).click()
+    await page.waitForSelector('.std-header', { timeout: 15000 })
+  }
   check(await page.locator('header.std-header').isVisible(), 'standard shell renders a top navigation header')
   check(await page.locator('nav.std-nav a').count() >= 7, 'standard navigation exposes the research sections')
   await shot(page, 'standard_markets')
 
-  await page.goto(`${BASE}/companies`, { waitUntil: 'networkidle' })
+  await page.goto(`${BASE}/companies`, { waitUntil: 'load' })
   await page.locator('a.company-card, .company-card').first().click()
   await page.waitForLoadState('networkidle')
   check(await page.locator('.statement-table, .metric-grid').first().isVisible(), 'standard company page renders statements or metrics')
   await shot(page, 'standard_company')
 
   // ---------------------------------------------------------------- advanced
-  await page.getByRole('button', { name: 'Advanced' }).click()
+  await page.getByRole('button', { name: /^Adv(anced)?$/ }).first().click()
   await page.waitForSelector('.adv-shell')
   check(await page.locator('.adv-shell').isVisible(), 'advanced shell renders a command header and rail')
   check(await page.locator('.adv-rail-link').count() >= 6, 'advanced rail exposes workstation sections')
 
-  await page.goto(`${BASE}/workstation`, { waitUntil: 'networkidle' })
+  await page.goto(`${BASE}/workstation`, { waitUntil: 'load' })
   await page.waitForSelector('.wb-group')
   const groups = await page.locator('.wb-group').count()
   check(groups >= 4, `workstation renders at least four panels (found ${groups})`)
+
+  // Select a real instrument before the visual capture: chrome-only screenshots
+  // would not prove that data-backed panels render.
+  const instrumentSelect = page.locator('.adv-inspector select').first()
+  const optionValue = await instrumentSelect.locator('option').nth(1).getAttribute('value')
+  check(Boolean(optionValue), 'inspector offers a covered instrument')
+  if (optionValue) {
+    await instrumentSelect.selectOption(optionValue)
+    await page.waitForTimeout(2500)
+    const statementRows = await page.locator('.statement-table tbody tr').count()
+    check(statementRows > 0, `statements render for the selected issuer (${statementRows} rows)`)
+    const metricRows = await page.locator('.wb-group').filter({ hasText: 'METRICS' }).locator('tbody tr').count()
+    check(metricRows > 0, `metrics render for the selected issuer (${metricRows} rows)`)
+  }
   await shot(page, 'advanced_desk')
 
   // Command palette: select an instrument, then open a panel.
@@ -118,23 +149,39 @@ try {
 
   // Persistence: save, reload, confirm the layout is still there.
   await page.keyboard.press('Control+s')
-  await page.waitForSelector('.ws-banner.is-ok', { timeout: 15000 })
+  await page.waitForSelector('.ws-banner', { timeout: 20000 })
+  const saveBanner = (await page.locator('.ws-banner').first().innerText()).trim().replace(/\s+/g, ' ')
+  console.log(`     save banner: ${saveBanner}`)
+  check((await page.locator('.ws-banner.is-ok').count()) > 0, `layout saves (${saveBanner})`)
   const savedUrl = page.url()
-  await page.reload({ waitUntil: 'networkidle' })
+  await page.reload({ waitUntil: 'load' })
   await page.waitForSelector('.wb-group')
   check((await page.locator('.wb-group').count()) >= 4, 'saved desk reopens after reload on its own URL')
   check(savedUrl.includes('/workstation'), 'save keeps the desk on the workstation route')
 
-  // Evidence inspector: click a statement value, expect provenance.
+  // Evidence inspector. A saved layout stores panels, not the transient link
+  // selection, so re-select an instrument before clicking a value.
+  const reselect = page.locator('.adv-inspector select').first()
+  const reselectValue = await reselect.locator('option').nth(1).getAttribute('value')
+  if (reselectValue) {
+    await reselect.selectOption(reselectValue)
+    await page.waitForTimeout(2500)
+  }
   const cell = page.locator('.statement-table button.link-button').first()
   if (await cell.count()) {
     await cell.click()
-    await page.waitForSelector('.tp-kv')
-    check(await page.locator('.tp-kv').first().isVisible(), 'evidence inspector shows provenance for a selected value')
-    await shot(page, 'advanced_evidence')
   } else {
-    console.log('skip evidence cell: no statement value on this database')
+    const chip = page.locator('.evidence-chip').first()
+    if (await chip.count()) await chip.click()
   }
+  const evidenceGroup = page.locator('.wb-group').filter({ hasText: 'EVIDENCE' })
+  const inspectorVisible = await evidenceGroup
+    .locator('.tp-kv')
+    .first()
+    .isVisible()
+    .catch(() => false)
+  check(inspectorVisible, 'evidence inspector shows provenance for the selected value')
+  await shot(page, 'advanced_evidence')
 
   // Point-in-time: moving the cutoff must be visible in the shell.
   await page.locator('.adv-inspector input[type="date"]').fill('2023-06-01')
@@ -144,7 +191,7 @@ try {
   // ---------------------------------------------------------------- viewports
   for (const viewport of VIEWPORTS) {
     await page.setViewportSize({ width: viewport.width, height: viewport.height })
-    await page.goto(`${BASE}/workstation`, { waitUntil: 'networkidle' })
+    await page.goto(`${BASE}/workstation`, { waitUntil: 'load' })
     await page.waitForSelector('.wb-group')
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)
     check(!overflow, `${viewport.name}: no horizontal page overflow`)
@@ -155,10 +202,16 @@ try {
 
   // Mobile standard journey.
   await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto(`${BASE}/companies`, { waitUntil: 'networkidle' })
+  await page.goto(`${BASE}/companies`, { waitUntil: 'load' })
   const mobileOverflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)
   check(!mobileOverflow, '390x844: standard company list has no horizontal overflow')
   await shot(page, 'standard_mobile')
+  // Leave the database in Standard mode so the next run starts from the default.
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+  if (await page.locator('.adv-shell').count()) {
+    await page.getByRole('button', { name: 'Std', exact: true }).click()
+  }
 } catch (error) {
   failures.push(`journey threw: ${error.message}`)
   console.error(error)

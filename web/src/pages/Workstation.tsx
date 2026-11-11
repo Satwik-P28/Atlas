@@ -171,6 +171,22 @@ export default function Workstation() {
     if (routeId) navigate('/workstation')
   }
 
+  async function persistWorkspace(document: WorkspaceDocument) {
+    if (workspaceId) return api.updateWorkspace(workspaceId, document)
+    // Workspace names are unique in the store. A collision is normal (two desks
+    // named "Desk"), so try a suffixed name instead of failing the save.
+    let next = document
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        return await api.createWorkspace(next)
+      } catch (error) {
+        const status = (error as { status?: number }).status
+        if (status !== 409 || attempt >= 4) throw error
+        next = { ...next, name: `${next.name.replace(/ \d+$/, '')} ${attempt + 2}` }
+      }
+    }
+  }
+
   async function save() {
     if (busy) return
     setBusy(true)
@@ -206,8 +222,21 @@ export default function Workstation() {
         }
         return base
       })
+      let targetName = name.trim() || 'Desk'
+      if (!workspaceId) {
+        // Names are unique in the store. Choose a free one before creating, so a
+        // collision is not a failed request the analyst has to interpret.
+        const existing = await api.workspaces()
+        const taken = new Set(existing.items.map((item) => item.name.toLowerCase()))
+        const base = targetName.replace(/ \d+$/, '')
+        let suffix = 2
+        while (taken.has(targetName.toLowerCase())) {
+          targetName = `${base} ${suffix}`
+          suffix += 1
+        }
+      }
       const document: WorkspaceDocument = {
-        name: name.trim() || 'Desk',
+        name: targetName,
         mode: 'advanced',
         columns: 3,
         description: 'Advanced workstation layout',
@@ -215,9 +244,7 @@ export default function Workstation() {
         panels: payloadPanels as unknown as PanelConfig[],
         layout: checked.layout,
       }
-      const saved = workspaceId
-        ? await api.updateWorkspace(workspaceId, document)
-        : await api.createWorkspace(document)
+      const saved = await persistWorkspace(document)
       setWorkspaceId(saved.workspace_id)
       setName(saved.name)
       setDirty(false)

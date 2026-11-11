@@ -141,7 +141,10 @@ def test_production_eligible_is_not_claimed_anywhere(payload):
 def test_icb_registry_covers_all_sixty_four_benchmarks(icb):
     identifiers = [entry["benchmark_id"] for entry in icb["benchmarks"]]
     assert len(identifiers) == 64
-    assert len(set(identifiers)) == 48
+    # v3.1 extended the scoreboard from 48 to 64 capabilities. The uniqueness check
+    # still matters; only the expected count changed, and the next assertion pins the
+    # complete ICB-01..ICB-64 set independently of this number.
+    assert len(set(identifiers)) == 64
     assert sorted(identifiers) == [f"ICB-{number:02d}" for number in range(1, 65)]
     assert all(ICB_ID.match(identifier) for identifier in identifiers)
 

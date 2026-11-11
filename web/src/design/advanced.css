@@ -298,6 +298,19 @@
 .tp-kv dd { margin: 0; font-family: var(--font-mono); overflow-wrap: anywhere; }
 .tp-mono { font-family: var(--font-mono); font-size: var(--text-xs); overflow-wrap: anywhere; }
 .tp-spark { width: 72px; height: 18px; display: block; }
+/* Long ids must not wrap a table row into five lines or push an action button out
+ * of its cell; truncate with the full value available on hover. */
+.tp-clip {
+  display: inline-block; max-width: 104px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom;
+}
+.tp-table td .button { white-space: nowrap; }
+/* A long panel meta line must not squeeze the title out of the panel. */
+.tp-head .tp-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tp-head .tp-meta { max-width: 58%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; }
+/* Financial tables scroll horizontally inside the panel instead of clipping a digit. */
+.wb-body table { min-width: max-content; }
+.wb-body table td, .wb-body table th { white-space: nowrap; }
 
 /* Command palette ------------------------------------------------------ */
 .palette-scrim {
@@ -398,4 +411,17 @@
   .std-nav { order: 3; width: 100%; border-top: var(--hairline); padding-top: var(--space-2); }
   .std-search { width: min(220px, 44vw); }
   .std-content .page { padding: var(--space-4); }
+}
+
+/* Phones: the command trigger, mode switch and theme control cannot share one
+ * 390 px row without overlapping, so the header wraps and secondary facts drop. */
+@media (max-width: 560px) {
+  .adv-shell { grid-template-rows: auto auto minmax(0, 1fr) 22px; }
+  .adv-header { flex-wrap: wrap; gap: var(--space-2); padding: var(--space-2) var(--space-3); }
+  .adv-brand small { display: none; }
+  .adv-command-trigger { flex: 1 1 auto; min-width: 0; }
+  .adv-command-trigger kbd,
+  .adv-command-trigger > span:nth-of-type(2) { display: none; }
+  .adv-head-actions { margin-left: auto; gap: var(--space-1); }
+  .adv-command-trigger > span:first-of-type { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }

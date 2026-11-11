@@ -47,7 +47,11 @@ export default function StandardShell({ children }: { children: ReactNode }) {
           <div className="std-utilities">
             <span className="small muted" title={status?.status === 'ok' ? 'Evidence database online' : 'Database unavailable'}>
               <span className={`dot ${status?.status === 'ok' ? 'dot-ok' : 'dot-warn'}`} />{' '}
-              {status?.evidence ? `${(status.evidence as number).toLocaleString()} evidence` : 'no database'}
+              {health.loading
+                ? 'checking evidence…'
+                : status?.evidence
+                  ? `${(status.evidence as number).toLocaleString()} evidence`
+                  : 'no database'}
             </span>
             <SecuritySearch />
             <div className="segmented" role="group" aria-label="Interface mode">

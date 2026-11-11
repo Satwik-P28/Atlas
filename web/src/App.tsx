@@ -1,46 +1,58 @@
+import { Suspense, lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import AdvancedShell from './shell/AdvancedShell'
 import StandardShell from './shell/StandardShell'
 import { useSettings } from './state'
-import Applications from './pages/Applications'
-import Companies from './pages/Companies'
-import Company from './pages/Company'
-import Economic from './pages/Economic'
-import EquityResearch from './pages/EquityResearch'
-import Institutional from './pages/Institutional'
-import Lab from './pages/Lab'
-import Learning from './pages/Learning'
-import Markets from './pages/Markets'
-import Research from './pages/Research'
-import Screener from './pages/Screener'
-import Studio from './pages/Studio'
-import Watchlists from './pages/Watchlists'
-import WorkspaceView from './pages/WorkspaceView'
-import Workspaces from './pages/Workspaces'
-import Workstation from './pages/Workstation'
+
+// Route-level splitting: opening the Standard desk must not download the quant
+// labs, the model studio or the docking engine before the analyst asks for them.
+const Markets = lazy(() => import('./pages/Markets'))
+const Companies = lazy(() => import('./pages/Companies'))
+const Company = lazy(() => import('./pages/Company'))
+const Research = lazy(() => import('./pages/Research'))
+const EquityResearch = lazy(() => import('./pages/EquityResearch'))
+const Screener = lazy(() => import('./pages/Screener'))
+const Studio = lazy(() => import('./pages/Studio'))
+const Lab = lazy(() => import('./pages/Lab'))
+const Institutional = lazy(() => import('./pages/Institutional'))
+const Learning = lazy(() => import('./pages/Learning'))
+const Economic = lazy(() => import('./pages/Economic'))
+const Applications = lazy(() => import('./pages/Applications'))
+const Watchlists = lazy(() => import('./pages/Watchlists'))
+const Workspaces = lazy(() => import('./pages/Workspaces'))
+const WorkspaceView = lazy(() => import('./pages/WorkspaceView'))
+const Workstation = lazy(() => import('./pages/Workstation'))
 
 function AtlasRoutes() {
   return (
-    <Routes>
-      <Route path="/" element={<Markets />} />
-      <Route path="/companies" element={<Companies />} />
-      <Route path="/companies/:identifier" element={<Company />} />
-      <Route path="/research" element={<Research />} />
-      <Route path="/equity" element={<EquityResearch />} />
-      <Route path="/screeners" element={<Screener />} />
-      <Route path="/studio" element={<Studio />} />
-      <Route path="/lab" element={<Lab />} />
-      <Route path="/lab/institutional" element={<Institutional />} />
-      <Route path="/lab/learning" element={<Learning />} />
-      <Route path="/lab/economic" element={<Economic />} />
-      <Route path="/applications" element={<Applications />} />
-      <Route path="/watchlists" element={<Watchlists />} />
-      <Route path="/workspaces" element={<Workspaces />} />
-      <Route path="/workspaces/:workspaceId" element={<WorkspaceView />} />
-      <Route path="/workstation" element={<Workstation />} />
-      <Route path="/workstation/:workspaceId" element={<Workstation />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <Suspense
+      fallback={
+        <div className="state-block" role="status">
+          Loading view…
+        </div>
+      }
+    >
+      <Routes>
+        <Route path="/" element={<Markets />} />
+        <Route path="/companies" element={<Companies />} />
+        <Route path="/companies/:identifier" element={<Company />} />
+        <Route path="/research" element={<Research />} />
+        <Route path="/equity" element={<EquityResearch />} />
+        <Route path="/screeners" element={<Screener />} />
+        <Route path="/studio" element={<Studio />} />
+        <Route path="/lab" element={<Lab />} />
+        <Route path="/lab/institutional" element={<Institutional />} />
+        <Route path="/lab/learning" element={<Learning />} />
+        <Route path="/lab/economic" element={<Economic />} />
+        <Route path="/applications" element={<Applications />} />
+        <Route path="/watchlists" element={<Watchlists />} />
+        <Route path="/workspaces" element={<Workspaces />} />
+        <Route path="/workspaces/:workspaceId" element={<WorkspaceView />} />
+        <Route path="/workstation" element={<Workstation />} />
+        <Route path="/workstation/:workspaceId" element={<Workstation />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   )
 }
 
