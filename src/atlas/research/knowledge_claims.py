@@ -82,8 +82,10 @@ def build_document_claim(
     if epistemic_status not in EPISTEMIC_STATUSES:
         raise ValidationError("unknown epistemic status", status=epistemic_status,
                               supported=list(EPISTEMIC_STATUSES))
+    # A claim is an assertion of support, so it uses the strict policy: incidental BM25
+    # matches that cover almost none of the question must not become citations.
     search = engine.search(question, issuer_id=issuer_id, cutoff=cutoff, policy=policy,
-                           forms=forms, limit=limit)
+                           forms=forms, limit=limit, support_policy="strict")
     abstained = search["abstained"] or not search["results"]
     # An abstention carries no citation. Attaching the incidental BM25 matches would
     # let an unsupported question look sourced, and a citation is a claim of support.
