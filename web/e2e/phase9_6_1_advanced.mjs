@@ -22,7 +22,7 @@ function check(passed, label) {
 
 async function shot(page, name) {
   fs.mkdirSync(ARTIFACTS, { recursive: true })
-  await page.screenshot({ path: path.join(ARTIFACTS, `phase9_6_1_${name}.png`) })
+  await page.screenshot({ path: path.join(ARTIFACTS, `phase9_6_2_${name}.png`) })
 }
 
 const browser = await chromium.launch({
@@ -155,7 +155,11 @@ try {
   // which would not prove anything about restoration.
   const workspaces = await page.evaluate(async () => (await fetch('/api/workspaces')).json())
   const items = Array.isArray(workspaces) ? workspaces : (workspaces.items ?? [])
-  const target = items[items.length - 1] ?? {}
+  // The list is not guaranteed to be newest-first: select the desk we just saved by name,
+  // otherwise the newest row, never merely the last array element.
+  const savedName = (notice.match(/[“"]([^”"]+)[”"]/) ?? [])[1]
+  const target = items.find((item) => savedName && item.name === savedName)
+    ?? items[items.length - 1] ?? {}
   const workspaceId = target.workspace_id ?? target.id
   check(Boolean(workspaceId), `saved workspace is listed (${workspaceId ?? 'none'})`)
   await page.goto(`${BASE}/workstation/${workspaceId}`, { waitUntil: 'domcontentloaded' })
@@ -165,7 +169,39 @@ try {
   check(titles.some((title) => title.includes('Document evidence')),
     `filing panel restored from the saved desk (${titles.join(' | ')})`)
   const boundAfter = await page.getByLabel('Instrument').inputValue()
-  check(Boolean(boundAfter), `desk instrument binding persisted (${boundAfter || 'none'})`)
+  check(boundAfter === next.value,
+    `desk instrument binding persisted (${boundAfter || 'none'} vs ${next.value})`)
+
+  // Phase 9.6.2: close down to a single panel, save it and reopen it. A lone panel must be a
+  // tabs node; a one-child split is rejected by both validators.
+  const closers = page.getByRole('button', { name: /^Close / })
+  let guard = 0
+  while ((await closers.count()) > 1 && guard < 8) {
+    await closers.first().click()
+    await page.waitForTimeout(350)
+    guard += 1
+  }
+  await page.getByRole('button', { name: 'Save' }).click()
+  await page.waitForTimeout(1500)
+  const singleBanner = await page.locator('.ws-banner').innerText().catch(() => '')
+  check(!/layout refused/i.test(singleBanner),
+    `single-panel layout accepted by the server (${singleBanner.replace(/\s+/g, ' ').slice(0, 80)})`)
+  const list2 = await page.evaluate(async () => (await fetch('/api/workspaces')).json())
+  const rows2 = Array.isArray(list2) ? list2 : (list2.items ?? [])
+  const singleName = (singleBanner.match(/[“"]([^”"]+)[”"]/) ?? [])[1]
+  const single = rows2.find((item) => singleName && item.name === singleName)
+    ?? rows2[rows2.length - 1] ?? {}
+  const singleId = single.workspace_id ?? single.id
+  if (singleId) {
+    await page.goto(`${BASE}/workstation/${singleId}`, { waitUntil: 'domcontentloaded' })
+    await page.waitForSelector('.wb-tab', { timeout: 25000 })
+    const tabs = await page.locator('.wb-tab').count()
+    check(tabs === 1, `one-panel desk restored (${tabs} tab)`)
+    check(await page.getByLabel('Instrument').inputValue() === next.value,
+      'one-panel desk keeps the instrument binding')
+  } else {
+    check(false, 'one-panel desk saved and listed')
+  }
 
   await page.setViewportSize({ width: 390, height: 844 })
   await page.waitForTimeout(600)

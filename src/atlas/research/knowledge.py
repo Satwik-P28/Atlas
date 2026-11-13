@@ -192,6 +192,12 @@ class _Parser(HTMLParser):
                 self.current_table = None
             return
         if self.table_depth:
+            if tag == "caption":
+                # Table captions carry the unit scale ("in millions"). They were previously
+                # dropped because the in-table branch returned before the caption handler.
+                self.pending_caption = _clean(" ".join(self.buffer))
+                self.buffer = []
+                return
             if tag in {"td", "th"} and self.current_table is not None:
                 cell = _clean(" ".join(self.buffer))
                 self.buffer = []
@@ -890,6 +896,7 @@ class KnowledgeEngine:
                 "accession": row["accession"],
                 "availability_time": row["availability_time"],
                 "rights": row["rights"],
+                "sha256": row["sha256"],
             }
             for row in rows
         ]
