@@ -64,6 +64,9 @@ SEC_MIN_INTERVAL = float(os.environ.get("ATLAS_SEC_MIN_INTERVAL", "0.15"))
 # publication lag so a historical query cannot see a filing before a reader plausibly could.
 SEC_PUBLICATION_LAG_SECONDS = int(os.environ.get("ATLAS_SEC_PUBLICATION_LAG", "900"))
 MAX_DOCUMENT_BYTES = 24 * 1024 * 1024
+#: Retrieval is lexical; an unbounded query can force quadratic work in the cascade.
+MAX_QUERY_CHARS = 2000
+MAX_QUERY_TERMS = 128
 POLICIES = ("public_available", "atlas_ingested")
 POLICY_NOTE = (
     "public_available answers from documents whose proven public availability precedes the "
@@ -430,11 +433,19 @@ class KnowledgeEngine:
         text, stamped = normalise_document(units)
         form = form_type.strip().upper()
         is_amendment = form.endswith("/A")
-        precision = "exact" if acceptance_time else "date"
         if acceptance_time:
+            # EDGAR acceptance is not the public-release instant. The stored availability time is
+            # a conservative *bound* derived from acceptance plus a fixed lag, so the precision is
+            # recorded as modeled, never as "exact".
+            # No observed public-release instant exists, so precision stays "unknown" and
+            # the convention is preserved separately as a named model.
+            precision = "unknown"
+            availability_model = "sec_acceptance_plus_publication_lag_v1"
             availability = _lagged(acceptance_time, publication_lag_seconds)
-            basis = "sec_acceptance_plus_publication_lag"
+            basis = "sec_acceptance_plus_publication_lag_v1"
         else:
+            precision = "date"
+            availability_model = "sec_filing_date_v1"
             availability = iso_date(filed_date)
             basis = "sec_filing_date"
         now = iso(utcnow())
@@ -443,13 +454,15 @@ class KnowledgeEngine:
             self.db.execute(
                 "INSERT INTO knowledge_document (document_id, issuer_id, source_id, accession, form_type, "
                 "is_amendment, amends_accession, period_of_report, filed_date, acceptance_time, "
-                "availability_time, availability_precision, availability_basis, primary_document_url, "
+                "availability_time, availability_precision, availability_basis, availability_model, "
+                "public_availability_time, primary_document_url, "
                 "media_type, sha256, byte_size, rights, retention_policy, parser_version, ingested_at, "
                 "section_count, unit_count, table_count, status, notes) "
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                "VALUES (" + ",".join("?"*28) + ")",
                 (document_id, issuer_id, source_id, accession, form, 1 if is_amendment else 0,
                  amends_accession, period_of_report, iso_date(filed_date), _iso_or_none(acceptance_time),
-                 availability, precision, basis, primary_document_url, media_type, digest, len(payload),
+                 availability, precision, basis, availability_model, None, primary_document_url,
+                 media_type, digest, len(payload),
                  rights_decision["redistribution"], "local_only", PARSER_VERSION, now,
                  len({unit["section_path"] for unit in stamped}), len(stamped),
                  sum(1 for unit in stamped if unit["kind"] == "table"), "indexed", notes),
@@ -513,6 +526,8 @@ class KnowledgeEngine:
             "availability_time": row["availability_time"],
             "availability_precision": row["availability_precision"],
             "availability_basis": row["availability_basis"],
+            "availability_model": row["availability_model"],
+            "public_availability_time": row["public_availability_time"],
             "primary_document_url": row["primary_document_url"],
             "source_id": row["source_id"],
             "sha256": row["sha256"],
@@ -549,7 +564,8 @@ class KnowledgeEngine:
     def unit(self, unit_id: str) -> dict[str, Any]:
         row = self.db.query_one(
             "SELECT u.*, d.issuer_id, d.accession, d.form_type, d.availability_time, "
-            "d.availability_precision, d.rights, d.primary_document_url "
+            "d.availability_precision, d.availability_model, d.public_availability_time, "
+            "d.rights, d.primary_document_url "
             "FROM knowledge_unit u JOIN knowledge_document d ON d.document_id = u.document_id "
             "WHERE u.unit_id = ?", (unit_id,),
         )
@@ -571,6 +587,8 @@ class KnowledgeEngine:
             "sha256": row["sha256"],
             "availability_time": row["availability_time"],
             "availability_precision": row["availability_precision"],
+            "availability_model": row["availability_model"],
+            "public_availability_time": row["public_availability_time"],
             "rights": row["rights"],
             "resolve_original": row["primary_document_url"],
         }
@@ -614,7 +632,15 @@ class KnowledgeEngine:
         the question, and is what claim construction uses, because there a passage is being
         presented as support rather than as a lead.
         """
-        if support_policy not in ("balanced", "strict"):
+        if len(query) > MAX_QUERY_CHARS or len(_tokens(query)) > MAX_QUERY_TERMS:
+            raise ValidationError("query exceeds the retrieval limit",
+                                  max_chars=MAX_QUERY_CHARS, max_terms=MAX_QUERY_TERMS)
+        if cutoff:
+            # Availability is stored at second precision. A caller's cutoff written with
+            # milliseconds would otherwise compare greater than "…:00Z" and exclude the very
+            # second a filing became available.
+            cutoff = iso(cutoff)
+        if support_policy not in ("balanced", "strict", "coverage"):
             raise ValidationError("unknown support policy", support_policy=support_policy)
         started = time.perf_counter()
         if policy not in POLICIES:
@@ -705,13 +731,15 @@ class KnowledgeEngine:
         if not results:
             abstained = True
             reason = "no_passage_satisfies_query_at_cutoff"
-        elif support_policy == "strict" and (absent or coverage < MIN_QUERY_COVERAGE):
+        elif support_policy == "strict" and absent:
+            abstained = True
+            reason = "query_term_absent_from_corpus"
+        elif support_policy in ("strict", "coverage") and coverage < MIN_QUERY_COVERAGE:
             # BM25 with OR semantics always returns something. Presenting a passage that
             # contains one incidental word as support would be misleading, so a claim needs
             # its question's terms present and most of them covered.
             abstained = True
-            reason = ("query_term_absent_from_corpus" if absent
-                      else "insufficient_query_term_coverage")
+            reason = "insufficient_query_term_coverage"
         elif results[0]["relevance"] < min_relevance:
             abstained = True
             reason = "best_match_below_relevance_floor"
