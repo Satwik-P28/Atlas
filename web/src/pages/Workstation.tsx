@@ -96,14 +96,6 @@ export default function Workstation() {
         const raw = (workspace.document as { layout?: unknown }).layout
         const parsed = raw ? validateLayout(raw, ids) : { ok: true as const, layout: derived }
         setPanels(descriptors)
-        const bound = (workspace.document.panels ?? []).find(
-          (panel) => typeof panel.issuer_id === 'string' && panel.issuer_id)
-        if (bound) {
-          links.select((bound.link_group as LinkGroup | null) ?? 'A',
-            bound.issuer_id as string, (bound.security_id as string | null) ?? null)
-        }
-        const savedAsOf = (workspace.document as { as_of?: string | null }).as_of
-        if (savedAsOf) links.setAsOf(savedAsOf)
         setName(workspace.name)
         setWorkspaceId(workspace.workspace_id)
         setDirty(false)
@@ -220,14 +212,14 @@ export default function Workstation() {
           if (!selection.issuerId) {
             throw new Error(`Panel “${panel.title}” needs an instrument in link group ${panel.linkGroup ?? 'A'} before it can be saved.`)
           }
+          base.issuer_id = selection.issuerId
         }
-        if (panel.kind === 'chart' && !selection.securityId) {
-          throw new Error(`Panel “${panel.title}” needs a priced security in link group ${panel.linkGroup ?? 'A'} before it can be saved.`)
+        if (panel.kind === 'chart') {
+          if (!selection.securityId) {
+            throw new Error(`Panel “${panel.title}” needs a priced security in link group ${panel.linkGroup ?? 'A'} before it can be saved.`)
+          }
+          base.security_id = selection.securityId
         }
-        // Any linked panel records its binding, so reopening the desk restores the same
-        // instrument instead of an unbound panel that silently shows nothing.
-        if (selection.issuerId) base.issuer_id = selection.issuerId
-        if (selection.securityId) base.security_id = selection.securityId
         return base
       })
       let targetName = name.trim() || 'Desk'

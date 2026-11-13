@@ -70,7 +70,6 @@ def build_document_claim(
     engine: KnowledgeEngine,
     *,
     issuer_id: str,
-    as_of_precision: str = "daily",
     cutoff: str,
     key: str,
     question: str,
@@ -83,12 +82,8 @@ def build_document_claim(
     if epistemic_status not in EPISTEMIC_STATUSES:
         raise ValidationError("unknown epistemic status", status=epistemic_status,
                               supported=list(EPISTEMIC_STATUSES))
-    # A claim is an assertion of support, so it uses the strict policy: incidental BM25
-    # matches that cover almost none of the question must not become citations.
-    if cutoff:
-        cutoff = iso(cutoff)
     search = engine.search(question, issuer_id=issuer_id, cutoff=cutoff, policy=policy,
-                           forms=forms, limit=limit, support_policy="strict")
+                           forms=forms, limit=limit)
     abstained = search["abstained"] or not search["results"]
     # An abstention carries no citation. Attaching the incidental BM25 matches would
     # let an unsupported question look sourced, and a citation is a claim of support.
@@ -116,7 +111,6 @@ def build_document_claim(
         "cutoff": cutoff,
         "policy": policy,
         "epistemic_status": status,
-        "as_of_precision": as_of_precision,
         "statement": statement[: max_chars * 2],
         "statement_kind": "abstention" if abstained else "verbatim_excerpt",
         "citations": citations,
@@ -169,7 +163,6 @@ def verify_document_claim(engine: KnowledgeEngine, claim: dict[str, Any]) -> dic
     checks: list[dict[str, Any]] = []
     diagnostics: list[dict[str, Any]] = []
     status = claim["epistemic_status"]
-    as_of_precision = claim.get("as_of_precision", "daily")
     if status == "unsupported":
         return {
             "outcome": "unsupported",
@@ -182,7 +175,7 @@ def verify_document_claim(engine: KnowledgeEngine, claim: dict[str, Any]) -> dic
     for citation in claim["citations"]:
         unit = db.query_one(
             "SELECT u.body, u.sha256, u.char_start, u.char_end, d.issuer_id, d.availability_time, "
-            "d.availability_precision, d.availability_model, d.rights, d.document_id "
+            "d.availability_precision, d.rights, d.document_id "
             "FROM knowledge_unit u JOIN knowledge_document d ON d.document_id = u.document_id "
             "WHERE u.unit_id = ?", (citation["unit_id"],),
         )
@@ -214,23 +207,11 @@ def verify_document_claim(engine: KnowledgeEngine, claim: dict[str, Any]) -> dic
                                "detail": f"{unit['availability_time']} > {claim['cutoff']}"})
             continue
         if unit["availability_precision"] != "exact":
-            modeled = unit["availability_model"] == "sec_acceptance_plus_publication_lag_v1"
-            if as_of_precision == "daily" and modeled:
-                # Explicit daily inclusion policy: acceptance plus a bounded publication lag is
-                # sufficient for a day-resolution as-of query. It is recorded, not hidden.
-                diagnostics.append({
-                    "code": "availability_modeled_bound",
-                    "unit_id": citation["unit_id"],
-                    "detail": "availability is a modelled bound, not an observed public instant; "
-                              "acceptable for daily as-of research, not for intraday claims",
-                })
-            else:
-                diagnostics.append({
-                    "code": "availability_date_precision",
-                    "unit_id": citation["unit_id"],
-                    "detail": "the source proves a filing date or modelled bound, not an observed "
-                              "intraday publication time",
-                })
+            diagnostics.append({
+                "code": "availability_date_precision",
+                "unit_id": citation["unit_id"],
+                "detail": "the source proves a filing date, not an intraday publication time",
+            })
         if unit["rights"] not in EXPORTABLE_RIGHTS:
             diagnostics.append({"code": "restricted_source", "unit_id": citation["unit_id"],
                                "detail": f"rights {unit['rights']} block byte export"})

@@ -309,16 +309,9 @@ def validate_workspace(payload: Any, *, workspace_id: str | None = None) -> dict
         panel_allowed = {"id", "type", "title", "span", "config"} | set(PANEL_TYPES.get(str(panel.get("type")), PANEL_TYPES["chart"]).requires)
         if allows_layout:
             panel_allowed.add("link_group")
-            # Linkage metadata: which instrument and security a panel was bound to. Stored with
-            # the layout so reopening a desk restores what the analyst was looking at.
-            panel_allowed |= {"issuer_id", "security_id"}
         unknown_panel = set(panel) - panel_allowed
         if unknown_panel:
             raise ValidationError("unknown panel key", index=index, unknown=sorted(unknown_panel))
-        for key in ("issuer_id", "security_id"):
-            value = panel.get(key)
-            if value is not None and not isinstance(value, str):
-                raise ValidationError(f"{key} must be a string", index=index)
         panel_id = panel.get("id")
         if not isinstance(panel_id, str) or not PANEL_ID.match(panel_id):
             raise ValidationError("panel id must match [a-z0-9-], 1-32 characters", index=index)
@@ -358,10 +351,6 @@ def validate_workspace(payload: Any, *, workspace_id: str | None = None) -> dict
                         "unknown link group", panel=panel_id, link_group=link_group, supported=list(LINK_GROUPS)
                     )
                 normalized["link_group"] = link_group
-            for key in ("issuer_id", "security_id"):
-                value = panel.get(key)
-                if isinstance(value, str) and value:
-                    normalized[key] = value
         for required in panel_type.requires:
             normalized[required] = panel[required]
         normalized_panels.append(normalized)

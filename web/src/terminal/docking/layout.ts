@@ -388,12 +388,7 @@ export function parseSerializedLayout(text: string, panelIds: string[]): LayoutR
 /** Default six-panel desk: monitor and chart on top, statements, metrics and evidence below. */
 export function defaultWorkstationLayout(panelIds: string[]): LayoutNode {
   const ids = panelIds.length ? panelIds : ['monitor']
-  if (ids.length === 1) {
-    // A lone panel is a tabs node. Wrapping it in a one-child split produces a layout that
-    // both validators reject ("A split needs 2 to 6 children").
-    return { type: 'tabs', active: ids[0], panels: [ids[0]] }
-  }
-  if (ids.length === 2) {
+  if (ids.length <= 2) {
     return {
       type: 'split',
       direction: 'column',

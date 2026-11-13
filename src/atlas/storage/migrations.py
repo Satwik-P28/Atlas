@@ -1236,24 +1236,6 @@ CREATE TABLE knowledge_query_log (
 );
 """
 
-_MIGRATION_015 = """
--- Phase 9.6.1: availability derived from EDGAR acceptance plus a publication lag is a modelled
--- bound. No observed public-release instant exists, so precision is recorded as 'unknown'
--- (an allowed value) and the model is preserved separately. Timestamps are unchanged, so
--- methodology 9.6.0 results reproduce exactly under 9.6.1.
-ALTER TABLE knowledge_document ADD COLUMN availability_model TEXT;
-ALTER TABLE knowledge_document ADD COLUMN public_availability_time TEXT;
-UPDATE knowledge_document
-   SET availability_precision = 'unknown',
-       availability_model = 'sec_acceptance_plus_publication_lag_v1',
-       availability_basis = 'sec_acceptance_plus_publication_lag_v1'
- WHERE availability_basis LIKE 'sec_acceptance_plus_publication_lag%';
-UPDATE knowledge_document
-   SET availability_model = 'sec_filing_date_v1'
- WHERE availability_basis = 'sec_filing_date';
-"""
-
-
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=1, name="phase1_foundation", sql=_MIGRATION_001),
     Migration(version=2, name="phase1_1_history_and_dependencies", sql=_MIGRATION_002),
@@ -1269,7 +1251,6 @@ MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=12, name="phase9_2_market_price_rights", sql=_MIGRATION_012),
     Migration(version=13, name="phase9_2_fr_y9c_consolidated", sql=_MIGRATION_013),
     Migration(version=14, name="phase9_5_financial_knowledge_engine", sql=_MIGRATION_014),
-    Migration(version=15, name="phase9_6_1_availability_model", sql=_MIGRATION_015),
 )
 
 LATEST_VERSION = max(m.version for m in MIGRATIONS)
