@@ -79,7 +79,7 @@ def _buy_hold(security: str) -> dict:
 
 def test_schema_has_phase4_objects(tmp_path):
     db, _ = _fixture(tmp_path)
-    assert db.schema_version() == LATEST_VERSION == 14
+    assert db.schema_version() == LATEST_VERSION == 15
     tables = {row["name"] for row in db.query("SELECT name FROM sqlite_master WHERE type='table'")}
     assert {"quant_run", "feature_snapshot", "source_archive", "source_archive_link"} <= tables
     db.close()

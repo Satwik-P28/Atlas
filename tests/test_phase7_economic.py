@@ -38,8 +38,8 @@ def _run(service: EconomicService) -> dict:
 
 def test_schema_9_observed_coverage_rights_and_retrieval_proxy(economic):
     db = economic.db
-    assert LATEST_VERSION == 14
-    assert db.schema_version() == 14
+    assert LATEST_VERSION == 15
+    assert db.schema_version() == 15
     tables = {row["name"] for row in db.query(
         "SELECT name FROM sqlite_master WHERE type = 'table'"
     )}
@@ -300,7 +300,7 @@ def test_economic_api_workflow(tmp_path: Path):
     client = TestClient(create_app(path))
 
     health = client.get("/api/health").json()
-    assert health["schema_version"] == 14
+    assert health["schema_version"] == 15
     assert health["economic_observations"] == 1095
     catalog = client.get("/api/economic/catalog")
     assert catalog.status_code == 200
