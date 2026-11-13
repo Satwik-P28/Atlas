@@ -24,4 +24,4 @@ document is exercised by the browser journey, which now saves and reopens a one-
 ## Evidence
 
 Browser run: 23/23 checks, 0 console errors, 0 failed requests, screenshots
-`artifacts/phase9_6_2_advanced_filing.png` and `..._mobile.png`.
+`artifacts/phase9_6_2_advanced_filing.png` (visually inspected) and `..._mobile.png` (captured; overflow verified programmatically, not visually inspected).
