@@ -1,0 +1,370 @@
+"""Bounded financial-answer compiler on top of the Financial-Economic Compiler (9.6.3).
+
+Every supported question is compiled into a typed FEC model, executed by
+``atlas.fec.ExecutionEngine``, and then recomputed by
+``atlas.research.financial_verification`` with independent parsing and ``Fraction`` arithmetic.
+If the two disagree, Atlas refuses to present an answer.
+
+The engine does not re-implement FEC arithmetic. What remains here is the mapping from verified
+table cells to typed plan inputs, the financial validity rules (same concept, period, scale,
+currency) and the evidence contract of the answer.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from dataclasses import dataclass
+from decimal import Decimal
+from fractions import Fraction
+from typing import Any, Iterable
+
+from atlas.fec import ExecutionEngine, compile_model
+from atlas.fec.compiler import COMPILER_VERSION
+from atlas.fec.operators import operator_versions
+
+from .financial_verification import (
+    VerificationError,
+    evaluate as verify_evaluate,
+    parse_raw,
+    round_half_up,
+)
+from .table_cells import Cell, extract_cells
+
+ENGINE_VERSION = "9.6.3"
+OPERATOR_VERSION = COMPILER_VERSION
+ABSTENTION_REASONS = {
+    "no_verified_cells",
+    "metric_not_found",
+    "metric_ambiguous",
+    "period_not_found",
+    "input_unverified",
+    "unit_mismatch",
+    "period_mismatch",
+    "zero_denominator",
+    "missing_input",
+    "insufficient_inputs",
+    "future_evidence",
+    "vintage_conflict",
+    "verification_disagreement",
+}
+_ROUNDING_POLICY = "half_up_2dp"
+
+
+@dataclass(slots=True)
+class InputRef:
+    cell: Cell
+
+
+def _fingerprint(payload: dict[str, Any]) -> str:
+    return hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()
+
+
+def _fec_type(cell: Cell) -> str:
+    if cell.currency == "USD":
+        return "Money[USD]"
+    if "share" in cell.row_label.lower():
+        return "Shares"
+    # Unknown unit: FEC still enforces arithmetic consistency, but no currency is claimed.
+    return "Scalar"
+
+
+def _compile_and_run(name: str, inputs: list[dict[str, Any]], nodes: list[dict[str, Any]],
+                     output: str, values: dict[str, Any]) -> dict[str, Any]:
+    spec = {
+        "schema_version": "atlas.model.v1",
+        "name": name,
+        "version": "1.0.0",
+        "interface": "graph",
+        "inputs": inputs,
+        "nodes": nodes,
+        "outputs": {"value": output},
+    }
+    model = compile_model(spec)
+    result = ExecutionEngine(use_cache=False).execute(model, values, persist=False)
+    encoded = result["exact_outputs"]["value"]
+    raw = encoded["value"] if isinstance(encoded, dict) else encoded
+    return {
+        "value": Decimal(str(raw)),
+        "compiler_version": model.compiler_version,
+        "fingerprint": result["fingerprint"],
+        "run_id": result["run_id"],
+        "trace": result["trace"],
+        "operator_versions": result["manifest"]["operator_versions"],
+        "spec": spec,
+    }
+
+
+def _decimal_to_fraction(value: Decimal) -> Fraction:
+    return Fraction(value)
+
+
+class FinancialAnswerEngine:
+    def __init__(self, engine: Any) -> None:
+        self.engine = engine
+        self.db = engine.db
+
+    # ---------------------------------------------------------------- evidence
+    def cells(self, issuer_id: str, cutoff: str | None) -> list[Cell]:
+        documents = self.db.query(
+            "SELECT document_id, accession, availability_time, availability_precision, rights, "
+            "filed_date FROM knowledge_document WHERE issuer_id = ? AND form_type = '10-K' "
+            "AND status = 'indexed'", (issuer_id,))
+        out: list[Cell] = []
+        for document in documents:
+            if cutoff and document["availability_time"] and document["availability_time"] > cutoff:
+                continue
+            tables = self.db.query(
+                "SELECT table_id, unit_id, section_path, caption, units, footnotes, rows_json, sha256 "
+                "FROM knowledge_table WHERE document_id = ?", (document["document_id"],))
+            for table in tables:
+                row = dict(table)
+                row["rows"] = json.loads(row.pop("rows_json"))
+                notes = table["footnotes"]
+                if not notes:
+                    parsed_notes: list[str] = []
+                else:
+                    try:
+                        candidate = json.loads(notes)
+                        parsed_notes = candidate if isinstance(candidate, list) else [str(candidate)]
+                    except ValueError:
+                        parsed_notes = [str(notes)]
+                row["footnotes"] = parsed_notes
+                out.extend(extract_cells(row, document=dict(document)))
+        return out
+
+    def find(self, cells: Iterable[Cell], metric: str, period: str) -> list[Cell]:
+        """Resolve a metric to cells at one period (exact label, then token-set equality)."""
+        wanted = {token for token in _tokenize(metric)}
+        phrase = metric.strip().lower()
+        candidates = [cell for cell in cells
+                      if cell.status == "verified" and (not period or cell.period == period)]
+        exact = [cell for cell in candidates if cell.row_label.strip().lower() == phrase]
+        if exact:
+            return exact
+        return [cell for cell in candidates if wanted and set(_tokenize(cell.row_label)) == wanted]
+
+    # ---------------------------------------------------------------- operators
+    def lookup(self, issuer_id: str, cutoff: str, *, metric: str, period: str) -> dict[str, Any]:
+        cells = self.cells(issuer_id, cutoff)
+        matches = self.find(cells, metric, period)
+        if not matches:
+            return self._refuse("metric_not_found", metric=metric, period=period)
+        if len({cell.value for cell in matches}) > 1:
+            return self._refuse("metric_ambiguous", metric=metric,
+                                candidates=[cell.cell_id for cell in matches[:5]])
+        cell = matches[0]
+        return self._run(
+            operator="lookup", name="Reported value", formula="lookup(cell)",
+            answer_type="reported_value", metric=metric, period=period, cells=[cell],
+            inputs=[{"name": "value", "type": _fec_type(cell), "required": True}],
+            nodes=[], output="value", values={"value": cell.value},
+            raw_values=[cell.raw],
+            limitations=["Value is quoted from a verified table cell; no computation was performed."],
+        )
+
+    def percentage_change(self, issuer_id: str, cutoff: str, *, metric: str,
+                          current_period: str, prior_period: str) -> dict[str, Any]:
+        cells = self.cells(issuer_id, cutoff)
+        current, prior = self.find(cells, metric, current_period), self.find(cells, metric, prior_period)
+        refusal = self._require(current, prior, current_period, prior_period)
+        if refusal:
+            return refusal
+        cur, prev = current[0], prior[0]
+        kind = _fec_type(cur)
+        return self._run(
+            operator="percentage_change", name="Percentage change",
+            formula="(current - prior) / prior * 100", answer_type="percentage_change",
+            metric=metric, period=f"{current_period} vs {prior_period}", cells=[cur, prev],
+            inputs=[{"name": "current", "type": kind, "required": True},
+                    {"name": "prior", "type": kind, "required": True},
+                    {"name": "hundred", "type": "Scalar", "default": 100}],
+            nodes=[{"id": "delta", "op": "sub", "inputs": ["current", "prior"]},
+                   {"id": "fraction", "op": "div", "inputs": ["delta", "prior"]},
+                   {"id": "scaled", "op": "mul", "inputs": ["fraction", "hundred"]}],
+            output="scaled",
+            values={"current": cur.value, "prior": prev.value, "hundred": 100},
+            raw_values=[cur.raw, prev.raw],
+            limitations=["Both cells must report the same concept; row labels were required to match."],
+        )
+
+    def ratio(self, issuer_id: str, cutoff: str, *, numerator: str, denominator: str,
+              period: str) -> dict[str, Any]:
+        cells = self.cells(issuer_id, cutoff)
+        top, bottom = self.find(cells, numerator, period), self.find(cells, denominator, period)
+        refusal = self._require(top, bottom, period, period, allow_same_period=True)
+        if refusal:
+            return refusal
+        return self._run(
+            operator="ratio", name="Ratio", formula="numerator / denominator",
+            answer_type="ratio", metric=f"{numerator} / {denominator}", period=period,
+            cells=[top[0], bottom[0]],
+            inputs=[{"name": "numerator", "type": _fec_type(top[0]), "required": True},
+                    {"name": "denominator", "type": _fec_type(bottom[0]), "required": True}],
+            nodes=[{"id": "quotient", "op": "div", "inputs": ["numerator", "denominator"]}],
+            output="quotient", values={"numerator": top[0].value, "denominator": bottom[0].value},
+            raw_values=[top[0].raw, bottom[0].raw],
+            limitations=["Ratio is dimensionless; both inputs must share scale and currency."],
+        )
+
+    def margin(self, issuer_id: str, cutoff: str, *, numerator: str, revenue: str,
+               period: str) -> dict[str, Any]:
+        cells = self.cells(issuer_id, cutoff)
+        top, bottom = self.find(cells, numerator, period), self.find(cells, revenue, period)
+        refusal = self._require(top, bottom, period, period, allow_same_period=True)
+        if refusal:
+            return refusal
+        return self._run(
+            operator="margin", name="Margin", formula="numerator / revenue * 100",
+            answer_type="margin_percent", metric=f"{numerator} margin", period=period,
+            cells=[top[0], bottom[0]],
+            inputs=[{"name": "numerator", "type": _fec_type(top[0]), "required": True},
+                    {"name": "revenue", "type": _fec_type(bottom[0]), "required": True},
+                    {"name": "hundred", "type": "Scalar", "default": 100}],
+            nodes=[{"id": "fraction", "op": "div", "inputs": ["numerator", "revenue"]},
+                   {"id": "scaled", "op": "mul", "inputs": ["fraction", "hundred"]}],
+            output="scaled", values={"numerator": top[0].value, "revenue": bottom[0].value,
+                                     "hundred": 100},
+            raw_values=[top[0].raw, bottom[0].raw],
+            limitations=["Margin definition follows the two row labels used; a different "
+                         "definition in the filing would produce a different number."],
+        )
+
+    def total(self, issuer_id: str, cutoff: str, *, components: list[str],
+              period: str) -> dict[str, Any]:
+        cells = self.cells(issuer_id, cutoff)
+        chosen: list[Cell] = []
+        for component in components:
+            matches = self.find(cells, component, period)
+            if not matches:
+                return self._refuse("missing_input", component=component, period=period)
+            chosen.append(matches[0])
+        inputs = [{"name": f"c{index}", "type": _fec_type(cell), "required": True}
+                  for index, cell in enumerate(chosen)]
+        nodes: list[dict[str, Any]] = []
+        running = "c0"
+        for index in range(1, len(chosen)):
+            node_id = f"sum{index}"
+            nodes.append({"id": node_id, "op": "add", "inputs": [running, f"c{index}"]})
+            running = node_id
+        values = {f"c{index}": cell.value for index, cell in enumerate(chosen)}
+        return self._run(
+            operator="total", name="Component total", formula="sum(components)",
+            answer_type="sum", metric=" + ".join(components), period=period, cells=chosen,
+            inputs=inputs, nodes=nodes, output=running, values=values,
+            raw_values=[cell.raw for cell in chosen],
+            limitations=["Components must be exhaustive and non-overlapping; that was assumed, "
+                         "not proven."],
+        )
+
+    # ---------------------------------------------------------------- plumbing
+    def _require(self, left: list[Cell], right: list[Cell], left_period: str, right_period: str,
+                 allow_same_period: bool = False) -> dict[str, Any] | None:
+        if not left or not right:
+            return self._refuse("missing_input",
+                                missing=[p for p, cells in ((left_period, left), (right_period, right))
+                                         if not cells])
+        if len({cell.value for cell in left}) > 1 or len({cell.value for cell in right}) > 1:
+            return self._refuse("metric_ambiguous")
+        a, b = left[0], right[0]
+        if not allow_same_period and a.period == b.period:
+            return self._refuse("period_mismatch", detail="both inputs report the same period")
+        if (a.scale, a.currency) != (b.scale, b.currency):
+            return self._refuse("unit_mismatch", left=[a.scale, a.currency],
+                                right=[b.scale, b.currency])
+        if a.period and b.period and a.period != b.period and not allow_same_period:
+            pass  # different periods are the point of a change calculation
+        return None
+
+    def _run(self, *, operator: str, name: str, formula: str, answer_type: str, metric: str,
+             period: str, cells: list[Cell], inputs: list[dict[str, Any]],
+             nodes: list[dict[str, Any]], output: str, values: dict[str, Any],
+             raw_values: list[str], limitations: list[str]) -> dict[str, Any]:
+        try:
+            fec = _compile_and_run(name, inputs, nodes, output, values)
+        except Exception as exc:  # noqa: BLE001 - a compiler refusal is a refusal, not a crash
+            return self._refuse("missing_input", detail=f"FEC refused the plan: {exc}")
+        try:
+            verified = verify_evaluate(operator, raw_values)
+        except (VerificationError, ValueError) as exc:
+            return self._refuse("verification_disagreement", detail=f"verifier refused: {exc}")
+        if round_half_up(verified) != fec["value"].quantize(Decimal("0.01")):
+            return self._refuse(
+                "verification_disagreement",
+                fec=str(fec["value"]), independent=str(round_half_up(verified)))
+        value = round_half_up(verified)
+        unit = ({"kind": "percent", "scale": 0} if "percent" in answer_type
+                else {"kind": "ratio", "scale": 0} if answer_type == "ratio"
+                else {"kind": cells[0].unit, "scale": cells[0].scale})
+        payload = {
+            "engine_version": ENGINE_VERSION, "operator_version": OPERATOR_VERSION,
+            "answer_type": answer_type, "value": str(value), "period": period,
+            "formula": formula, "cells": [cell.cell_id for cell in cells],
+            "fec_fingerprint": fec["fingerprint"],
+        }
+        return {
+            "outcome": "answered",
+            "answer_type": answer_type,
+            "value": str(value),
+            "unit": unit,
+            "currency": cells[0].currency,
+            "period": period,
+            "metric": metric,
+            "formula": formula,
+            "operator_version": OPERATOR_VERSION,
+            "engine_version": ENGINE_VERSION,
+            "inputs": [self._input_payload(cell) for cell in cells],
+            "verification": {
+                "independent_recomputation": True,
+                "method": "Fraction verifier over raw text vs FEC execution",
+                "verifier_version": "9.6.3",
+                "rounding_policy": _ROUNDING_POLICY,
+            },
+            "fec": {
+                "compiler_version": fec["compiler_version"],
+                "model_fingerprint": fec["fingerprint"],
+                "run_id": fec["run_id"],
+                "operator_versions": fec["operator_versions"],
+                "plan": fec["spec"],
+                "trace": fec["trace"],
+            },
+            "limitations": limitations + [
+                "Computed values are never presented as quoted filings; the source cells are the "
+                "authoritative statement.",
+            ],
+            "reproducibility_fingerprint": _fingerprint(payload),
+        }
+
+    def _input_payload(self, cell: Cell) -> dict[str, Any]:
+        try:
+            unit = self.engine.unit(cell.unit_id)
+        except Exception:  # noqa: BLE001 - a missing passage is a validation failure
+            unit = None
+        return {
+            "cell_id": cell.cell_id, "unit_id": cell.unit_id, "table_id": cell.table_id,
+            "document_id": cell.document_id, "accession": cell.accession,
+            "section_path": cell.section_path, "row": cell.row, "column": cell.column,
+            "row_label": cell.row_label, "column_label": cell.column_label,
+            "period": cell.period, "raw": cell.raw, "value": cell.value,
+            "scale": cell.scale, "currency": cell.currency,
+            "unit_sha256": (unit or {}).get("sha256"),
+            "availability_time": cell.availability_time,
+            "availability_precision": cell.availability_precision,
+            "rights": cell.rights,
+        }
+
+    def _refuse(self, reason: str, **context: Any) -> dict[str, Any]:
+        assert reason in ABSTENTION_REASONS, reason
+        return {
+            "outcome": "abstained", "reason": reason, "context": context,
+            "engine_version": ENGINE_VERSION, "operator_version": OPERATOR_VERSION,
+            "limitations": ["Atlas does not guess missing, ambiguous or unit-incompatible inputs."],
+        }
+
+
+def _tokenize(text: str) -> list[str]:
+    import re
+    return re.findall(r"[a-z]{3,}", text.lower())
+
+
+__all__ = ["FinancialAnswerEngine", "ENGINE_VERSION", "OPERATOR_VERSION", "ABSTENTION_REASONS"]

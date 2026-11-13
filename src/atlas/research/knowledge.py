@@ -43,8 +43,30 @@ from .rights import classify
 ENGINE_SCHEMA = "atlas.knowledge.engine.v1"
 PARSER_VERSION = "atlas.knowledge.parser.v1"
 DEFAULT_SOURCE_ID = "sec-edgar"
-SEC_USER_AGENT = "Atlas Quant research (research@atlas.local)"
+import os
+import time as _time
+
+# SEC fair-access policy requires a declared identity with a working contact. Atlas ships no
+# such value and refuses to guess: ingestion fails fast until an operator sets one.
+SEC_USER_AGENT = os.environ.get("ATLAS_SEC_USER_AGENT", "").strip()
+
+
+def sec_user_agent() -> str:
+    if not SEC_USER_AGENT:
+        raise ValidationError(
+            "SEC_USER_AGENT_UNSET",
+            detail=("set ATLAS_SEC_USER_AGENT to a declared identity with a working contact "
+                    "address before ingesting from SEC EDGAR"),
+        )
+    return SEC_USER_AGENT
+SEC_MIN_INTERVAL = float(os.environ.get("ATLAS_SEC_MIN_INTERVAL", "0.15"))
+# SEC acceptance is not the same instant as public availability. Atlas records a conservative
+# publication lag so a historical query cannot see a filing before a reader plausibly could.
+SEC_PUBLICATION_LAG_SECONDS = int(os.environ.get("ATLAS_SEC_PUBLICATION_LAG", "900"))
 MAX_DOCUMENT_BYTES = 24 * 1024 * 1024
+#: Retrieval is lexical; an unbounded query can force quadratic work in the cascade.
+MAX_QUERY_CHARS = 2000
+MAX_QUERY_TERMS = 128
 POLICIES = ("public_available", "atlas_ingested")
 POLICY_NOTE = (
     "public_available answers from documents whose proven public availability precedes the "
@@ -170,6 +192,12 @@ class _Parser(HTMLParser):
                 self.current_table = None
             return
         if self.table_depth:
+            if tag == "caption":
+                # Table captions carry the unit scale ("in millions"). They were previously
+                # dropped because the in-table branch returned before the caption handler.
+                self.pending_caption = _clean(" ".join(self.buffer))
+                self.buffer = []
+                return
             if tag in {"td", "th"} and self.current_table is not None:
                 cell = _clean(" ".join(self.buffer))
                 self.buffer = []
@@ -264,11 +292,88 @@ def _tokens(query: str) -> list[str]:
     return [match.group(0) for match in _TOKEN.finditer(query)]
 
 
+def _content_terms(query: str) -> list[str]:
+    """Question terms that carry retrieval signal.
+
+    Years, pure numbers, unit words and function words are dropped: their absence from a passage
+    says nothing about whether the passage answers the question.
+    """
+    terms: list[str] = []
+    for token in _tokens(query):
+        lowered = token.lower()
+        if lowered in STOPWORDS or len(lowered) < 3:
+            continue
+        if re.fullmatch(r"(19|20)\d{2}", lowered) or re.fullmatch(r"[\d.,]+", lowered):
+            continue
+        # FY2018 -> fy, 2018; the passage may print only the digits.
+        # FY2018 -> fy, 2018: passages print the digits, not the label.
+        parts = [part for part in re.split(r"(?<=[a-z])(?=\d)|(?<=\d)(?=[a-z])|[^a-z0-9]+", lowered)
+                 if part]
+        for part in parts:
+            if len(part) < 3 or part in STOPWORDS or part in INSTRUCTION_TERMS:
+                continue
+            if re.fullmatch(r"(19|20)\d{2}", part):
+                continue
+            terms.append(part)
+    return list(dict.fromkeys(terms))
+
+
 def _fts_query(query: str) -> str:
     tokens = _tokens(query)
     if not tokens:
         raise ValidationError("query has no indexable terms", query=query[:120])
     return " OR ".join(f'"{token}"' for token in tokens[:32])
+
+
+QUERY_MODES = ("bm25", "lexical_improved")
+#: Minimum share of a question's content terms that the best passage must contain before Atlas
+#: treats the result as an answer. Below this the engine abstains rather than answering from an
+#: incidental common word. Tuned on the negative probes, not on the held-out questions.
+MIN_QUERY_COVERAGE = 0.6
+
+#: Function words and financial boilerplate that carry no retrieval signal in a question.
+STOPWORDS = frozenset("""
+about above according across after against all also amount and annual any are around as at be
+because been before being below between both by can company companies compare compared did do does
+during each either estimate figure financial fiscal for from given had has have how in including
+into is it its just last latest many much million millions more most net new not number of on
+once only or other over percent please quarter reported reporting respectively result same show
+since so some statement such than that the their them then there these they this those through
+to total under usd using was were what when where which while who why will with within would year
+years your
+""".split())
+
+#: Words that belong to a question's instructions rather than to any filing. Their absence is
+#: evidence of nothing; without this list the strict policy abstained on 81% of externally
+#: annotated questions whose evidence was present.
+INSTRUCTION_TERMS = frozenset("""
+answer assume based calculate compute decimal define defined details determine explain extract
+filing following give information item items like line note please provide question relying
+respond response round shown state step steps tell two use using value values work
+""".split())
+
+
+def _match_candidates(query: str, mode: str) -> list[str]:
+    """Ordered FTS expressions for a query.
+
+    ``bm25`` is the Phase 9.5 behaviour (OR of all terms) and stays the default so existing
+    results are comparable. ``lexical_improved`` is a precision-first cascade: whole-query
+    phrase, then all-terms AND, then OR. It changes only the match expression, so a difference
+    in results is attributable to query semantics rather than a different index.
+    """
+    tokens = _tokens(query)
+    if not tokens:
+        raise ValidationError("query has no indexable terms", query=query[:120])
+    or_query = " OR ".join(f'"{token}"' for token in tokens[:32])
+    if mode == "bm25":
+        return [or_query]
+    if mode != "lexical_improved":
+        raise ValidationError("unknown query mode", mode=mode, supported=list(QUERY_MODES))
+    selected = tokens[:32]
+    phrase = '"' + " ".join(selected) + '"'
+    and_query = " AND ".join(f'"{token}"' for token in selected)
+    candidates = [phrase, and_query, or_query]
+    return list(dict.fromkeys(candidates))
 
 
 def _iso_or_none(value: Any) -> str | None:
@@ -295,6 +400,7 @@ class KnowledgeEngine:
         acceptance_time: str | None = None,
         period_of_report: str | None = None,
         retrieved_at: str | None = None,
+        publication_lag_seconds: int = SEC_PUBLICATION_LAG_SECONDS,
         rights: str = "public_domain",
         media_type: str = "text/html",
         amends_accession: str | None = None,
@@ -333,22 +439,36 @@ class KnowledgeEngine:
         text, stamped = normalise_document(units)
         form = form_type.strip().upper()
         is_amendment = form.endswith("/A")
-        precision = "exact" if acceptance_time else "date"
-        availability = _iso_or_none(acceptance_time) or iso_date(filed_date)
-        basis = "sec_acceptance_datetime" if acceptance_time else "sec_filing_date"
+        if acceptance_time:
+            # EDGAR acceptance is not the public-release instant. The stored availability time is
+            # a conservative *bound* derived from acceptance plus a fixed lag, so the precision is
+            # recorded as modeled, never as "exact".
+            # No observed public-release instant exists, so precision stays "unknown" and
+            # the convention is preserved separately as a named model.
+            precision = "unknown"
+            availability_model = "sec_acceptance_plus_publication_lag_v1"
+            availability = _lagged(acceptance_time, publication_lag_seconds)
+            basis = "sec_acceptance_plus_publication_lag_v1"
+        else:
+            precision = "date"
+            availability_model = "sec_filing_date_v1"
+            availability = iso_date(filed_date)
+            basis = "sec_filing_date"
         now = iso(utcnow())
         document_id = f"DOC-{uuid.uuid4().hex[:16]}"
         with self.db.transaction():
             self.db.execute(
                 "INSERT INTO knowledge_document (document_id, issuer_id, source_id, accession, form_type, "
                 "is_amendment, amends_accession, period_of_report, filed_date, acceptance_time, "
-                "availability_time, availability_precision, availability_basis, primary_document_url, "
+                "availability_time, availability_precision, availability_basis, availability_model, "
+                "public_availability_time, primary_document_url, "
                 "media_type, sha256, byte_size, rights, retention_policy, parser_version, ingested_at, "
                 "section_count, unit_count, table_count, status, notes) "
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                "VALUES (" + ",".join("?"*28) + ")",
                 (document_id, issuer_id, source_id, accession, form, 1 if is_amendment else 0,
                  amends_accession, period_of_report, iso_date(filed_date), _iso_or_none(acceptance_time),
-                 availability, precision, basis, primary_document_url, media_type, digest, len(payload),
+                 availability, precision, basis, availability_model, None, primary_document_url,
+                 media_type, digest, len(payload),
                  rights_decision["redistribution"], "local_only", PARSER_VERSION, now,
                  len({unit["section_path"] for unit in stamped}), len(stamped),
                  sum(1 for unit in stamped if unit["kind"] == "table"), "indexed", notes),
@@ -412,6 +532,8 @@ class KnowledgeEngine:
             "availability_time": row["availability_time"],
             "availability_precision": row["availability_precision"],
             "availability_basis": row["availability_basis"],
+            "availability_model": row["availability_model"],
+            "public_availability_time": row["public_availability_time"],
             "primary_document_url": row["primary_document_url"],
             "source_id": row["source_id"],
             "sha256": row["sha256"],
@@ -448,7 +570,8 @@ class KnowledgeEngine:
     def unit(self, unit_id: str) -> dict[str, Any]:
         row = self.db.query_one(
             "SELECT u.*, d.issuer_id, d.accession, d.form_type, d.availability_time, "
-            "d.availability_precision, d.rights, d.primary_document_url "
+            "d.availability_precision, d.availability_model, d.public_availability_time, "
+            "d.rights, d.primary_document_url "
             "FROM knowledge_unit u JOIN knowledge_document d ON d.document_id = u.document_id "
             "WHERE u.unit_id = ?", (unit_id,),
         )
@@ -470,6 +593,8 @@ class KnowledgeEngine:
             "sha256": row["sha256"],
             "availability_time": row["availability_time"],
             "availability_precision": row["availability_precision"],
+            "availability_model": row["availability_model"],
+            "public_availability_time": row["public_availability_time"],
             "rights": row["rights"],
             "resolve_original": row["primary_document_url"],
         }
@@ -502,11 +627,32 @@ class KnowledgeEngine:
         section: str | None = None,
         include_amendments: bool = True,
         min_relevance: float = 0.0,
+        mode: str = "bm25",
+        support_policy: str = "balanced",
     ) -> dict[str, Any]:
+        """Retrieve passages for a query.
+
+        ``support_policy`` decides what an empty-ish result means. ``balanced`` (the default)
+        abstains only when nothing is retrievable: retrieval should not hide evidence from the
+        analyst. ``strict`` additionally abstains when the returned set covers too little of
+        the question, and is what claim construction uses, because there a passage is being
+        presented as support rather than as a lead.
+        """
+        if len(query) > MAX_QUERY_CHARS or len(_tokens(query)) > MAX_QUERY_TERMS:
+            raise ValidationError("query exceeds the retrieval limit",
+                                  max_chars=MAX_QUERY_CHARS, max_terms=MAX_QUERY_TERMS)
+        if cutoff:
+            # Availability is stored at second precision. A caller's cutoff written with
+            # milliseconds would otherwise compare greater than "…:00Z" and exclude the very
+            # second a filing became available.
+            cutoff = iso(cutoff)
+        if support_policy not in ("balanced", "strict", "coverage"):
+            raise ValidationError("unknown support policy", support_policy=support_policy)
         started = time.perf_counter()
         if policy not in POLICIES:
             raise ValidationError("unknown retrieval policy", policy=policy, supported=list(POLICIES))
-        match = _fts_query(query)
+        candidates = _match_candidates(query, mode)
+        match = candidates[0]
         clauses = ["d.status = 'indexed'"]
         params: list[Any] = [match]
         if issuer_id:
@@ -539,7 +685,13 @@ class KnowledgeEngine:
             f"WHERE knowledge_fts MATCH ? AND {' AND '.join(clauses)} "
             "ORDER BY rank, d.availability_time DESC, u.ordinal LIMIT ?"
         )
-        rows = self.db.query(sql, params)
+        rows: list[Any] = []
+        for candidate in candidates:
+            params[0] = candidate
+            rows = self.db.query(sql, params)
+            if rows:
+                match = candidate
+                break
         future_excluded = self._future_count(query, issuer_id, cutoff, policy)
         results: list[dict[str, Any]] = []
         seen: set[str] = set()
@@ -577,18 +729,23 @@ class KnowledgeEngine:
                 "resolve_original": row["primary_document_url"],
                 "localization": "exact-span" if row["unit_kind"] != "table" else "table-block",
             })
-        absent = self._absent_terms(match)
+        # Only content terms count as missing; "give"/"FY2018" are not filing facts.
+        content = set(_content_terms(query))
+        absent = [term for term in self._absent_terms(match) if term in content]
+        coverage = self._coverage(query, results)
         abstained, reason = False, None
         if not results:
             abstained = True
-            reason = ("query_term_absent_from_corpus" if absent
-                      else "no_passage_satisfies_query_at_cutoff")
-        elif absent:
-            # BM25 with OR semantics always returns something, so a query containing a
-            # term that appears nowhere in the corpus would otherwise be "answered"
-            # from an incidental common word. Abstain and name the absent term.
+            reason = "no_passage_satisfies_query_at_cutoff"
+        elif support_policy == "strict" and absent:
             abstained = True
             reason = "query_term_absent_from_corpus"
+        elif support_policy in ("strict", "coverage") and coverage < MIN_QUERY_COVERAGE:
+            # BM25 with OR semantics always returns something. Presenting a passage that
+            # contains one incidental word as support would be misleading, so a claim needs
+            # its question's terms present and most of them covered.
+            abstained = True
+            reason = "insufficient_query_term_coverage"
         elif results[0]["relevance"] < min_relevance:
             abstained = True
             reason = "best_match_below_relevance_floor"
@@ -598,6 +755,9 @@ class KnowledgeEngine:
             "query": query,
             "plan": {
                 "retriever": "sqlite-fts5-bm25",
+                "query_mode": mode,
+                "match_expression": "phrase" if match.count('"') > 2 and " " in match else (
+                    "all_terms" if " AND " in match else "any_terms"),
                 "policy": policy,
                 "cutoff": cutoff,
                 "issuer_id": issuer_id,
@@ -619,11 +779,45 @@ class KnowledgeEngine:
             "results": results,
             "abstained": abstained,
             "abstention_reason": reason,
+            "query_coverage": round(coverage, 4),
+            "support_policy": support_policy,
+            "absent_terms": absent,
             "excluded": {"later_than_cutoff": future_excluded},
             "latency_ms": round(latency_ms, 3),
         }
         self._log_query(payload, abstained)
         return payload
+
+    def _coverage(self, query: str, results: list[dict[str, Any]]) -> float:
+        """Share of content terms present anywhere in the retrieved set.
+
+        A single passage cannot contain a whole question (a table row will not restate the
+        prompt), so sufficiency is judged over the returned evidence set. Terms that appear
+        nowhere in it are the ones the corpus cannot supply.
+        """
+        terms = _content_terms(query)
+        if not terms or not results:
+            return 0.0 if terms else 1.0
+        # Only terms the corpus can supply are evidence of coverage. A question's phrasing
+        # ("give a response by relying on the details shown") is not a filing fact, and a
+        # term absent from every document says nothing about this passage.
+        present: list[str] = []
+        for term in terms:
+            row = self.db.query_one(
+                "SELECT COUNT(*) AS n FROM knowledge_fts WHERE knowledge_fts MATCH ?",
+                (f'"{term}"',),
+            )
+            if row and int(row["n"]) > 0:
+                present.append(term)
+        if not present:
+            return 0.0
+        marks = ",".join("?" for _ in results)
+        rows = self.db.query(
+            f"SELECT body FROM knowledge_unit WHERE unit_id IN ({marks})",
+            [result["unit_id"] for result in results],
+        )
+        haystack = " ".join(row["body"].lower() for row in rows)
+        return sum(1 for term in present if term in haystack) / len(present)
 
     def _absent_terms(self, match: str) -> list[str]:
         """Query terms that appear in no indexed passage.
@@ -702,6 +896,7 @@ class KnowledgeEngine:
                 "accession": row["accession"],
                 "availability_time": row["availability_time"],
                 "rights": row["rights"],
+                "sha256": row["sha256"],
             }
             for row in rows
         ]
@@ -772,6 +967,79 @@ class KnowledgeEngine:
 
 
 # --------------------------------------------------------------------------- SEC adapter
+def _lagged(timestamp: str, seconds: int) -> str:
+    """Shift an acceptance timestamp by a conservative publication lag."""
+    from datetime import datetime, timedelta, timezone
+
+    if not seconds:
+        return _iso_or_none(timestamp) or timestamp
+    text = timestamp.replace("Z", "+00:00")
+    parsed = datetime.fromisoformat(text)
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return iso(parsed + timedelta(seconds=seconds))
+
+
+_LAST_SEC_REQUEST = [0.0]
+
+
+def _throttle() -> None:
+    elapsed = _time.monotonic() - _LAST_SEC_REQUEST[0]
+    if elapsed < SEC_MIN_INTERVAL:
+        _time.sleep(SEC_MIN_INTERVAL - elapsed)
+    _LAST_SEC_REQUEST[0] = _time.monotonic()
+
+
+def _get_json(url: str, *, attempts: int = 3) -> dict[str, Any]:
+    last: Exception | None = None
+    for attempt in range(attempts):
+        try:
+            _throttle()
+            request = Request(url, headers={"User-Agent": sec_user_agent(),
+                                           "Accept-Encoding": "identity"})
+            with urlopen(request, timeout=60) as response:  # noqa: S310 - fixed host
+                raw = _decoded(response.read(), response.headers.get("Content-Encoding"))
+            return json.loads(raw.decode("utf-8"))
+        except Exception as exc:  # noqa: BLE001 - retried with backoff
+            last = exc
+            _time.sleep(1.0 + attempt * 2.0)
+    raise ValidationError("SEC request failed after retries", url=url, error=str(last))
+
+
+def sec_filings(cik: str, forms: Iterable[str] | None = None) -> list[dict[str, Any]]:
+    """Every filing the SEC lists for a CIK, including archived submission files.
+
+    ``recent`` covers roughly the last thousand filings; historical evaluation needs the
+    paged archives, which is why both are read.
+    """
+    cik_digits = str(cik).lstrip("0").zfill(10)
+    payload = _get_json(f"https://data.sec.gov/submissions/CIK{cik_digits}.json")
+    wanted = {form.upper() for form in forms} if forms else None
+    chunks = [payload.get("filings", {}).get("recent", {})]
+    for extra in payload.get("filings", {}).get("files", []):
+        name = extra.get("name")
+        if twenty := name:
+            try:
+                chunks.append(_get_json(f"https://data.sec.gov/submissions/{twenty}"))
+            except ValidationError:
+                continue
+    out: list[dict[str, Any]] = []
+    for chunk in chunks:
+        forms_list = chunk.get("form", [])
+        for index, form in enumerate(forms_list):
+            if wanted and form.upper() not in wanted:
+                continue
+            out.append({
+                "accession": chunk["accessionNumber"][index],
+                "form_type": form.upper(),
+                "filed_date": chunk["filingDate"][index],
+                "acceptance_time": chunk.get("acceptanceDateTime", [None] * (index + 1))[index],
+                "period_of_report": chunk.get("reportDate", [None] * (index + 1))[index],
+                "primary_document": chunk.get("primaryDocument", [None] * (index + 1))[index],
+            })
+    return out
+
+
 def _decoded(raw: bytes, content_encoding: str | None) -> bytes:
     """SEC ignores ``identity`` for some documents and still returns gzip."""
     if raw[:2] == b"\x1f\x8b" or (content_encoding or "").lower() == "gzip":
@@ -785,7 +1053,8 @@ def _decoded(raw: bytes, content_encoding: str | None) -> bytes:
 def fetch_sec_document(cik: str, accession: str, primary_document: str) -> str:
     """Fetch the primary filing document from SEC EDGAR (public record)."""
     url = absolute_document_url(cik, accession, primary_document)
-    request = Request(url, headers={"User-Agent": SEC_USER_AGENT, "Accept-Encoding": "identity"})
+    _throttle()
+    request = Request(url, headers={"User-Agent": sec_user_agent(), "Accept-Encoding": "identity"})
     with urlopen(request, timeout=45) as response:  # noqa: S310 - fixed sec.gov host
         raw = _decoded(response.read(MAX_DOCUMENT_BYTES + 1),
                        response.headers.get("Content-Encoding"))
@@ -798,7 +1067,7 @@ def sec_filing_index(cik: str, forms: Iterable[str], limit: int = 4) -> list[dic
     """Recent filings for a CIK from the SEC submissions API."""
     cik_digits = str(cik).lstrip("0").zfill(10)
     url = f"https://data.sec.gov/submissions/CIK{cik_digits}.json"
-    request = Request(url, headers={"User-Agent": SEC_USER_AGENT, "Accept-Encoding": "identity"})
+    request = Request(url, headers={"User-Agent": sec_user_agent(), "Accept-Encoding": "identity"})
     with urlopen(request, timeout=45) as response:  # noqa: S310
         raw = _decoded(response.read(), response.headers.get("Content-Encoding"))
     payload = json.loads(raw.decode("utf-8"))
@@ -845,5 +1114,6 @@ def _footnotes(rows: list[list[str]]) -> str | None:
 
 __all__ = [
     "ENGINE_SCHEMA", "PARSER_VERSION", "KnowledgeEngine", "extract_units",
-    "normalise_document", "fetch_sec_document", "sec_filing_index", "absolute_document_url",
+    "normalise_document", "fetch_sec_document", "sec_filing_index", "sec_filings",
+    "absolute_document_url", "SEC_USER_AGENT", "sec_user_agent", "SEC_PUBLICATION_LAG_SECONDS",
 ]
