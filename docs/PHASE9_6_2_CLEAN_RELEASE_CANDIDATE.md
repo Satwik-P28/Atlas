@@ -25,3 +25,9 @@ evaluation artifact contains counts and metrics only, and no licensed question o
 committed. The presence of CC BY-NC material in a private repository is not by itself a licence
 violation, and this phase does not assert one. It also does not claim history is clean: retention
 of `d8ae4f1` is an open item for the repository owner. `main` is not promoted.
+
+## Addendum: accidental main push
+
+A push helper defaulted to the connected branch and briefly advanced `main` to the 9.6.2 tree.
+It was reverted non-destructively: `644448d` restores the exact Phase 9.5 tree (`af25770`) as a
+forward commit. No force-push occurred and no history was rewritten. `main` is not promoted.

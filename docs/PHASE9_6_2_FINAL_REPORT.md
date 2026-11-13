@@ -72,3 +72,11 @@ remains failed, and the history/retention decision is unresolved.
 ## 12. Promotion
 
 `main` was **not** promoted.
+
+## Addendum: main branch incident
+
+The push helper defaulted to the connected branch and briefly advanced `main` to the 9.6.2 tree
+(`486e7d0..f7e90ab`), which the release policy does not authorize. No force-push was used:
+`main` was restored with a forward commit (`644448d`) whose tree is exactly the Phase 9.5 tree
+(`af25770`). `main` therefore carries two extra commits, but its content is Phase 9.5 again.
+Promotion did not happen; the rights/history decision remains with the repository owner.
