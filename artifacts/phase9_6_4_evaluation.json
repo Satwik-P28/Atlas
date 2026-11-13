@@ -1,0 +1,20 @@
+{
+  "counts": {
+    "answered": 0,
+    "attempted": 0,
+    "correct": 0,
+    "negatives": 0
+  },
+  "evaluation_status": "unavailable_reference_data",
+  "gates": {
+    "eligible_population": false,
+    "reference_data_available": false
+  },
+  "limitations": [
+    "Reference questions are licensed and are not stored in the repository."
+  ],
+  "methodology_version": "9.6.3",
+  "metrics": {},
+  "reason": "FileNotFoundError: /tmp/financebench_rows.json",
+  "schema": "atlas.phase9_6_4.evaluation.v1"
+}

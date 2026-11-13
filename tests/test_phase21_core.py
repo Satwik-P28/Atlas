@@ -23,8 +23,8 @@ from atlas.terminal import cache, read_models
 def test_schema_v4_adds_indexes_and_research_tables(tmp_path):
     db = Database(tmp_path / "v4.db")
     db.migrate()
-    assert LATEST_VERSION == 14
-    assert db.scalar("SELECT MAX(version) FROM schema_migration") == 14
+    assert LATEST_VERSION == 15
+    assert db.scalar("SELECT MAX(version) FROM schema_migration") == 15
     indexes = {row["name"] for row in db.query("PRAGMA index_list('bar')")}
     assert {"idx_bar_latest_v4", "idx_bar_security_v4"} <= indexes
     tables = {row["name"] for row in db.query("SELECT name FROM sqlite_master WHERE type = 'table'")}
@@ -144,7 +144,7 @@ def test_migration_v3_to_v4_is_additive_and_preserves_rows(tmp_path):
         ("local", "theme", '"dark"', "2026-01-01T00:00:00Z"),
     )
     assert db.schema_version() == 3
-    assert db.migrate() == [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+    assert db.migrate() == [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     assert db.schema_version() == LATEST_VERSION
     assert db.scalar("SELECT legal_name FROM issuer WHERE issuer_id = ?", (issuer_id,)) == "Upgrade Co"
     assert db.scalar("SELECT value FROM app_setting WHERE key = 'theme'") == '"dark"'
