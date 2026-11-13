@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from dataclasses import dataclass
 from decimal import Decimal
 from fractions import Fraction
@@ -58,6 +59,14 @@ class InputRef:
 
 def _fingerprint(payload: dict[str, Any]) -> str:
     return hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()
+
+
+def _decimal(text: Any) -> Any:
+    from decimal import Decimal
+    try:
+        return Decimal(str(text))
+    except Exception:  # noqa: BLE001
+        return None
 
 
 def _fec_type(cell: Cell) -> str:
@@ -117,8 +126,16 @@ class FinancialAnswerEngine:
             tables = self.db.query(
                 "SELECT table_id, unit_id, section_path, caption, units, footnotes, rows_json, sha256 "
                 "FROM knowledge_table WHERE document_id = ?", (document["document_id"],))
+            units = {unit["unit_id"]: dict(unit) for unit in self.db.query(
+                "SELECT unit_id, ordinal, heading, body FROM knowledge_unit WHERE document_id = ?",
+                (document["document_id"],))}
             for table in tables:
                 row = dict(table)
+                # Statement identity comes from the document's own text, not the truncated
+                # section path ("Item 8"): the nearest statement title in this unit, then the
+                # immediately preceding unit.
+                statement = _statement_context(units, dict(table))
+                row.update(statement)
                 row["rows"] = json.loads(row.pop("rows_json"))
                 notes = table["footnotes"]
                 if not notes:
@@ -143,6 +160,147 @@ class FinancialAnswerEngine:
         if exact:
             return exact
         return [cell for cell in candidates if wanted and set(_tokenize(cell.row_label)) == wanted]
+
+    # ---------------------------------------------------------------- bindings
+    def validate_binding(self, binding: Any, cutoff: str) -> list[str]:
+        """Revalidate a resolved binding against the store before any arithmetic."""
+        problems: list[str] = []
+        document = self.db.query_one(
+            "SELECT document_id, issuer_id, accession, availability_time, rights "
+            "FROM knowledge_document WHERE document_id = ?", (binding.document_id,))
+        if document is None:
+            return ["document_missing"]
+        if document["issuer_id"] != binding.issuer_id:
+            problems.append("issuer_mismatch")
+        if binding.accession != document["accession"]:
+            problems.append("accession_mismatch")
+        available = binding.availability_time or document["availability_time"]
+        if not available or available > cutoff:
+            problems.append("future_evidence")
+        table = self.db.query_one(
+            "SELECT sha256, unit_id, rows_json FROM knowledge_table WHERE table_id = ?",
+            (binding.table_id,))
+        if table is None:
+            problems.append("table_missing")
+        else:
+            if table["sha256"] != binding.source_table_sha256:
+                problems.append("table_hash_mismatch")
+            if table["unit_id"] != binding.unit_id:
+                problems.append("unit_mismatch")
+            rows = json.loads(table["rows_json"] or "[]")
+            sourced = False
+            if 0 <= binding.row < len(rows) and 0 <= binding.column < len(rows[binding.row]):
+                sourced = " ".join(rows[binding.row][binding.column].split()) == binding.raw
+            if not sourced:
+                problems.append("cell_not_in_source")
+            printed = set(re.findall(r"(?:19|20)\d{2}", table["rows_json"] or ""))
+            if not binding.period or binding.period not in printed:
+                problems.append("period_mismatch")
+        try:
+            unit = self.engine.unit(binding.unit_id)
+        except Exception:  # noqa: BLE001
+            unit = None
+        if not unit or not unit.get("sha256"):
+            problems.append("unit_missing")
+        elif binding.value is None or _decimal(binding.value) != parse_raw(binding.raw):
+            problems.append("value_does_not_match_raw")
+        return problems
+
+    def cell_from_binding(self, binding: Any) -> Cell:
+        return Cell(
+            document_id=binding.document_id, accession=binding.accession,
+            table_id=binding.table_id, unit_id=binding.unit_id,
+            section_path="", table_caption=binding.statement_title, row=binding.row,
+            column=binding.column, row_label=binding.row_label,
+            column_label=binding.column_label, period=binding.period,
+            currency=binding.currency, unit=binding.currency, scale=binding.scale,
+            sign_convention="plain", raw=binding.raw, value=binding.value,
+            footnotes=[], status="verified", reason=None, extraction_method="binding",
+            confidence="high", source_sha256=binding.source_table_sha256,
+            availability_time=binding.availability_time,
+            availability_precision=binding.availability_precision, rights=binding.rights,
+            statement_title=binding.statement_title,
+            statement_family=binding.statement_family, entity_scope=binding.entity_scope)
+
+    def lookup_bound(self, binding: Any, cutoff: str) -> dict[str, Any]:
+        return self._bound("lookup", [binding], cutoff, formula="lookup(cell)",
+                           answer_type="reported_value", metric=binding.row_label,
+                           period=binding.period or "")
+
+    def percentage_change_bound(self, current: Any, prior: Any, cutoff: str,
+                                metric: str) -> dict[str, Any]:
+        return self._bound("percentage_change", [current, prior], cutoff,
+                           formula="(current - prior) / prior * 100",
+                           answer_type="percentage_change", metric=metric,
+                           period=f"{current.period} vs {prior.period}")
+
+    def ratio_bound(self, numerator: Any, denominator: Any, cutoff: str) -> dict[str, Any]:
+        return self._bound("ratio", [numerator, denominator], cutoff,
+                           formula="numerator / denominator", answer_type="ratio",
+                           metric=f"{numerator.row_label} / {denominator.row_label}",
+                           period=numerator.period or "")
+
+    def margin_bound(self, numerator: Any, revenue: Any, cutoff: str) -> dict[str, Any]:
+        return self._bound("margin", [numerator, revenue], cutoff,
+                           formula="numerator / revenue * 100",
+                           answer_type="margin_percent",
+                           metric=f"{numerator.row_label} margin", period=numerator.period or "")
+
+    def _bound(self, operator: str, bindings: list[Any], cutoff: str, *, formula: str,
+               answer_type: str, metric: str, period: str) -> dict[str, Any]:
+        problems: list[str] = []
+        for binding in bindings:
+            problems.extend(self.validate_binding(binding, cutoff))
+        if problems:
+            return self._refuse("input_unverified", problems=sorted(set(problems)))
+        cells = [self.cell_from_binding(binding) for binding in bindings]
+        if operator == "lookup":
+            cell = cells[0]
+            return self._run(
+                operator="lookup", name="Reported value", formula=formula,
+                answer_type=answer_type, metric=metric, period=period, cells=cells,
+                inputs=[{"name": "value", "type": _fec_type(cell), "required": True}],
+                nodes=[], output="value", values={"value": cell.value},
+                raw_values=[cell.raw],
+                limitations=["Value is quoted from one verified cell bound by the resolver."])
+        if operator == "percentage_change":
+            cur, prev = cells
+            kind = _fec_type(cur)
+            return self._run(
+                operator=operator, name="Percentage change", formula=formula,
+                answer_type=answer_type, metric=metric, period=period, cells=cells,
+                inputs=[{"name": "current", "type": kind, "required": True},
+                        {"name": "prior", "type": kind, "required": True},
+                        {"name": "hundred", "type": "Scalar", "default": 100}],
+                nodes=[{"id": "delta", "op": "sub", "inputs": ["current", "prior"]},
+                       {"id": "fraction", "op": "div", "inputs": ["delta", "prior"]},
+                       {"id": "scaled", "op": "mul", "inputs": ["fraction", "hundred"]}],
+                output="scaled",
+                values={"current": cur.value, "prior": prev.value, "hundred": 100},
+                raw_values=[cur.raw, prev.raw], limitations=[])
+        if operator == "ratio":
+            top, bottom = cells
+            return self._run(
+                operator=operator, name="Ratio", formula=formula, answer_type=answer_type,
+                metric=metric, period=period, cells=cells,
+                inputs=[{"name": "numerator", "type": _fec_type(top), "required": True},
+                        {"name": "denominator", "type": _fec_type(bottom), "required": True}],
+                nodes=[{"id": "quotient", "op": "div", "inputs": ["numerator", "denominator"]}],
+                output="quotient",
+                values={"numerator": top.value, "denominator": bottom.value},
+                raw_values=[top.raw, bottom.raw], limitations=[])
+        top, bottom = cells
+        return self._run(
+            operator="margin", name="Margin", formula=formula, answer_type=answer_type,
+            metric=metric, period=period, cells=cells,
+            inputs=[{"name": "numerator", "type": _fec_type(top), "required": True},
+                    {"name": "revenue", "type": _fec_type(bottom), "required": True},
+                    {"name": "hundred", "type": "Scalar", "default": 100}],
+            nodes=[{"id": "fraction", "op": "div", "inputs": ["numerator", "revenue"]},
+                   {"id": "scaled", "op": "mul", "inputs": ["fraction", "hundred"]}],
+            output="scaled",
+            values={"numerator": top.value, "revenue": bottom.value, "hundred": 100},
+            raw_values=[top.raw, bottom.raw], limitations=[])
 
     # ---------------------------------------------------------------- operators
     def lookup(self, issuer_id: str, cutoff: str, *, metric: str, period: str) -> dict[str, Any]:
@@ -360,6 +518,54 @@ class FinancialAnswerEngine:
             "engine_version": ENGINE_VERSION, "operator_version": OPERATOR_VERSION,
             "limitations": ["Atlas does not guess missing, ambiguous or unit-incompatible inputs."],
         }
+
+
+_TITLE_LINE = re.compile(
+    r"(consolidated statements? of [a-z ]+|consolidated balance sheets?|"
+    r"consolidated statements? of cash flows?|parent company[ a-z]*|segment information)",
+    re.IGNORECASE)
+
+
+def _statement_context(units: dict[str, dict], table: dict) -> dict[str, Any]:
+    """Nearest explicit statement title and unit scale from the document's own text.
+
+    SEC filings put the statement title in its own paragraph a few blocks before the table, not in
+    a caption. Search the current block and up to three preceding blocks; never assume the section
+    heading ("Item 8") is the statement title.
+    """
+    from .table_cells import classify_statement, detect_scale
+    current = units.get(table.get("unit_id"), {})
+    ordinal = int(current.get("ordinal", 0) or 0)
+    by_ordinal = {int(unit.get("ordinal", -1)): unit for unit in units.values()}
+    blocks: list[dict] = [current] + [by_ordinal[ordinal - step] for step in (1, 2, 3, 4)
+                                      if ordinal - step in by_ordinal]
+    title: str | None = None
+    family, scope = None, "unknown"
+    for block in blocks:
+        texts = [str(block.get("heading") or "")]
+        for line in str(block.get("body") or "").splitlines()[:8]:
+            # Statement titles are short lines, not sentences from surrounding prose.
+            if 0 < len(line) <= 90 and not line.rstrip().endswith((".", ";", ":")):
+                texts.append(line)
+        for text in texts:
+            candidate_family, candidate_scope = classify_statement(text)
+            if candidate_family:
+                title, family, scope = text.strip()[:200], candidate_family, candidate_scope
+                break
+        if family:
+            break
+    scale_hint = None
+    if not table.get("units"):
+        for block in blocks[:5]:
+            body = str(block.get("body") or "")
+            if "in millions" in body.lower() or "in thousands" in body.lower():
+                scale_hint = body[:200]
+                break
+    caption = str(table.get("caption") or "").lower()
+    caption_has_scale = any(word in caption for word in ("million", "thousand", "billion"))
+    units_value = table.get("units") or (None if caption_has_scale else scale_hint)
+    return {"statement_title": title, "statement_family": family or "unknown",
+            "entity_scope": scope, "units": units_value}
 
 
 def _tokenize(text: str) -> list[str]:

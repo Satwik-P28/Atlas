@@ -60,6 +60,10 @@ class Cell:
     reason: str | None = None
     extraction_method: str = "html_row_column_v1"
     confidence: str = "low"
+    geometry: str = "column_header"
+    statement_title: str | None = None
+    statement_family: str = "unknown"
+    entity_scope: str = "unknown"
     source_sha256: str = ""
     availability_time: str | None = None
     availability_precision: str | None = None
@@ -197,7 +201,8 @@ def extract_cells(
     # SEC tables often put "$" in its own column and leave empty spacer columns between
     # periods. Reading those as data columns shifts every header by one or more positions and
     # turns real values into "unparseable" cells. Drop columns that are empty, or symbol-only,
-    # across the body; then right-align the header periods onto the value columns. Original
+    # across the body; then align printed periods, left to right, onto the columns that carry
+    # values across the body. Original
     # column indices are preserved on every emitted cell.
     body_rows = rows[body_start:]
     raw_width = max((len(row) for row in rows), default=0)
@@ -214,17 +219,19 @@ def extract_cells(
         kept = list(range(raw_width))
     width = len(kept)
     headers: list[str] = [""] * width
+    for position, column in enumerate(kept):
+        parts = []
+        for index in header_rows:
+            if column < len(rows[index]):
+                parts.append(_norm(rows[index][column]))
+        headers[position] = " · ".join(dict.fromkeys(part for part in parts if part))
+    # Periods exactly as printed, left to right, in the header rows.
+    printed_periods: list[str] = []
     for index in header_rows:
-        raw_header = [_norm(cell) for cell in rows[index] if _norm(cell)]
-        if width <= 1 or not raw_header:
-            continue
-        periods = [cell for cell in raw_header if _periods(cell)]
-        values = (periods or raw_header)[-(width - 1):]
-        if len(values) < width - 1:
-            values = [""] * (width - 1 - len(values)) + values
-        for position in range(1, width):
-            parts = [part for part in (headers[position], values[position - 1]) if part]
-            headers[position] = " · ".join(dict.fromkeys(parts))
+        for cell in rows[index]:
+            for period in _periods(cell):
+                if period not in printed_periods:
+                    printed_periods.append(period)
     rows = [[row[i] if i < len(row) else "" for i in kept] for row in rows]
     cells: list[Cell] = []
     occurrences: dict[str, int] = {}
@@ -234,12 +241,27 @@ def extract_cells(
         row = rows[row_index]
         label = _norm(row[0]) if row else ""
         occurrences[label] = occurrences.get(label, 0) + 1
+        numeric_columns: list[int] = []
+        for candidate in range(1, width):
+            text = _norm(row[candidate]) if candidate < len(row) else ""
+            if not text:
+                continue
+            _v, _s, candidate_reason = parse_number(split_footnote(text)[0])
+            if candidate_reason in {"parsed", "percent"}:
+                numeric_columns.append(candidate)
+        row_periods = (printed_periods
+                       if printed_periods
+                       and len(numeric_columns) == len(printed_periods) else [])
         for column in range(1, width):
             raw = _norm(row[column]) if column < len(row) else ""
             if not raw:
                 continue
             header = headers[column] if column < len(headers) else ""
             periods = _periods(header)
+            geometry = "column_header"
+            if row_periods and column in numeric_columns:
+                geometry = "row_sequence"
+                periods = [row_periods[numeric_columns.index(column)]]
             numeric_text, marker = split_footnote(raw)
             value, sign, reason = parse_number(numeric_text)
             status, cell_reason = "verified", None
@@ -271,12 +293,45 @@ def extract_cells(
                 raw=raw, value=str(value) if status == "verified" and value is not None else None,
                 footnotes=([*footnotes_value, marker] if marker else footnotes_value), status=status, reason=cell_reason,
                 confidence="high" if status == "verified" else "low",
+                geometry=geometry if status == "verified" else "unresolved",
+                statement_title=table.get("statement_title"),
+                statement_family=table.get("statement_family") or "unknown",
+                entity_scope=table.get("entity_scope") or "unknown",
                 source_sha256=table.get("sha256") or "",
                 availability_time=document.get("availability_time"),
                 availability_precision=document.get("availability_precision"),
                 rights=document.get("rights"),
             ))
     return cells
+
+
+STATEMENT_PATTERNS = (
+    ("balance_sheet", re.compile(r"balance sheets?", re.IGNORECASE)),
+    ("income", re.compile(r"statements? of (income|operations)|income statements?", re.IGNORECASE)),
+    ("cash_flow", re.compile(r"statements? of cash flows?", re.IGNORECASE)),
+    ("equity", re.compile(r"statements? of (stockholders'? |shareholders'? )?equity", re.IGNORECASE)),
+    ("segment", re.compile(r"segment (information|reporting|results)", re.IGNORECASE)),
+)
+
+
+def classify_statement(text: str | None) -> tuple[str | None, str]:
+    """Return (statement family, entity scope) from a real heading/caption line."""
+    if not text:
+        return None, "unknown"
+    cleaned = _norm(text)
+    # Summary and average-balance schedules are not the consolidated statements they describe.
+    if re.search(r"\b(average|supplemental|selected financial data|fair value)\b",
+                 cleaned, re.IGNORECASE):
+        return None, "unknown"
+    for family, pattern in STATEMENT_PATTERNS:
+        if pattern.search(cleaned):
+            scope = "consolidated" if "consolidated" in cleaned.lower() else "unknown"
+            if family == "segment":
+                scope = "segment"
+            if "parent company" in cleaned.lower():
+                scope = "parent"
+            return family, scope
+    return None, "unknown"
 
 
 FINANCIAL_CAPTION_HINTS = (
@@ -324,6 +379,6 @@ def cell_as_of(cell: Cell, cutoff: str) -> bool:
 
 
 __all__ = [
-    "Cell", "CONTRACT_VERSION", "classify_table", "detect_scale", "parse_number",
+    "Cell", "CONTRACT_VERSION", "classify_statement", "classify_table", "detect_scale", "parse_number",
     "extract_cells", "cell_as_of", "split_footnote",
 ]

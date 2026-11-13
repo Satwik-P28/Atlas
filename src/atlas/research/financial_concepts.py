@@ -117,9 +117,14 @@ QUALIFIERS = ("less:", "noncontrolling", "attributable to non", "before income t
               "including", "excluding", "per share", "per diluted share")
 
 
+COST_QUALIFIERS = ("cost of", "costs of", "costs and expenses", "less", "expense")
+
+
 def _label_score(label: str, alias: str) -> float:
     text = _normalise(label)
     alias = _normalise(alias)
+    if text.startswith(COST_QUALIFIERS) and not alias.startswith(COST_QUALIFIERS):
+        return 0.0
     score = _base_label_score(text, alias)
     if score and any(qualifier in text for qualifier in QUALIFIERS):
         score -= 2.0
@@ -197,14 +202,28 @@ class ConceptResolver:
                 continue
             haystack = _normalise(cell.section_path + " " + (cell.table_caption or "")
                                   + " " + cell.column_label)
-            scope = statement_scope(cell.section_path, cell.table_caption)
+            if context == "consolidated" and _normalise(cell.row_label).startswith("consolidated"):
+                score += 0.5
+            family = cell.statement_family or "unknown"
+            expected = "balance_sheet" if concept.statement == "balance" else concept.statement
+            if family == expected:
+                score += 1.0
+            elif family != "unknown":
+                score -= 2.0
+            if context == "consolidated":
+                if cell.entity_scope == "consolidated":
+                    score += 1.0
+                elif cell.entity_scope in {"parent", "segment"}:
+                    score -= 3.0
+            scope = (cell.entity_scope if cell.entity_scope != "unknown"
+                     else statement_scope(cell.section_path, cell.table_caption))
             if context == "consolidated":
                 if scope == "consolidated":
                     score += 1.0
                 elif scope in {"parent", "segment"}:
                     score -= 3.0
-            on_statement = any(hint in haystack
-                               for hint in STATEMENT_HINTS.get(concept.statement, ()))
+            on_statement = (family == expected or any(
+                hint in haystack for hint in STATEMENT_HINTS.get(concept.statement, ())))
             if on_statement:
                 score += 0.5
             if concept.segment_sensitive and context == "consolidated":
@@ -228,14 +247,32 @@ class ConceptResolver:
                 scored = filtered
         if any(flag for _, _, flag in scored):
             scored = [(score, cell, flag) for score, cell, flag in scored if flag]
+        expected_family = "balance_sheet" if concept.statement == "balance" else concept.statement
+        if any(cell.statement_family == expected_family for _, cell, _ in scored):
+            scored = [(score, cell, flag) for score, cell, flag in scored
+                      if cell.statement_family == expected_family]
+        if context == "consolidated" and any(
+                cell.entity_scope == "consolidated" for _, cell, _ in scored):
+            scored = [(score, cell, flag) for score, cell, flag in scored
+                      if cell.entity_scope == "consolidated"]
         # Consolidated scope wins over parent-company and segment presentations of the same label.
         if context == "consolidated" and any(
-                statement_scope(cell.section_path, cell.table_caption) == "consolidated"
+                (cell.entity_scope if cell.entity_scope != "unknown"
+                 else statement_scope(cell.section_path, cell.table_caption)) == "consolidated"
                 for _, cell, _ in scored):
             scored = [(score, cell, flag) for score, cell, flag in scored
-                      if statement_scope(cell.section_path, cell.table_caption) == "consolidated"]
+                      if (cell.entity_scope if cell.entity_scope != "unknown"
+                          else statement_scope(cell.section_path, cell.table_caption))
+                      == "consolidated"]
         if not scored:
             return Resolution("not_found", concept_key, period, reason="no_candidate_row")
+        # An exact alias ("net sales" == "net sales") outranks a longer phrase that merely
+        # contains it ("sales (millions)", "organic sales"); conflicting exact matches still
+        # remain ambiguous below.
+        exact = [(score, cell, flag) for score, cell, flag in scored
+                 if _normalise(cell.row_label) in {_normalise(a) for a in concept.aliases}]
+        if exact:
+            scored = exact
         best = max(score for score, _, _ in scored)
         finalists = [(score, cell) for score, cell, _ in scored if score == best]
         # A token-subset match (score 1.0) is only a candidate: "total current assets" and
@@ -268,6 +305,12 @@ class ConceptResolver:
         for cell in cells:
             if cell.document_id == chosen.document_id or cell.value == chosen.value:
                 continue
+            # Only the same statement in another vintage can contradict this fact. A revenue
+            # row from a note or segment table is a different disclosure, not a restatement.
+            if (cell.statement_family != chosen.statement_family
+                    or cell.entity_scope != chosen.entity_scope
+                    or cell.table_id == chosen.table_id):
+                continue
             score = max((_label_score(cell.row_label, alias) for alias in concept.aliases),
                         default=0.0)
             if score < 2.0:
@@ -282,6 +325,8 @@ class ConceptResolver:
                               "accession": cell.accession, "value": cell.value,
                               "raw": cell.raw, "filed_date": other.get("filed_date"),
                               "period_of_report": other.get("period_of_report")})
+        if conflicts and all(item["value"] == chosen.value for item in conflicts):
+            conflicts = []
         if conflicts:
             return Resolution("vintage_conflict", concept_key, period,
                               reason="multiple_filings_disagree",
@@ -302,3 +347,58 @@ class ConceptResolver:
 
 
 __all__ = ["CONCEPTS", "Concept", "ConceptResolver", "Resolution", "RESOLVER_VERSION"]
+
+
+@dataclass(frozen=True, slots=True)
+class ResolvedFinancialInput:
+    """Immutable evidence binding: identity of one verified cell, carried to FEC."""
+
+    issuer_id: str
+    concept: str
+    document_id: str
+    accession: str
+    table_id: str
+    unit_id: str
+    cell_id: str
+    row: int
+    column: int
+    row_label: str
+    column_label: str
+    period: str | None
+    currency: str | None
+    scale: int | None
+    value: str | None
+    raw: str
+    source_table_sha256: str
+    statement_title: str | None
+    statement_family: str
+    entity_scope: str
+    availability_time: str | None
+    availability_precision: str | None
+    rights: str | None
+    resolver_version: str
+    rationale: str
+
+
+def bind(resolution: "Resolution", issuer_id: str, concept: str) -> ResolvedFinancialInput | None:
+    """Turn a resolved cell into a binding. Ambiguous or unresolved results cannot be bound."""
+    cell = resolution.cell
+    if resolution.status != "resolved" or cell is None:
+        return None
+    rationale = (f"label match score {resolution.score:.2f}; "
+                 f"statement={cell.statement_family}/{cell.entity_scope}; "
+                 f"period={cell.period}; scale={cell.scale}")
+    return ResolvedFinancialInput(
+        issuer_id=issuer_id, concept=concept, document_id=cell.document_id,
+        accession=cell.accession, table_id=cell.table_id, unit_id=cell.unit_id,
+        cell_id=cell.cell_id, row=cell.row, column=cell.column, row_label=cell.row_label,
+        column_label=cell.column_label, period=cell.period, currency=cell.currency,
+        scale=cell.scale, value=cell.value, raw=cell.raw,
+        source_table_sha256=cell.source_sha256, statement_title=cell.statement_title,
+        statement_family=cell.statement_family, entity_scope=cell.entity_scope,
+        availability_time=cell.availability_time,
+        availability_precision=cell.availability_precision, rights=cell.rights,
+        resolver_version=RESOLVER_VERSION, rationale=rationale)
+
+
+__all__ += ["ResolvedFinancialInput", "bind"]
