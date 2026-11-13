@@ -1,0 +1,587 @@
+{
+  "abstained": 12,
+  "answered": 0,
+  "limitations": [
+    "Cutoffs restrict evidence to filings available on that date.",
+    "The bank case intentionally includes a gross-profit lookup; the refusal is a finding.",
+    "Scale is reported as printed; no hidden unit conversion is applied."
+  ],
+  "packets": [
+    {
+      "cutoff": "2023-06-30T00:00:00Z",
+      "family": "operating",
+      "issuer": "COCA COLA CO",
+      "operator": "lookup",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "request": {
+        "concept": "revenue",
+        "period": "2022"
+      },
+      "resolution": {
+        "candidates": [],
+        "cell": null,
+        "concept": "revenue",
+        "period": "2022",
+        "reason": "no_candidate_row",
+        "resolver_version": "9.6.3",
+        "score": 0.0,
+        "status": "not_found",
+        "vintage": null,
+        "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+      }
+    },
+    {
+      "context": {
+        "candidates": [
+          "CELL-0d80b7e09faf0bee",
+          "CELL-55f84388d9e9a6c5"
+        ],
+        "metric": "Consolidated Net Income"
+      },
+      "cutoff": "2023-06-30T00:00:00Z",
+      "engine_version": "9.6.3",
+      "family": "operating",
+      "issuer": "COCA COLA CO",
+      "limitations": [
+        "Atlas does not guess missing, ambiguous or unit-incompatible inputs."
+      ],
+      "operator": "lookup",
+      "operator_version": "atlas.fec.compiler.v1",
+      "outcome": "abstained",
+      "reason": "metric_ambiguous",
+      "request": {
+        "concept": "net_income",
+        "period": "2022"
+      },
+      "research_task": "What was COCA COLA CO's net income in FY2022?",
+      "resolution": {
+        "candidates": [],
+        "cell": {
+          "accession": "0000021344-23-000011",
+          "cell_id": "CELL-0d80b7e09faf0bee",
+          "column": 3,
+          "column_label": "2022",
+          "currency": null,
+          "document_id": "DOC-3d4eac155cb147f0",
+          "period": "2022",
+          "raw": "9,804",
+          "row": 13,
+          "row_label": "Consolidated Net Income",
+          "scale": 0,
+          "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
+          "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+          "table_id": "TAB-156608b48f668e96",
+          "value": "9804"
+        },
+        "concept": "net_income",
+        "period": "2022",
+        "reason": null,
+        "resolver_version": "9.6.3",
+        "score": 2.2,
+        "status": "resolved",
+        "vintage": {
+          "accession": "0000021344-23-000011",
+          "document_id": "DOC-3d4eac155cb147f0",
+          "filed_date": "2023-02-21",
+          "period_of_report": "2022-12-31",
+          "selection_policy": "filing whose own period is the requested year; disagreements refused"
+        },
+        "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+      }
+    },
+    {
+      "context": {
+        "missing": [
+          "2022",
+          "2021"
+        ]
+      },
+      "cutoff": "2023-06-30T00:00:00Z",
+      "engine_version": "9.6.3",
+      "family": "operating",
+      "issuer": "COCA COLA CO",
+      "limitations": [
+        "Atlas does not guess missing, ambiguous or unit-incompatible inputs."
+      ],
+      "operator": "percentage_change",
+      "operator_version": "atlas.fec.compiler.v1",
+      "outcome": "abstained",
+      "reason": "missing_input",
+      "request": {
+        "current_period": "2022",
+        "metric": "revenue",
+        "prior_period": "2021"
+      },
+      "research_task": "percentage change for COCA COLA CO ({'metric': 'revenue', 'current_period': '2022', 'prior_period': '2021'})"
+    },
+    {
+      "context": {
+        "missing": [
+          "2022"
+        ]
+      },
+      "cutoff": "2023-06-30T00:00:00Z",
+      "engine_version": "9.6.3",
+      "family": "operating",
+      "issuer": "COCA COLA CO",
+      "limitations": [
+        "Atlas does not guess missing, ambiguous or unit-incompatible inputs."
+      ],
+      "operator": "margin",
+      "operator_version": "atlas.fec.compiler.v1",
+      "outcome": "abstained",
+      "reason": "missing_input",
+      "request": {
+        "numerator": "operating income",
+        "period": "2022",
+        "revenue": "revenue"
+      },
+      "research_task": "margin for COCA COLA CO ({'numerator': 'operating income', 'revenue': 'revenue', 'period': '2022'})"
+    },
+    {
+      "context": {
+        "missing": [
+          "2022"
+        ]
+      },
+      "cutoff": "2023-06-30T00:00:00Z",
+      "engine_version": "9.6.3",
+      "family": "operating",
+      "issuer": "COCA COLA CO",
+      "limitations": [
+        "Atlas does not guess missing, ambiguous or unit-incompatible inputs."
+      ],
+      "operator": "ratio",
+      "operator_version": "atlas.fec.compiler.v1",
+      "outcome": "abstained",
+      "reason": "missing_input",
+      "request": {
+        "denominator": "revenue",
+        "numerator": "total assets",
+        "period": "2022"
+      },
+      "research_task": "ratio for COCA COLA CO ({'numerator': 'total assets', 'denominator': 'revenue', 'period': '2022'})"
+    },
+    {
+      "cutoff": "2024-01-01T00:00:00Z",
+      "family": "bank",
+      "issuer": "JPMORGAN CHASE & CO",
+      "operator": "lookup",
+      "outcome": "abstained",
+      "reason": "concept_resolution:ambiguous",
+      "request": {
+        "concept": "total_assets",
+        "period": "2022"
+      },
+      "resolution": {
+        "candidates": [
+          {
+            "document_id": "DOC-d612e96c67d845f0",
+            "period": "2022",
+            "raw": "3,743,567",
+            "row_label": "Total assets",
+            "score": 3.0,
+            "value": "3743567"
+          },
+          {
+            "document_id": "DOC-d612e96c67d845f0",
+            "period": "2022",
+            "raw": "1,259,896",
+            "row_label": "Total assets",
+            "score": 3.0,
+            "value": "1259896"
+          },
+          {
+            "document_id": "DOC-d612e96c67d845f0",
+            "period": "2022",
+            "raw": "1,334,518",
+            "row_label": "Total assets",
+            "score": 3.0,
+            "value": "1334518"
+          },
+          {
+            "document_id": "DOC-d612e96c67d845f0",
+            "period": "2022",
+            "raw": "230,776",
+            "row_label": "Total assets",
+            "score": 3.0,
+            "value": "230776"
+          },
+          {
+            "document_id": "DOC-d612e96c67d845f0",
+            "period": "2022",
+            "raw": "225,548",
+            "row_label": "Total assets",
+            "score": 3.0,
+            "value": "225548"
+          },
+          {
+            "document_id": "DOC-d612e96c67d845f0",
+            "period": "2022",
+            "raw": "3,743,567",
+            "row_label": "Total assets",
+            "score": 3.0,
+            "value": "3743567"
+          }
+        ],
+        "cell": null,
+        "concept": "total_assets",
+        "period": "2022",
+        "reason": "conflicting_row_values",
+        "resolver_version": "9.6.3",
+        "score": 0.0,
+        "status": "ambiguous",
+        "vintage": null,
+        "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+      }
+    },
+    {
+      "context": {
+        "candidates": [
+          "CELL-6f98ad37ec28f2f7",
+          "CELL-969f533ab71e4063",
+          "CELL-3da396c472a2c7ff",
+          "CELL-f2e652433b54e4fa",
+          "CELL-911abd35276ab24c"
+        ],
+        "metric": "Net income"
+      },
+      "cutoff": "2024-01-01T00:00:00Z",
+      "engine_version": "9.6.3",
+      "family": "bank",
+      "issuer": "JPMORGAN CHASE & CO",
+      "limitations": [
+        "Atlas does not guess missing, ambiguous or unit-incompatible inputs."
+      ],
+      "operator": "lookup",
+      "operator_version": "atlas.fec.compiler.v1",
+      "outcome": "abstained",
+      "reason": "metric_ambiguous",
+      "request": {
+        "concept": "net_income",
+        "period": "2022"
+      },
+      "research_task": "What was JPMORGAN CHASE & CO's net income in FY2022?",
+      "resolution": {
+        "candidates": [],
+        "cell": {
+          "accession": "0000019617-23-000231",
+          "cell_id": "CELL-6f98ad37ec28f2f7",
+          "column": 7,
+          "column_label": "2022",
+          "currency": null,
+          "document_id": "DOC-d612e96c67d845f0",
+          "period": "2022",
+          "raw": "48,334",
+          "row": 9,
+          "row_label": "Net income",
+          "scale": 0,
+          "section_path": "Item 15. Exhibits, Financial Statement Schedules.",
+          "source_sha256": "d91bd6f1076515aec1d99e96089038b62f7a867346735d9ae7a2cff79421abfc",
+          "table_id": "TAB-764a7e9b50c30cf5",
+          "value": "48334"
+        },
+        "concept": "net_income",
+        "period": "2022",
+        "reason": null,
+        "resolver_version": "9.6.3",
+        "score": 3.0,
+        "status": "resolved",
+        "vintage": {
+          "accession": "0000019617-23-000231",
+          "document_id": "DOC-d612e96c67d845f0",
+          "filed_date": "2023-02-21",
+          "period_of_report": "2022-12-31",
+          "selection_policy": "filing whose own period is the requested year; disagreements refused"
+        },
+        "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+      }
+    },
+    {
+      "context": {},
+      "cutoff": "2024-01-01T00:00:00Z",
+      "engine_version": "9.6.3",
+      "family": "bank",
+      "issuer": "JPMORGAN CHASE & CO",
+      "limitations": [
+        "Atlas does not guess missing, ambiguous or unit-incompatible inputs."
+      ],
+      "operator": "margin",
+      "operator_version": "atlas.fec.compiler.v1",
+      "outcome": "abstained",
+      "reason": "metric_ambiguous",
+      "request": {
+        "numerator": "net income",
+        "period": "2022",
+        "revenue": "total net revenue"
+      },
+      "research_task": "margin for JPMORGAN CHASE & CO ({'numerator': 'net income', 'revenue': 'total net revenue', 'period': '2022'})"
+    },
+    {
+      "cutoff": "2024-01-01T00:00:00Z",
+      "family": "bank",
+      "issuer": "JPMORGAN CHASE & CO",
+      "operator": "lookup",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "request": {
+        "concept": "gross_profit",
+        "period": "2022"
+      },
+      "resolution": {
+        "candidates": [],
+        "cell": null,
+        "concept": "gross_profit",
+        "period": "2022",
+        "reason": "no_candidate_row",
+        "resolver_version": "9.6.3",
+        "score": 0.0,
+        "status": "not_found",
+        "vintage": null,
+        "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+      }
+    },
+    {
+      "context": {
+        "candidates": [
+          "CELL-f91b8a36753b19ff",
+          "CELL-5806a3cd46328dee",
+          "CELL-c007731b02b3a41d"
+        ],
+        "metric": "Cost of sales"
+      },
+      "cutoff": "2024-01-01T00:00:00Z",
+      "engine_version": "9.6.3",
+      "family": "segment",
+      "issuer": "3M CO",
+      "limitations": [
+        "Atlas does not guess missing, ambiguous or unit-incompatible inputs."
+      ],
+      "operator": "lookup",
+      "operator_version": "atlas.fec.compiler.v1",
+      "outcome": "abstained",
+      "reason": "metric_ambiguous",
+      "request": {
+        "concept": "revenue",
+        "period": "2022"
+      },
+      "research_task": "What was 3M CO's revenue in FY2022?",
+      "resolution": {
+        "candidates": [],
+        "cell": {
+          "accession": "0000066740-23-000014",
+          "cell_id": "CELL-f91b8a36753b19ff",
+          "column": 11,
+          "column_label": "2022",
+          "currency": null,
+          "document_id": "DOC-35df69871a254c06",
+          "period": "2022",
+          "raw": "53.2",
+          "row": 1,
+          "row_label": "Cost of sales",
+          "scale": 0,
+          "section_path": "Item 7. Management\u2019s Discussion and Analysis of Financial Condition and Results of Operations.",
+          "source_sha256": "0814d92e081bf3535bda32d4a94eeacf6fff2ecbc4ab9b799c3dcaa8957eb5da",
+          "table_id": "TAB-5b5f545fc864d850",
+          "value": "53.2"
+        },
+        "concept": "revenue",
+        "period": "2022",
+        "reason": null,
+        "resolver_version": "9.6.3",
+        "score": 2.6,
+        "status": "resolved",
+        "vintage": {
+          "accession": "0000066740-23-000014",
+          "document_id": "DOC-35df69871a254c06",
+          "filed_date": "2023-02-08",
+          "period_of_report": "2022-12-31",
+          "selection_policy": "filing whose own period is the requested year; disagreements refused"
+        },
+        "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+      }
+    },
+    {
+      "context": {
+        "missing": [
+          "2022",
+          "2021"
+        ]
+      },
+      "cutoff": "2024-01-01T00:00:00Z",
+      "engine_version": "9.6.3",
+      "family": "segment",
+      "issuer": "3M CO",
+      "limitations": [
+        "Atlas does not guess missing, ambiguous or unit-incompatible inputs."
+      ],
+      "operator": "percentage_change",
+      "operator_version": "atlas.fec.compiler.v1",
+      "outcome": "abstained",
+      "reason": "missing_input",
+      "request": {
+        "current_period": "2022",
+        "metric": "revenue",
+        "prior_period": "2021"
+      },
+      "research_task": "percentage change for 3M CO ({'metric': 'revenue', 'current_period': '2022', 'prior_period': '2021'})"
+    },
+    {
+      "cutoff": "2024-01-01T00:00:00Z",
+      "family": "segment",
+      "issuer": "3M CO",
+      "operator": "lookup",
+      "outcome": "abstained",
+      "reason": "concept_resolution:ambiguous",
+      "request": {
+        "concept": "revenue",
+        "period": "2018"
+      },
+      "resolution": {
+        "candidates": [
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "50.9",
+            "row_label": "Cost of sales",
+            "score": 2.6,
+            "value": "50.9"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "12,267",
+            "row_label": "Sales (millions)",
+            "score": 2.6,
+            "value": "12267"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "3.4",
+            "row_label": "Total sales change",
+            "score": 2.6,
+            "value": "3.4"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "22.3",
+            "row_label": "Percent of sales",
+            "score": 2.6,
+            "value": "22.3"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "6,827",
+            "row_label": "Sales (millions)",
+            "score": 2.6,
+            "value": "6827"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "9.5",
+            "row_label": "Total sales change",
+            "score": 2.6,
+            "value": "9.5"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "25.2",
+            "row_label": "Percent of sales",
+            "score": 2.6,
+            "value": "25.2"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "6,021",
+            "row_label": "Sales (millions)",
+            "score": 2.6,
+            "value": "6021"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "2.9",
+            "row_label": "Total sales change",
+            "score": 2.6,
+            "value": "2.9"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "29.9",
+            "row_label": "Percent of sales",
+            "score": 2.6,
+            "value": "29.9"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "5,472",
+            "row_label": "Sales (millions)",
+            "score": 2.6,
+            "value": "5472"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "(0.5)",
+            "row_label": "Total sales change",
+            "score": 2.6,
+            "value": "-0.5"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "37.6",
+            "row_label": "Percent of sales",
+            "score": 2.6,
+            "value": "37.6"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "4,796",
+            "row_label": "Sales (millions)",
+            "score": 2.6,
+            "value": "4796"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "1.4",
+            "row_label": "Total sales change",
+            "score": 2.6,
+            "value": "1.4"
+          },
+          {
+            "document_id": "DOC-77e530ee20cb4f68",
+            "period": "2018",
+            "raw": "21.4",
+            "row_label": "Percent of sales",
+            "score": 2.6,
+            "value": "21.4"
+          }
+        ],
+        "cell": null,
+        "concept": "revenue",
+        "period": "2018",
+        "reason": "conflicting_row_values",
+        "resolver_version": "9.6.3",
+        "score": 0.0,
+        "status": "ambiguous",
+        "vintage": null,
+        "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+      }
+    }
+  ],
+  "research_tasks": 12,
+  "schema": "atlas.phase9_6_3.case_studies.v1",
+  "version": "9.6.3"
+}

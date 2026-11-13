@@ -33,6 +33,7 @@ _UNIT_WORDS = {
 _PERIOD = re.compile(r"(?:fy\s*)?((?:19|20)\d{2})(?:\s*[A-Za-z]{0,3}\b)?", re.IGNORECASE)
 _NUMBER = re.compile(r"^\(?\s*[-+]?\$?\s*[\d,]*\.?\d+\s*\)?%?$")
 _DASHES = {"-", "–", "—", "—", "n/a", "nm", "*"}
+_SYMBOLS = {"$", "€", "£", "¥", "%", "usd", "eur", "gbp"}
 
 
 @dataclass(slots=True)
@@ -42,6 +43,7 @@ class Cell:
     table_id: str
     unit_id: str
     section_path: str
+    table_caption: str | None
     row: int
     column: int
     row_label: str
@@ -190,20 +192,40 @@ def extract_cells(
     if not header_rows:
         header_rows = [0]
     body_start = max(header_rows) + 1
-    # The extractor drops empty cells, so a row-label header cell can vanish and shift every
-    # column left. Realign only in that shape (short header, all cells non-empty); otherwise the
-    # geometry is ambiguous and the cells stay unresolved.
-    width = max(len(row) for row in rows)
+
+    # --- grid reconstruction -------------------------------------------------
+    # SEC tables often put "$" in its own column and leave empty spacer columns between
+    # periods. Reading those as data columns shifts every header by one or more positions and
+    # turns real values into "unparseable" cells. Drop columns that are empty, or symbol-only,
+    # across the body; then right-align the header periods onto the value columns. Original
+    # column indices are preserved on every emitted cell.
+    body_rows = rows[body_start:]
+    raw_width = max((len(row) for row in rows), default=0)
+    kept: list[int] = []
+    for column in range(raw_width):
+        values = [_norm(row[column]) for row in body_rows if column < len(row)]
+        non_empty = [value for value in values if value]
+        if not non_empty:
+            continue
+        if all(value in _SYMBOLS for value in non_empty):
+            continue
+        kept.append(column)
+    if not kept:
+        kept = list(range(raw_width))
+    width = len(kept)
+    headers: list[str] = [""] * width
     for index in header_rows:
-        row = rows[index]
-        if 0 < len(row) < width and all(_norm(cell) for cell in row):
-            rows[index] = [""] * (width - len(row)) + list(row)
-    columns = max(len(row) for row in rows)
-    headers: list[str] = []
-    for column in range(columns):
-        parts = [_norm(rows[r][column]) for r in header_rows
-                 if column < len(rows[r]) and _norm(rows[r][column])]
-        headers.append(" · ".join(dict.fromkeys(parts)))
+        raw_header = [_norm(cell) for cell in rows[index] if _norm(cell)]
+        if width <= 1 or not raw_header:
+            continue
+        periods = [cell for cell in raw_header if _periods(cell)]
+        values = (periods or raw_header)[-(width - 1):]
+        if len(values) < width - 1:
+            values = [""] * (width - 1 - len(values)) + values
+        for position in range(1, width):
+            parts = [part for part in (headers[position], values[position - 1]) if part]
+            headers[position] = " · ".join(dict.fromkeys(parts))
+    rows = [[row[i] if i < len(row) else "" for i in kept] for row in rows]
     cells: list[Cell] = []
     occurrences: dict[str, int] = {}
     labels = [_norm(row[0]) for row in rows[body_start:] if row]
@@ -212,7 +234,7 @@ def extract_cells(
         row = rows[row_index]
         label = _norm(row[0]) if row else ""
         occurrences[label] = occurrences.get(label, 0) + 1
-        for column in range(1, columns):
+        for column in range(1, width):
             raw = _norm(row[column]) if column < len(row) else ""
             if not raw:
                 continue
@@ -241,7 +263,9 @@ def extract_cells(
                 document_id=document["document_id"], accession=document["accession"],
                 table_id=table["table_id"], unit_id=table["unit_id"],
                 section_path=table.get("section_path") or "",
-                row=row_index, column=column, row_label=label, column_label=header,
+                table_caption=table.get("caption"),
+                row=row_index, column=kept[column] if column < len(kept) else column,
+                row_label=label, column_label=header,
                 period=period, currency=currency, unit="USD" if currency == "USD" else table.get("units"),
                 scale=scale if status == "verified" else None, sign_convention=sign,
                 raw=raw, value=str(value) if status == "verified" and value is not None else None,
@@ -255,6 +279,43 @@ def extract_cells(
     return cells
 
 
+FINANCIAL_CAPTION_HINTS = (
+    "balance sheet", "statement of operations", "statements of operations", "income statement",
+    "cash flow", "financial position", "in millions", "in thousands", "(in thousands",
+    "in billions", "financial statements", "results of operations", "segment",
+)
+NON_FINANCIAL_LABEL_HINTS = (
+    "item 1", "item 2", "item 3", "item 4", "item 5", "item 6", "item 7", "item 8",
+    "item 9", "item 10", "item 11", "item 12", "item 13", "item 14", "item 15",
+    "present position", "other positions held", "part i", "part ii", "part iii",
+)
+
+
+def classify_table(table: dict[str, Any], cells: list[Cell]) -> tuple[str, str]:
+    """Classify a stored table as financial, non-financial or unknown.
+
+    The Phase 9.6.2 "unparseable" count was dominated by tables of contents and executive-bio
+    tables. Counting those as extraction failures measures the corpus, not the parser, so they are
+    separated instead of being made "verified".
+    """
+    caption = _norm(table.get("caption") or "").lower()
+    section = _norm(table.get("section_path") or "").lower()
+    labels = [_norm(cell.row_label).lower() for cell in cells[:40]]
+    headers = " ".join(_norm(cell.column_label).lower() for cell in cells[:20])
+    haystack = f"{caption} {section} {headers}"
+    if any(hint in label for label in labels for hint in NON_FINANCIAL_LABEL_HINTS):
+        return "non_financial", "document_navigation_or_personnel_table"
+    if any(hint in haystack for hint in FINANCIAL_CAPTION_HINTS):
+        if cells:
+            return "financial", "caption_or_section_signal"
+        return "unknown", "no_cells"
+    verified = sum(1 for cell in cells if cell.status == "verified")
+    numeric_density = verified / len(cells) if cells else 0.0
+    if len(cells) >= 6 and numeric_density >= 0.5:
+        return "financial", "numeric_density"
+    return "unknown", "no_financial_signal"
+
+
 def cell_as_of(cell: Cell, cutoff: str) -> bool:
     """A cell may only be used if its document was available at the cutoff."""
     if not cell.availability_time:
@@ -262,4 +323,7 @@ def cell_as_of(cell: Cell, cutoff: str) -> bool:
     return cell.availability_time <= cutoff
 
 
-__all__ = ["Cell", "CONTRACT_VERSION", "detect_scale", "parse_number", "extract_cells", "cell_as_of"]
+__all__ = [
+    "Cell", "CONTRACT_VERSION", "classify_table", "detect_scale", "parse_number",
+    "extract_cells", "cell_as_of", "split_footnote",
+]
