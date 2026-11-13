@@ -1,6 +1,5 @@
 {
   "schema": "atlas.phase9_6.case_study.v1",
-  "question": "What does the company disclose about liquidity and capital resources?",
   "cutoff": "2021-06-30T00:00:00Z",
   "policy": "public_available",
   "label": "self_authored",
