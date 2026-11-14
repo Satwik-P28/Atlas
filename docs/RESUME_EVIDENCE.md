@@ -1,6 +1,6 @@
 # Resume evidence
 
-Git checkpoint for these bullets: branch `cursor/focus-priority0-827f` (derive SHA after merge/push). Spec baseline SHA before edits: `616f131ffa5f19dad4ceee4b8f02ba874a497b57`.
+Git checkpoint for these bullets: branch `cursor/focus-priority0-827f` @ `b605299b55d70817e7272caed92c44d11bc3c3fc`. Spec baseline SHA before edits: `616f131ffa5f19dad4ceee4b8f02ba874a497b57`.
 
 ## Bullet 1
 

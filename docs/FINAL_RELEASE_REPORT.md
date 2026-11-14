@@ -9,7 +9,7 @@
 | Development (same tree as candidate) | `5b185a8fe36dcbe0d2e9c053ffde3003ed65d2d6` |
 | Spec v3.1.0 SHA-256 | `d1800cfea35d973e2ff2b3570f8bf564fd3a7aceabca2f623ec5de17931a1111` (verified) |
 
-Priority 0 branch: `cursor/focus-priority0-827f` (see latest commit after push).
+Priority 0 branch: `cursor/focus-priority0-827f` @ `b605299b55d70817e7272caed92c44d11bc3c3fc`.
 
 ## Engineering
 
