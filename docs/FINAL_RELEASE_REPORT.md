@@ -6,7 +6,8 @@
 |-------|-------|
 | Branch | `focus/integration` (based on PR #1 head `3f184ebcfc4524de06d61c44c770580f1135e27b`) |
 | Integration commit (code + reconciled FOCUS docs) | `28ff2e88508b1a6b212aec2e57df1eda35966a8f` |
-| This report | committed on top of the integration commit; the branch head at hand-off is stated in the delivery message |
+| Follow-up commits | `13abbe5` this report, `f92239d` fingerprint-claim correction, `4ea0704` `make focus-verify` default |
+| Branch head | the delivery message states the authoritative head for `focus/integration` and PR #1 |
 | Reconciles | `cursor/focus-priority0-827f` (PR #1) and `focus/application-ready` (`bf5f6ade…`) |
 | `main` | untouched at `644448d4fbb3414c9c8045f5a86030ef34bfe2df` |
 | `focus/application-ready` | preserved as reference, not deleted |
