@@ -462,6 +462,10 @@ class FinancialAnswerEngine:
         }
         return {
             "outcome": "answered",
+            # The operator is recorded on the packet, not inferred from ``answer_type``. They are
+            # different facts: ``answer_type`` describes the answer's shape, the operator names
+            # the computation a verifier must reproduce.
+            "operator": operator,
             "answer_type": answer_type,
             "value": str(value),
             "unit": unit,

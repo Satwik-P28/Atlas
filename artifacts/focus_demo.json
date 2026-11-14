@@ -1,0 +1,1719 @@
+{
+  "adversarial": [
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "INVALID",
+      "mutation": "changed_result",
+      "reasons": [
+        "independent_arithmetic:claimed 99999.00 recomputed 43004.00"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "INVALID",
+      "mutation": "changed_raw_input",
+      "reasons": [
+        "independent_arithmetic:claimed 43004.00 recomputed 44004.00"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "mutation": "changed_input_and_result",
+      "reasons": [
+        "manifest_raw_0:pinned '43,004' claimed '44,004'"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "mutation": "changed_source_fingerprint",
+      "reasons": [
+        "manifest_document_sha256:document bytes differ from the pinned manifest"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "mutation": "changed_issuer",
+      "reasons": [
+        "manifest_issuer_issuer_id:pinned 'ISS-CIK0000021344' claimed 'ISS-CIK0000000001'"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "mutation": "changed_accession",
+      "reasons": [
+        "manifest_document:accession 0000000000-00-000000 not pinned"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "mutation": "changed_period",
+      "reasons": [
+        "manifest_period_0:pinned '2022' claimed '1999'"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "mutation": "changed_currency",
+      "reasons": [
+        "manifest_currency_0:pinned None claimed 'EUR'"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "mutation": "changed_scale",
+      "reasons": [
+        "manifest_scale_0:pinned 6 claimed 9"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "mutation": "changed_availability",
+      "reasons": [
+        "manifest_availability_time_0:pinned '2023-02-21T21:18:20Z' claimed '1999-01-01T00:00:00Z'"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "mutation": "changed_coordinates",
+      "reasons": [
+        "manifest_cell_0:cell ('cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279', 2, 2) is not pinned"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "mutation": "changed_concept",
+      "reasons": [
+        "manifest_concept_0:pinned 'revenue' claimed 'net_income'"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "mutation": "changed_table_fingerprint",
+      "reasons": [
+        "manifest_cell_0:cell ('ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 1, 2) is not pinned"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "INVALID",
+      "mutation": "changed_operator",
+      "reasons": [
+        "structure:evidence_count_mismatch:ratio:1"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "INVALID",
+      "mutation": "changed_value_scale_consistently",
+      "reasons": [
+        "independent_arithmetic:claimed 43004000.0 recomputed 43004.00"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    },
+    {
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "mutation": "changed_row_label",
+      "reasons": [
+        "manifest_row_label_0:pinned 'Net Operating Revenues' claimed 'Other revenue'"
+      ],
+      "rejected": true,
+      "self_consistent_after_tamper": true
+    }
+  ],
+  "ambiguity_probe": {
+    "context": {
+      "candidates": [
+        "CELL-1495e0e4049785a4",
+        "CELL-80b7b0c7d7a617b7",
+        "CELL-5bf02b29cf46533f",
+        "CELL-373f3ff26df926f9",
+        "CELL-bd1174e8ee47d172"
+      ],
+      "metric": "total assets"
+    },
+    "issuer": "JPMORGAN CHASE & CO",
+    "metric": "total assets",
+    "period": "2022",
+    "reason": "metric_ambiguous",
+    "status": "observed"
+  },
+  "answer": {
+    "case_id": "FOCUS-01",
+    "certificate_fingerprint": "a84f1e0fa85469780cc47dbd0b183bc34a473a9ab5863299690bc8e165898626",
+    "certificate_sha256": "3484b0ab69ee6293090418b01ab0c8df213073ee9728214e3ac5d5fedd197aec",
+    "issuer": "COCA COLA CO",
+    "level_with_trusted_evidence": "SOURCE_VERIFIED",
+    "level_without_evidence": "ARITHMETIC_VERIFIED",
+    "reasons": [],
+    "request": {
+      "concept": "revenue",
+      "period": "2022"
+    },
+    "source_route": "snapshot",
+    "unit": {
+      "kind": null,
+      "scale": 6
+    },
+    "value": "43004.00"
+  },
+  "cases": [
+    {
+      "case_id": "FOCUS-01",
+      "classification": "answered",
+      "context": null,
+      "currency": null,
+      "cutoff": "2023-06-30T00:00:00Z",
+      "family": "operating",
+      "inputs": [
+        {
+          "accession": "0000021344-23-000011",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-21T21:18:20Z",
+          "cell_id": "CELL-b5eb090816402015",
+          "column": 2,
+          "column_label": "2021",
+          "currency": null,
+          "document_id": "DOC-3bf19fd22fcd4c58",
+          "period": "2022",
+          "raw": "43,004",
+          "rights": "public_domain",
+          "row": 1,
+          "row_label": "Net Operating Revenues",
+          "scale": 6,
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
+          "value": "43004"
+        }
+      ],
+      "issuer": "COCA COLA CO",
+      "note": null,
+      "operator": "lookup",
+      "outcome": "answered",
+      "period": "2022",
+      "reason": null,
+      "request": {
+        "concept": "revenue",
+        "period": "2022"
+      },
+      "resolution": {
+        "base": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000021344-23-000011",
+            "cell_id": "CELL-b5eb090816402015",
+            "column": 2,
+            "column_label": "2021",
+            "currency": null,
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "period": "2022",
+            "raw": "43,004",
+            "row": 1,
+            "row_label": "Net Operating Revenues",
+            "scale": 6,
+            "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
+            "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+            "table_id": "TAB-6a9c5dc82936ea46",
+            "value": "43004"
+          },
+          "concept": "revenue",
+          "period": "2022",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 6.5,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000021344-23-000011",
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "filed_date": "2023-02-21",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        }
+      },
+      "unit": {
+        "kind": null,
+        "scale": 6
+      },
+      "value": "43004.00"
+    },
+    {
+      "case_id": "FOCUS-02",
+      "classification": "answered",
+      "context": null,
+      "currency": null,
+      "cutoff": "2023-06-30T00:00:00Z",
+      "family": "operating",
+      "inputs": [
+        {
+          "accession": "0000021344-23-000011",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-21T21:18:20Z",
+          "cell_id": "CELL-672817e69bfb98fb",
+          "column": 1,
+          "column_label": "2022",
+          "currency": null,
+          "document_id": "DOC-3bf19fd22fcd4c58",
+          "period": "2022",
+          "raw": "9,571",
+          "rights": "public_domain",
+          "row": 13,
+          "row_label": "Consolidated Net Income",
+          "scale": 6,
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
+          "value": "9571"
+        }
+      ],
+      "issuer": "COCA COLA CO",
+      "note": null,
+      "operator": "lookup",
+      "outcome": "answered",
+      "period": "2022",
+      "reason": null,
+      "request": {
+        "concept": "net_income",
+        "period": "2022"
+      },
+      "resolution": {
+        "base": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000021344-23-000011",
+            "cell_id": "CELL-672817e69bfb98fb",
+            "column": 1,
+            "column_label": "2022",
+            "currency": null,
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "period": "2022",
+            "raw": "9,571",
+            "row": 13,
+            "row_label": "Consolidated Net Income",
+            "scale": 6,
+            "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
+            "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+            "table_id": "TAB-6a9c5dc82936ea46",
+            "value": "9571"
+          },
+          "concept": "net_income",
+          "period": "2022",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 6.2,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000021344-23-000011",
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "filed_date": "2023-02-21",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        }
+      },
+      "unit": {
+        "kind": null,
+        "scale": 6
+      },
+      "value": "9571.00"
+    },
+    {
+      "case_id": "FOCUS-03",
+      "classification": "answered",
+      "context": null,
+      "currency": null,
+      "cutoff": "2023-06-30T00:00:00Z",
+      "family": "operating",
+      "inputs": [
+        {
+          "accession": "0000021344-23-000011",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-21T21:18:20Z",
+          "cell_id": "CELL-b5eb090816402015",
+          "column": 2,
+          "column_label": "2021",
+          "currency": null,
+          "document_id": "DOC-3bf19fd22fcd4c58",
+          "period": "2022",
+          "raw": "43,004",
+          "rights": "public_domain",
+          "row": 1,
+          "row_label": "Net Operating Revenues",
+          "scale": 6,
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
+          "value": "43004"
+        },
+        {
+          "accession": "0000021344-23-000011",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-21T21:18:20Z",
+          "cell_id": "CELL-5c372c74c6ab2ef0",
+          "column": 5,
+          "column_label": "",
+          "currency": null,
+          "document_id": "DOC-3bf19fd22fcd4c58",
+          "period": "2021",
+          "raw": "38,655",
+          "rights": "public_domain",
+          "row": 1,
+          "row_label": "Net Operating Revenues",
+          "scale": 6,
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
+          "value": "38655"
+        }
+      ],
+      "issuer": "COCA COLA CO",
+      "note": null,
+      "operator": "percentage_change",
+      "outcome": "answered",
+      "period": "2022 vs 2021",
+      "reason": null,
+      "request": {
+        "concept": "revenue",
+        "current_period": "2022",
+        "prior_period": "2021"
+      },
+      "resolution": {
+        "current": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000021344-23-000011",
+            "cell_id": "CELL-b5eb090816402015",
+            "column": 2,
+            "column_label": "2021",
+            "currency": null,
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "period": "2022",
+            "raw": "43,004",
+            "row": 1,
+            "row_label": "Net Operating Revenues",
+            "scale": 6,
+            "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
+            "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+            "table_id": "TAB-6a9c5dc82936ea46",
+            "value": "43004"
+          },
+          "concept": "revenue",
+          "period": "2022",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 6.5,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000021344-23-000011",
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "filed_date": "2023-02-21",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        },
+        "prior": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000021344-23-000011",
+            "cell_id": "CELL-5c372c74c6ab2ef0",
+            "column": 5,
+            "column_label": "",
+            "currency": null,
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "period": "2021",
+            "raw": "38,655",
+            "row": 1,
+            "row_label": "Net Operating Revenues",
+            "scale": 6,
+            "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
+            "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+            "table_id": "TAB-6a9c5dc82936ea46",
+            "value": "38655"
+          },
+          "concept": "revenue",
+          "period": "2021",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 6.5,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000021344-23-000011",
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "filed_date": "2023-02-21",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        }
+      },
+      "unit": {
+        "kind": "percent",
+        "scale": 0
+      },
+      "value": "11.25"
+    },
+    {
+      "case_id": "FOCUS-04",
+      "classification": "answered",
+      "context": null,
+      "currency": null,
+      "cutoff": "2023-06-30T00:00:00Z",
+      "family": "operating",
+      "inputs": [
+        {
+          "accession": "0000021344-23-000011",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-21T21:18:20Z",
+          "cell_id": "CELL-a5c4a2851a0377eb",
+          "column": 1,
+          "column_label": "2022",
+          "currency": null,
+          "document_id": "DOC-3bf19fd22fcd4c58",
+          "period": "2022",
+          "raw": "10,909",
+          "rights": "public_domain",
+          "row": 6,
+          "row_label": "Operating Income",
+          "scale": 6,
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
+          "value": "10909"
+        },
+        {
+          "accession": "0000021344-23-000011",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-21T21:18:20Z",
+          "cell_id": "CELL-b5eb090816402015",
+          "column": 2,
+          "column_label": "2021",
+          "currency": null,
+          "document_id": "DOC-3bf19fd22fcd4c58",
+          "period": "2022",
+          "raw": "43,004",
+          "rights": "public_domain",
+          "row": 1,
+          "row_label": "Net Operating Revenues",
+          "scale": 6,
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
+          "value": "43004"
+        }
+      ],
+      "issuer": "COCA COLA CO",
+      "note": null,
+      "operator": "margin",
+      "outcome": "answered",
+      "period": "2022",
+      "reason": null,
+      "request": {
+        "concept": "revenue",
+        "numerator": "operating_income",
+        "period": "2022"
+      },
+      "resolution": {
+        "base": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000021344-23-000011",
+            "cell_id": "CELL-b5eb090816402015",
+            "column": 2,
+            "column_label": "2021",
+            "currency": null,
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "period": "2022",
+            "raw": "43,004",
+            "row": 1,
+            "row_label": "Net Operating Revenues",
+            "scale": 6,
+            "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
+            "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+            "table_id": "TAB-6a9c5dc82936ea46",
+            "value": "43004"
+          },
+          "concept": "revenue",
+          "period": "2022",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 6.5,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000021344-23-000011",
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "filed_date": "2023-02-21",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        },
+        "numerator": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000021344-23-000011",
+            "cell_id": "CELL-a5c4a2851a0377eb",
+            "column": 1,
+            "column_label": "2022",
+            "currency": null,
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "period": "2022",
+            "raw": "10,909",
+            "row": 6,
+            "row_label": "Operating Income",
+            "scale": 6,
+            "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
+            "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+            "table_id": "TAB-6a9c5dc82936ea46",
+            "value": "10909"
+          },
+          "concept": "operating_income",
+          "period": "2022",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 6.5,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000021344-23-000011",
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "filed_date": "2023-02-21",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        }
+      },
+      "unit": {
+        "kind": "percent",
+        "scale": 0
+      },
+      "value": "25.37"
+    },
+    {
+      "case_id": "FOCUS-05",
+      "classification": "answered",
+      "context": null,
+      "currency": null,
+      "cutoff": "2023-06-30T00:00:00Z",
+      "family": "operating",
+      "inputs": [
+        {
+          "accession": "0000021344-23-000011",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-21T21:18:20Z",
+          "cell_id": "CELL-873903c129eb143a",
+          "column": 2,
+          "column_label": "2021",
+          "currency": null,
+          "document_id": "DOC-3bf19fd22fcd4c58",
+          "period": "2022",
+          "raw": "92,763",
+          "rights": "public_domain",
+          "row": 19,
+          "row_label": "Total Assets",
+          "scale": 6,
+          "table_id": "TAB-7c81cb80cc9c6192",
+          "unit_id": "UNI-7c81cb80cc9c6192",
+          "value": "92763"
+        },
+        {
+          "accession": "0000021344-23-000011",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-21T21:18:20Z",
+          "cell_id": "CELL-b5eb090816402015",
+          "column": 2,
+          "column_label": "2021",
+          "currency": null,
+          "document_id": "DOC-3bf19fd22fcd4c58",
+          "period": "2022",
+          "raw": "43,004",
+          "rights": "public_domain",
+          "row": 1,
+          "row_label": "Net Operating Revenues",
+          "scale": 6,
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
+          "value": "43004"
+        }
+      ],
+      "issuer": "COCA COLA CO",
+      "note": null,
+      "operator": "ratio",
+      "outcome": "answered",
+      "period": "2022",
+      "reason": null,
+      "request": {
+        "concept": "revenue",
+        "numerator": "total_assets",
+        "period": "2022"
+      },
+      "resolution": {
+        "base": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000021344-23-000011",
+            "cell_id": "CELL-b5eb090816402015",
+            "column": 2,
+            "column_label": "2021",
+            "currency": null,
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "period": "2022",
+            "raw": "43,004",
+            "row": 1,
+            "row_label": "Net Operating Revenues",
+            "scale": 6,
+            "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
+            "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+            "table_id": "TAB-6a9c5dc82936ea46",
+            "value": "43004"
+          },
+          "concept": "revenue",
+          "period": "2022",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 6.5,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000021344-23-000011",
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "filed_date": "2023-02-21",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        },
+        "numerator": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000021344-23-000011",
+            "cell_id": "CELL-873903c129eb143a",
+            "column": 2,
+            "column_label": "2021",
+            "currency": null,
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "period": "2022",
+            "raw": "92,763",
+            "row": 19,
+            "row_label": "Total Assets",
+            "scale": 6,
+            "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
+            "source_sha256": "de5296e553332f9b463978bb0e56c622dc53e2ef8a6c6672226d80505f7046db",
+            "table_id": "TAB-7c81cb80cc9c6192",
+            "value": "92763"
+          },
+          "concept": "total_assets",
+          "period": "2022",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 6.5,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000021344-23-000011",
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "filed_date": "2023-02-21",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        }
+      },
+      "unit": {
+        "kind": "ratio",
+        "scale": 0
+      },
+      "value": "2.16"
+    },
+    {
+      "case_id": "FOCUS-06",
+      "classification": "answered",
+      "context": null,
+      "currency": "USD",
+      "cutoff": "2024-01-01T00:00:00Z",
+      "family": "bank",
+      "inputs": [
+        {
+          "accession": "0000019617-23-000231",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-21T21:28:55Z",
+          "cell_id": "CELL-266ffe8cd0484184",
+          "column": 2,
+          "column_label": "",
+          "currency": "USD",
+          "document_id": "DOC-cd52c9e55c0845a1",
+          "period": "2022",
+          "raw": "3,665,743",
+          "rights": "public_domain",
+          "row": 17,
+          "row_label": "Total assets (a)",
+          "scale": 6,
+          "table_id": "TAB-d22d786f04910263",
+          "unit_id": "UNI-d22d786f04910263",
+          "value": "3665743"
+        }
+      ],
+      "issuer": "JPMORGAN CHASE & CO",
+      "note": null,
+      "operator": "lookup",
+      "outcome": "answered",
+      "period": "2022",
+      "reason": null,
+      "request": {
+        "concept": "total_assets",
+        "period": "2022"
+      },
+      "resolution": {
+        "base": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000019617-23-000231",
+            "cell_id": "CELL-266ffe8cd0484184",
+            "column": 2,
+            "column_label": "",
+            "currency": "USD",
+            "document_id": "DOC-cd52c9e55c0845a1",
+            "period": "2022",
+            "raw": "3,665,743",
+            "row": 17,
+            "row_label": "Total assets (a)",
+            "scale": 6,
+            "section_path": "Item 15. Exhibits, Financial Statement Schedules.",
+            "source_sha256": "de8f026b15473349ed30680db91bba078dc183af34232c1ea8a8b302a9dca237",
+            "table_id": "TAB-d22d786f04910263",
+            "value": "3665743"
+          },
+          "concept": "total_assets",
+          "period": "2022",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 5.7,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000019617-23-000231",
+            "document_id": "DOC-cd52c9e55c0845a1",
+            "filed_date": "2023-02-21",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        }
+      },
+      "unit": {
+        "kind": "USD",
+        "scale": 6
+      },
+      "value": "3665743.00"
+    },
+    {
+      "case_id": "FOCUS-07",
+      "classification": "answered",
+      "context": null,
+      "currency": "USD",
+      "cutoff": "2024-01-01T00:00:00Z",
+      "family": "bank",
+      "inputs": [
+        {
+          "accession": "0000019617-23-000231",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-21T21:28:55Z",
+          "cell_id": "CELL-ed434ee59b3a57ba",
+          "column": 2,
+          "column_label": "",
+          "currency": "USD",
+          "document_id": "DOC-cd52c9e55c0845a1",
+          "period": "2022",
+          "raw": "37,676",
+          "rights": "public_domain",
+          "row": 26,
+          "row_label": "Net income",
+          "scale": 6,
+          "table_id": "TAB-fd229317ee190561",
+          "unit_id": "UNI-fd229317ee190561",
+          "value": "37676"
+        }
+      ],
+      "issuer": "JPMORGAN CHASE & CO",
+      "note": null,
+      "operator": "lookup",
+      "outcome": "answered",
+      "period": "2022",
+      "reason": null,
+      "request": {
+        "concept": "net_income",
+        "period": "2022"
+      },
+      "resolution": {
+        "base": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000019617-23-000231",
+            "cell_id": "CELL-ed434ee59b3a57ba",
+            "column": 2,
+            "column_label": "",
+            "currency": "USD",
+            "document_id": "DOC-cd52c9e55c0845a1",
+            "period": "2022",
+            "raw": "37,676",
+            "row": 26,
+            "row_label": "Net income",
+            "scale": 6,
+            "section_path": "Item 15. Exhibits, Financial Statement Schedules.",
+            "source_sha256": "982b59ce9ee019dc61ec131532206f34a1f5290305e89744653a6c9d95a22392",
+            "table_id": "TAB-fd229317ee190561",
+            "value": "37676"
+          },
+          "concept": "net_income",
+          "period": "2022",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 6.5,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000019617-23-000231",
+            "document_id": "DOC-cd52c9e55c0845a1",
+            "filed_date": "2023-02-21",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        }
+      },
+      "unit": {
+        "kind": "USD",
+        "scale": 6
+      },
+      "value": "37676.00"
+    },
+    {
+      "case_id": "FOCUS-08",
+      "classification": "answered",
+      "context": null,
+      "currency": "USD",
+      "cutoff": "2024-01-01T00:00:00Z",
+      "family": "bank",
+      "inputs": [
+        {
+          "accession": "0000019617-23-000231",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-21T21:28:55Z",
+          "cell_id": "CELL-ed434ee59b3a57ba",
+          "column": 2,
+          "column_label": "",
+          "currency": "USD",
+          "document_id": "DOC-cd52c9e55c0845a1",
+          "period": "2022",
+          "raw": "37,676",
+          "rights": "public_domain",
+          "row": 26,
+          "row_label": "Net income",
+          "scale": 6,
+          "table_id": "TAB-fd229317ee190561",
+          "unit_id": "UNI-fd229317ee190561",
+          "value": "37676"
+        },
+        {
+          "accession": "0000019617-23-000231",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-21T21:28:55Z",
+          "cell_id": "CELL-266ffe8cd0484184",
+          "column": 2,
+          "column_label": "",
+          "currency": "USD",
+          "document_id": "DOC-cd52c9e55c0845a1",
+          "period": "2022",
+          "raw": "3,665,743",
+          "rights": "public_domain",
+          "row": 17,
+          "row_label": "Total assets (a)",
+          "scale": 6,
+          "table_id": "TAB-d22d786f04910263",
+          "unit_id": "UNI-d22d786f04910263",
+          "value": "3665743"
+        }
+      ],
+      "issuer": "JPMORGAN CHASE & CO",
+      "note": null,
+      "operator": "ratio",
+      "outcome": "answered",
+      "period": "2022",
+      "reason": null,
+      "request": {
+        "concept": "total_assets",
+        "numerator": "net_income",
+        "period": "2022"
+      },
+      "resolution": {
+        "base": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000019617-23-000231",
+            "cell_id": "CELL-266ffe8cd0484184",
+            "column": 2,
+            "column_label": "",
+            "currency": "USD",
+            "document_id": "DOC-cd52c9e55c0845a1",
+            "period": "2022",
+            "raw": "3,665,743",
+            "row": 17,
+            "row_label": "Total assets (a)",
+            "scale": 6,
+            "section_path": "Item 15. Exhibits, Financial Statement Schedules.",
+            "source_sha256": "de8f026b15473349ed30680db91bba078dc183af34232c1ea8a8b302a9dca237",
+            "table_id": "TAB-d22d786f04910263",
+            "value": "3665743"
+          },
+          "concept": "total_assets",
+          "period": "2022",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 5.7,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000019617-23-000231",
+            "document_id": "DOC-cd52c9e55c0845a1",
+            "filed_date": "2023-02-21",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        },
+        "numerator": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000019617-23-000231",
+            "cell_id": "CELL-ed434ee59b3a57ba",
+            "column": 2,
+            "column_label": "",
+            "currency": "USD",
+            "document_id": "DOC-cd52c9e55c0845a1",
+            "period": "2022",
+            "raw": "37,676",
+            "row": 26,
+            "row_label": "Net income",
+            "scale": 6,
+            "section_path": "Item 15. Exhibits, Financial Statement Schedules.",
+            "source_sha256": "982b59ce9ee019dc61ec131532206f34a1f5290305e89744653a6c9d95a22392",
+            "table_id": "TAB-fd229317ee190561",
+            "value": "37676"
+          },
+          "concept": "net_income",
+          "period": "2022",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 6.5,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000019617-23-000231",
+            "document_id": "DOC-cd52c9e55c0845a1",
+            "filed_date": "2023-02-21",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        }
+      },
+      "unit": {
+        "kind": "ratio",
+        "scale": 0
+      },
+      "value": "0.01"
+    },
+    {
+      "case_id": "FOCUS-09",
+      "classification": "justified_unanswerability",
+      "context": null,
+      "currency": null,
+      "cutoff": "2024-01-01T00:00:00Z",
+      "family": "bank",
+      "inputs": [],
+      "issuer": "JPMORGAN CHASE & CO",
+      "note": "no verified statement row of this issuer uses the concept 'gross_profit'; the question asks for a line item the statements do not report",
+      "operator": "lookup",
+      "outcome": "abstained",
+      "period": null,
+      "reason": "concept_resolution:not_found",
+      "request": {
+        "concept": "gross_profit",
+        "period": "2022"
+      },
+      "resolution": {
+        "base": {
+          "candidates": [],
+          "cell": null,
+          "concept": "gross_profit",
+          "period": "2022",
+          "reason": "no_candidate_row",
+          "resolver_version": "9.6.3",
+          "score": 0.0,
+          "status": "not_found",
+          "vintage": null,
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        }
+      },
+      "unit": null,
+      "value": null
+    },
+    {
+      "case_id": "FOCUS-10",
+      "classification": "answered",
+      "context": null,
+      "currency": null,
+      "cutoff": "2024-01-01T00:00:00Z",
+      "family": "segment",
+      "inputs": [
+        {
+          "accession": "0000066740-23-000014",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-08T18:14:49Z",
+          "cell_id": "CELL-9749d86ee392019e",
+          "column": 11,
+          "column_label": "",
+          "currency": null,
+          "document_id": "DOC-5c68712c37634802",
+          "period": "2022",
+          "raw": "34,229",
+          "rights": "public_domain",
+          "row": 1,
+          "row_label": "Net sales",
+          "scale": 6,
+          "table_id": "TAB-273c3e0c42fcbf80",
+          "unit_id": "UNI-273c3e0c42fcbf80",
+          "value": "34229"
+        }
+      ],
+      "issuer": "3M CO",
+      "note": null,
+      "operator": "lookup",
+      "outcome": "answered",
+      "period": "2022",
+      "reason": null,
+      "request": {
+        "concept": "revenue",
+        "period": "2022"
+      },
+      "resolution": {
+        "base": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000066740-23-000014",
+            "cell_id": "CELL-9749d86ee392019e",
+            "column": 11,
+            "column_label": "",
+            "currency": null,
+            "document_id": "DOC-5c68712c37634802",
+            "period": "2022",
+            "raw": "34,229",
+            "row": 1,
+            "row_label": "Net sales",
+            "scale": 6,
+            "section_path": "Item 8. Financial Statements and Supplementary Data.",
+            "source_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
+            "table_id": "TAB-273c3e0c42fcbf80",
+            "value": "34229"
+          },
+          "concept": "revenue",
+          "period": "2022",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 6.5,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000066740-23-000014",
+            "document_id": "DOC-5c68712c37634802",
+            "filed_date": "2023-02-08",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        }
+      },
+      "unit": {
+        "kind": null,
+        "scale": 6
+      },
+      "value": "34229.00"
+    },
+    {
+      "case_id": "FOCUS-11",
+      "classification": "answered",
+      "context": null,
+      "currency": null,
+      "cutoff": "2024-01-01T00:00:00Z",
+      "family": "segment",
+      "inputs": [
+        {
+          "accession": "0000066740-23-000014",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-08T18:14:49Z",
+          "cell_id": "CELL-9749d86ee392019e",
+          "column": 11,
+          "column_label": "",
+          "currency": null,
+          "document_id": "DOC-5c68712c37634802",
+          "period": "2022",
+          "raw": "34,229",
+          "rights": "public_domain",
+          "row": 1,
+          "row_label": "Net sales",
+          "scale": 6,
+          "table_id": "TAB-273c3e0c42fcbf80",
+          "unit_id": "UNI-273c3e0c42fcbf80",
+          "value": "34229"
+        },
+        {
+          "accession": "0000066740-23-000014",
+          "availability_precision": "unknown",
+          "availability_time": "2023-02-08T18:14:49Z",
+          "cell_id": "CELL-f633d5740a1665d0",
+          "column": 15,
+          "column_label": "",
+          "currency": null,
+          "document_id": "DOC-5c68712c37634802",
+          "period": "2021",
+          "raw": "35,355",
+          "rights": "public_domain",
+          "row": 1,
+          "row_label": "Net sales",
+          "scale": 6,
+          "table_id": "TAB-273c3e0c42fcbf80",
+          "unit_id": "UNI-273c3e0c42fcbf80",
+          "value": "35355"
+        }
+      ],
+      "issuer": "3M CO",
+      "note": null,
+      "operator": "percentage_change",
+      "outcome": "answered",
+      "period": "2022 vs 2021",
+      "reason": null,
+      "request": {
+        "concept": "revenue",
+        "current_period": "2022",
+        "prior_period": "2021"
+      },
+      "resolution": {
+        "current": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000066740-23-000014",
+            "cell_id": "CELL-9749d86ee392019e",
+            "column": 11,
+            "column_label": "",
+            "currency": null,
+            "document_id": "DOC-5c68712c37634802",
+            "period": "2022",
+            "raw": "34,229",
+            "row": 1,
+            "row_label": "Net sales",
+            "scale": 6,
+            "section_path": "Item 8. Financial Statements and Supplementary Data.",
+            "source_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
+            "table_id": "TAB-273c3e0c42fcbf80",
+            "value": "34229"
+          },
+          "concept": "revenue",
+          "period": "2022",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 6.5,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000066740-23-000014",
+            "document_id": "DOC-5c68712c37634802",
+            "filed_date": "2023-02-08",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        },
+        "prior": {
+          "candidates": [],
+          "cell": {
+            "accession": "0000066740-23-000014",
+            "cell_id": "CELL-f633d5740a1665d0",
+            "column": 15,
+            "column_label": "",
+            "currency": null,
+            "document_id": "DOC-5c68712c37634802",
+            "period": "2021",
+            "raw": "35,355",
+            "row": 1,
+            "row_label": "Net sales",
+            "scale": 6,
+            "section_path": "Item 8. Financial Statements and Supplementary Data.",
+            "source_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
+            "table_id": "TAB-273c3e0c42fcbf80",
+            "value": "35355"
+          },
+          "concept": "revenue",
+          "period": "2021",
+          "reason": null,
+          "resolver_version": "9.6.3",
+          "score": 6.5,
+          "status": "resolved",
+          "vintage": {
+            "accession": "0000066740-23-000014",
+            "document_id": "DOC-5c68712c37634802",
+            "filed_date": "2023-02-08",
+            "period_of_report": "2022-12-31",
+            "selection_policy": "filing whose own period is the requested year; disagreements refused"
+          },
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        }
+      },
+      "unit": {
+        "kind": "percent",
+        "scale": 0
+      },
+      "value": "-3.18"
+    },
+    {
+      "case_id": "FOCUS-12",
+      "classification": "capability_gap",
+      "context": null,
+      "currency": null,
+      "cutoff": "2024-01-01T00:00:00Z",
+      "family": "segment",
+      "inputs": [],
+      "issuer": "3M CO",
+      "note": "the filing prints a unique statement row for this concept ('Net sales' = '32,765' for 2018), but concept resolution did not bind it (concept_resolution:ambiguous); this is a resolution limitation, not an unanswerable question",
+      "operator": "lookup",
+      "outcome": "abstained",
+      "period": null,
+      "reason": "concept_resolution:ambiguous",
+      "request": {
+        "concept": "revenue",
+        "period": "2018"
+      },
+      "resolution": {
+        "base": {
+          "candidates": [
+            {
+              "document_id": "DOC-9d2ea65655d14ebc",
+              "period": "2018",
+              "raw": "12,267",
+              "row_label": "Sales (millions)",
+              "score": 2.6,
+              "value": "12267"
+            },
+            {
+              "document_id": "DOC-9d2ea65655d14ebc",
+              "period": "2018",
+              "raw": "22.3",
+              "row_label": "Percent of sales",
+              "score": 2.6,
+              "value": "22.3"
+            },
+            {
+              "document_id": "DOC-9d2ea65655d14ebc",
+              "period": "2018",
+              "raw": "6,827",
+              "row_label": "Sales (millions)",
+              "score": 2.6,
+              "value": "6827"
+            },
+            {
+              "document_id": "DOC-9d2ea65655d14ebc",
+              "period": "2018",
+              "raw": "25.2",
+              "row_label": "Percent of sales",
+              "score": 2.6,
+              "value": "25.2"
+            },
+            {
+              "document_id": "DOC-9d2ea65655d14ebc",
+              "period": "2018",
+              "raw": "6,021",
+              "row_label": "Sales (millions)",
+              "score": 2.6,
+              "value": "6021"
+            },
+            {
+              "document_id": "DOC-9d2ea65655d14ebc",
+              "period": "2018",
+              "raw": "29.9",
+              "row_label": "Percent of sales",
+              "score": 2.6,
+              "value": "29.9"
+            },
+            {
+              "document_id": "DOC-9d2ea65655d14ebc",
+              "period": "2018",
+              "raw": "5,472",
+              "row_label": "Sales (millions)",
+              "score": 2.6,
+              "value": "5472"
+            },
+            {
+              "document_id": "DOC-9d2ea65655d14ebc",
+              "period": "2018",
+              "raw": "37.6",
+              "row_label": "Percent of sales",
+              "score": 2.6,
+              "value": "37.6"
+            },
+            {
+              "document_id": "DOC-9d2ea65655d14ebc",
+              "period": "2018",
+              "raw": "4,796",
+              "row_label": "Sales (millions)",
+              "score": 2.6,
+              "value": "4796"
+            },
+            {
+              "document_id": "DOC-9d2ea65655d14ebc",
+              "period": "2018",
+              "raw": "21.4",
+              "row_label": "Percent of sales",
+              "score": 2.6,
+              "value": "21.4"
+            }
+          ],
+          "cell": null,
+          "concept": "revenue",
+          "period": "2018",
+          "reason": "conflicting_row_values",
+          "resolver_version": "9.6.3",
+          "score": 0.0,
+          "status": "ambiguous",
+          "vintage": null,
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        }
+      },
+      "unit": null,
+      "value": null
+    },
+    {
+      "case_id": "FOCUS-13",
+      "classification": "historical_information_refusal",
+      "context": null,
+      "currency": null,
+      "cutoff": "2017-01-01T00:00:00Z",
+      "family": "cutoff",
+      "inputs": [],
+      "issuer": "3M CO",
+      "note": "accession 0000066740-23-000014 covers 2022 but became available 2023-02-08T18:14:49Z, after the cutoff 2017-01-01T00:00:00Z",
+      "operator": "lookup",
+      "outcome": "abstained",
+      "period": null,
+      "reason": "concept_resolution:not_found",
+      "request": {
+        "concept": "revenue",
+        "period": "2022"
+      },
+      "resolution": {
+        "base": {
+          "candidates": [],
+          "cell": null,
+          "concept": "revenue",
+          "period": "2022",
+          "reason": "no_candidate_row",
+          "resolver_version": "9.6.3",
+          "score": 0.0,
+          "status": "not_found",
+          "vintage": null,
+          "xbrl_status": "unavailable: no XBRL fact table in this corpus"
+        }
+      },
+      "unit": null,
+      "value": null
+    }
+  ],
+  "certificates": [
+    {
+      "case_id": "FOCUS-01",
+      "certificate_fingerprint": "a84f1e0fa85469780cc47dbd0b183bc34a473a9ab5863299690bc8e165898626",
+      "certificate_sha256": "3484b0ab69ee6293090418b01ab0c8df213073ee9728214e3ac5d5fedd197aec",
+      "issuer": "COCA COLA CO",
+      "level_with_trusted_evidence": "SOURCE_VERIFIED",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "reasons": [],
+      "request": {
+        "concept": "revenue",
+        "period": "2022"
+      },
+      "source_route": "snapshot",
+      "unit": {
+        "kind": null,
+        "scale": 6
+      },
+      "value": "43004.00"
+    },
+    {
+      "case_id": "FOCUS-02",
+      "certificate_fingerprint": "ecf2cb856ecf3519921d96a9410c683c453083a3b28132ca2a7156e440567d6a",
+      "certificate_sha256": "57e65e59a9eec75c82030af6ca01a093e8820548530650760fe246860c98b488",
+      "issuer": "COCA COLA CO",
+      "level_with_trusted_evidence": "SOURCE_VERIFIED",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "reasons": [],
+      "request": {
+        "concept": "net_income",
+        "period": "2022"
+      },
+      "source_route": "snapshot",
+      "unit": {
+        "kind": null,
+        "scale": 6
+      },
+      "value": "9571.00"
+    },
+    {
+      "case_id": "FOCUS-03",
+      "certificate_fingerprint": "2c8296f861672dda426550853e2c9d31cb017900d5b2804f5ae99ebd0f09c103",
+      "certificate_sha256": "a0ca433e9edc8d7442dcad5dedff1a346c2f5f93bc20dbae158ea74d26131cf0",
+      "issuer": "COCA COLA CO",
+      "level_with_trusted_evidence": "SOURCE_VERIFIED",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "reasons": [],
+      "request": {
+        "concept": "revenue",
+        "current_period": "2022",
+        "prior_period": "2021"
+      },
+      "source_route": "snapshot",
+      "unit": {
+        "kind": "percent",
+        "scale": 0
+      },
+      "value": "11.25"
+    },
+    {
+      "case_id": "FOCUS-04",
+      "certificate_fingerprint": "92600465091a3835c767c0808588f72016aea8f8dc349c1fc0d119e768d25fb5",
+      "certificate_sha256": "70d3d5ed4d7d9dc9f54291ae9f0d268a2e5c98d17e390919e9f5ea6ad70cdccf",
+      "issuer": "COCA COLA CO",
+      "level_with_trusted_evidence": "SOURCE_VERIFIED",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "reasons": [],
+      "request": {
+        "concept": "revenue",
+        "numerator": "operating_income",
+        "period": "2022"
+      },
+      "source_route": "snapshot",
+      "unit": {
+        "kind": "percent",
+        "scale": 0
+      },
+      "value": "25.37"
+    },
+    {
+      "case_id": "FOCUS-05",
+      "certificate_fingerprint": "edf44f2562b413d2bcd523dbc435f576c6d5ad241189e6835c15eeca99224e48",
+      "certificate_sha256": "081910a2a9d17ac4c8e2f274a7853bd8b528c19eb6671052e3c7a464105847e5",
+      "issuer": "COCA COLA CO",
+      "level_with_trusted_evidence": "SOURCE_VERIFIED",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "reasons": [],
+      "request": {
+        "concept": "revenue",
+        "numerator": "total_assets",
+        "period": "2022"
+      },
+      "source_route": "snapshot",
+      "unit": {
+        "kind": "ratio",
+        "scale": 0
+      },
+      "value": "2.16"
+    },
+    {
+      "case_id": "FOCUS-06",
+      "certificate_fingerprint": "428aa1830ed55e27bbd7e50b37dc6e65f74d3d9b1e904aef174d3c866c6c8a60",
+      "certificate_sha256": "2ff60a294102d875dc5ec2fd0e35f5e01a1c44bbf80f7d57a225abfa4ffe22c8",
+      "issuer": "JPMORGAN CHASE & CO",
+      "level_with_trusted_evidence": "SOURCE_VERIFIED",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "reasons": [],
+      "request": {
+        "concept": "total_assets",
+        "period": "2022"
+      },
+      "source_route": "snapshot",
+      "unit": {
+        "kind": "USD",
+        "scale": 6
+      },
+      "value": "3665743.00"
+    },
+    {
+      "case_id": "FOCUS-07",
+      "certificate_fingerprint": "60ea866401541b04c5f838cfff72ff7c0fa8edaeeb6c7c6d060e126614a76544",
+      "certificate_sha256": "fe0984b4677e216b4bb959040dbc76ad1f1736cc970ce0f42bb497fa04f99535",
+      "issuer": "JPMORGAN CHASE & CO",
+      "level_with_trusted_evidence": "SOURCE_VERIFIED",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "reasons": [],
+      "request": {
+        "concept": "net_income",
+        "period": "2022"
+      },
+      "source_route": "snapshot",
+      "unit": {
+        "kind": "USD",
+        "scale": 6
+      },
+      "value": "37676.00"
+    },
+    {
+      "case_id": "FOCUS-08",
+      "certificate_fingerprint": "061da7d33ee0ce05112b11bd26c0b4f35870b5b1accb89791d414528e997ae6f",
+      "certificate_sha256": "a17c04bd83bce459b90510111ee49eeec4eb4f93794cb65b589c4f57f5907576",
+      "issuer": "JPMORGAN CHASE & CO",
+      "level_with_trusted_evidence": "SOURCE_VERIFIED",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "reasons": [],
+      "request": {
+        "concept": "total_assets",
+        "numerator": "net_income",
+        "period": "2022"
+      },
+      "source_route": "snapshot",
+      "unit": {
+        "kind": "ratio",
+        "scale": 0
+      },
+      "value": "0.01"
+    },
+    {
+      "case_id": "FOCUS-10",
+      "certificate_fingerprint": "91e7835d6538fe701b00c3d82900609d50d4d13b84bfd754391c821e20b07222",
+      "certificate_sha256": "53b8b0ce8ec00e0453c65d72171595ef465c0e8f964f24d5882f9ec9099d71c9",
+      "issuer": "3M CO",
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "reasons": [
+        "manifest_scale_0:pinned 0 claimed 6"
+      ],
+      "request": {
+        "concept": "revenue",
+        "period": "2022"
+      },
+      "source_route": null,
+      "unit": {
+        "kind": null,
+        "scale": 6
+      },
+      "value": "34229.00"
+    },
+    {
+      "case_id": "FOCUS-11",
+      "certificate_fingerprint": "480781bf627da5da2d3c1438cf242f4c279ca0408d3209837ddd2157322fba5d",
+      "certificate_sha256": "e3d009bd8637d08a7dea75a9e3c42c928e80577391b494d11e26a8095e92e910",
+      "issuer": "3M CO",
+      "level_with_trusted_evidence": "INVALID",
+      "level_without_evidence": "ARITHMETIC_VERIFIED",
+      "reasons": [
+        "manifest_scale_0:pinned 0 claimed 6"
+      ],
+      "request": {
+        "concept": "revenue",
+        "current_period": "2022",
+        "prior_period": "2021"
+      },
+      "source_route": null,
+      "unit": {
+        "kind": "percent",
+        "scale": 0
+      },
+      "value": "-3.18"
+    }
+  ],
+  "corpus": {
+    "database": "var/phase9_6.db",
+    "documents": 4,
+    "evidence_route": "snapshot",
+    "expected_snapshots": 3,
+    "manifest": "/workspace/chats/7c583000e3d88b493cb6695c/artifacts/focus_source_manifest.json",
+    "snapshots_found": 3
+  },
+  "refusals": [
+    {
+      "case_id": "FOCUS-09",
+      "classification": "justified_unanswerability",
+      "issuer": "JPMORGAN CHASE & CO",
+      "note": "no verified statement row of this issuer uses the concept 'gross_profit'; the question asks for a line item the statements do not report",
+      "reason": "concept_resolution:not_found",
+      "request": {
+        "concept": "gross_profit",
+        "period": "2022"
+      }
+    },
+    {
+      "case_id": "FOCUS-12",
+      "classification": "capability_gap",
+      "issuer": "3M CO",
+      "note": "the filing prints a unique statement row for this concept ('Net sales' = '32,765' for 2018), but concept resolution did not bind it (concept_resolution:ambiguous); this is a resolution limitation, not an unanswerable question",
+      "reason": "concept_resolution:ambiguous",
+      "request": {
+        "concept": "revenue",
+        "period": "2018"
+      }
+    },
+    {
+      "case_id": "FOCUS-13",
+      "classification": "historical_information_refusal",
+      "issuer": "3M CO",
+      "note": "accession 0000066740-23-000014 covers 2022 but became available 2023-02-08T18:14:49Z, after the cutoff 2017-01-01T00:00:00Z",
+      "reason": "concept_resolution:not_found",
+      "request": {
+        "concept": "revenue",
+        "period": "2022"
+      }
+    }
+  ],
+  "schema": "atlas.focus.demo.v1",
+  "summary": {
+    "answered": 10,
+    "cases": 13,
+    "certificates_arithmetic_only": 10,
+    "certificates_source_verified": 8,
+    "primary_certificate": "/workspace/chats/7c583000e3d88b493cb6695c/artifacts/focus_certificate.json",
+    "refusal_classes": [
+      "capability_gap",
+      "historical_information_refusal",
+      "justified_unanswerability"
+    ],
+    "refused": 3,
+    "tamper_accepted": 0,
+    "tamper_attempts": 16,
+    "tamper_rejected": 16
+  }
+}

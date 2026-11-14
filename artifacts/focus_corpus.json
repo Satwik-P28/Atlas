@@ -1,0 +1,78 @@
+{
+  "database": "var/phase9_6.db",
+  "document_count": 4,
+  "documents": [
+    {
+      "accession": "0000021344-23-000011",
+      "availability_precision": "unknown",
+      "availability_time": "2023-02-21T21:18:20Z",
+      "bytes": 5390657,
+      "cik": "0000021344",
+      "document_id": "DOC-3bf19fd22fcd4c58",
+      "document_sha256": "df1877fd85ec0598f85faf476ed161617403b1fe9c383e456860b9c3f7ee70d4",
+      "issuer": "COCA COLA CO",
+      "primary_document_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134423000011/ko-20221231.htm",
+      "status": "ingested",
+      "tables": 122,
+      "units": 1522
+    },
+    {
+      "accession": "0000019617-23-000231",
+      "availability_precision": "unknown",
+      "availability_time": "2023-02-21T21:28:55Z",
+      "bytes": 15883009,
+      "cik": "0000019617",
+      "document_id": "DOC-cd52c9e55c0845a1",
+      "document_sha256": "18c893da2ef6361982d087d9eee2f08d79bd0559197aa832ac30bb310901c5b1",
+      "issuer": "JPMORGAN CHASE & CO",
+      "primary_document_url": "https://www.sec.gov/Archives/edgar/data/19617/000001961723000231/jpm-20221231.htm",
+      "status": "ingested",
+      "tables": 634,
+      "units": 4477
+    },
+    {
+      "accession": "0000066740-23-000014",
+      "availability_precision": "unknown",
+      "availability_time": "2023-02-08T18:14:49Z",
+      "bytes": 6551758,
+      "cik": "0000066740",
+      "document_id": "DOC-5c68712c37634802",
+      "document_sha256": "00fbd4464afde54c9f7904c58ea31949890f61c6ffc740d88d96fcbfff51007a",
+      "issuer": "3M CO",
+      "primary_document_url": "https://www.sec.gov/Archives/edgar/data/66740/000006674023000014/mmm-20221231.htm",
+      "status": "ingested",
+      "tables": 113,
+      "units": 1468
+    },
+    {
+      "accession": "0001558370-19-000470",
+      "availability_precision": "unknown",
+      "availability_time": "2019-02-07T22:30:37Z",
+      "bytes": 10020722,
+      "cik": "0000066740",
+      "document_id": "DOC-9d2ea65655d14ebc",
+      "document_sha256": "d65f7fcd29d939ee0455cee79afd28e3b6ce92e54b6c49fb82c827f8d7ea82aa",
+      "issuer": "3M CO",
+      "primary_document_url": "https://www.sec.gov/Archives/edgar/data/66740/000155837019000470/mmm-20181231x10k.htm",
+      "status": "ingested",
+      "tables": 277,
+      "units": 1519
+    }
+  ],
+  "engine": {
+    "documents": 4,
+    "engine": "atlas.knowledge.engine.v1",
+    "parser": "atlas.knowledge.parser.v1",
+    "source_bytes": 37846146,
+    "tables": 1146,
+    "units": 8986
+  },
+  "generated_at": "2026-11-14T21:50:29Z",
+  "limitations": [
+    "Documents are fetched live from SEC EDGAR; the snapshot directory is the only copy of the authenticated bytes and is not committed.",
+    "Availability times are modelled conservatively as EDGAR acceptance plus a fixed publication lag, with precision recorded as 'unknown'."
+  ],
+  "schema": "atlas.focus.corpus.v1",
+  "sec_user_agent": "AtlasQuant/0.1 research@example.com",
+  "snapshot_directory": "var/focus/snapshots"
+}

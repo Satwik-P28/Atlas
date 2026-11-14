@@ -8,13 +8,21 @@ VENV   ?= .venv
 BIN     = $(VENV)/bin
 DB     ?= var/atlas.db
 CIK    ?= 320193
+FOCUS_DB       ?= var/phase9_6.db
+FOCUS_SNAPSHOTS ?= var/focus/snapshots
+CERT   ?=
 
-.PHONY: help install test demo bench cli-init sync sync-live facts history reconcile deps validate stats clean terminal-data serve web-install web-build phase8-fixtures phase8-bench release-manifest app-test
+.PHONY: help install test demo bench cli-init sync sync-live facts history reconcile deps validate stats clean terminal-data serve web-install web-build phase8-fixtures phase8-bench release-manifest app-test focus-corpus focus-cases focus-demo focus-manifest focus-verify
 
 help:
 	@echo "install    create the virtualenv and install the package (editable, dev extras)"
 	@echo "test       run the full offline test suite (186 tests)"
 	@echo "demo       run the offline end-to-end demonstration"
+	@echo "focus-corpus  build the FOCUS corpus from live SEC 10-Ks (needs ATLAS_SEC_USER_AGENT)"
+	@echo "focus-cases   run the thirteen FOCUS financial cases against that corpus"
+	@echo "focus-demo    run the full source-bound demonstration and write artifacts/focus_demo.json"
+	@echo "focus-manifest  regenerate the pinned source manifest from the corpus"
+	@echo "focus-verify  verify a certificate: make focus-verify CERT=path/to/cert.json"
 	@echo "bench      run the reproducible benchmark suite"
 	@echo "cli-init   create/migrate the database at $(DB)"
 	@echo "sync       ingest a company from archived fixtures (CIK=$(CIK), no network)"
@@ -44,6 +52,28 @@ test:
 
 demo:
 	$(BIN)/atlas demo
+
+# --------------------------------------------------------------------------- FOCUS
+# Two distinct procedures, never conflated:
+#   focus-corpus needs the network and a declared SEC contact User-Agent.
+#   focus-demo   is offline given that corpus; it authenticates against archived bytes.
+
+focus-corpus:
+	@test -n "$$ATLAS_SEC_USER_AGENT" || (echo "set ATLAS_SEC_USER_AGENT='AtlasQuant/0.1 you@example.com'" && exit 1)
+	$(BIN)/python scripts/focus_corpus.py --db $(FOCUS_DB) --snapshots $(FOCUS_SNAPSHOTS) --force
+
+focus-cases:
+	$(BIN)/python scripts/focus_demo.py --db $(FOCUS_DB) --quiet --out benchmarks/out/focus_demo.json
+
+focus-demo:
+	$(BIN)/python scripts/focus_demo.py --db $(FOCUS_DB) --snapshots $(FOCUS_SNAPSHOTS)
+
+focus-manifest:
+	$(BIN)/python scripts/focus_demo.py --db $(FOCUS_DB) --emit-manifest --quiet --out benchmarks/out/focus_demo.json
+
+focus-verify:
+	@test -n "$(CERT)" || (echo "usage: make focus-verify CERT=path/to/certificate.json" && exit 1)
+	$(BIN)/atlas certificate verify --certificate $(CERT) --manifest artifacts/focus_source_manifest.json --snapshots $(FOCUS_SNAPSHOTS)
 
 bench:
 	$(BIN)/python benchmarks/bench.py --json benchmarks/out/bench.json

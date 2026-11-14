@@ -13,12 +13,12 @@
         "accession": "0000021344-23-000011",
         "availability_precision": "unknown",
         "availability_time": "2023-02-21T21:18:20Z",
-        "cell_id": "CELL-434695d51de9376f",
+        "cell_id": "CELL-b5eb090816402015",
         "column": 2,
         "column_label": "2021",
         "concept": "revenue",
         "currency": null,
-        "document_id": "DOC-3d4eac155cb147f0",
+        "document_id": "DOC-3bf19fd22fcd4c58",
         "entity_scope": "consolidated",
         "issuer_id": "ISS-CIK0000021344",
         "period": "2022",
@@ -32,8 +32,8 @@
         "source_table_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
         "statement_family": "income",
         "statement_title": "CONSOLIDATED STATEMENTS OF INCOME",
-        "table_id": "TAB-156608b48f668e96",
-        "unit_id": "UNI-156608b48f668e96",
+        "table_id": "TAB-6a9c5dc82936ea46",
+        "unit_id": "UNI-6a9c5dc82936ea46",
         "value": "43004"
       },
       "currency": null,
@@ -97,7 +97,7 @@
         "run_id": "RUN-947fa0d08d32dc62bbf7bf7c",
         "trace": [
           {
-            "duration_ms": 0.005,
+            "duration_ms": 0.0041,
             "node": "value",
             "op": "input",
             "position": 0,
@@ -113,11 +113,11 @@
           "accession": "0000021344-23-000011",
           "availability_precision": "unknown",
           "availability_time": "2023-02-21T21:18:20Z",
-          "cell_id": "CELL-434695d51de9376f",
+          "cell_id": "CELL-b5eb090816402015",
           "column": 2,
           "column_label": "2021",
           "currency": null,
-          "document_id": "DOC-3d4eac155cb147f0",
+          "document_id": "DOC-3bf19fd22fcd4c58",
           "period": "2022",
           "raw": "43,004",
           "rights": "public_domain",
@@ -125,8 +125,8 @@
           "row_label": "Net Operating Revenues",
           "scale": 6,
           "section_path": "",
-          "table_id": "TAB-156608b48f668e96",
-          "unit_id": "UNI-156608b48f668e96",
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
           "unit_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
           "value": "43004"
         }
@@ -141,7 +141,7 @@
       "operator_version": "atlas.fec.compiler.v1",
       "outcome": "answered",
       "period": "2022",
-      "reproducibility_fingerprint": "81fbb6b3fea5548b22e0d9521310e9c3272a3c3274fb06ef09a3bf2079664e88",
+      "reproducibility_fingerprint": "2f2a13a2924f2a33e9d86c8db5199cf7c91e59b16a050969be3bf5187eb2ead8",
       "request": {
         "concept": "revenue",
         "period": "2022"
@@ -151,11 +151,11 @@
         "candidates": [],
         "cell": {
           "accession": "0000021344-23-000011",
-          "cell_id": "CELL-434695d51de9376f",
+          "cell_id": "CELL-b5eb090816402015",
           "column": 2,
           "column_label": "2021",
           "currency": null,
-          "document_id": "DOC-3d4eac155cb147f0",
+          "document_id": "DOC-3bf19fd22fcd4c58",
           "period": "2022",
           "raw": "43,004",
           "row": 1,
@@ -163,7 +163,7 @@
           "scale": 6,
           "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
           "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
-          "table_id": "TAB-156608b48f668e96",
+          "table_id": "TAB-6a9c5dc82936ea46",
           "value": "43004"
         },
         "concept": "revenue",
@@ -174,7 +174,7 @@
         "status": "resolved",
         "vintage": {
           "accession": "0000021344-23-000011",
-          "document_id": "DOC-3d4eac155cb147f0",
+          "document_id": "DOC-3bf19fd22fcd4c58",
           "filed_date": "2023-02-21",
           "period_of_report": "2022-12-31",
           "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -199,12 +199,12 @@
         "accession": "0000021344-23-000011",
         "availability_precision": "unknown",
         "availability_time": "2023-02-21T21:18:20Z",
-        "cell_id": "CELL-d12699806be5cc51",
+        "cell_id": "CELL-672817e69bfb98fb",
         "column": 1,
         "column_label": "2022",
         "concept": "net_income",
         "currency": null,
-        "document_id": "DOC-3d4eac155cb147f0",
+        "document_id": "DOC-3bf19fd22fcd4c58",
         "entity_scope": "consolidated",
         "issuer_id": "ISS-CIK0000021344",
         "period": "2022",
@@ -218,8 +218,8 @@
         "source_table_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
         "statement_family": "income",
         "statement_title": "CONSOLIDATED STATEMENTS OF INCOME",
-        "table_id": "TAB-156608b48f668e96",
-        "unit_id": "UNI-156608b48f668e96",
+        "table_id": "TAB-6a9c5dc82936ea46",
+        "unit_id": "UNI-6a9c5dc82936ea46",
         "value": "9571"
       },
       "currency": null,
@@ -283,7 +283,7 @@
         "run_id": "RUN-4e70c3a3c55ea6fb21fa6494",
         "trace": [
           {
-            "duration_ms": 0.0037,
+            "duration_ms": 0.0032,
             "node": "value",
             "op": "input",
             "position": 0,
@@ -299,11 +299,11 @@
           "accession": "0000021344-23-000011",
           "availability_precision": "unknown",
           "availability_time": "2023-02-21T21:18:20Z",
-          "cell_id": "CELL-d12699806be5cc51",
+          "cell_id": "CELL-672817e69bfb98fb",
           "column": 1,
           "column_label": "2022",
           "currency": null,
-          "document_id": "DOC-3d4eac155cb147f0",
+          "document_id": "DOC-3bf19fd22fcd4c58",
           "period": "2022",
           "raw": "9,571",
           "rights": "public_domain",
@@ -311,8 +311,8 @@
           "row_label": "Consolidated Net Income",
           "scale": 6,
           "section_path": "",
-          "table_id": "TAB-156608b48f668e96",
-          "unit_id": "UNI-156608b48f668e96",
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
           "unit_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
           "value": "9571"
         }
@@ -327,7 +327,7 @@
       "operator_version": "atlas.fec.compiler.v1",
       "outcome": "answered",
       "period": "2022",
-      "reproducibility_fingerprint": "582c72d020a9d2fc34b34d3d231273762e16e4eea5cbd523d9011d43fe7ca1d8",
+      "reproducibility_fingerprint": "8a78a087264d175f7e8e2fb7507aed259233f923da3b722e46da43ff40f6c3ab",
       "request": {
         "concept": "net_income",
         "period": "2022"
@@ -337,11 +337,11 @@
         "candidates": [],
         "cell": {
           "accession": "0000021344-23-000011",
-          "cell_id": "CELL-d12699806be5cc51",
+          "cell_id": "CELL-672817e69bfb98fb",
           "column": 1,
           "column_label": "2022",
           "currency": null,
-          "document_id": "DOC-3d4eac155cb147f0",
+          "document_id": "DOC-3bf19fd22fcd4c58",
           "period": "2022",
           "raw": "9,571",
           "row": 13,
@@ -349,7 +349,7 @@
           "scale": 6,
           "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
           "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
-          "table_id": "TAB-156608b48f668e96",
+          "table_id": "TAB-6a9c5dc82936ea46",
           "value": "9571"
         },
         "concept": "net_income",
@@ -360,7 +360,7 @@
         "status": "resolved",
         "vintage": {
           "accession": "0000021344-23-000011",
-          "document_id": "DOC-3d4eac155cb147f0",
+          "document_id": "DOC-3bf19fd22fcd4c58",
           "filed_date": "2023-02-21",
           "period_of_report": "2022-12-31",
           "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -477,7 +477,7 @@
         "run_id": "RUN-5adee66bed5bbd0505d03489",
         "trace": [
           {
-            "duration_ms": 0.0024,
+            "duration_ms": 0.0027,
             "node": "current",
             "op": "input",
             "position": 0,
@@ -504,7 +504,7 @@
             "value_digest": "bc591c84b35d1ab9"
           },
           {
-            "duration_ms": 0.0283,
+            "duration_ms": 0.0471,
             "node": "delta",
             "op": "sub",
             "position": 3,
@@ -513,7 +513,7 @@
             "value_digest": "4bb5536f5ce7d253"
           },
           {
-            "duration_ms": 0.0183,
+            "duration_ms": 0.0246,
             "node": "fraction",
             "op": "div",
             "position": 4,
@@ -538,11 +538,11 @@
           "accession": "0000021344-23-000011",
           "availability_precision": "unknown",
           "availability_time": "2023-02-21T21:18:20Z",
-          "cell_id": "CELL-434695d51de9376f",
+          "cell_id": "CELL-b5eb090816402015",
           "column": 2,
           "column_label": "2021",
           "currency": null,
-          "document_id": "DOC-3d4eac155cb147f0",
+          "document_id": "DOC-3bf19fd22fcd4c58",
           "period": "2022",
           "raw": "43,004",
           "rights": "public_domain",
@@ -550,20 +550,20 @@
           "row_label": "Net Operating Revenues",
           "scale": 6,
           "section_path": "",
-          "table_id": "TAB-156608b48f668e96",
-          "unit_id": "UNI-156608b48f668e96",
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
           "unit_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
           "value": "43004"
         },
         {
-          "accession": "0000021344-22-000009",
+          "accession": "0000021344-23-000011",
           "availability_precision": "unknown",
-          "availability_time": "2022-02-22T21:00:48Z",
-          "cell_id": "CELL-89826878a5180d9d",
-          "column": 2,
-          "column_label": "2020",
+          "availability_time": "2023-02-21T21:18:20Z",
+          "cell_id": "CELL-5c372c74c6ab2ef0",
+          "column": 5,
+          "column_label": "",
           "currency": null,
-          "document_id": "DOC-8262efdb9639419b",
+          "document_id": "DOC-3bf19fd22fcd4c58",
           "period": "2021",
           "raw": "38,655",
           "rights": "public_domain",
@@ -571,9 +571,9 @@
           "row_label": "Net Operating Revenues",
           "scale": 6,
           "section_path": "",
-          "table_id": "TAB-cd60b778201f344b",
-          "unit_id": "UNI-cd60b778201f344b",
-          "unit_sha256": "0fa323b87835d9ce0864b3361bf7ce3f2602e5169ea654aaae3ebcb4556b009d",
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
+          "unit_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
           "value": "38655"
         }
       ],
@@ -586,7 +586,7 @@
       "operator_version": "atlas.fec.compiler.v1",
       "outcome": "answered",
       "period": "2022 vs 2021",
-      "reproducibility_fingerprint": "452cdcaa3c2a76c69b2ed17721a9dab62ce8142c6a74b7c8ced3ca8f70e22763",
+      "reproducibility_fingerprint": "2ee43935ed064c30349a4cc9089c9de2bc32461094335d7a8754db9bdf3078f9",
       "request": {
         "concept": "revenue",
         "current_period": "2022",
@@ -598,11 +598,11 @@
           "candidates": [],
           "cell": {
             "accession": "0000021344-23-000011",
-            "cell_id": "CELL-434695d51de9376f",
+            "cell_id": "CELL-b5eb090816402015",
             "column": 2,
             "column_label": "2021",
             "currency": null,
-            "document_id": "DOC-3d4eac155cb147f0",
+            "document_id": "DOC-3bf19fd22fcd4c58",
             "period": "2022",
             "raw": "43,004",
             "row": 1,
@@ -610,7 +610,7 @@
             "scale": 6,
             "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
             "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
-            "table_id": "TAB-156608b48f668e96",
+            "table_id": "TAB-6a9c5dc82936ea46",
             "value": "43004"
           },
           "concept": "revenue",
@@ -621,7 +621,7 @@
           "status": "resolved",
           "vintage": {
             "accession": "0000021344-23-000011",
-            "document_id": "DOC-3d4eac155cb147f0",
+            "document_id": "DOC-3bf19fd22fcd4c58",
             "filed_date": "2023-02-21",
             "period_of_report": "2022-12-31",
             "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -631,20 +631,20 @@
         "prior": {
           "candidates": [],
           "cell": {
-            "accession": "0000021344-22-000009",
-            "cell_id": "CELL-89826878a5180d9d",
-            "column": 2,
-            "column_label": "2020",
+            "accession": "0000021344-23-000011",
+            "cell_id": "CELL-5c372c74c6ab2ef0",
+            "column": 5,
+            "column_label": "",
             "currency": null,
-            "document_id": "DOC-8262efdb9639419b",
+            "document_id": "DOC-3bf19fd22fcd4c58",
             "period": "2021",
             "raw": "38,655",
             "row": 1,
             "row_label": "Net Operating Revenues",
             "scale": 6,
             "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
-            "source_sha256": "0fa323b87835d9ce0864b3361bf7ce3f2602e5169ea654aaae3ebcb4556b009d",
-            "table_id": "TAB-cd60b778201f344b",
+            "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+            "table_id": "TAB-6a9c5dc82936ea46",
             "value": "38655"
           },
           "concept": "revenue",
@@ -654,10 +654,10 @@
           "score": 6.5,
           "status": "resolved",
           "vintage": {
-            "accession": "0000021344-22-000009",
-            "document_id": "DOC-8262efdb9639419b",
-            "filed_date": "2022-02-22",
-            "period_of_report": "2021-12-31",
+            "accession": "0000021344-23-000011",
+            "document_id": "DOC-3bf19fd22fcd4c58",
+            "filed_date": "2023-02-21",
+            "period_of_report": "2022-12-31",
             "selection_policy": "filing whose own period is the requested year; disagreements refused"
           },
           "xbrl_status": "unavailable: no XBRL fact table in this corpus"
@@ -765,7 +765,7 @@
         "run_id": "RUN-6023978b01ce21ed4897bebb",
         "trace": [
           {
-            "duration_ms": 0.0023,
+            "duration_ms": 0.0022,
             "node": "hundred",
             "op": "input",
             "position": 0,
@@ -774,7 +774,7 @@
             "value_digest": "0985274ab1347781"
           },
           {
-            "duration_ms": 0.0012,
+            "duration_ms": 0.0015,
             "node": "numerator",
             "op": "input",
             "position": 1,
@@ -792,7 +792,7 @@
             "value_digest": "849bb34277cf5fbe"
           },
           {
-            "duration_ms": 0.0202,
+            "duration_ms": 0.0205,
             "node": "fraction",
             "op": "div",
             "position": 3,
@@ -801,7 +801,7 @@
             "value_digest": "ade83f60309e203b"
           },
           {
-            "duration_ms": 0.0148,
+            "duration_ms": 0.023,
             "node": "scaled",
             "op": "mul",
             "position": 4,
@@ -817,11 +817,11 @@
           "accession": "0000021344-23-000011",
           "availability_precision": "unknown",
           "availability_time": "2023-02-21T21:18:20Z",
-          "cell_id": "CELL-e84acb15b0b875fc",
+          "cell_id": "CELL-a5c4a2851a0377eb",
           "column": 1,
           "column_label": "2022",
           "currency": null,
-          "document_id": "DOC-3d4eac155cb147f0",
+          "document_id": "DOC-3bf19fd22fcd4c58",
           "period": "2022",
           "raw": "10,909",
           "rights": "public_domain",
@@ -829,8 +829,8 @@
           "row_label": "Operating Income",
           "scale": 6,
           "section_path": "",
-          "table_id": "TAB-156608b48f668e96",
-          "unit_id": "UNI-156608b48f668e96",
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
           "unit_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
           "value": "10909"
         },
@@ -838,11 +838,11 @@
           "accession": "0000021344-23-000011",
           "availability_precision": "unknown",
           "availability_time": "2023-02-21T21:18:20Z",
-          "cell_id": "CELL-434695d51de9376f",
+          "cell_id": "CELL-b5eb090816402015",
           "column": 2,
           "column_label": "2021",
           "currency": null,
-          "document_id": "DOC-3d4eac155cb147f0",
+          "document_id": "DOC-3bf19fd22fcd4c58",
           "period": "2022",
           "raw": "43,004",
           "rights": "public_domain",
@@ -850,8 +850,8 @@
           "row_label": "Net Operating Revenues",
           "scale": 6,
           "section_path": "",
-          "table_id": "TAB-156608b48f668e96",
-          "unit_id": "UNI-156608b48f668e96",
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
           "unit_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
           "value": "43004"
         }
@@ -865,7 +865,7 @@
       "operator_version": "atlas.fec.compiler.v1",
       "outcome": "answered",
       "period": "2022",
-      "reproducibility_fingerprint": "e370c7d5471bfdd64196e9b0f758803a40af9b44a11543977001a84ddf6ecd90",
+      "reproducibility_fingerprint": "7556f69eafc90351e5920f32817e5cc9990847a5686d94bd022294e0578abbe1",
       "request": {
         "concept": "revenue",
         "numerator": "operating_income",
@@ -877,11 +877,11 @@
           "candidates": [],
           "cell": {
             "accession": "0000021344-23-000011",
-            "cell_id": "CELL-434695d51de9376f",
+            "cell_id": "CELL-b5eb090816402015",
             "column": 2,
             "column_label": "2021",
             "currency": null,
-            "document_id": "DOC-3d4eac155cb147f0",
+            "document_id": "DOC-3bf19fd22fcd4c58",
             "period": "2022",
             "raw": "43,004",
             "row": 1,
@@ -889,7 +889,7 @@
             "scale": 6,
             "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
             "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
-            "table_id": "TAB-156608b48f668e96",
+            "table_id": "TAB-6a9c5dc82936ea46",
             "value": "43004"
           },
           "concept": "revenue",
@@ -900,7 +900,7 @@
           "status": "resolved",
           "vintage": {
             "accession": "0000021344-23-000011",
-            "document_id": "DOC-3d4eac155cb147f0",
+            "document_id": "DOC-3bf19fd22fcd4c58",
             "filed_date": "2023-02-21",
             "period_of_report": "2022-12-31",
             "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -911,11 +911,11 @@
           "candidates": [],
           "cell": {
             "accession": "0000021344-23-000011",
-            "cell_id": "CELL-e84acb15b0b875fc",
+            "cell_id": "CELL-a5c4a2851a0377eb",
             "column": 1,
             "column_label": "2022",
             "currency": null,
-            "document_id": "DOC-3d4eac155cb147f0",
+            "document_id": "DOC-3bf19fd22fcd4c58",
             "period": "2022",
             "raw": "10,909",
             "row": 6,
@@ -923,7 +923,7 @@
             "scale": 6,
             "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
             "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
-            "table_id": "TAB-156608b48f668e96",
+            "table_id": "TAB-6a9c5dc82936ea46",
             "value": "10909"
           },
           "concept": "operating_income",
@@ -934,7 +934,7 @@
           "status": "resolved",
           "vintage": {
             "accession": "0000021344-23-000011",
-            "document_id": "DOC-3d4eac155cb147f0",
+            "document_id": "DOC-3bf19fd22fcd4c58",
             "filed_date": "2023-02-21",
             "period_of_report": "2022-12-31",
             "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -1031,7 +1031,7 @@
         "run_id": "RUN-f278138e895da236dab6b6b6",
         "trace": [
           {
-            "duration_ms": 0.0024,
+            "duration_ms": 0.0028,
             "node": "denominator",
             "op": "input",
             "position": 0,
@@ -1040,7 +1040,7 @@
             "value_digest": "849bb34277cf5fbe"
           },
           {
-            "duration_ms": 0.0014,
+            "duration_ms": 0.0019,
             "node": "numerator",
             "op": "input",
             "position": 1,
@@ -1049,7 +1049,7 @@
             "value_digest": "ae5ac1fae166bdf6"
           },
           {
-            "duration_ms": 0.02,
+            "duration_ms": 0.0303,
             "node": "quotient",
             "op": "div",
             "position": 2,
@@ -1065,11 +1065,11 @@
           "accession": "0000021344-23-000011",
           "availability_precision": "unknown",
           "availability_time": "2023-02-21T21:18:20Z",
-          "cell_id": "CELL-e2638c3e20ca1127",
+          "cell_id": "CELL-873903c129eb143a",
           "column": 2,
           "column_label": "2021",
           "currency": null,
-          "document_id": "DOC-3d4eac155cb147f0",
+          "document_id": "DOC-3bf19fd22fcd4c58",
           "period": "2022",
           "raw": "92,763",
           "rights": "public_domain",
@@ -1077,8 +1077,8 @@
           "row_label": "Total Assets",
           "scale": 6,
           "section_path": "",
-          "table_id": "TAB-debf2ecc4fd1d58e",
-          "unit_id": "UNI-debf2ecc4fd1d58e",
+          "table_id": "TAB-7c81cb80cc9c6192",
+          "unit_id": "UNI-7c81cb80cc9c6192",
           "unit_sha256": "de5296e553332f9b463978bb0e56c622dc53e2ef8a6c6672226d80505f7046db",
           "value": "92763"
         },
@@ -1086,11 +1086,11 @@
           "accession": "0000021344-23-000011",
           "availability_precision": "unknown",
           "availability_time": "2023-02-21T21:18:20Z",
-          "cell_id": "CELL-434695d51de9376f",
+          "cell_id": "CELL-b5eb090816402015",
           "column": 2,
           "column_label": "2021",
           "currency": null,
-          "document_id": "DOC-3d4eac155cb147f0",
+          "document_id": "DOC-3bf19fd22fcd4c58",
           "period": "2022",
           "raw": "43,004",
           "rights": "public_domain",
@@ -1098,8 +1098,8 @@
           "row_label": "Net Operating Revenues",
           "scale": 6,
           "section_path": "",
-          "table_id": "TAB-156608b48f668e96",
-          "unit_id": "UNI-156608b48f668e96",
+          "table_id": "TAB-6a9c5dc82936ea46",
+          "unit_id": "UNI-6a9c5dc82936ea46",
           "unit_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
           "value": "43004"
         }
@@ -1113,7 +1113,7 @@
       "operator_version": "atlas.fec.compiler.v1",
       "outcome": "answered",
       "period": "2022",
-      "reproducibility_fingerprint": "ef65be408c1a7e80e8abed8b01cd9fa42ab5dafeb9baee7d611880f37f974960",
+      "reproducibility_fingerprint": "4c51b0a0b3853cc18cd4780ebdb5b47cc16a3e7259029392a00d4c17d9e090a9",
       "request": {
         "concept": "revenue",
         "numerator": "total_assets",
@@ -1125,11 +1125,11 @@
           "candidates": [],
           "cell": {
             "accession": "0000021344-23-000011",
-            "cell_id": "CELL-434695d51de9376f",
+            "cell_id": "CELL-b5eb090816402015",
             "column": 2,
             "column_label": "2021",
             "currency": null,
-            "document_id": "DOC-3d4eac155cb147f0",
+            "document_id": "DOC-3bf19fd22fcd4c58",
             "period": "2022",
             "raw": "43,004",
             "row": 1,
@@ -1137,7 +1137,7 @@
             "scale": 6,
             "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
             "source_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
-            "table_id": "TAB-156608b48f668e96",
+            "table_id": "TAB-6a9c5dc82936ea46",
             "value": "43004"
           },
           "concept": "revenue",
@@ -1148,7 +1148,7 @@
           "status": "resolved",
           "vintage": {
             "accession": "0000021344-23-000011",
-            "document_id": "DOC-3d4eac155cb147f0",
+            "document_id": "DOC-3bf19fd22fcd4c58",
             "filed_date": "2023-02-21",
             "period_of_report": "2022-12-31",
             "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -1159,11 +1159,11 @@
           "candidates": [],
           "cell": {
             "accession": "0000021344-23-000011",
-            "cell_id": "CELL-e2638c3e20ca1127",
+            "cell_id": "CELL-873903c129eb143a",
             "column": 2,
             "column_label": "2021",
             "currency": null,
-            "document_id": "DOC-3d4eac155cb147f0",
+            "document_id": "DOC-3bf19fd22fcd4c58",
             "period": "2022",
             "raw": "92,763",
             "row": 19,
@@ -1171,7 +1171,7 @@
             "scale": 6,
             "section_path": "ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA",
             "source_sha256": "de5296e553332f9b463978bb0e56c622dc53e2ef8a6c6672226d80505f7046db",
-            "table_id": "TAB-debf2ecc4fd1d58e",
+            "table_id": "TAB-7c81cb80cc9c6192",
             "value": "92763"
           },
           "concept": "total_assets",
@@ -1182,7 +1182,7 @@
           "status": "resolved",
           "vintage": {
             "accession": "0000021344-23-000011",
-            "document_id": "DOC-3d4eac155cb147f0",
+            "document_id": "DOC-3bf19fd22fcd4c58",
             "filed_date": "2023-02-21",
             "period_of_report": "2022-12-31",
             "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -1208,12 +1208,12 @@
         "accession": "0000019617-23-000231",
         "availability_precision": "unknown",
         "availability_time": "2023-02-21T21:28:55Z",
-        "cell_id": "CELL-e982907135b273d0",
+        "cell_id": "CELL-266ffe8cd0484184",
         "column": 2,
         "column_label": "",
         "concept": "total_assets",
         "currency": "USD",
-        "document_id": "DOC-d612e96c67d845f0",
+        "document_id": "DOC-cd52c9e55c0845a1",
         "entity_scope": "consolidated",
         "issuer_id": "ISS-CIK0000019617",
         "period": "2022",
@@ -1227,8 +1227,8 @@
         "source_table_sha256": "de8f026b15473349ed30680db91bba078dc183af34232c1ea8a8b302a9dca237",
         "statement_family": "balance_sheet",
         "statement_title": "Consolidated balance sheets",
-        "table_id": "TAB-0c66ff1417abe8ad",
-        "unit_id": "UNI-0c66ff1417abe8ad",
+        "table_id": "TAB-d22d786f04910263",
+        "unit_id": "UNI-d22d786f04910263",
         "value": "3665743"
       },
       "currency": "USD",
@@ -1308,11 +1308,11 @@
           "accession": "0000019617-23-000231",
           "availability_precision": "unknown",
           "availability_time": "2023-02-21T21:28:55Z",
-          "cell_id": "CELL-e982907135b273d0",
+          "cell_id": "CELL-266ffe8cd0484184",
           "column": 2,
           "column_label": "",
           "currency": "USD",
-          "document_id": "DOC-d612e96c67d845f0",
+          "document_id": "DOC-cd52c9e55c0845a1",
           "period": "2022",
           "raw": "3,665,743",
           "rights": "public_domain",
@@ -1320,8 +1320,8 @@
           "row_label": "Total assets (a)",
           "scale": 6,
           "section_path": "",
-          "table_id": "TAB-0c66ff1417abe8ad",
-          "unit_id": "UNI-0c66ff1417abe8ad",
+          "table_id": "TAB-d22d786f04910263",
+          "unit_id": "UNI-d22d786f04910263",
           "unit_sha256": "de8f026b15473349ed30680db91bba078dc183af34232c1ea8a8b302a9dca237",
           "value": "3665743"
         }
@@ -1336,7 +1336,7 @@
       "operator_version": "atlas.fec.compiler.v1",
       "outcome": "answered",
       "period": "2022",
-      "reproducibility_fingerprint": "c52598d31b3fbd46cd7c613a4dcea2b7881285a1ca493691556be7f9de408674",
+      "reproducibility_fingerprint": "fbedd869819f713eeb51355a9d4fbbbdb1af88ccb85f3950502825a02da4bd29",
       "request": {
         "concept": "total_assets",
         "period": "2022"
@@ -1346,11 +1346,11 @@
         "candidates": [],
         "cell": {
           "accession": "0000019617-23-000231",
-          "cell_id": "CELL-e982907135b273d0",
+          "cell_id": "CELL-266ffe8cd0484184",
           "column": 2,
           "column_label": "",
           "currency": "USD",
-          "document_id": "DOC-d612e96c67d845f0",
+          "document_id": "DOC-cd52c9e55c0845a1",
           "period": "2022",
           "raw": "3,665,743",
           "row": 17,
@@ -1358,7 +1358,7 @@
           "scale": 6,
           "section_path": "Item 15. Exhibits, Financial Statement Schedules.",
           "source_sha256": "de8f026b15473349ed30680db91bba078dc183af34232c1ea8a8b302a9dca237",
-          "table_id": "TAB-0c66ff1417abe8ad",
+          "table_id": "TAB-d22d786f04910263",
           "value": "3665743"
         },
         "concept": "total_assets",
@@ -1369,7 +1369,7 @@
         "status": "resolved",
         "vintage": {
           "accession": "0000019617-23-000231",
-          "document_id": "DOC-d612e96c67d845f0",
+          "document_id": "DOC-cd52c9e55c0845a1",
           "filed_date": "2023-02-21",
           "period_of_report": "2022-12-31",
           "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -1394,12 +1394,12 @@
         "accession": "0000019617-23-000231",
         "availability_precision": "unknown",
         "availability_time": "2023-02-21T21:28:55Z",
-        "cell_id": "CELL-8223a94e19aac941",
+        "cell_id": "CELL-ed434ee59b3a57ba",
         "column": 2,
         "column_label": "",
         "concept": "net_income",
         "currency": "USD",
-        "document_id": "DOC-d612e96c67d845f0",
+        "document_id": "DOC-cd52c9e55c0845a1",
         "entity_scope": "consolidated",
         "issuer_id": "ISS-CIK0000019617",
         "period": "2022",
@@ -1413,8 +1413,8 @@
         "source_table_sha256": "982b59ce9ee019dc61ec131532206f34a1f5290305e89744653a6c9d95a22392",
         "statement_family": "income",
         "statement_title": "Consolidated statements of income",
-        "table_id": "TAB-94aa535dbfb85376",
-        "unit_id": "UNI-94aa535dbfb85376",
+        "table_id": "TAB-fd229317ee190561",
+        "unit_id": "UNI-fd229317ee190561",
         "value": "37676"
       },
       "currency": "USD",
@@ -1478,7 +1478,7 @@
         "run_id": "RUN-0178666c3dd88b08d0139296",
         "trace": [
           {
-            "duration_ms": 0.003,
+            "duration_ms": 0.0029,
             "node": "value",
             "op": "input",
             "position": 0,
@@ -1494,11 +1494,11 @@
           "accession": "0000019617-23-000231",
           "availability_precision": "unknown",
           "availability_time": "2023-02-21T21:28:55Z",
-          "cell_id": "CELL-8223a94e19aac941",
+          "cell_id": "CELL-ed434ee59b3a57ba",
           "column": 2,
           "column_label": "",
           "currency": "USD",
-          "document_id": "DOC-d612e96c67d845f0",
+          "document_id": "DOC-cd52c9e55c0845a1",
           "period": "2022",
           "raw": "37,676",
           "rights": "public_domain",
@@ -1506,8 +1506,8 @@
           "row_label": "Net income",
           "scale": 6,
           "section_path": "",
-          "table_id": "TAB-94aa535dbfb85376",
-          "unit_id": "UNI-94aa535dbfb85376",
+          "table_id": "TAB-fd229317ee190561",
+          "unit_id": "UNI-fd229317ee190561",
           "unit_sha256": "982b59ce9ee019dc61ec131532206f34a1f5290305e89744653a6c9d95a22392",
           "value": "37676"
         }
@@ -1522,7 +1522,7 @@
       "operator_version": "atlas.fec.compiler.v1",
       "outcome": "answered",
       "period": "2022",
-      "reproducibility_fingerprint": "390917478322c81b5914fbc0c1c1885bac63d264a7ea568b7acaa947a49358d9",
+      "reproducibility_fingerprint": "5fb19949958da62e383f3267cbda292fda8bcd1f09b758c1c52192787467ffda",
       "request": {
         "concept": "net_income",
         "period": "2022"
@@ -1532,11 +1532,11 @@
         "candidates": [],
         "cell": {
           "accession": "0000019617-23-000231",
-          "cell_id": "CELL-8223a94e19aac941",
+          "cell_id": "CELL-ed434ee59b3a57ba",
           "column": 2,
           "column_label": "",
           "currency": "USD",
-          "document_id": "DOC-d612e96c67d845f0",
+          "document_id": "DOC-cd52c9e55c0845a1",
           "period": "2022",
           "raw": "37,676",
           "row": 26,
@@ -1544,7 +1544,7 @@
           "scale": 6,
           "section_path": "Item 15. Exhibits, Financial Statement Schedules.",
           "source_sha256": "982b59ce9ee019dc61ec131532206f34a1f5290305e89744653a6c9d95a22392",
-          "table_id": "TAB-94aa535dbfb85376",
+          "table_id": "TAB-fd229317ee190561",
           "value": "37676"
         },
         "concept": "net_income",
@@ -1555,7 +1555,7 @@
         "status": "resolved",
         "vintage": {
           "accession": "0000019617-23-000231",
-          "document_id": "DOC-d612e96c67d845f0",
+          "document_id": "DOC-cd52c9e55c0845a1",
           "filed_date": "2023-02-21",
           "period_of_report": "2022-12-31",
           "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -1660,7 +1660,7 @@
             "value_digest": "2748e0b5ac5fcde6"
           },
           {
-            "duration_ms": 0.0014,
+            "duration_ms": 0.0017,
             "node": "numerator",
             "op": "input",
             "position": 1,
@@ -1669,7 +1669,7 @@
             "value_digest": "6186e04bb751dba1"
           },
           {
-            "duration_ms": 0.0212,
+            "duration_ms": 0.0581,
             "node": "quotient",
             "op": "div",
             "position": 2,
@@ -1685,11 +1685,11 @@
           "accession": "0000019617-23-000231",
           "availability_precision": "unknown",
           "availability_time": "2023-02-21T21:28:55Z",
-          "cell_id": "CELL-8223a94e19aac941",
+          "cell_id": "CELL-ed434ee59b3a57ba",
           "column": 2,
           "column_label": "",
           "currency": "USD",
-          "document_id": "DOC-d612e96c67d845f0",
+          "document_id": "DOC-cd52c9e55c0845a1",
           "period": "2022",
           "raw": "37,676",
           "rights": "public_domain",
@@ -1697,8 +1697,8 @@
           "row_label": "Net income",
           "scale": 6,
           "section_path": "",
-          "table_id": "TAB-94aa535dbfb85376",
-          "unit_id": "UNI-94aa535dbfb85376",
+          "table_id": "TAB-fd229317ee190561",
+          "unit_id": "UNI-fd229317ee190561",
           "unit_sha256": "982b59ce9ee019dc61ec131532206f34a1f5290305e89744653a6c9d95a22392",
           "value": "37676"
         },
@@ -1706,11 +1706,11 @@
           "accession": "0000019617-23-000231",
           "availability_precision": "unknown",
           "availability_time": "2023-02-21T21:28:55Z",
-          "cell_id": "CELL-e982907135b273d0",
+          "cell_id": "CELL-266ffe8cd0484184",
           "column": 2,
           "column_label": "",
           "currency": "USD",
-          "document_id": "DOC-d612e96c67d845f0",
+          "document_id": "DOC-cd52c9e55c0845a1",
           "period": "2022",
           "raw": "3,665,743",
           "rights": "public_domain",
@@ -1718,8 +1718,8 @@
           "row_label": "Total assets (a)",
           "scale": 6,
           "section_path": "",
-          "table_id": "TAB-0c66ff1417abe8ad",
-          "unit_id": "UNI-0c66ff1417abe8ad",
+          "table_id": "TAB-d22d786f04910263",
+          "unit_id": "UNI-d22d786f04910263",
           "unit_sha256": "de8f026b15473349ed30680db91bba078dc183af34232c1ea8a8b302a9dca237",
           "value": "3665743"
         }
@@ -1733,7 +1733,7 @@
       "operator_version": "atlas.fec.compiler.v1",
       "outcome": "answered",
       "period": "2022",
-      "reproducibility_fingerprint": "46e89373e340a4a7ec9addc1373779c277fdcc879b5e832a1e629bc1e37cb4ad",
+      "reproducibility_fingerprint": "85fb279bfcee1b7a7f97ba74f3c583f3a58fa3a2e6365ca77d0b5a8da798c77d",
       "request": {
         "concept": "total_assets",
         "numerator": "net_income",
@@ -1745,11 +1745,11 @@
           "candidates": [],
           "cell": {
             "accession": "0000019617-23-000231",
-            "cell_id": "CELL-e982907135b273d0",
+            "cell_id": "CELL-266ffe8cd0484184",
             "column": 2,
             "column_label": "",
             "currency": "USD",
-            "document_id": "DOC-d612e96c67d845f0",
+            "document_id": "DOC-cd52c9e55c0845a1",
             "period": "2022",
             "raw": "3,665,743",
             "row": 17,
@@ -1757,7 +1757,7 @@
             "scale": 6,
             "section_path": "Item 15. Exhibits, Financial Statement Schedules.",
             "source_sha256": "de8f026b15473349ed30680db91bba078dc183af34232c1ea8a8b302a9dca237",
-            "table_id": "TAB-0c66ff1417abe8ad",
+            "table_id": "TAB-d22d786f04910263",
             "value": "3665743"
           },
           "concept": "total_assets",
@@ -1768,7 +1768,7 @@
           "status": "resolved",
           "vintage": {
             "accession": "0000019617-23-000231",
-            "document_id": "DOC-d612e96c67d845f0",
+            "document_id": "DOC-cd52c9e55c0845a1",
             "filed_date": "2023-02-21",
             "period_of_report": "2022-12-31",
             "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -1779,11 +1779,11 @@
           "candidates": [],
           "cell": {
             "accession": "0000019617-23-000231",
-            "cell_id": "CELL-8223a94e19aac941",
+            "cell_id": "CELL-ed434ee59b3a57ba",
             "column": 2,
             "column_label": "",
             "currency": "USD",
-            "document_id": "DOC-d612e96c67d845f0",
+            "document_id": "DOC-cd52c9e55c0845a1",
             "period": "2022",
             "raw": "37,676",
             "row": 26,
@@ -1791,7 +1791,7 @@
             "scale": 6,
             "section_path": "Item 15. Exhibits, Financial Statement Schedules.",
             "source_sha256": "982b59ce9ee019dc61ec131532206f34a1f5290305e89744653a6c9d95a22392",
-            "table_id": "TAB-94aa535dbfb85376",
+            "table_id": "TAB-fd229317ee190561",
             "value": "37676"
           },
           "concept": "net_income",
@@ -1802,7 +1802,7 @@
           "status": "resolved",
           "vintage": {
             "accession": "0000019617-23-000231",
-            "document_id": "DOC-d612e96c67d845f0",
+            "document_id": "DOC-cd52c9e55c0845a1",
             "filed_date": "2023-02-21",
             "period_of_report": "2022-12-31",
             "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -1853,27 +1853,27 @@
         "accession": "0000066740-23-000014",
         "availability_precision": "unknown",
         "availability_time": "2023-02-08T18:14:49Z",
-        "cell_id": "CELL-4ca33ba7550f839f",
+        "cell_id": "CELL-9749d86ee392019e",
         "column": 11,
         "column_label": "",
         "concept": "revenue",
         "currency": null,
-        "document_id": "DOC-35df69871a254c06",
+        "document_id": "DOC-5c68712c37634802",
         "entity_scope": "consolidated",
         "issuer_id": "ISS-CIK0000066740",
         "period": "2022",
-        "rationale": "label match score 6.50; statement=income/consolidated; period=2022; scale=0",
+        "rationale": "label match score 6.50; statement=income/consolidated; period=2022; scale=6",
         "raw": "34,229",
         "resolver_version": "9.6.3",
         "rights": "public_domain",
         "row": 1,
         "row_label": "Net sales",
-        "scale": 0,
+        "scale": 6,
         "source_table_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
         "statement_family": "income",
         "statement_title": "Consolidated Statement of Income",
-        "table_id": "TAB-841f40f62db0d3a3",
-        "unit_id": "UNI-841f40f62db0d3a3",
+        "table_id": "TAB-273c3e0c42fcbf80",
+        "unit_id": "UNI-273c3e0c42fcbf80",
         "value": "34229"
       },
       "currency": null,
@@ -1937,7 +1937,7 @@
         "run_id": "RUN-254183445254176508b629be",
         "trace": [
           {
-            "duration_ms": 0.0025,
+            "duration_ms": 0.0041,
             "node": "value",
             "op": "input",
             "position": 0,
@@ -1953,20 +1953,20 @@
           "accession": "0000066740-23-000014",
           "availability_precision": "unknown",
           "availability_time": "2023-02-08T18:14:49Z",
-          "cell_id": "CELL-4ca33ba7550f839f",
+          "cell_id": "CELL-9749d86ee392019e",
           "column": 11,
           "column_label": "",
           "currency": null,
-          "document_id": "DOC-35df69871a254c06",
+          "document_id": "DOC-5c68712c37634802",
           "period": "2022",
           "raw": "34,229",
           "rights": "public_domain",
           "row": 1,
           "row_label": "Net sales",
-          "scale": 0,
+          "scale": 6,
           "section_path": "",
-          "table_id": "TAB-841f40f62db0d3a3",
-          "unit_id": "UNI-841f40f62db0d3a3",
+          "table_id": "TAB-273c3e0c42fcbf80",
+          "unit_id": "UNI-273c3e0c42fcbf80",
           "unit_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
           "value": "34229"
         }
@@ -1981,7 +1981,7 @@
       "operator_version": "atlas.fec.compiler.v1",
       "outcome": "answered",
       "period": "2022",
-      "reproducibility_fingerprint": "490e69e5af0e7b0e7e8050da2c71d9fa2f1d31e79314d57e85ecdf897ffdb4c2",
+      "reproducibility_fingerprint": "a2a0d2db3de37edca09c5aeef0e7f1e83194ef3ae54c0e25c279713b0c55f7ec",
       "request": {
         "concept": "revenue",
         "period": "2022"
@@ -1991,19 +1991,19 @@
         "candidates": [],
         "cell": {
           "accession": "0000066740-23-000014",
-          "cell_id": "CELL-4ca33ba7550f839f",
+          "cell_id": "CELL-9749d86ee392019e",
           "column": 11,
           "column_label": "",
           "currency": null,
-          "document_id": "DOC-35df69871a254c06",
+          "document_id": "DOC-5c68712c37634802",
           "period": "2022",
           "raw": "34,229",
           "row": 1,
           "row_label": "Net sales",
-          "scale": 0,
+          "scale": 6,
           "section_path": "Item 8. Financial Statements and Supplementary Data.",
           "source_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
-          "table_id": "TAB-841f40f62db0d3a3",
+          "table_id": "TAB-273c3e0c42fcbf80",
           "value": "34229"
         },
         "concept": "revenue",
@@ -2014,7 +2014,7 @@
         "status": "resolved",
         "vintage": {
           "accession": "0000066740-23-000014",
-          "document_id": "DOC-35df69871a254c06",
+          "document_id": "DOC-5c68712c37634802",
           "filed_date": "2023-02-08",
           "period_of_report": "2022-12-31",
           "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -2023,7 +2023,7 @@
       },
       "unit": {
         "kind": null,
-        "scale": 0
+        "scale": 6
       },
       "value": "34229.00",
       "verification": {
@@ -2131,7 +2131,7 @@
         "run_id": "RUN-18478e48b58e0f20b76731d9",
         "trace": [
           {
-            "duration_ms": 0.0027,
+            "duration_ms": 0.0031,
             "node": "current",
             "op": "input",
             "position": 0,
@@ -2149,7 +2149,7 @@
             "value_digest": "0985274ab1347781"
           },
           {
-            "duration_ms": 0.0009,
+            "duration_ms": 0.0008,
             "node": "prior",
             "op": "input",
             "position": 2,
@@ -2158,7 +2158,7 @@
             "value_digest": "a1d1158fb0e44092"
           },
           {
-            "duration_ms": 0.0213,
+            "duration_ms": 0.036,
             "node": "delta",
             "op": "sub",
             "position": 3,
@@ -2167,7 +2167,7 @@
             "value_digest": "6ac885c56378ae07"
           },
           {
-            "duration_ms": 0.015,
+            "duration_ms": 0.0162,
             "node": "fraction",
             "op": "div",
             "position": 4,
@@ -2176,7 +2176,7 @@
             "value_digest": "fbb1e34a18515af4"
           },
           {
-            "duration_ms": 0.0135,
+            "duration_ms": 0.0148,
             "node": "scaled",
             "op": "mul",
             "position": 5,
@@ -2192,20 +2192,20 @@
           "accession": "0000066740-23-000014",
           "availability_precision": "unknown",
           "availability_time": "2023-02-08T18:14:49Z",
-          "cell_id": "CELL-4ca33ba7550f839f",
+          "cell_id": "CELL-9749d86ee392019e",
           "column": 11,
           "column_label": "",
           "currency": null,
-          "document_id": "DOC-35df69871a254c06",
+          "document_id": "DOC-5c68712c37634802",
           "period": "2022",
           "raw": "34,229",
           "rights": "public_domain",
           "row": 1,
           "row_label": "Net sales",
-          "scale": 0,
+          "scale": 6,
           "section_path": "",
-          "table_id": "TAB-841f40f62db0d3a3",
-          "unit_id": "UNI-841f40f62db0d3a3",
+          "table_id": "TAB-273c3e0c42fcbf80",
+          "unit_id": "UNI-273c3e0c42fcbf80",
           "unit_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
           "value": "34229"
         },
@@ -2213,20 +2213,20 @@
           "accession": "0000066740-23-000014",
           "availability_precision": "unknown",
           "availability_time": "2023-02-08T18:14:49Z",
-          "cell_id": "CELL-474af392731de73d",
+          "cell_id": "CELL-f633d5740a1665d0",
           "column": 15,
           "column_label": "",
           "currency": null,
-          "document_id": "DOC-35df69871a254c06",
+          "document_id": "DOC-5c68712c37634802",
           "period": "2021",
           "raw": "35,355",
           "rights": "public_domain",
           "row": 1,
           "row_label": "Net sales",
-          "scale": 0,
+          "scale": 6,
           "section_path": "",
-          "table_id": "TAB-841f40f62db0d3a3",
-          "unit_id": "UNI-841f40f62db0d3a3",
+          "table_id": "TAB-273c3e0c42fcbf80",
+          "unit_id": "UNI-273c3e0c42fcbf80",
           "unit_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
           "value": "35355"
         }
@@ -2240,7 +2240,7 @@
       "operator_version": "atlas.fec.compiler.v1",
       "outcome": "answered",
       "period": "2022 vs 2021",
-      "reproducibility_fingerprint": "ae35613c65730efcce8c292729c155e31b239404d18de17575df49b9e25aaf54",
+      "reproducibility_fingerprint": "ef0fc2dbffd4f064151d20bddbe12889c6bc4a3b6d1a1a05e5306ac6b87337c7",
       "request": {
         "concept": "revenue",
         "current_period": "2022",
@@ -2252,19 +2252,19 @@
           "candidates": [],
           "cell": {
             "accession": "0000066740-23-000014",
-            "cell_id": "CELL-4ca33ba7550f839f",
+            "cell_id": "CELL-9749d86ee392019e",
             "column": 11,
             "column_label": "",
             "currency": null,
-            "document_id": "DOC-35df69871a254c06",
+            "document_id": "DOC-5c68712c37634802",
             "period": "2022",
             "raw": "34,229",
             "row": 1,
             "row_label": "Net sales",
-            "scale": 0,
+            "scale": 6,
             "section_path": "Item 8. Financial Statements and Supplementary Data.",
             "source_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
-            "table_id": "TAB-841f40f62db0d3a3",
+            "table_id": "TAB-273c3e0c42fcbf80",
             "value": "34229"
           },
           "concept": "revenue",
@@ -2275,7 +2275,7 @@
           "status": "resolved",
           "vintage": {
             "accession": "0000066740-23-000014",
-            "document_id": "DOC-35df69871a254c06",
+            "document_id": "DOC-5c68712c37634802",
             "filed_date": "2023-02-08",
             "period_of_report": "2022-12-31",
             "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -2286,19 +2286,19 @@
           "candidates": [],
           "cell": {
             "accession": "0000066740-23-000014",
-            "cell_id": "CELL-474af392731de73d",
+            "cell_id": "CELL-f633d5740a1665d0",
             "column": 15,
             "column_label": "",
             "currency": null,
-            "document_id": "DOC-35df69871a254c06",
+            "document_id": "DOC-5c68712c37634802",
             "period": "2021",
             "raw": "35,355",
             "row": 1,
             "row_label": "Net sales",
-            "scale": 0,
+            "scale": 6,
             "section_path": "Item 8. Financial Statements and Supplementary Data.",
             "source_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
-            "table_id": "TAB-841f40f62db0d3a3",
+            "table_id": "TAB-273c3e0c42fcbf80",
             "value": "35355"
           },
           "concept": "revenue",
@@ -2309,7 +2309,7 @@
           "status": "resolved",
           "vintage": {
             "accession": "0000066740-23-000014",
-            "document_id": "DOC-35df69871a254c06",
+            "document_id": "DOC-5c68712c37634802",
             "filed_date": "2023-02-08",
             "period_of_report": "2022-12-31",
             "selection_policy": "filing whose own period is the requested year; disagreements refused"
@@ -2344,7 +2344,7 @@
       "resolution": {
         "candidates": [
           {
-            "document_id": "DOC-77e530ee20cb4f68",
+            "document_id": "DOC-9d2ea65655d14ebc",
             "period": "2018",
             "raw": "12,267",
             "row_label": "Sales (millions)",
@@ -2352,7 +2352,7 @@
             "value": "12267"
           },
           {
-            "document_id": "DOC-77e530ee20cb4f68",
+            "document_id": "DOC-9d2ea65655d14ebc",
             "period": "2018",
             "raw": "22.3",
             "row_label": "Percent of sales",
@@ -2360,7 +2360,7 @@
             "value": "22.3"
           },
           {
-            "document_id": "DOC-77e530ee20cb4f68",
+            "document_id": "DOC-9d2ea65655d14ebc",
             "period": "2018",
             "raw": "6,827",
             "row_label": "Sales (millions)",
@@ -2368,7 +2368,7 @@
             "value": "6827"
           },
           {
-            "document_id": "DOC-77e530ee20cb4f68",
+            "document_id": "DOC-9d2ea65655d14ebc",
             "period": "2018",
             "raw": "25.2",
             "row_label": "Percent of sales",
@@ -2376,7 +2376,7 @@
             "value": "25.2"
           },
           {
-            "document_id": "DOC-77e530ee20cb4f68",
+            "document_id": "DOC-9d2ea65655d14ebc",
             "period": "2018",
             "raw": "6,021",
             "row_label": "Sales (millions)",
@@ -2384,7 +2384,7 @@
             "value": "6021"
           },
           {
-            "document_id": "DOC-77e530ee20cb4f68",
+            "document_id": "DOC-9d2ea65655d14ebc",
             "period": "2018",
             "raw": "29.9",
             "row_label": "Percent of sales",
@@ -2392,7 +2392,7 @@
             "value": "29.9"
           },
           {
-            "document_id": "DOC-77e530ee20cb4f68",
+            "document_id": "DOC-9d2ea65655d14ebc",
             "period": "2018",
             "raw": "5,472",
             "row_label": "Sales (millions)",
@@ -2400,7 +2400,7 @@
             "value": "5472"
           },
           {
-            "document_id": "DOC-77e530ee20cb4f68",
+            "document_id": "DOC-9d2ea65655d14ebc",
             "period": "2018",
             "raw": "37.6",
             "row_label": "Percent of sales",
@@ -2408,7 +2408,7 @@
             "value": "37.6"
           },
           {
-            "document_id": "DOC-77e530ee20cb4f68",
+            "document_id": "DOC-9d2ea65655d14ebc",
             "period": "2018",
             "raw": "4,796",
             "row_label": "Sales (millions)",
@@ -2416,7 +2416,7 @@
             "value": "4796"
           },
           {
-            "document_id": "DOC-77e530ee20cb4f68",
+            "document_id": "DOC-9d2ea65655d14ebc",
             "period": "2018",
             "raw": "21.4",
             "row_label": "Percent of sales",

@@ -37,7 +37,47 @@ inadmissible model. See [docs/PHASE9_IMPLEMENTATION.md](docs/PHASE9_IMPLEMENTATI
 [docs/PHASE9_FINANCIAL_RECONCILIATION.md](docs/PHASE9_FINANCIAL_RECONCILIATION.md) and
 [docs/PHASE9_READINESS.md](docs/PHASE9_READINESS.md).
 
-**The canonical Atlas Master Specification v3.0.0 is present and byte-verified.**
+## Source-bound financial answers (FOCUS)
+
+A financial number is only an answer if you can show which printed cell it came from and that the
+cell has not changed. Atlas now does that end to end:
+
+```bash
+export ATLAS_SEC_USER_AGENT='AtlasQuant/0.1 you@example.com'   # SEC fair-access requirement
+make focus-corpus     # fetch and ingest real 10-Ks (network)
+make focus-demo       # offline; authenticate against the archived bytes
+make focus-verify CERT=artifacts/focus_certificate.json
+```
+
+`make focus-demo` runs thirteen research questions against four real 10-K filings, builds a
+research certificate for each answered value, verifies it against the original SEC bytes, and then
+attacks it sixteen ways. Current results: ten answered, three refused with distinct causes (a
+concept the statement does not report, a resolver capability gap, and a historical cutoff), and
+sixteen of sixteen self-consistent forgeries refused.
+
+The verifier reports one of four levels, and the difference between them is the point:
+
+| Level | Meaning |
+| --- | --- |
+| `ARITHMETIC_VERIFIED` | the verifier's own rational arithmetic reproduces the result from the inputs the certificate carries |
+| `SOURCE_VERIFIED` | additionally, the original document bytes hash to the pinned value, the source table is found inside them, the printed cell text matches, and the arithmetic recomputed from that text matches |
+| `SOURCE_UNVERIFIED` | arithmetic holds but authoritative evidence was unavailable |
+| `INVALID` | a required check failed |
+
+A certificate fingerprint proves internal consistency and nothing more: an attacker who changes an
+input and the result together and recomputes every owned hash produces a self-consistent artifact.
+Strict verification refuses it. Read the argument in
+[docs/FOCUS_TECHNICAL_NOTE.md](docs/FOCUS_TECHNICAL_NOTE.md), the numbers in
+[docs/FOCUS_RESEARCH_RESULTS.md](docs/FOCUS_RESEARCH_RESULTS.md), and the architecture in
+[docs/FOCUS_ARCHITECTURE.md](docs/FOCUS_ARCHITECTURE.md).
+
+Known limitations, stated in the verifier's own output: currency is not detected for these
+statements (scale is certified, currency is not), and the concept-to-row mapping is a pinned,
+reviewed judgement rather than something the bytes can prove. The 3M FY2018 question is a
+capability gap, not an unanswerable question: the filing prints `Net sales 32,765` and resolution
+failed to bind it.
+
+**The canonical Atlas Master Specification v3.1.0 is present and byte-verified.**
 `ATLAS_MASTER_SPEC.md` at the repository root is 289,963 bytes with SHA-256
 `c1228db93e66a04fb211bea85f6c978289a6040b1f655f934da76498c8c4752d`, confirmed by
 `scripts/verify_master_spec.py` and by an independent `sha256sum`. It is the authoritative
@@ -379,7 +419,7 @@ compiler setup. Details: [docs/PHASE7_BENCHMARKS.md](docs/PHASE7_BENCHMARKS.md).
 ## 7. Verification
 
 ```bash
-.venv/bin/python -m pytest -q          # 446 passed through Phase 9.2
+.venv/bin/python -m pytest -q          # 810 passed
 cd web && npm test -- --run            # 4 passed
 cd web && npm run build                # tsc + vite
 ```

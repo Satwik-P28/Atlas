@@ -1,5 +1,11 @@
 #!/usr/bin/env python
-"""Reproduce the exported Phase 9.2 application on a clean schema-13 database."""
+"""Reproduce the exported Phase 9.2 application on a clean database.
+
+The schema version is asserted against the registry rather than a literal. The original script
+asserted 13, which was correct when it was written and became a false failure as soon as a later
+phase appended a migration. The financial guarantees below are unchanged and are what this script
+exists to check.
+"""
 from __future__ import annotations
 
 import hashlib
@@ -13,6 +19,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from atlas.applications.contracts import read_package
 from atlas.applications.service import ApplicationService
 from atlas.storage.db import Database
+from atlas.storage.migrations import LATEST_VERSION
 
 ARTIFACT = ROOT / "artifacts" / "phase9_2_application.atlas"
 payload = ARTIFACT.read_bytes()
@@ -47,6 +54,7 @@ result = {
     },
     "fresh_database": "temporary directory, removed after execution",
     "fresh_schema": schema,
+    "expected_schema": LATEST_VERSION,
     "migrations": migrations,
     "install": {
         "status": install["status"],
@@ -86,7 +94,9 @@ assert result["execution"]["differences"] == {}, result["execution"]["difference
 assert result["package"]["sha256"] == result["package"]["package_sha256"]
 assert result["package"]["contains_restricted_price_289_91"] is False
 assert result["source_reconciliation"]["parent_form"] == "FR Y-9C"
-assert result["fresh_schema"] == 13
+assert result["fresh_schema"] == LATEST_VERSION, (
+    f"a fresh database migrated to {result['fresh_schema']}, "
+    f"but the registry declares {LATEST_VERSION}")
 outputs = result["execution"]["outputs"]
 assert outputs["book_value_basis"] == "sec_total_stockholders_equity_less_preferred_stock"
 assert outputs["common_equity_status"] == "derived_total_equity_less_preferred_stock"

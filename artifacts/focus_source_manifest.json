@@ -1,0 +1,198 @@
+{
+  "documents": {
+    "0000019617-23-000231": {
+      "accession": "0000019617-23-000231",
+      "cells": [
+        {
+          "availability_time": "2023-02-21T21:28:55Z",
+          "column": 2,
+          "column_label": "",
+          "concept": "total_assets",
+          "currency": "USD",
+          "period": "2022",
+          "raw": "3,665,743",
+          "row": 17,
+          "row_label": "Total assets (a)",
+          "scale": 6,
+          "statement_family": "balance_sheet",
+          "table_sha256": "de8f026b15473349ed30680db91bba078dc183af34232c1ea8a8b302a9dca237",
+          "unit_sha256": "de8f026b15473349ed30680db91bba078dc183af34232c1ea8a8b302a9dca237",
+          "value": "3665743"
+        },
+        {
+          "availability_time": "2023-02-21T21:28:55Z",
+          "column": 2,
+          "column_label": "",
+          "concept": "net_income",
+          "currency": "USD",
+          "period": "2022",
+          "raw": "37,676",
+          "row": 26,
+          "row_label": "Net income",
+          "scale": 6,
+          "statement_family": "income",
+          "table_sha256": "982b59ce9ee019dc61ec131532206f34a1f5290305e89744653a6c9d95a22392",
+          "unit_sha256": "982b59ce9ee019dc61ec131532206f34a1f5290305e89744653a6c9d95a22392",
+          "value": "37676"
+        }
+      ],
+      "cik": "0000019617",
+      "document_sha256": "18c893da2ef6361982d087d9eee2f08d79bd0559197aa832ac30bb310901c5b1",
+      "form_type": "10-K",
+      "issuer_id": "ISS-CIK0000019617",
+      "issuer_name": "JPMORGAN CHASE & CO",
+      "primary_document_url": "https://www.sec.gov/Archives/edgar/data/19617/000001961723000231/jpm-20221231.htm",
+      "tables": [
+        "de8f026b15473349ed30680db91bba078dc183af34232c1ea8a8b302a9dca237",
+        "982b59ce9ee019dc61ec131532206f34a1f5290305e89744653a6c9d95a22392"
+      ]
+    },
+    "0000021344-23-000011": {
+      "accession": "0000021344-23-000011",
+      "cells": [
+        {
+          "availability_time": "2023-02-21T21:18:20Z",
+          "column": 2,
+          "column_label": "2021",
+          "concept": "revenue",
+          "currency": null,
+          "period": "2022",
+          "raw": "43,004",
+          "row": 1,
+          "row_label": "Net Operating Revenues",
+          "scale": 6,
+          "statement_family": "income",
+          "table_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+          "unit_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+          "value": "43004"
+        },
+        {
+          "availability_time": "2023-02-21T21:18:20Z",
+          "column": 1,
+          "column_label": "2022",
+          "concept": "net_income",
+          "currency": null,
+          "period": "2022",
+          "raw": "9,571",
+          "row": 13,
+          "row_label": "Consolidated Net Income",
+          "scale": 6,
+          "statement_family": "income",
+          "table_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+          "unit_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+          "value": "9571"
+        },
+        {
+          "availability_time": "2023-02-21T21:18:20Z",
+          "column": 5,
+          "column_label": "",
+          "concept": "revenue",
+          "currency": null,
+          "period": "2021",
+          "raw": "38,655",
+          "row": 1,
+          "row_label": "Net Operating Revenues",
+          "scale": 6,
+          "statement_family": "income",
+          "table_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+          "unit_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+          "value": "38655"
+        },
+        {
+          "availability_time": "2023-02-21T21:18:20Z",
+          "column": 1,
+          "column_label": "2022",
+          "concept": "operating_income",
+          "currency": null,
+          "period": "2022",
+          "raw": "10,909",
+          "row": 6,
+          "row_label": "Operating Income",
+          "scale": 6,
+          "statement_family": "income",
+          "table_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+          "unit_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+          "value": "10909"
+        },
+        {
+          "availability_time": "2023-02-21T21:18:20Z",
+          "column": 2,
+          "column_label": "2021",
+          "concept": "total_assets",
+          "currency": null,
+          "period": "2022",
+          "raw": "92,763",
+          "row": 19,
+          "row_label": "Total Assets",
+          "scale": 6,
+          "statement_family": "balance_sheet",
+          "table_sha256": "de5296e553332f9b463978bb0e56c622dc53e2ef8a6c6672226d80505f7046db",
+          "unit_sha256": "de5296e553332f9b463978bb0e56c622dc53e2ef8a6c6672226d80505f7046db",
+          "value": "92763"
+        }
+      ],
+      "cik": "0000021344",
+      "document_sha256": "df1877fd85ec0598f85faf476ed161617403b1fe9c383e456860b9c3f7ee70d4",
+      "form_type": "10-K",
+      "issuer_id": "ISS-CIK0000021344",
+      "issuer_name": "COCA COLA CO",
+      "primary_document_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134423000011/ko-20221231.htm",
+      "tables": [
+        "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+        "de5296e553332f9b463978bb0e56c622dc53e2ef8a6c6672226d80505f7046db"
+      ]
+    },
+    "0000066740-23-000014": {
+      "accession": "0000066740-23-000014",
+      "cells": [
+        {
+          "availability_time": "2023-02-08T18:14:49Z",
+          "column": 11,
+          "column_label": "",
+          "concept": "revenue",
+          "currency": null,
+          "period": "2022",
+          "raw": "34,229",
+          "row": 1,
+          "row_label": "Net sales",
+          "scale": 0,
+          "statement_family": "income",
+          "table_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
+          "unit_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
+          "value": "34229"
+        },
+        {
+          "availability_time": "2023-02-08T18:14:49Z",
+          "column": 15,
+          "column_label": "",
+          "concept": "revenue",
+          "currency": null,
+          "period": "2021",
+          "raw": "35,355",
+          "row": 1,
+          "row_label": "Net sales",
+          "scale": 0,
+          "statement_family": "income",
+          "table_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
+          "unit_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
+          "value": "35355"
+        }
+      ],
+      "cik": "0000066740",
+      "document_sha256": "00fbd4464afde54c9f7904c58ea31949890f61c6ffc740d88d96fcbfff51007a",
+      "form_type": "10-K",
+      "issuer_id": "ISS-CIK0000066740",
+      "issuer_name": "3M CO",
+      "primary_document_url": "https://www.sec.gov/Archives/edgar/data/66740/000006674023000014/mmm-20221231.htm",
+      "tables": [
+        "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416"
+      ]
+    }
+  },
+  "generated_at": null,
+  "limitations": [
+    "This manifest pins what the ingested documents contain. It is not a signature and it does not prove which bytes SEC served; authenticity comes from the source bytes.",
+    "Cells are keyed by content hash, row and column because document and table identifiers are regenerated on every ingestion."
+  ],
+  "schema": "atlas.focus.source_manifest.v1"
+}

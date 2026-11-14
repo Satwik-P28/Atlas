@@ -184,8 +184,6 @@ def extract_cells(
         footnotes_value = []
     if not isinstance(rows, list) or len(rows) < 2:
         return []
-    scale, currency, unit_basis = detect_scale(table.get("caption") or "",
-                                               table.get("units") or "")
     header_rows: list[int] = []
     for index, row in enumerate(rows[:max_header_rows]):
         if _looks_numeric(row) <= 0.34 and any(_periods(cell) for cell in row):
@@ -196,6 +194,16 @@ def extract_cells(
     if not header_rows:
         header_rows = [0]
     body_start = max(header_rows) + 1
+
+    # The unit declaration is often the table's own first row ("(Millions, except per share
+    # amounts)"), not the caption. 3M's consolidated statement of income declares millions that
+    # way; reading only the caption silently scaled a $34.2bn revenue line to $34,229. Header-row
+    # text is included so an in-table declaration is honoured, and a header that conflicts with
+    # the caption still resolves to no scale rather than to a guess.
+    unit_texts = [table.get("caption") or "", table.get("units") or ""]
+    for index in header_rows:
+        unit_texts.extend(rows[index])
+    scale, currency, unit_basis = detect_scale(*[text for text in unit_texts if text])
 
     # --- grid reconstruction -------------------------------------------------
     # SEC tables often put "$" in its own column and leave empty spacer columns between

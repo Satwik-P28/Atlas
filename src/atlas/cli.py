@@ -111,6 +111,47 @@ def cmd_init(db: Database, args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_certificate(db: Database, args: argparse.Namespace) -> int:
+    """Verify a research certificate and report its verification level explicitly.
+
+    The level is the whole point of the command. A certificate whose arithmetic matches the
+    inputs it carries is not described as source-verified; that label is reserved for a
+    certificate whose original document bytes and pinned source record were independently
+    checked.
+    """
+    from .research.certificate import load_certificate_file
+    from .research.certificate_verify import TrustedEvidence, VerificationLevel, verify
+
+    certificate = load_certificate_file(args.certificate)
+    evidence = None
+    if args.manifest:
+        snapshots: dict[str, bytes] = {}
+        if args.snapshots:
+            directory = Path(args.snapshots)
+            if not directory.is_dir():
+                raise ValidationError("snapshot directory does not exist",
+                                      path=str(directory))
+            for path in sorted(directory.glob("*.htm*")):
+                snapshots[path.stem] = path.read_bytes()
+        evidence = TrustedEvidence.from_manifest_file(
+            args.manifest, snapshots=snapshots, live_sec=args.live_sec,
+            user_agent=os.environ.get("ATLAS_SEC_USER_AGENT") or None)
+    report = verify(certificate, evidence)
+    if args.json:
+        print(json.dumps(report.as_dict(), indent=2, sort_keys=True))
+    else:
+        print(f"level               {report.level.value}")
+        print(f"certificate         {report.certificate_fingerprint}")
+        print(f"method              {report.method}")
+        print(f"source route        {report.source_route or 'none'}")
+        print(f"recomputed value    {report.recomputed_value}")
+        for reason in report.reasons:
+            print(f"failure             {reason}")
+        for limitation in report.limitations:
+            print(f"limitation          {limitation}")
+    return 2 if report.level is VerificationLevel.INVALID else 0
+
+
 def cmd_concepts(db: Database, args: argparse.Namespace) -> int:
     rows = []
     for key, meta in concept_metadata().items():
@@ -924,6 +965,20 @@ def build_parser() -> argparse.ArgumentParser:
     pack_uninstall.add_argument("--pack-id", required=True)
     pack_uninstall.add_argument("--version", required=True)
     pack_uninstall.set_defaults(func=cmd_app)
+
+    certificate = subparsers.add_parser(
+        "certificate", help="verify source-bound research certificates")
+    certificate_sub = certificate.add_subparsers(dest="certificate_command", required=True)
+    certificate_verify = certificate_sub.add_parser("verify", help="verify a certificate")
+    certificate_verify.add_argument("--certificate", required=True,
+                                    help="path to a certificate JSON file")
+    certificate_verify.add_argument("--manifest", default=None,
+                                    help="pinned source manifest to compare against")
+    certificate_verify.add_argument("--snapshots", default=None,
+                                    help="directory of original document bytes")
+    certificate_verify.add_argument("--live-sec", dest="live_sec", action="store_true",
+                                    help="fetch original bytes from SEC EDGAR instead")
+    certificate_verify.set_defaults(func=cmd_certificate)
 
     concepts = subparsers.add_parser("concepts", help="list the canonical concept registry")
     concepts.set_defaults(func=cmd_concepts)
