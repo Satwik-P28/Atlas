@@ -499,6 +499,10 @@ class FinancialAnswerEngine:
         }
         return {
             "outcome": "answered",
+            # The operator names the computation a verifier must reproduce; ``answer_type``
+            # describes the answer's shape. Recording it here keeps certificates from inferring
+            # one from the other.
+            "operator": operator,
             "answer_type": answer_type,
             "value": str(displayed),
             "value_exact": str(verified),

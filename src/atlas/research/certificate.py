@@ -6,6 +6,14 @@ answer-resolution pipeline.
 
 Canonical JSON serialization (UTF-8, sorted keys, no insignificant whitespace beyond a trailing
 newline on disk) is the only serialization that participates in the certificate fingerprint.
+
+Trust model
+-----------
+The certificate records what the answer pipeline selected. Its fingerprint proves the payload is
+internally consistent; it does **not** make the payload authoritative. Source authenticity is
+established only by ``atlas.research.certificate_verify`` against evidence the certificate does not
+control (a pinned source manifest plus the original document bytes). ``build_certificate`` therefore
+records the document digest and URL it was built against, so a verifier can authenticate them later.
 """
 
 from __future__ import annotations
@@ -14,15 +22,11 @@ import hashlib
 import json
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
-from decimal import Decimal
-from fractions import Fraction
 from typing import Any, Mapping
-
-from . import financial_verification as independent_math
 
 SCHEMA = "atlas.research_certificate.v1"
 ISSUER_IDENTITY = "atlas.research_certificate.issuer.v1"
-CERTIFICATE_VERSION = "1.0.0"
+CERTIFICATE_VERSION = "1.1.0"
 
 
 def _canonical_bytes(payload: Mapping[str, Any]) -> bytes:
@@ -74,6 +78,14 @@ class ResearchCertificate:
         return cls(**data)  # type: ignore[arg-type]
 
 
+def _binding_data(binding: Any) -> dict[str, Any]:
+    if hasattr(binding, "__slots__"):
+        return {name: getattr(binding, name) for name in binding.__slots__}
+    if isinstance(binding, Mapping):
+        return dict(binding)
+    return dict(binding.__dict__)
+
+
 def build_certificate(
     *,
     research_question: str,
@@ -85,26 +97,33 @@ def build_certificate(
         "filing whose own period is the requested year; disagreements refused"),
     assumptions: list[str] | None = None,
     limitations: list[str] | None = None,
+    source_documents: Mapping[str, Mapping[str, Any]] | None = None,
+    issuer_identity: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Build a certificate from a bound answer packet and its ResolvedFinancialInput list."""
+    """Build a certificate from a bound answer packet and its ResolvedFinancialInput list.
+
+    ``source_documents`` maps ``document_id`` to the identity of the document the answer was
+    computed from: ``sha256`` (of the exact bytes that were ingested), ``primary_document_url`` and
+    ``form_type``. Supplying it is what allows a later strict verification to authenticate the
+    source; omitting it yields a certificate that can only ever reach ``ARITHMETIC_VERIFIED``.
+    """
     if answer.get("outcome") != "answered":
         raise ValueError("refused answers cannot be certified")
+    documents = dict(source_documents or {})
+    issuer_record = dict(issuer_identity or {})
     input_bindings: list[dict[str, Any]] = []
     sources: list[dict[str, Any]] = []
     concepts: list[str] = []
     for binding in bindings:
-        if hasattr(binding, "__slots__"):
-            data = {name: getattr(binding, name) for name in binding.__slots__}
-        elif isinstance(binding, Mapping):
-            data = dict(binding)
-        else:
-            data = dict(binding.__dict__)
+        data = _binding_data(binding)
+        document = dict(documents.get(str(data["document_id"])) or {})
         concepts.append(str(data.get("concept") or ""))
         input_bindings.append({
             "issuer_id": data["issuer_id"],
             "concept": data.get("concept"),
             "document_id": data["document_id"],
             "accession": data["accession"],
+            "document_sha256": document.get("sha256"),
             "table_id": data["table_id"],
             "unit_id": data["unit_id"],
             "cell_id": data["cell_id"],
@@ -129,6 +148,9 @@ def build_certificate(
         sources.append({
             "document_id": data["document_id"],
             "accession": data["accession"],
+            "document_sha256": document.get("sha256"),
+            "primary_document_url": document.get("primary_document_url"),
+            "form_type": document.get("form_type"),
             "table_id": data["table_id"],
             "unit_id": data["unit_id"],
             "cell_id": data["cell_id"],
@@ -138,7 +160,9 @@ def build_certificate(
         })
     first = input_bindings[0]
     requirement = dict(normalized_requirement or {
-        "operator": answer.get("formula"),
+        # The operator is recorded on the answer packet. ``formula`` is prose for humans and is
+        # not a dispatch key; falling back to it made every certificate look like a lookup.
+        "operator": answer.get("operator"),
         "metric": answer.get("metric"),
         "period": answer.get("period"),
         "answer_type": answer.get("answer_type"),
@@ -149,6 +173,10 @@ def build_certificate(
         issuer_identity={
             "schema": ISSUER_IDENTITY,
             "issuer_id": first["issuer_id"],
+            # The CIK is the authoritative issuer identifier; without it a verifier cannot pin
+            # identity and must not claim source verification.
+            "cik": issuer_record.get("cik"),
+            "issuer_name": issuer_record.get("issuer_name"),
             "reporting_entity_scope": first.get("entity_scope") or "unknown",
         },
         reporting_entity_scope=str(first.get("entity_scope") or "unknown"),
@@ -159,6 +187,7 @@ def build_certificate(
         typed_computation={
             "formula": answer.get("formula"),
             "answer_type": answer.get("answer_type"),
+            "operator": answer.get("operator"),
             "operator_version": answer.get("operator_version"),
             "engine_version": answer.get("engine_version"),
             "fec": answer.get("fec"),
@@ -181,111 +210,35 @@ def build_certificate(
         ]),
         limitations=list(limitations or list(answer.get("limitations") or [])),
     )
-    return cert.to_dict()
-
-
-def _parse_exact(value: Any) -> Fraction:
-    return Fraction(str(value))
-
-
-def verify_certificate_payload(payload: Mapping[str, Any], *,
-                               trusted_sources: Mapping[str, Mapping[str, Any]] | None = None
-                               ) -> dict[str, Any]:
-    """Independently verify a certificate.
-
-    ``trusted_sources`` maps accession → {sha256, availability_time, body_present}.
-    When source bytes are unavailable, authenticity of a bare hash is reported as limited.
-    """
-    problems: list[str] = []
-    if payload.get("schema") != SCHEMA:
-        problems.append("schema_mismatch")
-    expected = payload.get("certificate_fingerprint")
+    payload = cert.to_dict()
+    payload["limitations"] = list(payload["limitations"]) + [
+        "The certificate fingerprint proves internal consistency only. It is not a signature, it "
+        "confers no authority on the values it covers, and it cannot detect an attacker who "
+        "recomputes it over altered inputs.",
+        "Source authenticity and semantic intent require independent evidence: verify with "
+        "atlas.research.certificate_verify against a pinned source manifest and the original "
+        "document bytes.",
+    ]
+    # Re-fingerprint after appending limitations so the digest covers the final payload.
     body = {key: value for key, value in payload.items() if key != "certificate_fingerprint"}
-    actual = fingerprint(body)
-    if not expected or expected != actual:
-        problems.append("certificate_fingerprint_mismatch")
+    payload["certificate_fingerprint"] = fingerprint(body)
+    return payload
 
-    bindings = list(payload.get("input_bindings") or [])
-    if not bindings:
-        problems.append("missing_bindings")
 
-    cutoff = str(payload.get("information_cutoff") or "")
-    for binding in bindings:
-        available = binding.get("availability_time")
-        if not available or (cutoff and available > cutoff):
-            problems.append("future_evidence")
-        if binding.get("scale") is None:
-            problems.append("scale_unknown")
-        if binding.get("currency") is None and (payload.get("result") or {}).get("currency"):
-            problems.append("currency_missing")
-        accession = binding.get("accession")
-        if trusted_sources is not None:
-            trusted = trusted_sources.get(str(accession))
-            if trusted is None:
-                problems.append("source_unavailable")
-            else:
-                if trusted.get("availability_time") and cutoff and trusted["availability_time"] > cutoff:
-                    problems.append("trusted_source_after_cutoff")
-                stored_hash = binding.get("source_table_sha256")
-                if trusted.get("sha256") and stored_hash and trusted["sha256"] != stored_hash:
-                    problems.append("source_hash_mismatch")
-                if not trusted.get("body_present", True):
-                    problems.append("source_bytes_unavailable")
-        elif not binding.get("source_table_sha256"):
-            problems.append("source_hash_missing")
+def verify_certificate_payload(
+    payload: Mapping[str, Any],
+    *,
+    evidence: Any = None,
+    trusted_sources: Mapping[str, Mapping[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Compatibility entry point; the implementation lives in ``certificate_verify``.
 
-    # Typed arithmetic over raw printed values — independent of FEC.
-    answer_type = (payload.get("result") or {}).get("unit", {})
-    formula = (payload.get("typed_computation") or {}).get("formula") or ""
-    raw_values = [str(binding.get("raw") or "") for binding in bindings]
-    try:
-        if "percentage" in formula or "percent" in str(
-                (payload.get("typed_computation") or {}).get("answer_type") or ""):
-            if "margin" in str((payload.get("typed_computation") or {}).get("answer_type") or ""):
-                computed = independent_math.margin(raw_values[0], raw_values[1])
-            else:
-                computed = independent_math.percentage_change(raw_values[0], raw_values[1])
-        elif (payload.get("typed_computation") or {}).get("answer_type") == "ratio":
-            computed = independent_math.ratio(raw_values[0], raw_values[1])
-        elif (payload.get("typed_computation") or {}).get("answer_type") == "sum":
-            computed = independent_math.total(raw_values)
-        else:
-            computed = independent_math.lookup(raw_values[0])
-    except Exception as exc:  # noqa: BLE001
-        problems.append(f"arithmetic_refused:{type(exc).__name__}")
-        computed = None
+    ``trusted_sources`` is the legacy mapping of accession → claimed hashes. It is treated as
+    insufficient evidence, because a hash supplied by the caller proves nothing about the bytes.
+    """
+    from .certificate_verify import verify_payload
 
-    result = payload.get("result") or {}
-    if computed is not None:
-        places = int(result.get("display_places") or 2)
-        displayed = independent_math.round_half_up(computed, places=places)
-        claimed = result.get("value")
-        if claimed is None or Decimal(str(claimed)) != displayed:
-            problems.append("result_mismatch")
-        exact = result.get("value_exact")
-        if exact is not None and _parse_exact(exact) != computed:
-            problems.append("exact_result_mismatch")
-
-    # Financial type / operator version presence.
-    computation = payload.get("typed_computation") or {}
-    if not computation.get("operator_version"):
-        problems.append("operator_version_missing")
-    if not computation.get("execution_fingerprint"):
-        problems.append("execution_fingerprint_missing")
-
-    status = "valid" if not problems else "invalid"
-    return {
-        "schema": "atlas.research_certificate.verify.v1",
-        "status": status,
-        "problems": sorted(set(problems)),
-        "certificate_fingerprint": expected,
-        "recomputed_fingerprint": actual,
-        "limitations": [
-            "A hash without independently trusted source bytes does not establish authenticity.",
-            "This verifier recomputes arithmetic from printed raw values with Fraction math and "
-            "does not invoke the production FinancialAnswerEngine or FEC runtime.",
-        ],
-    }
+    return verify_payload(payload, evidence=evidence, trusted_sources=trusted_sources)
 
 
 __all__ = [

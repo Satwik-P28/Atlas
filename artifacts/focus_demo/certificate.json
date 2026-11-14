@@ -3,8 +3,8 @@
     "Selected cells are the consolidated primary statement for the requested concept.",
     "Printed scale metadata on the statement applies to every bound cell."
   ],
-  "certificate_fingerprint": "14c4e6f106f825d6d20e3ec3c9ed2cf59ebfd8aac26399d5ef11d839004f4590",
-  "certificate_version": "1.0.0",
+  "certificate_fingerprint": "471d9b0a1c6cce0bd652f1d35943afbfb09980b6c57c412e630a15a704929e67",
+  "certificate_version": "1.1.0",
   "financial_concepts": [
     "revenue"
   ],
@@ -15,86 +15,94 @@
     "rounding_policy": "typed_half_up_by_answer_type",
     "verifier_version": "9.6.4"
   },
-  "information_cutoff": "2024-01-01T00:00:00Z",
+  "information_cutoff": "2023-06-30T00:00:00Z",
   "input_bindings": [
     {
-      "accession": "0000066740-23-000014",
-      "availability_time": "2023-02-08T18:14:49Z",
-      "cell_id": "CELL-b9c86de0ff11ff98",
-      "column": 11,
-      "column_label": "",
+      "accession": "0000021344-23-000011",
+      "availability_time": "2023-02-21T21:18:20Z",
+      "cell_id": "CELL-e2c46b0dc7f9c1c5",
+      "column": 2,
+      "column_label": "2021",
       "concept": "revenue",
-      "currency": "USD",
-      "document_id": "DOC-d43ca7c5be364fd3",
+      "currency": null,
+      "document_id": "DOC-f69998da52b54907",
+      "document_sha256": "df1877fd85ec0598f85faf476ed161617403b1fe9c383e456860b9c3f7ee70d4",
       "entity_scope": "consolidated",
-      "issuer_id": "ISS-CIK0000066740",
+      "issuer_id": "ISS-CIK0000021344",
       "period": "2022",
       "rationale": "label match score 6.50; statement=income/consolidated; period=2022; scale=6",
-      "raw": "34,229",
+      "raw": "43,004",
       "resolver_version": "9.6.4",
       "rights": "public_domain",
       "row": 1,
-      "row_label": "Net sales",
+      "row_label": "Net Operating Revenues",
       "scale": 6,
-      "source_table_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
+      "source_table_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
       "statement_family": "income",
-      "statement_title": "Consolidated Statement of Income",
-      "table_id": "TAB-54b9720adb652e93",
-      "unit_id": "UNI-54b9720adb652e93",
-      "value": "34229"
+      "statement_title": "CONSOLIDATED STATEMENTS OF INCOME",
+      "table_id": "TAB-745bbb7ca834321c",
+      "unit_id": "UNI-745bbb7ca834321c",
+      "value": "43004"
     }
   ],
-  "issued_at": "2026-11-14T07:16:21Z",
+  "issued_at": "2026-11-14T22:32:52Z",
   "issuer_identity": {
-    "issuer_id": "ISS-CIK0000066740",
+    "cik": "0000021344",
+    "issuer_id": "ISS-CIK0000021344",
+    "issuer_name": "COCA COLA CO",
     "reporting_entity_scope": "consolidated",
     "schema": "atlas.research_certificate.issuer.v1"
   },
   "limitations": [
     "Value is quoted from one verified cell bound by the resolver.",
     "Computed values are never presented as quoted filings; the source cells are the authoritative statement.",
-    "Display rounding is applied only after exact verification; intermediates stay exact."
+    "Display rounding is applied only after exact verification; intermediates stay exact.",
+    "The certificate fingerprint proves internal consistency only. It is not a signature, it confers no authority on the values it covers, and it cannot detect an attacker who recomputes it over altered inputs.",
+    "Source authenticity and semantic intent require independent evidence: verify with atlas.research.certificate_verify against a pinned source manifest and the original document bytes."
   ],
   "normalized_requirement": {
     "concept": "revenue",
-    "issuer": "3M CO",
+    "issuer": "COCA COLA CO",
     "operator": "lookup",
     "period": "2022"
   },
   "reporting_entity_scope": "consolidated",
-  "research_question": "What were 3M consolidated net sales for fiscal year 2022?",
+  "research_question": "COCA COLA CO: lookup {'concept': 'revenue', 'period': '2022'}",
   "result": {
-    "currency": "USD",
+    "currency": null,
     "display_places": 2,
-    "economic_amount": "34229000000",
+    "economic_amount": "43004000000",
     "period": "2022",
     "unit": {
-      "kind": "USD",
+      "kind": null,
       "scale": 6
     },
-    "value": "34229.00",
-    "value_exact": "34229"
+    "value": "43004.00",
+    "value_exact": "43004"
   },
   "schema": "atlas.research_certificate.v1",
   "selected_sources": [
     {
-      "accession": "0000066740-23-000014",
-      "availability_time": "2023-02-08T18:14:49Z",
-      "cell_id": "CELL-b9c86de0ff11ff98",
-      "document_id": "DOC-d43ca7c5be364fd3",
+      "accession": "0000021344-23-000011",
+      "availability_time": "2023-02-21T21:18:20Z",
+      "cell_id": "CELL-e2c46b0dc7f9c1c5",
+      "document_id": "DOC-f69998da52b54907",
+      "document_sha256": "df1877fd85ec0598f85faf476ed161617403b1fe9c383e456860b9c3f7ee70d4",
+      "form_type": "10-K",
+      "primary_document_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134423000011/ko-20221231.htm",
       "rights": "public_domain",
-      "source_table_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
-      "table_id": "TAB-54b9720adb652e93",
-      "unit_id": "UNI-54b9720adb652e93"
+      "source_table_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+      "table_id": "TAB-745bbb7ca834321c",
+      "unit_id": "UNI-745bbb7ca834321c"
     }
   ],
   "typed_computation": {
     "answer_type": "reported_value",
     "engine_version": "9.6.4",
-    "execution_fingerprint": "509a515c25a27cd09456d8005bc60b9890d7475c41f5aa99a5d0af51845a0147",
+    "execution_fingerprint": "acd517361db11ea4c7334bce040c43309747c5e88ebce821a63023b212e42b46",
     "fec": {
       "compiler_version": "atlas.fec.compiler.v1",
-      "model_fingerprint": "509a515c25a27cd09456d8005bc60b9890d7475c41f5aa99a5d0af51845a0147",
+      "model_fingerprint": "acd517361db11ea4c7334bce040c43309747c5e88ebce821a63023b212e42b46",
       "operator_versions": {
         "abs": "atlas.fec.operators.v1",
         "add": "atlas.fec.operators.v1",
@@ -134,7 +142,7 @@
           {
             "name": "value",
             "required": true,
-            "type": "Money[USD]"
+            "type": "Scalar"
           }
         ],
         "interface": "graph",
@@ -146,20 +154,21 @@
         "schema_version": "atlas.model.v1",
         "version": "1.0.0"
       },
-      "run_id": "RUN-2cf41534cc4bf8070b3259ef",
+      "run_id": "RUN-947fa0d08d32dc62bbf7bf7c",
       "trace": [
         {
-          "duration_ms": 0.003,
+          "duration_ms": 0.0043,
           "node": "value",
           "op": "input",
           "position": 0,
           "status": "input",
-          "type": "Money[USD]",
-          "value_digest": "79d930274c58aba8"
+          "type": "Scalar",
+          "value_digest": "849bb34277cf5fbe"
         }
       ]
     },
     "formula": "lookup(cell)",
+    "operator": "lookup",
     "operator_version": "atlas.fec.compiler.v1"
   },
   "vintage_selection_policy": "filing whose own period is the requested year; disagreements refused"

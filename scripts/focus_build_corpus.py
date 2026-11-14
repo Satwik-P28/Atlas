@@ -9,10 +9,12 @@ Requires ``ATLAS_SEC_USER_AGENT`` (declared identity with contact).
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 import time
 from pathlib import Path
+from urllib.request import Request, urlopen
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
@@ -20,9 +22,14 @@ from atlas.core.temporal import iso, utcnow  # noqa: E402
 from atlas.research.knowledge import (  # noqa: E402
     KnowledgeEngine,
     absolute_document_url,
-    fetch_sec_document,
     sec_filings,
+    sec_user_agent,
 )
+
+#: The archived snapshot of the exact bytes that were ingested. Strict certificate verification
+#: authenticates against these, which is why they are archived rather than only hashed.
+DEFAULT_SNAPSHOTS = "var/focus/snapshots"
+_MAX_BYTES = 45 * 1024 * 1024
 from atlas.storage.db import Database  # noqa: E402
 
 # Exact accessions previously ingested for the 9.6.4 case studies (see corpus manifest).
@@ -58,6 +65,16 @@ FOCUS_FILINGS = (
 )
 
 
+def _fetch_bytes(url: str) -> bytes:
+    """Fetch the primary document as exact bytes. Decoding and re-encoding would change the digest."""
+    request = Request(url, headers={"User-Agent": sec_user_agent(), "Accept-Encoding": "identity"})
+    with urlopen(request, timeout=90) as response:  # noqa: S310 - fixed sec.gov host
+        payload = response.read(_MAX_BYTES + 1)
+    if len(payload) > _MAX_BYTES:
+        raise SystemExit(f"document exceeds the ingestion limit: {url}")
+    return payload
+
+
 def _primary_document(cik: str, accession: str) -> dict:
     # Use the full submissions archive (not only ``recent``) so FY2022 filings remain findable.
     for filing in sec_filings(cik, forms=["10-K", "10-K/A"]):
@@ -84,7 +101,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--db", default="var/focus_demo.db")
     parser.add_argument("--manifest", default="artifacts/focus_corpus_manifest.json")
+    parser.add_argument("--snapshots", default=DEFAULT_SNAPSHOTS,
+                        help="directory for the exact source bytes strict verification reads")
     args = parser.parse_args()
+    snapshots = Path(args.snapshots)
+    snapshots.mkdir(parents=True, exist_ok=True)
 
     db_path = Path(args.db)
     db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -105,24 +126,30 @@ def main() -> int:
         meta = _primary_document(filing["cik"], filing["accession"])
         issuer_id = _ensure_issuer(database, filing["cik"], filing["legal_name"])
         started = time.time()
-        html = fetch_sec_document(filing["cik"], filing["accession"], meta["primary_document"])
+        url = absolute_document_url(filing["cik"], filing["accession"], meta["primary_document"])
+        payload_bytes = _fetch_bytes(url)
         document = engine.ingest_document(
             issuer_id=issuer_id,
             accession=filing["accession"],
             form_type="10-K",
-            html=html,
+            html=payload_bytes,
             filed_date=meta["filed_date"],
             acceptance_time=meta["acceptance_time"],
             period_of_report=meta.get("period_of_report") or filing["period_of_report"],
             rights="public_domain",
-            primary_document_url=absolute_document_url(
-                filing["cik"], filing["accession"], meta["primary_document"]),
+            primary_document_url=url,
         )
+        snapshot = snapshots / f"{filing['accession']}.html"
+        snapshot.write_bytes(payload_bytes)
+        if hashlib.sha256(snapshot.read_bytes()).hexdigest() != document["sha256"]:
+            raise SystemExit(f"archived snapshot does not match ingested bytes: {filing['accession']}")
         elapsed = round(time.time() - started, 2)
         records.append({
             **filing,
             "issuer_id": issuer_id,
             "document_id": document["document_id"],
+            "document_sha256": document["sha256"],
+            "snapshot": str(snapshot),
             "filed_date": meta["filed_date"],
             "acceptance_time": meta["acceptance_time"],
             "primary_document": meta["primary_document"],
@@ -138,6 +165,7 @@ def main() -> int:
     payload = {
         "schema": "atlas.focus.corpus.v1",
         "database": str(db_path),
+        "snapshots": str(snapshots),
         "filings": records,
         "rights": "SEC EDGAR public filings fetched at build time; not redistributed in git",
         "limitations": [

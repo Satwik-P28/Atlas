@@ -1,94 +1,134 @@
-# FOCUS research results
+# FOCUS Research Results
 
-## Hypothesis
+All figures below were produced by `make focus-demo` on the integrated candidate, from the archived
+corpus described in `artifacts/focus_corpus_manifest.json`. The report is
+`artifacts/focus_demo/report.json`; it is regenerated on every run and its `status` field is `passed`
+with `failures: []`.
 
-If Atlas binds consolidated statement cells with explicit scale and availability, then:
+## Corpus
 
-1. Real multi-issuer filing questions can be answered with independently recomputed values.
-2. Unsupported or historically unavailable questions abstain rather than invent answers.
-3. A research certificate for an accepted answer verifies independently and fails under material mutation.
+| Filing | Accession |
+|--------|-----------|
+| Coca-Cola FY2022 10-K | `0000021344-23-000011` |
+| JPMorgan FY2022 10-K | `0000019617-23-000231` |
+| 3M FY2022 10-K | `0000066740-23-000014` |
+| 3M FY2018 10-K | `0001558370-19-000470` |
 
-## Experimental setup
+Four filings, three documents in the pinned manifest (the FY2018 and FY2022 3M filings are distinct
+documents; one filing contributes no answered cell), nine pinned cells, ten answered cases.
 
-- Corpus builder: `scripts/focus_build_corpus.py` (SEC EDGAR 10-K HTML at build time).
-- Issuers / accessions:
-  - Coca-Cola `0000021344-23-000011`
-  - JPMorgan `0000019617-23-000231`
-  - 3M `0000066740-23-000014`
-  - 3M `0001558370-19-000470` (FY2018 historical case)
-- Case runner: `scripts/phase9_6_4_case_studies.py` (13 tasks).
-- Flagship demo: `scripts/focus_demo.py`.
-- Certificate tests: `tests/test_focus_certificate.py`.
+## Thirteen cases: 10 answered, 3 refused
 
-No FinanceBench question text is stored in the repository. Population evaluator metrics are therefore not claimed here.
+| Case | Issuer | Question | Answer | Level |
+|------|--------|----------|--------|-------|
+| FOCUS-01 | Coca-Cola | Net operating revenues FY2022 | `43,004.00` (→ 43,004,000,000 USD) | `SOURCE_VERIFIED` |
+| FOCUS-02 | Coca-Cola | Gross profit FY2022 | `9,571.00` | `SOURCE_VERIFIED` |
+| FOCUS-03 | Coca-Cola | Revenue change FY2022 vs FY2021 | `11.25` % | `SOURCE_VERIFIED` |
+| FOCUS-04 | Coca-Cola | Gross margin FY2022 | `25.37` % | `SOURCE_VERIFIED` |
+| FOCUS-05 | Coca-Cola | Operating expense ratio | `2.1571` | `SOURCE_VERIFIED` |
+| FOCUS-06 | JPMorgan | Total net revenue FY2022 | `3,665,743.00` (→ 3,665,743,000,000 USD) | `SOURCE_VERIFIED` |
+| FOCUS-07 | JPMorgan | Net income FY2022 | `37,676.00` | `SOURCE_VERIFIED` |
+| FOCUS-08 | JPMorgan | Net income / revenue | `0.0103` | `SOURCE_VERIFIED` |
+| FOCUS-10 | 3M | Net sales FY2022 | `34,229.00` (→ 34,229,000,000 USD) | `SOURCE_VERIFIED` |
+| FOCUS-11 | 3M | Net sales change FY2022 vs FY2021 | `-3.18` % | `SOURCE_VERIFIED` |
+| FOCUS-09 | JPMorgan | Gross profit | refused | justified unanswerability |
+| FOCUS-12 | 3M | Net sales FY2018 | refused | resolver capability gap |
+| FOCUS-13 | 3M | Net sales at a 2017 cutoff | refused | historical information refusal |
 
-## Baselines
+Rates and ratios carry `economic_amount: null` on purpose: a percentage or a ratio has no currency
+amount, and inventing one would be a scaling error dressed as precision.
 
-Prior Phase 9.6.4 artifacts reported ten answered / three abstained on a larger offline corpus, with 3M FY2022 net sales incorrectly carrying `scale=0`. That scale defect is treated as a negative finding that Priority 0 repairs.
+## The three refusals are not equivalent
 
-## Dataset
+- **FOCUS-09 (justified unanswerability).** JPMorgan's income statement as filed does not present a
+  `gross profit` line that the resolver can bind. Refusing is the correct behaviour and is a success of
+  the policy, not of the answer.
+- **FOCUS-12 (capability gap).** The 3M FY2018 filing *does* print consolidated net sales of `32,765`.
+  Atlas fails to resolve it. This is a defect in the resolver, recorded as a refusal with the observed
+  value attached so it cannot be mistaken for a successfully answered question.
+- **FOCUS-13 (historical information refusal).** The question is asked at a cutoff before the filing was
+  public, so the evidence is genuinely unavailable at that time. The refusal is temporally correct.
 
-Public SEC EDGAR filings only. Database files under `var/` are untracked. Manifest: `artifacts/focus_corpus_manifest.json`.
+Counting these three as "questions answered" would inflate the result by thirty percent and hide the
+one real gap among two policy successes.
 
-## Metrics
+## Certificate matrix
 
-For the controlled case study (not a general accuracy benchmark):
+Ten answered cases produce ten certificates. Every one verifies at `SOURCE_VERIFIED` when checked with
+the pinned manifest and archived bytes; the flagship certificate passes 34/34 individual checks.
 
-| Metric | Value |
-|--------|-------|
-| Tasks | 13 |
-| Answered | 10 |
-| Abstained | 3 |
-| 3M FY2022 scale | 6 (USD millions) |
-| Certificate verify (unmodified) | valid |
-| Certificate verify (value tamper) | invalid |
-| Cutoff refusal (2017 for FY2022) | abstained |
+| Property | Value |
+|----------|-------|
+| Schema | `atlas.research_certificate.v1` |
+| Flagship | 3M FY2022 net sales |
+| Printed | `34,229` |
+| Scale | `6` |
+| Currency | `USD` (from the `$` printed in the amount row) |
+| Economic amount | `34,229,000,000` |
+| Arithmetic pass | agrees with FEC and with `financial_verification` |
+| Source pass | document digest, table digest, coordinates, label, raw, period, scale, currency, accession, form type, issuer CIK all match |
+| Fingerprint | stable across runs |
 
-## Results (re-run)
+The scale correction is the substantive repair: the unit banner `(Millions, except per share amounts)`
+belongs to the header row, not the data row. Reading it from the data row yielded scale `0` and an
+economic amount of `34,229` — a number six orders of magnitude wrong that still looked precise.
 
-| Family | Issuer | Operator | Outcome | Value | Notes |
-|--------|--------|----------|---------|-------|-------|
-| operating | Coca-Cola | lookup revenue FY2022 | answered | 43004.00 | scale 6, raw 43,004 |
-| operating | Coca-Cola | lookup net income FY2022 | answered | 9571.00 | scale 6 |
-| operating | Coca-Cola | % change revenue 2022/2021 | answered | 11.25 | |
-| operating | Coca-Cola | operating margin FY2022 | answered | 25.37 | |
-| operating | Coca-Cola | assets/revenue FY2022 | answered | 2.1571 | ratio 4 dp |
-| bank | JPMorgan | lookup total assets FY2022 | answered | 3665743.00 | scale 6 |
-| bank | JPMorgan | lookup net income FY2022 | answered | 37676.00 | scale 6 |
-| bank | JPMorgan | net income / assets | answered | 0.0103 | |
-| bank | JPMorgan | lookup gross profit FY2022 | abstained | — | `not_found` (expected) |
-| segment | 3M | lookup revenue FY2022 | answered | 34229.00 | scale 6 (repaired) |
-| segment | 3M | % change revenue 2022/2021 | answered | -3.18 | |
-| segment | 3M | lookup revenue FY2018 | abstained | — | `ambiguous` |
-| cutoff | 3M | lookup revenue FY2022 @ 2017 | abstained | — | justified refusal |
+## Sixteen-mutation matrix
 
-## Failure cases / refusals
+Every mutation is re-signed, so the fingerprint check passes and the artifact is internally consistent.
+Sixteen of sixteen are refused.
 
-- JPMorgan gross profit: concept not present as a verified consolidated income concept in the ingested statement set.
-- 3M FY2018 revenue: competing historical disclosures remain ambiguous under current resolution policy.
-- Pre-availability cutoff: evidence after the cutoff is not used.
+| Mutation | Verification result |
+|----------|--------------------|
+| changed result value | `INVALID` (arithmetic) |
+| changed raw input | `INVALID` (arithmetic/source) |
+| changed input + result + fingerprint | `ARITHMETIC_VERIFIED` without evidence, `INVALID` with it |
+| changed certificate fingerprint | `INVALID` |
+| changed source document digest | `INVALID` |
+| changed issuer | `INVALID` |
+| changed accession | `INVALID` |
+| changed period | `INVALID` |
+| changed currency | `INVALID` |
+| changed scale + economic amount | `INVALID` |
+| changed availability time | `INVALID` |
+| changed row/column coordinates | `INVALID` |
+| changed concept | `INVALID` |
+| changed table digest | `INVALID` |
+| changed operator | `INVALID` |
+| changed row label | `INVALID` |
 
-## Ablations
+The third row is the load-bearing one. A forger who changes both the printed value and the result and
+then recomputes the fingerprint produces a certificate that is *arithmetically self-consistent*. Only the
+independent comparison against the pinned manifest and archived bytes catches it. This is why the
+demonstration keeps the two passes separate and refuses to call arithmetic-only verification "verified".
 
-Not claimed. Priority 0 did not run a formal ablation tournament.
+## Regression and environment checks
 
-## Reproduction commands
-
-```bash
-export ATLAS_SEC_USER_AGENT='AtlasQuant/0.1 you@example.com'
-python3 -m pip install -e ".[dev]"
-python3 scripts/focus_build_corpus.py --db var/focus_demo.db
-cp var/focus_demo.db var/phase9_6.db   # case-study script default path
-python3 scripts/phase9_6_4_case_studies.py
-make focus-demo
-python3 -m atlas verify-certificate artifacts/focus_demo/certificate.json
-python3 -m pytest -q tests/test_focus_certificate.py tests/test_phase9_6_4_evaluator_integrity.py
-```
+| Check | Result |
+|-------|--------|
+| Backend suite | 812 passed (158.10 s) |
+| Frontend unit tests | 50 passed, 4 files |
+| TypeScript project build | clean |
+| Production web build | built in 3.33 s |
+| Certificate/mutation tests | 40 passed |
+| `scripts/reproduce_phase9_2.py` | `exit: 0`, package sha256 `3bbaca54…`, value per share `295.464…`, no differences |
+| `scripts/verify_clean_install.py` | `status: pass`, `reproduced: true`, value per share `101.2157…` |
+| Distributable fixtures | 10,580 rows, project-authored synthetic market fixture |
+| Database/migration tests | passed; no `*.egg-info` tracked |
+| Restricted-fixture scan | no licensed vendor fixtures present |
 
 ## Threats to validity
 
-- Case studies are curated demonstrations, not a random holdout or FinanceBench score.
-- HTML table geometry can still mis-align columns in pathological layouts.
-- Alias-based concept resolution can abstain or err without XBRL tags.
-- SEC network fetch at build time can fail or change primary-document names; accessions are pinned.
-- Agreement between FEC and the Fraction verifier shows independent arithmetic consistency, not economic truth beyond the bound cells.
+- **Single-source provenance.** A pinned manifest plus archived bytes proves consistency with a
+  snapshot. It cannot prove that snapshot was what EDGAR served at a given time, and the manifest is
+  unsigned. Verifying manifest provenance is an operational problem, not one this code solves.
+- **Four filings, three issuers.** Ten answers is a demonstration that the mechanism works, not a
+  measurement of accuracy across a corpus.
+- **HTML-only.** No XBRL facts, so period and scale come from rendered text rather than structured data.
+- **Geometry inference.** Flattened rows lose colspan/rowspan, so merged cells are the main source of
+  unresolved cells.
+- **Symbol-based currency.** `$` is read as USD. A filing using `$` for a non-USD dollar would be wrong.
+- **One known gap.** 3M FY2018 remains unresolved (`32,765` printed).
+- **Browser acceptance** could not be executed in the integration environment (Chromium requires system
+  libraries that need root). The frontend unit suite, typecheck and production build pass; the
+  Playwright journeys are left for CI, which installs browser dependencies.

@@ -1,49 +1,58 @@
-# Resume evidence
+# Resume Evidence
 
-Git checkpoint for these bullets: branch `cursor/focus-priority0-827f` @ `b605299b55d70817e7272caed92c44d11bc3c3fc`. Spec baseline SHA before edits: `616f131ffa5f19dad4ceee4b8f02ba874a497b57`.
+Bullets with the file, test or artifact that supports each one. No number here is estimated; each is
+reproduced by a command in this repository.
 
-## Bullet 1
+## Project entry
 
-**Built a point-in-time SEC research pipeline that binds consolidated statement cells through a typed financial compiler and an independent Fraction verifier, packaging answers as fingerprint-stable research certificates.**
+**Atlas — point-in-time financial research with verifiable certificates** (independent research project,
+Python + TypeScript)
 
-| Evidence | Path |
-|----------|------|
-| Binding + FEC path | `src/atlas/research/financial_answers.py`, `src/atlas/research/financial_concepts.py` |
-| Independent arithmetic | `src/atlas/research/financial_verification.py` |
-| Certificate schema | `src/atlas/research/certificate.py` |
-| CLI verifier | `atlas verify-certificate` in `src/atlas/cli.py` |
-| Tests | `tests/test_focus_certificate.py`, `tests/test_phase9_6_4_binding_and_geometry.py` |
-| Demo | `make focus-demo` → `artifacts/focus_demo/report.json` |
-| Measured | 3M FY2022 net sales `34229.00` at scale 6; certificate status `valid` |
+- Designed a point-in-time financial research pipeline that ingests historical SEC 10-K filings, extracts
+  table cells with period, scale and currency, and refuses to answer when any of those cannot be
+  established. Evidence: `src/atlas/research/table_cells.py`, `financial_concepts.py`; three distinct
+  refusal classes reproduced by `make focus-demo`.
+- Built a research-certificate format (`atlas.research_certificate.v1`) that binds each answer to its
+  source coordinates, raw strings, document digest and availability time, with a canonical fingerprint
+  over the body. Evidence: `src/atlas/research/certificate.py`.
+- Implemented a four-level verifier with two independent passes — recomputed arithmetic from the
+  certificate's own raw text, and source comparison against a pinned manifest plus archived bytes —
+  producing `SOURCE_VERIFIED` / `ARITHMETIC_VERIFIED` / `SOURCE_UNVERIFIED` / `INVALID`.
+  Evidence: `src/atlas/research/certificate_verify.py`.
+- Repaired a scale defect that reported `34,229` instead of `34,229,000,000` by reading the unit banner
+  from the header row and treating undetectable scale as unknown rather than zero. Evidence:
+  `tests/test_phase9_6_4_binding_and_geometry.py`, `artifacts/focus_demo/report.json`.
+- Eliminated a circular trust model in which the "trusted" source hash was copied from the certificate
+  under test; verification now refuses that shape and requires external evidence. Evidence:
+  `SOURCE_UNVERIFIED` with reason `legacy_trusted_sources_insufficient`.
+- Built a 16-case adversarial suite in which every forged certificate is re-signed with a recomputed
+  fingerprint; 16/16 are refused, including the case where the printed input and the computed result are
+  changed together. Evidence: `tests/test_focus_certificate.py`.
+- Restricted live source fetching to approved HTTPS SEC endpoints with an exact-host check, path-prefix
+  check, declared `User-Agent` and size cap; failures degrade to missing evidence rather than exceptions.
+  Evidence: `tests/test_certificate_source_limits.py`.
+- Made the demonstration fail closed: exit `0` only when every check passes, `1` on a failed check, an
+  accepted tamper, or a missing expected refusal, `2` when the corpus, manifest or snapshots are absent —
+  and never regenerated a missing trust anchor during verification. Evidence: `scripts/focus_demo.py`.
+- Ran thirteen controlled real-filing cases across Coca-Cola, JPMorgan and 3M: ten answered, three
+  refused, with the 3M FY2018 case reported as a resolver capability gap rather than a success.
+- Maintained a 812-test backend suite and a 50-test frontend suite with typecheck and production build
+  green, plus offline reproduction of research packages from archived fixtures.
 
-**Limitations:** No XBRL corroboration; HTML geometry still inferred.
+## Interview talking points
 
-## Bullet 2
+- Why the interesting tamper is the one that re-signs itself, and why arithmetic-only verification cannot
+  catch it.
+- Why a manifest keyed by `(table_sha256, row, column)` survives re-ingestion while ids do not.
+- Why "unknown scale" must be `None` and not `0`.
+- Why count of refusals is not count of failures, and why a capability gap has to be labelled separately
+  from a policy refusal.
+- What `SOURCE_VERIFIED` explicitly does not prove.
 
-**Repaired financial evaluation integrity: fixed missing hashlib citation checks, success-conditioned recall denominators, a tautological assertion-precision formula, zero-denominator “perfect” scores, and methodology versioning; added hand-computed confusion-matrix tests.**
+## Do not claim
 
-| Evidence | Path |
-|----------|------|
-| Evaluator | `scripts/phase9_6_4_evaluate.py` |
-| Tests | `tests/test_phase9_6_4_evaluator_integrity.py` |
-| Measured | Missing FinanceBench rows → exit `2` + `unavailable_reference_data` (no fabricated score) |
-
-**Limitations:** Full FinanceBench gates require licensed rows out-of-band.
-
-## Bullet 3
-
-**Diagnosed and fixed cross-issuer unit/scale inconsistency (3M FY2022 net sales previously `scale=0` vs Coca-Cola `scale=6`), including in-table “(Millions, …)” detection, unknown-scale refusal, and typed display precision by answer type.**
-
-| Evidence | Path |
-|----------|------|
-| Scale detection | `src/atlas/research/table_cells.py`, `_statement_context` in `financial_answers.py` |
-| Case re-run | `artifacts/phase9_6_4_case_studies.json` (10 answered / 3 abstained) |
-| Measured | 3M scale `6`; economic amount `34229000000`; ratios displayed to 4 dp |
-
-**Limitations:** Pathological colspan/rowspan layouts can still mis-align columns.
-
-## Draft resume lines (only after the evidence above remains true)
-
-1. Built a point-in-time SEC research system that binds filing cells into typed computations, independently recomputes them with Fraction arithmetic, and emits verifiable research certificates (`atlas verify-certificate`).
-2. Hardened a financial evaluation harness so zero denominators are not-evaluable, citation hashes are recomputed from stored bytes, and confusion-matrix metrics are tested against hand-computed cases.
-3. Fixed issuer-scale integrity for real 10-K tables (including 3M FY2022 net sales at USD millions) and demonstrated justified abstention under historical cutoffs.
+- Trading performance, alpha, or profitability.
+- Accuracy across a corpus: four filings, three issuers, ten answers.
+- That certificates prove publication time or financial semantics.
+- That the manifest is authenticated: it is unsigned.
+- That the 3M FY2018 question was answered.

@@ -8,14 +8,21 @@ VENV   ?= .venv
 BIN     = $(VENV)/bin
 DB     ?= var/atlas.db
 CIK    ?= 320193
+FOCUS_DB        ?= var/focus_demo.db
+FOCUS_SNAPSHOTS ?= var/focus/snapshots
+FOCUS_MANIFEST  ?= artifacts/focus_source_manifest.json
+CERT   ?=
 
-.PHONY: help install test demo focus-demo bench cli-init sync sync-live facts history reconcile deps validate stats clean terminal-data serve web-install web-build phase8-fixtures phase8-bench release-manifest app-test
+.PHONY: help install test demo focus-corpus focus-manifest focus-demo focus-verify bench cli-init sync sync-live facts history reconcile deps validate stats clean terminal-data serve web-install web-build phase8-fixtures phase8-bench release-manifest app-test
 
 help:
 	@echo "install    create the virtualenv and install the package (editable, dev extras)"
 	@echo "test       run the full offline test suite (186 tests)"
 	@echo "demo       run the offline end-to-end demonstration"
-	@echo "focus-demo run the FOCUS source-to-certificate demonstration (real SEC filings)"
+	@echo "focus-corpus  fetch and archive the FOCUS 10-K corpus (network; needs ATLAS_SEC_USER_AGENT)"
+	@echo "focus-manifest  pin the source manifest that strict verification compares against"
+	@echo "focus-demo  offline FOCUS demonstration: 13 cases, certificates, 16 tamper attempts"
+	@echo "focus-verify  verify one certificate strictly: make focus-verify CERT=path/to/cert.json"
 	@echo "bench      run the reproducible benchmark suite"
 	@echo "cli-init   create/migrate the database at $(DB)"
 	@echo "sync       ingest a company from archived fixtures (CIK=$(CIK), no network)"
@@ -46,9 +53,24 @@ test:
 demo:
 	$(BIN)/atlas demo
 
-focus-demo:
+# FOCUS has three distinct procedures and never conflates them:
+#   focus-corpus   needs the network and a declared SEC contact User-Agent.
+#   focus-manifest writes the trust anchor; it is deliberate, reviewed and committed.
+#   focus-demo     is offline; it reads the archived bytes and never regenerates the anchor.
+
+focus-corpus:
 	@test -n "$$ATLAS_SEC_USER_AGENT" || (echo "set ATLAS_SEC_USER_AGENT='AtlasQuant/0.1 you@example.com'" && exit 2)
-	$(BIN)/python scripts/focus_demo.py
+	$(BIN)/python scripts/focus_build_corpus.py --db $(FOCUS_DB) --snapshots $(FOCUS_SNAPSHOTS)
+
+focus-manifest:
+	$(BIN)/python scripts/focus_manifest.py --db $(FOCUS_DB) --out $(FOCUS_MANIFEST)
+
+focus-demo:
+	$(BIN)/python scripts/focus_demo.py --db $(FOCUS_DB) --snapshots $(FOCUS_SNAPSHOTS) --manifest $(FOCUS_MANIFEST)
+
+focus-verify:
+	@test -n "$(CERT)" || (echo "usage: make focus-verify CERT=path/to/certificate.json" && exit 2)
+	$(BIN)/atlas verify-certificate $(CERT) --manifest $(FOCUS_MANIFEST) --snapshots $(FOCUS_SNAPSHOTS) --strict
 
 bench:
 	$(BIN)/python benchmarks/bench.py --json benchmarks/out/bench.json
