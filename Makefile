@@ -11,7 +11,8 @@ CIK    ?= 320193
 FOCUS_DB        ?= var/focus_demo.db
 FOCUS_SNAPSHOTS ?= var/focus/snapshots
 FOCUS_MANIFEST  ?= artifacts/focus_source_manifest.json
-CERT   ?=
+FOCUS_OUT       ?= artifacts/focus_demo
+CERT   ?= $(FOCUS_OUT)/certificate.json
 
 .PHONY: help install test demo focus-corpus focus-manifest focus-demo focus-verify bench cli-init sync sync-live facts history reconcile deps validate stats clean terminal-data serve web-install web-build phase8-fixtures phase8-bench release-manifest app-test
 
@@ -68,8 +69,9 @@ focus-manifest:
 focus-demo:
 	$(BIN)/python scripts/focus_demo.py --db $(FOCUS_DB) --snapshots $(FOCUS_SNAPSHOTS) --manifest $(FOCUS_MANIFEST)
 
+# Verifies the flagship certificate by default; pass CERT=... to check another one.
 focus-verify:
-	@test -n "$(CERT)" || (echo "usage: make focus-verify CERT=path/to/certificate.json" && exit 2)
+	@test -f "$(CERT)" || (echo "no certificate at $(CERT); run make focus-demo first, or pass CERT=path/to/certificate.json" && exit 2)
 	$(BIN)/atlas verify-certificate $(CERT) --manifest $(FOCUS_MANIFEST) --snapshots $(FOCUS_SNAPSHOTS) --strict
 
 bench:
