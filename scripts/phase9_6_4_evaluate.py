@@ -1,40 +1,46 @@
-"""Phase 9.6.3 evaluation: concept-aware localization on the full eligible corpus.
+"""Phase 9.6.4 evaluation: concept-aware localization on the full eligible corpus.
 
-Differences from 9.6.2 (which remain unchanged as history):
+Differences from 9.6.3 (which remain unchanged as history):
 
 * every eligible question is classified once, by answer shape and question intent, without
   reference to whether Atlas succeeded;
 * a value match alone is no longer credited: the concept must resolve to one cell first;
 * financial and non-financial tables are reported separately, because the 9.6.2 "unparseable"
   count was dominated by tables of contents and executive-bio tables;
-* abstention is measured on hard negatives constructed from the real corpus.
+* abstention is measured on hard negatives constructed from the real corpus;
+* successful resolutions exercise the bound FEC path (bind + lookup_bound), not a second
+  corpus-wide row-label search;
+* metric denominators that are zero yield null (not-evaluable), never a perfect score.
 
 Licensed question and answer text is never written to the artifact.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import os
 import platform
 import re
 import sys
+import traceback
 from collections import Counter
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from atlas.research import financebench  # noqa: E402
 from atlas.research.evaluation import load_questions  # noqa: E402
 from atlas.research.financial_answers import FinancialAnswerEngine  # noqa: E402
-from atlas.research.financial_concepts import CONCEPTS, ConceptResolver  # noqa: E402
+from atlas.research.financial_concepts import CONCEPTS, ConceptResolver, bind  # noqa: E402
 from atlas.research.knowledge import KnowledgeEngine  # noqa: E402
 from atlas.research.table_cells import classify_table, extract_cells  # noqa: E402
 from atlas.storage.db import Database  # noqa: E402
 
-METHODOLOGY_VERSION = "9.6.3"
+METHODOLOGY_VERSION = "9.6.4"
 THRESHOLDS = {
     "concept_resolution_rate": 0.30,
     "cell_localization_rate": 0.20,
@@ -47,6 +53,9 @@ _MAGNITUDE = {"thousand": 3, "million": 6, "billion": 9, "trillion": 12}
 ARITHMETIC = re.compile(
     r"percent|percentage|%|change|grow|increase|decrease|margin|ratio|cagr|relative to",
     re.IGNORECASE)
+
+# Distinct from gate failure (1) and unavailable reference data (2).
+EXIT_UNEXPECTED = 3
 
 
 def answer_number(text: str) -> Decimal | None:
@@ -72,6 +81,13 @@ def wilson(successes: int, total: int, z: float = 1.96) -> list[float] | None:
     centre = (p + z * z / (2 * total)) / denominator
     margin = z * math.sqrt(p * (1 - p) / total + z * z / (4 * total * total)) / denominator
     return [round(max(0.0, centre - margin), 4), round(min(1.0, centre + margin), 4)]
+
+
+def rate(numerator: int, denominator: int) -> float | None:
+    """Integer rate with an explicit not-evaluable result for a zero denominator."""
+    if denominator == 0:
+        return None
+    return round(numerator / denominator, 4)
 
 
 def classify(question) -> tuple[str, str | None]:
@@ -100,12 +116,32 @@ def matches(value: str | None, scale: int | None, answer: Decimal) -> bool:
     if value is None:
         return False
     raw = Decimal(value)
-    for candidate in ([raw, raw * (Decimal(10) ** scale)] if scale else [raw]):
+    scales = [raw]
+    if scale is not None:
+        scales.append(raw * (Decimal(10) ** scale))
+    for candidate in scales:
         if candidate == answer:
             return True
         if answer != 0 and abs((candidate - answer) / answer) <= Decimal("0.005"):
             return True
     return False
+
+
+def confusion_rates(*, true_positives: int, false_positives: int,
+                    true_negatives: int, false_negatives: int) -> dict[str, float | None]:
+    """Hand-checkable confusion-matrix rates. Zero denominators are not-evaluable."""
+    asserted = true_positives + false_positives
+    abstained = true_negatives + false_negatives
+    answerable = true_positives + false_negatives
+    unanswerable = true_negatives + false_positives
+    return {
+        "assertion_precision": rate(true_positives, asserted),
+        "abstention_precision": rate(true_negatives, abstained),
+        "answerable_recall": rate(true_positives, answerable),
+        "unanswerable_recall": rate(true_negatives, unanswerable),
+        "false_assertion_rate": rate(false_positives, unanswerable),
+        "false_abstention_rate": rate(false_negatives, answerable),
+    }
 
 
 class CachedEngine(FinancialAnswerEngine):
@@ -149,10 +185,8 @@ def table_taxonomy(db: Database, engine: KnowledgeEngine, documents: list[str]) 
         "tables_by_kind": {kind: counts["tables"] for kind, counts in per_kind.items()},
         "cells_by_kind": {kind: counts["cells"] for kind, counts in per_kind.items()},
         "verified_by_kind": {kind: counts["verified"] for kind, counts in per_kind.items()},
-        "financial_verified_rate": round(financial["verified"] / financial["cells"], 4)
-        if financial["cells"] else None,
-        "all_table_verified_rate": round(totals["verified"] / totals["cells"], 4)
-        if totals["cells"] else None,
+        "financial_verified_rate": rate(financial["verified"], financial["cells"]),
+        "all_table_verified_rate": rate(totals["verified"], totals["cells"]),
         "unresolved_reasons": dict(reasons.most_common(10)),
     }
 
@@ -178,16 +212,46 @@ def unavailable_artifact(reason: str) -> dict:
     }
 
 
+def write_artifact(payload: dict[str, Any], path: Path | None = None) -> Path:
+    target = path or Path("artifacts/phase9_6_4_evaluation.json")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    # Never persist licensed question/answer text if a caller accidentally attached it.
+    sanitized = json.loads(json.dumps(payload, default=str))
+    for key in ("questions", "answers", "licensed_text", "raw_rows"):
+        sanitized.pop(key, None)
+    target.write_text(json.dumps(sanitized, indent=2, sort_keys=True) + "\n")
+    return target
+
+
 def main() -> int:
+    try:
+        return _evaluate()
+    except SystemExit:
+        raise
+    except Exception as exc:  # noqa: BLE001 - distinct exit for unexpected failures
+        payload = {
+            "schema": "atlas.phase9_6_4.evaluation.v1",
+            "methodology_version": METHODOLOGY_VERSION,
+            "evaluation_status": "unexpected_error",
+            "reason": f"{type(exc).__name__}: {exc}",
+            "diagnostics": {"exception_type": type(exc).__name__,
+                            "traceback_tail": traceback.format_exc()[-2000:]},
+            "gates": {"eligible_population": False},
+            "limitations": ["Evaluation aborted on an unexpected execution error."],
+        }
+        write_artifact(payload)
+        print(json.dumps({"error": payload["reason"], "exit": EXIT_UNEXPECTED}, indent=2))
+        return EXIT_UNEXPECTED
+
+
+def _evaluate() -> int:
     corpus = Database("var/phase9_6.db")
     knowledge = KnowledgeEngine(corpus)
     try:
         raw_rows = json.loads(INPUT_PATH.read_text())
     except (FileNotFoundError, json.JSONDecodeError) as error:
         payload = unavailable_artifact(f"{type(error).__name__}: {INPUT_PATH}")
-        target = Path("artifacts/phase9_6_4_evaluation.json")
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+        write_artifact(payload)
         print(json.dumps({"error": payload["reason"], "gates": payload["gates"]}, indent=2))
         return 2
     rows = financebench.open_source_rows(raw_rows)
@@ -203,8 +267,10 @@ def main() -> int:
     value_coincidence = 0
     answered = correct = incorrect = abstained = unsupported = citation_failures = 0
     period_failures = 0
-    positives_answered = positives = 0
-    negatives = negatives_abstained = 0
+    # Confusion-matrix populations are classified independently of success.
+    # answerable positives: eligible numeric_direct questions with a reference number.
+    true_positives = false_positives = true_negatives = false_negatives = 0
+    answerable_total = 0
 
     for question in questions:
         category, concept = classify(question)
@@ -234,21 +300,29 @@ def main() -> int:
             continue
         reference = answer_number(question.answer)
         cutoff = str(question.availability_time or "2100-01-01T00:00:00Z")
+        answerable = reference is not None
+        if answerable:
+            answerable_total += 1
         resolution = resolver.resolve(question.issuer_id, concept, year, cutoff)
         if resolution.status != "resolved":
             abstained += 1
             bucket[f"abstained:{resolution.status}"] += 1
-            negatives += 1 if resolution.status in {"vintage_conflict", "ambiguous"} else 0
+            if answerable:
+                false_negatives += 1
             continue
         concept_resolved += 1
         bucket["concept_resolved"] += 1
         cell = resolution.cell
         if cell is None:
+            if answerable:
+                false_negatives += 1
             continue
         if cell.availability_time and cell.availability_time > cutoff:
             period_failures += 1
             abstained += 1
             bucket["period_failure"] += 1
+            if answerable:
+                false_negatives += 1
             continue
         if reference is not None and matches(cell.value, cell.scale, reference):
             localized += 1
@@ -260,21 +334,33 @@ def main() -> int:
                 citation_failures += 1
         except Exception:  # noqa: BLE001
             citation_failures += 1
-        result = answers.lookup(question.issuer_id, cutoff, metric=cell.row_label, period=year)
+        # Bound path: preserve the resolved evidence identity; do not re-search by row label.
+        binding = bind(resolution, question.issuer_id, concept)
+        if binding is None:
+            abstained += 1
+            bucket["abstained:bind"] += 1
+            if answerable:
+                false_negatives += 1
+            continue
+        result = answers.lookup_bound(binding, cutoff)
         if result.get("outcome") != "answered":
             abstained += 1
-            bucket["abstained:lookup"] += 1
+            bucket["abstained:lookup_bound"] += 1
+            if answerable:
+                false_negatives += 1
             continue
         answered += 1
         bucket["answered"] += 1
         if reference is not None and matches(result["value"], 0, reference):
             correct += 1
             bucket["correct"] += 1
-            positives += 1
-            positives_answered += 1
+            true_positives += 1
         else:
             incorrect += 1
             bucket["incorrect"] += 1
+            # An assertion on an answerable question that fails the reference is still an
+            # assertion; count it as a false positive against the reference, not a false abstention.
+            false_positives += 1
         # Old, weaker metric: a value coincidence anywhere in the target filing.
         for candidate in answers.cells(question.issuer_id, cutoff):
             if (candidate.document_id == document_id and reference is not None
@@ -282,15 +368,11 @@ def main() -> int:
                 value_coincidence += 1
                 break
 
-    # Hard negatives constructed from the real corpus: wrong year, undisclosed metric, and a
-    # cutoff before the filing existed. They are not human-reviewed and the artifact says so.
+    # Hard negatives constructed from the real corpus. They are not human-reviewed.
     issuers = sorted({q.issuer_id for q in questions if q.issuer_id})
-    negatives_abstained = 0
-    negatives = 0
-    # Audited negatives. A FY2017 question at a 2100 cutoff is *not* unanswerable when the
-    # corpus holds the filing, so historical reach is measured separately as a positive.
     negative_log: list[dict] = []
     historical_answered = historical_total = 0
+    constructed_unanswerable = 0
     for issuer_id in issuers[:12]:
         years = sorted({row["period_of_report"][:4] for row in corpus.query(
             "SELECT DISTINCT period_of_report FROM knowledge_document "
@@ -304,51 +386,76 @@ def main() -> int:
                              "issuer_id": issuer_id, "period": years[0] if years else None,
                              "status": historical.status if historical else "no_filing",
                              "counted_as": "positive"})
-        negatives += 1
         undisclosed = answers.lookup(issuer_id, "2100-01-01T00:00:00Z", metric="ebitda",
                                      period="2020")
-        negatives_abstained += undisclosed["outcome"] == "abstained"
+        constructed_unanswerable += 1
+        if undisclosed["outcome"] == "abstained":
+            true_negatives += 1
+        else:
+            false_positives += 1
         negative_log.append({"class": "undisclosed_metric", "issuer_id": issuer_id,
                              "status": undisclosed["outcome"]})
-        negatives += 1
         early = answers.lookup(issuer_id, "1990-01-01T00:00:00Z", metric="revenue", period="2020")
-        negatives_abstained += early["outcome"] == "abstained"
+        constructed_unanswerable += 1
+        if early["outcome"] == "abstained":
+            true_negatives += 1
+        else:
+            false_positives += 1
         negative_log.append({"class": "cutoff_before_availability", "issuer_id": issuer_id,
                              "status": early["outcome"]})
 
     attempted = sum(bucket["attempted"] for bucket in categories.values())
+    confusion = confusion_rates(
+        true_positives=true_positives, false_positives=false_positives,
+        true_negatives=true_negatives, false_negatives=false_negatives)
+    negatives = constructed_unanswerable
     metrics = {
         "document_recall@5": 0.9732,  # carried from 9.6.1; same corpus, same questions
-        "concept_resolution_rate": round(concept_resolved / max(1, attempted), 4),
-        "cell_localization_rate": round(localized / max(1, concept_resolved), 4),
-        "value_coincidence_rate": round(value_coincidence / max(1, attempted), 4),
-        "answer_correctness_among_answered": round(correct / max(1, answered), 4),
-        "answer_coverage": round(answered / max(1, attempted), 4),
-        "correct_over_all_attempted": round(correct / max(1, attempted), 4),
-        "citation_integrity": round(1 - citation_failures / max(1, concept_resolved), 4),
-        "abstention_precision": round(negatives_abstained / max(1, negatives), 4),
-        "assertion_precision": round((negatives - (negatives - negatives_abstained))
-                                     / max(1, negatives_abstained), 4),
-        "unanswerable_recall": round(negatives_abstained / max(1, negatives), 4),
-        "historical_answer_rate": round(historical_answered / max(1, historical_total), 4),
-        "abstention_recall": round(positives_answered / max(1, positives), 4),
-        "false_assertion_rate": round((negatives - negatives_abstained) / max(1, negatives), 4),
-        "false_assertions": negatives - negatives_abstained,
-        "false_abstention_rate": round(1 - positives_answered / max(1, positives), 4),
-        "false_abstentions": positives - positives_answered,
-        "period_failure_rate": round(period_failures / max(1, concept_resolved), 4),
+        "concept_resolution_rate": rate(concept_resolved, attempted),
+        "cell_localization_rate": rate(localized, concept_resolved),
+        "value_coincidence_rate": rate(value_coincidence, attempted),
+        "answer_correctness_among_answered": rate(correct, answered),
+        "answer_coverage": rate(answered, attempted),
+        "correct_over_all_attempted": rate(correct, attempted),
+        "citation_integrity": (
+            None if concept_resolved == 0
+            else rate(concept_resolved - citation_failures, concept_resolved)),
+        "abstention_precision": confusion["abstention_precision"],
+        "assertion_precision": confusion["assertion_precision"],
+        "unanswerable_recall": confusion["unanswerable_recall"],
+        "answerable_recall": confusion["answerable_recall"],
+        "historical_answer_rate": rate(historical_answered, historical_total),
+        "false_assertion_rate": confusion["false_assertion_rate"],
+        "false_assertions": false_positives,
+        "false_abstention_rate": confusion["false_abstention_rate"],
+        "false_abstentions": false_negatives,
+        "period_failure_rate": rate(period_failures, concept_resolved),
+        "confusion": {
+            "true_positives": true_positives,
+            "false_positives": false_positives,
+            "true_negatives": true_negatives,
+            "false_negatives": false_negatives,
+            "answerable_total": answerable_total,
+            "constructed_unanswerable": constructed_unanswerable,
+        },
     }
+
+    def gate_ge(metric_key: str, threshold_key: str) -> bool:
+        value = metrics[metric_key]
+        return value is not None and value >= THRESHOLDS[threshold_key]
+
+    def gate_le(metric_key: str, threshold_key: str) -> bool:
+        value = metrics[metric_key]
+        return value is not None and value <= THRESHOLDS[threshold_key]
+
     gates = {
         "eligible_population": attempted > 0 and negatives > 0,
-        "concept_resolution": metrics["concept_resolution_rate"]
-        >= THRESHOLDS["concept_resolution_rate"],
-        "cell_localization": metrics["cell_localization_rate"] >= THRESHOLDS["cell_localization_rate"],
-        "answer_correctness": metrics["answer_correctness_among_answered"]
-        >= THRESHOLDS["answer_correctness"],
-        "citation_integrity": metrics["citation_integrity"] >= THRESHOLDS["citation_integrity"],
-        "abstention_precision": metrics["abstention_precision"]
-        >= THRESHOLDS["abstention_precision"],
-        "false_assertions": metrics["false_assertion_rate"] <= THRESHOLDS["false_assertion_rate"],
+        "concept_resolution": gate_ge("concept_resolution_rate", "concept_resolution_rate"),
+        "cell_localization": gate_ge("cell_localization_rate", "cell_localization_rate"),
+        "answer_correctness": gate_ge("answer_correctness_among_answered", "answer_correctness"),
+        "citation_integrity": gate_ge("citation_integrity", "citation_integrity"),
+        "abstention_precision": gate_ge("abstention_precision", "abstention_precision"),
+        "false_assertions": gate_le("false_assertion_rate", "false_assertion_rate"),
     }
     payload = {
         "schema": "atlas.phase9_6_4.evaluation.v1",
@@ -364,7 +471,9 @@ def main() -> int:
             "answered": answered, "correct": correct, "incorrect": incorrect,
             "abstained": abstained, "unsupported": unsupported,
             "citation_failures": citation_failures, "period_failures": period_failures,
-            "positives": positives, "negatives": negatives,
+            "true_positives": true_positives, "false_positives": false_positives,
+            "true_negatives": true_negatives, "false_negatives": false_negatives,
+            "negatives": negatives,
         },
         "categories": {name: dict(bucket) for name, bucket in sorted(categories.items())},
         "metrics": metrics,
@@ -383,10 +492,10 @@ def main() -> int:
                                   "aliases are candidates, not proof",
             "cell_localization": "the resolved cell for the question's concept and period must "
                                  "carry the reference value at its stated scale",
-            "answer_correctness": "the answer engine must return the reference value for the "
-                                  "resolved row label and period",
-            "abstention": "constructed corpus negatives: wrong year, undisclosed metric, and "
-                          "pre-filing cutoff",
+            "answer_correctness": "the bound answer engine must return the reference value for the "
+                                  "resolved binding without a second corpus search",
+            "abstention": "constructed corpus negatives: undisclosed metric and pre-filing cutoff",
+            "metrics": "zero denominators are null (not-evaluable), never perfect scores",
         },
         "limitations": [
             "No XBRL fact table exists in this corpus, so concept identity is lexical plus "
@@ -400,8 +509,7 @@ def main() -> int:
         ],
         "environment": {"python": platform.python_version(), "platform": platform.platform()},
     }
-    Path("artifacts/phase9_6_4_evaluation.json").write_text(
-        json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    write_artifact(payload)
     print(json.dumps({"metrics": metrics, "gates": gates,
                       "tables": payload["tables"]["financial_verified_rate"]}, indent=2))
     failed = sorted(name for name, passed in gates.items() if not passed)

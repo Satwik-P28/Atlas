@@ -18,7 +18,7 @@ from typing import Any
 from .financial_answers import FinancialAnswerEngine
 from .table_cells import Cell
 
-RESOLVER_VERSION = "9.6.3"
+RESOLVER_VERSION = "9.6.4"
 
 
 @dataclass(frozen=True, slots=True)
@@ -116,6 +116,11 @@ def statement_scope(section_path: str, caption: str | None) -> str:
 QUALIFIERS = ("less:", "noncontrolling", "attributable to non", "before income taxes",
               "including", "excluding", "per share", "per diluted share")
 
+# Labels that contain "sales"/"revenue" but are not the consolidated top-line concept.
+REVENUE_FALSE_FRIENDS = (
+    "percent of", "% of", "organic", "change", "growth", "by segment", "by geographic",
+    "disaggregated", "rental",
+)
 
 COST_QUALIFIERS = ("cost of", "costs of", "costs and expenses", "less", "expense")
 
@@ -125,9 +130,17 @@ def _label_score(label: str, alias: str) -> float:
     alias = _normalise(alias)
     if text.startswith(COST_QUALIFIERS) and not alias.startswith(COST_QUALIFIERS):
         return 0.0
+    if alias in {"sales", "revenue", "net sales", "total revenue", "net revenue",
+                 "total net revenue", "net operating revenues"}:
+        if any(friend in text for friend in REVENUE_FALSE_FRIENDS):
+            return 0.0
     score = _base_label_score(text, alias)
     if score and any(qualifier in text for qualifier in QUALIFIERS):
         score -= 2.0
+    # A bare "sales" alias must not outrank an exact "net sales" when both exist; demote
+    # partial "sales" matches that are longer phrases like "sales (millions)" unless exact.
+    if alias == "sales" and text != "sales" and "net sales" not in text:
+        score = min(score, 1.5)
     return max(0.0, score)
 
 

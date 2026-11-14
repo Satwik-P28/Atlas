@@ -1,0 +1,166 @@
+{
+  "assumptions": [
+    "Selected cells are the consolidated primary statement for the requested concept.",
+    "Printed scale metadata on the statement applies to every bound cell."
+  ],
+  "certificate_fingerprint": "14c4e6f106f825d6d20e3ec3c9ed2cf59ebfd8aac26399d5ef11d839004f4590",
+  "certificate_version": "1.0.0",
+  "financial_concepts": [
+    "revenue"
+  ],
+  "independent_verification": {
+    "display_places": 2,
+    "independent_recomputation": true,
+    "method": "Fraction verifier over raw text vs FEC execution",
+    "rounding_policy": "typed_half_up_by_answer_type",
+    "verifier_version": "9.6.4"
+  },
+  "information_cutoff": "2024-01-01T00:00:00Z",
+  "input_bindings": [
+    {
+      "accession": "0000066740-23-000014",
+      "availability_time": "2023-02-08T18:14:49Z",
+      "cell_id": "CELL-b9c86de0ff11ff98",
+      "column": 11,
+      "column_label": "",
+      "concept": "revenue",
+      "currency": "USD",
+      "document_id": "DOC-d43ca7c5be364fd3",
+      "entity_scope": "consolidated",
+      "issuer_id": "ISS-CIK0000066740",
+      "period": "2022",
+      "rationale": "label match score 6.50; statement=income/consolidated; period=2022; scale=6",
+      "raw": "34,229",
+      "resolver_version": "9.6.4",
+      "rights": "public_domain",
+      "row": 1,
+      "row_label": "Net sales",
+      "scale": 6,
+      "source_table_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
+      "statement_family": "income",
+      "statement_title": "Consolidated Statement of Income",
+      "table_id": "TAB-54b9720adb652e93",
+      "unit_id": "UNI-54b9720adb652e93",
+      "value": "34229"
+    }
+  ],
+  "issued_at": "2026-11-14T07:16:21Z",
+  "issuer_identity": {
+    "issuer_id": "ISS-CIK0000066740",
+    "reporting_entity_scope": "consolidated",
+    "schema": "atlas.research_certificate.issuer.v1"
+  },
+  "limitations": [
+    "Value is quoted from one verified cell bound by the resolver.",
+    "Computed values are never presented as quoted filings; the source cells are the authoritative statement.",
+    "Display rounding is applied only after exact verification; intermediates stay exact."
+  ],
+  "normalized_requirement": {
+    "concept": "revenue",
+    "issuer": "3M CO",
+    "operator": "lookup",
+    "period": "2022"
+  },
+  "reporting_entity_scope": "consolidated",
+  "research_question": "What were 3M consolidated net sales for fiscal year 2022?",
+  "result": {
+    "currency": "USD",
+    "display_places": 2,
+    "economic_amount": "34229000000",
+    "period": "2022",
+    "unit": {
+      "kind": "USD",
+      "scale": 6
+    },
+    "value": "34229.00",
+    "value_exact": "34229"
+  },
+  "schema": "atlas.research_certificate.v1",
+  "selected_sources": [
+    {
+      "accession": "0000066740-23-000014",
+      "availability_time": "2023-02-08T18:14:49Z",
+      "cell_id": "CELL-b9c86de0ff11ff98",
+      "document_id": "DOC-d43ca7c5be364fd3",
+      "rights": "public_domain",
+      "source_table_sha256": "e8ac21e84f82eefdf7dce2350901991fa1c237c8fd32d5781204f25746db5416",
+      "table_id": "TAB-54b9720adb652e93",
+      "unit_id": "UNI-54b9720adb652e93"
+    }
+  ],
+  "typed_computation": {
+    "answer_type": "reported_value",
+    "engine_version": "9.6.4",
+    "execution_fingerprint": "509a515c25a27cd09456d8005bc60b9890d7475c41f5aa99a5d0af51845a0147",
+    "fec": {
+      "compiler_version": "atlas.fec.compiler.v1",
+      "model_fingerprint": "509a515c25a27cd09456d8005bc60b9890d7475c41f5aa99a5d0af51845a0147",
+      "operator_versions": {
+        "abs": "atlas.fec.operators.v1",
+        "add": "atlas.fec.operators.v1",
+        "after_tax_cost_impact": "atlas.fec.operators.v1",
+        "bond_macaulay_duration": "atlas.fec.operators.v1",
+        "bond_price": "atlas.fec.operators.v1",
+        "delta": "atlas.fec.operators.v1",
+        "diff": "atlas.fec.operators.v1",
+        "discount": "atlas.fec.operators.v1",
+        "discount_factor": "atlas.fec.operators.v1",
+        "div": "atlas.fec.operators.v1",
+        "energy_cost_impact": "atlas.fec.operators.v1",
+        "forecast_series": "atlas.fec.operators.v1",
+        "growth": "atlas.fec.operators.v1",
+        "margin_impact": "atlas.fec.operators.v1",
+        "max": "atlas.fec.operators.v1",
+        "mean": "atlas.fec.operators.v1",
+        "min": "atlas.fec.operators.v1",
+        "mul": "atlas.fec.operators.v1",
+        "neg": "atlas.fec.operators.v1",
+        "npv": "atlas.fec.operators.v1",
+        "option_greek": "atlas.fec.operators.v1",
+        "option_price": "atlas.fec.operators.v1",
+        "portfolio_variance": "atlas.fec.operators.v1",
+        "portfolio_volatility": "atlas.fec.operators.v1",
+        "pow": "atlas.fec.operators.v1",
+        "probability_brier": "atlas.fec.operators.v1",
+        "probability_calibration_error": "atlas.fec.operators.v1",
+        "probability_log_loss": "atlas.fec.operators.v1",
+        "risk_contributions": "atlas.fec.operators.v1",
+        "sub": "atlas.fec.operators.v1",
+        "sum": "atlas.fec.operators.v1",
+        "terminal_value": "atlas.fec.operators.v1"
+      },
+      "plan": {
+        "inputs": [
+          {
+            "name": "value",
+            "required": true,
+            "type": "Money[USD]"
+          }
+        ],
+        "interface": "graph",
+        "name": "Reported value",
+        "nodes": [],
+        "outputs": {
+          "value": "value"
+        },
+        "schema_version": "atlas.model.v1",
+        "version": "1.0.0"
+      },
+      "run_id": "RUN-2cf41534cc4bf8070b3259ef",
+      "trace": [
+        {
+          "duration_ms": 0.003,
+          "node": "value",
+          "op": "input",
+          "position": 0,
+          "status": "input",
+          "type": "Money[USD]",
+          "value_digest": "79d930274c58aba8"
+        }
+      ]
+    },
+    "formula": "lookup(cell)",
+    "operator_version": "atlas.fec.compiler.v1"
+  },
+  "vintage_selection_policy": "filing whose own period is the requested year; disagreements refused"
+}

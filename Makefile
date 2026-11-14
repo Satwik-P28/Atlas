@@ -9,12 +9,13 @@ BIN     = $(VENV)/bin
 DB     ?= var/atlas.db
 CIK    ?= 320193
 
-.PHONY: help install test demo bench cli-init sync sync-live facts history reconcile deps validate stats clean terminal-data serve web-install web-build phase8-fixtures phase8-bench release-manifest app-test
+.PHONY: help install test demo focus-demo bench cli-init sync sync-live facts history reconcile deps validate stats clean terminal-data serve web-install web-build phase8-fixtures phase8-bench release-manifest app-test
 
 help:
 	@echo "install    create the virtualenv and install the package (editable, dev extras)"
 	@echo "test       run the full offline test suite (186 tests)"
 	@echo "demo       run the offline end-to-end demonstration"
+	@echo "focus-demo run the FOCUS source-to-certificate demonstration (real SEC filings)"
 	@echo "bench      run the reproducible benchmark suite"
 	@echo "cli-init   create/migrate the database at $(DB)"
 	@echo "sync       ingest a company from archived fixtures (CIK=$(CIK), no network)"
@@ -44,6 +45,10 @@ test:
 
 demo:
 	$(BIN)/atlas demo
+
+focus-demo:
+	@test -n "$$ATLAS_SEC_USER_AGENT" || (echo "set ATLAS_SEC_USER_AGENT='AtlasQuant/0.1 you@example.com'" && exit 2)
+	$(BIN)/python scripts/focus_demo.py
 
 bench:
 	$(BIN)/python benchmarks/bench.py --json benchmarks/out/bench.json

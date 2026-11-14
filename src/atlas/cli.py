@@ -1087,12 +1087,42 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     serve.set_defaults(func=cmd_serve)
+
+    verify_certificate = subparsers.add_parser(
+        "verify-certificate",
+        help="independently verify an atlas.research_certificate.v1 JSON file",
+    )
+    verify_certificate.add_argument("certificate", help="path to the certificate JSON file")
+    verify_certificate.add_argument(
+        "--trusted-sources", default=None,
+        help="optional JSON map of accession → {sha256, availability_time, body_present}",
+    )
+    verify_certificate.set_defaults(func=cmd_verify_certificate)
     return parser
+
+
+def cmd_verify_certificate(_db: Database | None, args: argparse.Namespace) -> int:
+    """Verify a research certificate without the production answer pipeline."""
+    from .research.certificate_verify import verify_certificate_file
+
+    trusted = None
+    if args.trusted_sources:
+        trusted = json.loads(Path(args.trusted_sources).read_text(encoding="utf-8"))
+    result = verify_certificate_file(args.certificate, trusted_sources=trusted)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if result.get("status") == "valid" else 1
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    # Certificate verification is intentionally database-free.
+    if getattr(args, "command", None) == "verify-certificate":
+        try:
+            return cmd_verify_certificate(None, args)
+        except (OSError, json.JSONDecodeError, AtlasError) as exc:
+            print(json.dumps({"error": str(exc)}) if args.json else f"error: {exc}", file=sys.stderr)
+            return 2
     try:
         db = Database(args.db) if getattr(args, "command", None) == "migrate" else open_database(args.db)
     except AtlasError as exc:

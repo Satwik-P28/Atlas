@@ -121,7 +121,8 @@ def test_margin_and_ratio_use_same_units(db: Database):
     assert margin["value"] == "81.04"  # 1000 / 1234 * 100
     ratio = engine.ratio(ISSUER, "2021-12-31T00:00:00Z", numerator="total assets",
                          denominator="revenue", period="2020")
-    assert ratio["value"] == "2.03"  # 2500 / 1234
+    assert ratio["value"] == "2.0259"  # 2500 / 1234 at typed ratio precision (4 dp)
+    assert ratio["display_places"] == 4
     assert ratio["unit"]["kind"] == "ratio"
 
 
@@ -182,7 +183,7 @@ def test_merged_period_header_is_unresolved():
 
 def test_duplicate_labels_without_period_are_unresolved():
     cells = extract_cells(_table([["", "Amount"], ["Revenue", "1,000"],
-                                  ["Revenue", "900"]]), document=_DOC)
+                                  ["Revenue", "900"]], units="in millions"), document=_DOC)
     assert all(cell.status == "unresolved" for cell in cells)
     assert {cell.reason for cell in cells} == {"duplicate_row_label"}
 
@@ -193,10 +194,18 @@ def test_conflicting_units_are_unresolved():
     assert cells[0].reason == "conflicting_units"
 
 
+def test_missing_scale_is_unresolved_not_ones():
+    cells = extract_cells(_table([["", "2020"], ["Revenue", "1,000"]]), document=_DOC)
+    assert cells[0].status == "unresolved"
+    assert cells[0].reason == "scale_undetected"
+    assert cells[0].scale is None
+
+
 def test_corrupted_values_are_not_guessed_but_footnotes_are_preserved():
     cells = extract_cells(_table([["", "2020"], ["Revenue", "1,2x4"],
-                                  ["Other", "1,234 (a)"]]), document=_DOC)
+                                  ["Other", "1,234 (a)"]], units="in millions"), document=_DOC)
     assert cells[0].status == "unresolved" and cells[0].reason == "unparseable"
     assert cells[1].status == "verified"
     assert cells[1].value == "1234"
+    assert cells[1].scale == 6
     assert cells[1].footnotes == ["a"]

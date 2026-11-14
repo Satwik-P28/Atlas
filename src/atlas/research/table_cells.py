@@ -104,8 +104,11 @@ def detect_scale(*texts: str) -> tuple[int | None, str | None, str]:
         return None, None, "conflicting_units"
     if len(currency) > 1:
         return None, None, "conflicting_currencies"
-    scale = next(iter(found)) if found else 0
-    return scale, next(iter(currency)) if currency else None, "detected"
+    if not found:
+        # Missing scale is unknown, not "ones". Claiming scale 0 when the filing said
+        # "millions" elsewhere produces economically false amounts (e.g. 3M FY2022).
+        return None, next(iter(currency)) if currency else None, "scale_undetected"
+    return next(iter(found)), next(iter(currency)) if currency else None, "detected"
 
 
 def parse_number(raw: str) -> tuple[Decimal | None, str, str]:
@@ -184,8 +187,6 @@ def extract_cells(
         footnotes_value = []
     if not isinstance(rows, list) or len(rows) < 2:
         return []
-    scale, currency, unit_basis = detect_scale(table.get("caption") or "",
-                                               table.get("units") or "")
     header_rows: list[int] = []
     for index, row in enumerate(rows[:max_header_rows]):
         if _looks_numeric(row) <= 0.34 and any(_periods(cell) for cell in row):
@@ -195,6 +196,17 @@ def extract_cells(
             header_rows.append(index)
     if not header_rows:
         header_rows = [0]
+    # Filers often put "(Millions, except per share amounts)" in the first table row rather than
+    # a caption. Include those header cells when detecting scale.
+    header_texts = [" ".join(_norm(cell) for cell in rows[index]) for index in header_rows]
+    # Also inspect the first non-period label-like row above the body (unit banner rows).
+    for index, row in enumerate(rows[: max(header_rows) + 1]):
+        joined = " ".join(_norm(cell) for cell in row)
+        if any(word in joined.lower() for word in ("million", "thousand", "billion")):
+            header_texts.append(joined)
+    scale, currency, unit_basis = detect_scale(table.get("caption") or "",
+                                               table.get("units") or "",
+                                               *header_texts)
     body_start = max(header_rows) + 1
 
     # --- grid reconstruction -------------------------------------------------
@@ -337,7 +349,8 @@ def classify_statement(text: str | None) -> tuple[str | None, str]:
 FINANCIAL_CAPTION_HINTS = (
     "balance sheet", "statement of operations", "statements of operations", "income statement",
     "cash flow", "financial position", "in millions", "in thousands", "(in thousands",
-    "in billions", "financial statements", "results of operations", "segment",
+    "in billions", "millions of dollars", "thousands of dollars", "dollars in millions",
+    "financial statements", "results of operations", "segment",
 )
 NON_FINANCIAL_LABEL_HINTS = (
     "item 1", "item 2", "item 3", "item 4", "item 5", "item 6", "item 7", "item 8",

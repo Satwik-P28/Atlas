@@ -17,7 +17,7 @@ import re
 from decimal import Decimal, ROUND_HALF_UP
 from fractions import Fraction
 
-VERIFIER_VERSION = "9.6.3"
+VERIFIER_VERSION = "9.6.4"
 
 _RAW = re.compile(r"^\s*(?P<open>\()?\s*(?P<sign>[-+])?\s*\$?\s*(?P<body>\d[\d,]*(?:\.\d+)?)\s*%?\s*\)?\s*$")
 _DASHES = {"", "-", "--", "—", "–", "n/a", "na", "nm"}

@@ -1,0 +1,70 @@
+{
+  "claims": [
+    "3M FY2022 consolidated net sales resolved from a real SEC 10-K with scale=6 (USD millions).",
+    "Answer compiled through FEC and independently recomputed with Fraction arithmetic.",
+    "Research certificate verified by atlas verify-certificate; value tampering is rejected.",
+    "A pre-availability cutoff correctly refuses the same binding."
+  ],
+  "schema": "atlas.focus.demo.v1",
+  "status": "passed",
+  "steps": [
+    {
+      "status": "ok",
+      "step": "dependencies"
+    },
+    {
+      "database": "var/focus_demo.db",
+      "status": "ok",
+      "step": "corpus"
+    },
+    {
+      "accession": "0000066740-23-000014",
+      "economic_amount": "34229000000",
+      "entity_scope": "consolidated",
+      "raw": "34,229",
+      "scale": 6,
+      "statement_family": "income",
+      "status": "ok",
+      "step": "answer",
+      "value": "34229.00"
+    },
+    {
+      "fingerprint": "14c4e6f106f825d6d20e3ec3c9ed2cf59ebfd8aac26399d5ef11d839004f4590",
+      "path": "artifacts/focus_demo/certificate.json",
+      "status": "ok",
+      "step": "certificate"
+    },
+    {
+      "result": {
+        "certificate_fingerprint": "14c4e6f106f825d6d20e3ec3c9ed2cf59ebfd8aac26399d5ef11d839004f4590",
+        "limitations": [
+          "A hash without independently trusted source bytes does not establish authenticity.",
+          "This verifier recomputes arithmetic from printed raw values with Fraction math and does not invoke the production FinancialAnswerEngine or FEC runtime."
+        ],
+        "problems": [],
+        "recomputed_fingerprint": "14c4e6f106f825d6d20e3ec3c9ed2cf59ebfd8aac26399d5ef11d839004f4590",
+        "schema": "atlas.research_certificate.verify.v1",
+        "status": "valid"
+      },
+      "status": "ok",
+      "step": "verify"
+    },
+    {
+      "problems": [
+        "certificate_fingerprint_mismatch",
+        "result_mismatch"
+      ],
+      "status": "ok",
+      "step": "adversarial_tamper"
+    },
+    {
+      "outcome": "abstained",
+      "problems": [
+        "future_evidence"
+      ],
+      "reason": "input_unverified",
+      "status": "ok",
+      "step": "cutoff_refusal"
+    }
+  ]
+}

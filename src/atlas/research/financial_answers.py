@@ -32,7 +32,7 @@ from .financial_verification import (
 )
 from .table_cells import Cell, extract_cells
 
-ENGINE_VERSION = "9.6.3"
+ENGINE_VERSION = "9.6.4"
 OPERATOR_VERSION = COMPILER_VERSION
 ABSTENTION_REASONS = {
     "no_verified_cells",
@@ -49,7 +49,20 @@ ABSTENTION_REASONS = {
     "vintage_conflict",
     "verification_disagreement",
 }
-_ROUNDING_POLICY = "half_up_2dp"
+# Display precision by answer type. Exact Fraction/Decimal output is preserved separately.
+_DISPLAY_PLACES = {
+    "reported_value": 2,
+    "sum": 2,
+    "percentage_change": 2,
+    "margin_percent": 2,
+    "ratio": 4,
+    "multiple": 4,
+    "yield": 4,
+    "duration": 4,
+    "probability": 6,
+    "basis_point_sensitivity": 4,
+}
+_ROUNDING_POLICY = "typed_half_up_by_answer_type"
 
 
 @dataclass(slots=True)
@@ -200,10 +213,19 @@ class FinancialAnswerEngine:
             unit = self.engine.unit(binding.unit_id)
         except Exception:  # noqa: BLE001
             unit = None
-        if not unit or not unit.get("sha256"):
+        if not unit:
             problems.append("unit_missing")
-        elif binding.value is None or _decimal(binding.value) != parse_raw(binding.raw):
+        else:
+            body = (unit.get("body") or "").encode("utf-8")
+            digest = hashlib.sha256(body).hexdigest()
+            stored = unit.get("sha256")
+            # A SHA field is not verification: recompute from stored bytes.
+            if not stored or stored != digest:
+                problems.append("unit_hash_mismatch")
+        if binding.value is None or _decimal(binding.value) != parse_raw(binding.raw):
             problems.append("value_does_not_match_raw")
+        if binding.scale is None:
+            problems.append("scale_unknown")
         return problems
 
     def cell_from_binding(self, binding: Any) -> Cell:
@@ -438,6 +460,14 @@ class FinancialAnswerEngine:
              period: str, cells: list[Cell], inputs: list[dict[str, Any]],
              nodes: list[dict[str, Any]], output: str, values: dict[str, Any],
              raw_values: list[str], limitations: list[str]) -> dict[str, Any]:
+        # Scale/currency consistency before any arithmetic (beyond pairwise checks above).
+        scales = {cell.scale for cell in cells}
+        currencies = {cell.currency for cell in cells}
+        if None in scales:
+            return self._refuse("unit_mismatch", detail="one or more inputs have unknown scale")
+        if len(scales) > 1 or len(currencies) > 1:
+            return self._refuse("unit_mismatch", scales=sorted(scales, key=lambda s: s or -1),
+                                currencies=sorted(str(c) for c in currencies))
         try:
             fec = _compile_and_run(name, inputs, nodes, output, values)
         except Exception as exc:  # noqa: BLE001 - a compiler refusal is a refusal, not a crash
@@ -446,24 +476,34 @@ class FinancialAnswerEngine:
             verified = verify_evaluate(operator, raw_values)
         except (VerificationError, ValueError) as exc:
             return self._refuse("verification_disagreement", detail=f"verifier refused: {exc}")
-        if round_half_up(verified) != fec["value"].quantize(Decimal("0.01")):
+        places = _DISPLAY_PLACES.get(answer_type, 2)
+        displayed = round_half_up(verified, places=places)
+        fec_displayed = fec["value"].quantize(Decimal(10) ** -places)
+        if displayed != fec_displayed:
             return self._refuse(
                 "verification_disagreement",
-                fec=str(fec["value"]), independent=str(round_half_up(verified)))
-        value = round_half_up(verified)
+                fec=str(fec["value"]), independent=str(verified),
+                displayed_fec=str(fec_displayed), displayed_independent=str(displayed))
         unit = ({"kind": "percent", "scale": 0} if "percent" in answer_type
                 else {"kind": "ratio", "scale": 0} if answer_type == "ratio"
                 else {"kind": cells[0].unit, "scale": cells[0].scale})
+        economic = None
+        if answer_type in {"reported_value", "sum"} and cells[0].scale is not None:
+            economic = str(Decimal(str(verified)) * (Decimal(10) ** cells[0].scale))
         payload = {
             "engine_version": ENGINE_VERSION, "operator_version": OPERATOR_VERSION,
-            "answer_type": answer_type, "value": str(value), "period": period,
+            "answer_type": answer_type, "value": str(displayed), "period": period,
             "formula": formula, "cells": [cell.cell_id for cell in cells],
             "fec_fingerprint": fec["fingerprint"],
+            "value_exact": str(verified), "display_places": places,
         }
         return {
             "outcome": "answered",
             "answer_type": answer_type,
-            "value": str(value),
+            "value": str(displayed),
+            "value_exact": str(verified),
+            "display_places": places,
+            "economic_amount": economic,
             "unit": unit,
             "currency": cells[0].currency,
             "period": period,
@@ -475,8 +515,9 @@ class FinancialAnswerEngine:
             "verification": {
                 "independent_recomputation": True,
                 "method": "Fraction verifier over raw text vs FEC execution",
-                "verifier_version": "9.6.3",
+                "verifier_version": "9.6.4",
                 "rounding_policy": _ROUNDING_POLICY,
+                "display_places": places,
             },
             "fec": {
                 "compiler_version": fec["compiler_version"],
@@ -489,6 +530,7 @@ class FinancialAnswerEngine:
             "limitations": limitations + [
                 "Computed values are never presented as quoted filings; the source cells are the "
                 "authoritative statement.",
+                "Display rounding is applied only after exact verification; intermediates stay exact.",
             ],
             "reproducibility_fingerprint": _fingerprint(payload),
         }
@@ -555,11 +597,29 @@ def _statement_context(units: dict[str, dict], table: dict) -> dict[str, Any]:
         if family:
             break
     scale_hint = None
+    scale_patterns = (
+        "in millions", "in thousands", "in billions",
+        "millions of dollars", "thousands of dollars", "billions of dollars",
+        "dollars in millions", "dollars in thousands", "dollars in billions",
+        "(millions)", "(thousands)", "(billions)",
+        "(millions,", "(thousands,", "(billions,",
+        "millions,", "thousands,", "billions,",
+        # Bare unit words: 3M prints "(Millions, except per share amounts)" in-table.
+        "millions", "thousands", "billions",
+        "$ in millions", "$ in thousands", "usd in millions",
+    )
     if not table.get("units"):
         for block in blocks[:5]:
             body = str(block.get("body") or "")
-            if "in millions" in body.lower() or "in thousands" in body.lower():
-                scale_hint = body[:200]
+            heading = str(block.get("heading") or "")
+            # Prefer the text that actually carries the scale phrase. Headings are often the
+            # section title ("Item 8") while the scale lives in a neighbouring body line.
+            for candidate in (body, heading, f"{heading}\n{body}"):
+                lowered = candidate.lower()
+                if any(pattern in lowered for pattern in scale_patterns):
+                    scale_hint = candidate[:200]
+                    break
+            if scale_hint:
                 break
     caption = str(table.get("caption") or "").lower()
     caption_has_scale = any(word in caption for word in ("million", "thousand", "billion"))
