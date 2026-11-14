@@ -67,7 +67,7 @@ the pinned manifest and archived bytes; the flagship certificate passes 34/34 in
 | Economic amount | `34,229,000,000` |
 | Arithmetic pass | agrees with FEC and with `financial_verification` |
 | Source pass | document digest, table digest, coordinates, label, raw, period, scale, currency, accession, form type, issuer CIK all match |
-| Fingerprint | stable across runs |
+| Fingerprint | a pure function of the body: re-hashing any stored certificate reproduces it (two runs differ because `issued_at` and `run_id` are part of the body) |
 
 The scale correction is the substantive repair: the unit banner `(Millions, except per share amounts)`
 belongs to the header row, not the data row. Reading it from the data row yielded scale `0` and an
@@ -129,6 +129,7 @@ demonstration keeps the two passes separate and refuses to call arithmetic-only 
   unresolved cells.
 - **Symbol-based currency.** `$` is read as USD. A filing using `$` for a non-USD dollar would be wrong.
 - **One known gap.** 3M FY2018 remains unresolved (`32,765` printed).
+- **Committed artifacts are timestamped.** `issued_at` and `run_id` are inside the certificate body, so a fresh `make focus-demo` produces the same answers and levels but different fingerprints and therefore a dirty working tree. Deterministic byte-identical replay would need a pinned issuance clock.
 - **Browser acceptance** could not be executed in the integration environment (Chromium requires system
   libraries that need root). The frontend unit suite, typecheck and production build pass; the
   Playwright journeys are left for CI, which installs browser dependencies.

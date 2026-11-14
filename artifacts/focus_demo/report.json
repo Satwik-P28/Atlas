@@ -35,7 +35,7 @@
       "level_without_evidence": "INVALID",
       "mutation": "changed_certificate_fingerprint",
       "reasons": [
-        "certificate_fingerprint:recomputed 471d9b0a1c6cce0bd652f1d35943afbfb09980b6c57c412e630a15a704929e67"
+        "certificate_fingerprint:recomputed 50eff373a4736458dc689e3074347009647d1662101f8fd755c6087e02c90d52"
       ],
       "rejected": true,
       "self_consistent": false
@@ -1572,7 +1572,7 @@
     {
       "check": "tamper_rejected:changed_certificate_fingerprint",
       "detail": [
-        "certificate_fingerprint:recomputed 471d9b0a1c6cce0bd652f1d35943afbfb09980b6c57c412e630a15a704929e67"
+        "certificate_fingerprint:recomputed 50eff373a4736458dc689e3074347009647d1662101f8fd755c6087e02c90d52"
       ],
       "passed": true
     },
@@ -1693,7 +1693,7 @@
   "flagship": {
     "accession": "0000066740-23-000014",
     "case_id": "FOCUS-10",
-    "certificate_fingerprint": "ba9ea41075552715ce9acdf08619dcc5d9a0ebb96f923792a04eb8afec1d17c6",
+    "certificate_fingerprint": "2265587842ecc16d51113db0656cf85045a50342bc82284bd26f5233f5f97399",
     "currency": "USD",
     "economic_amount": "34229000000",
     "issuer": "3M CO",
@@ -1754,7 +1754,7 @@
     {
       "accession": "0000021344-23-000011",
       "case_id": "FOCUS-01",
-      "certificate_fingerprint": "471d9b0a1c6cce0bd652f1d35943afbfb09980b6c57c412e630a15a704929e67",
+      "certificate_fingerprint": "50eff373a4736458dc689e3074347009647d1662101f8fd755c6087e02c90d52",
       "currency": null,
       "economic_amount": "43004000000",
       "issuer": "COCA COLA CO",
@@ -1775,7 +1775,7 @@
     {
       "accession": "0000021344-23-000011",
       "case_id": "FOCUS-02",
-      "certificate_fingerprint": "b7b206b4046bae425b411d324991fac4bfd5a56ad17dd8fb69b02dda5b1dd066",
+      "certificate_fingerprint": "f68d921f338729d57efb74e178734be3e88ccbdee9a6b1f8cf83453a5916ea1e",
       "currency": null,
       "economic_amount": "9571000000",
       "issuer": "COCA COLA CO",
@@ -1796,7 +1796,7 @@
     {
       "accession": "0000021344-23-000011",
       "case_id": "FOCUS-03",
-      "certificate_fingerprint": "3ac5ee058c8e0dc069694b10d9affc564cefe70dd23bd234530fdf1a612e9a09",
+      "certificate_fingerprint": "fdf703c729a3ddff6b4fa4a1bc86d13f415f204c6b1a1aa17f10cabbfab0aa36",
       "currency": null,
       "economic_amount": null,
       "issuer": "COCA COLA CO",
@@ -1818,7 +1818,7 @@
     {
       "accession": "0000021344-23-000011",
       "case_id": "FOCUS-04",
-      "certificate_fingerprint": "435fa0f7439a7999e0d1de373b5368de1558a06a9937b5a2baea9d2013ac79e7",
+      "certificate_fingerprint": "c7ced928bf7f93fda32446bb92fd24f5e0503fa309270f1742e1b2e741b06976",
       "currency": null,
       "economic_amount": null,
       "issuer": "COCA COLA CO",
@@ -1840,7 +1840,7 @@
     {
       "accession": "0000021344-23-000011",
       "case_id": "FOCUS-05",
-      "certificate_fingerprint": "0d24ccd848eafdf56c062d0c029fb6799cb3e8bb6e0d77e68b85f7be32ff5249",
+      "certificate_fingerprint": "9e90f90c6cad9acd48866bdbdcb40d35b21ccf06f744dbc9b4841675f8b76e87",
       "currency": null,
       "economic_amount": null,
       "issuer": "COCA COLA CO",
@@ -1862,7 +1862,7 @@
     {
       "accession": "0000019617-23-000231",
       "case_id": "FOCUS-06",
-      "certificate_fingerprint": "4edf334225e3c63070f9f9407863dc954cc2d4ca6100c6e60f9e73c143b3b644",
+      "certificate_fingerprint": "ee8c5af705d4010a830d1fe2c50d65efc6c533f0427bf10b0d1bb1983c0967d5",
       "currency": "USD",
       "economic_amount": "3665743000000",
       "issuer": "JPMORGAN CHASE & CO",
@@ -1883,7 +1883,7 @@
     {
       "accession": "0000019617-23-000231",
       "case_id": "FOCUS-07",
-      "certificate_fingerprint": "5b189147300508df9983121b9bcbda59c83ab50d723f5d4d52b0ed18efe4a88f",
+      "certificate_fingerprint": "bbb46412f7312d9914d5253100ade4db38c83cb252797cd339caf5947c023caa",
       "currency": "USD",
       "economic_amount": "37676000000",
       "issuer": "JPMORGAN CHASE & CO",
@@ -1904,7 +1904,7 @@
     {
       "accession": "0000019617-23-000231",
       "case_id": "FOCUS-08",
-      "certificate_fingerprint": "b417cb40105a0f61edf3dca6a245c2bddbfc3d9b224b910d2f4d132f6bfca6f5",
+      "certificate_fingerprint": "d9d4cb422c8c8f9696886a65ea353f9463e50c0aeb49243afcf24082f00c3bec",
       "currency": "USD",
       "economic_amount": null,
       "issuer": "JPMORGAN CHASE & CO",
@@ -1926,7 +1926,7 @@
     {
       "accession": "0000066740-23-000014",
       "case_id": "FOCUS-10",
-      "certificate_fingerprint": "ba9ea41075552715ce9acdf08619dcc5d9a0ebb96f923792a04eb8afec1d17c6",
+      "certificate_fingerprint": "2265587842ecc16d51113db0656cf85045a50342bc82284bd26f5233f5f97399",
       "currency": "USD",
       "economic_amount": "34229000000",
       "issuer": "3M CO",
@@ -1947,7 +1947,7 @@
     {
       "accession": "0000066740-23-000014",
       "case_id": "FOCUS-11",
-      "certificate_fingerprint": "693fa4fe3036e65ff5e6be97623956f6c2d17ae71966a7c61ec1561870fc86ba",
+      "certificate_fingerprint": "0de0ebc489e057570bbf2ea658edd04e3481ae02329d0be0bd5595553bd4e840",
       "currency": "USD",
       "economic_amount": null,
       "issuer": "3M CO",

@@ -35,7 +35,7 @@ Measured on the real 3M FY2022 10-K (accession `0000066740-23-000014`):
 |------|--------|
 | Consolidated net sales FY2022 | printed `34,229`, scale `6` (millions), economic amount `34,229,000,000` USD |
 | FEC + independent Fraction verification | agree |
-| `atlas.research_certificate.v1` | issued and fingerprint-stable |
+| `atlas.research_certificate.v1` | issued; fingerprint is a pure function of the body, so re-hashing any stored certificate reproduces it |
 | `atlas verify-certificate --manifest --snapshots --strict` | `SOURCE_VERIFIED`, 34/34 checks pass |
 | 16 self-consistent retampered certificates | all `INVALID` |
 | Cutoff before availability (2017) | refused |

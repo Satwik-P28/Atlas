@@ -104,7 +104,7 @@ exits `2`; `make focus-manifest` is the only way to create one, and running it i
 | Economic amount | `34,229,000,000` |
 | Independent arithmetic | agrees |
 | Strict verification | `SOURCE_VERIFIED`, checks 34/34 |
-| Fingerprint | stable across runs |
+| Fingerprint | a pure function of the body (re-hashing a stored certificate reproduces it) |
 
 The scale defect that produced `34229` (i.e. `34,229 × 10^0`) is fixed, and it was fixed twice over: the
 unit banner is now taken from the header row rather than the data row, and an undetectable scale returns
