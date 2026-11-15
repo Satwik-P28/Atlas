@@ -48,6 +48,7 @@ from fractions import Fraction
 from pathlib import Path
 from typing import Any, Mapping
 from urllib.parse import urlparse
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from .certificate import SCHEMA, fingerprint
 
@@ -144,14 +145,23 @@ def fetch_source_bytes(url: str, user_agent: str | None = None) -> bytes | None:
         return None
     if not parsed.path.startswith(_LIVE_PATH_PREFIX):
         return None
+    # Restrict the exact URL shape, including encoded paths and credentials.
+    if (parsed.query or parsed.fragment or parsed.username or parsed.password or
+            parsed.port not in (None, 443) or "%" in parsed.path or
+            any(piece in (".", "..") for piece in parsed.path.split("/"))):
+        return None
     if not user_agent:
         return None
-    from urllib.request import Request, urlopen
+
+    class _NoRedirect(HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            return None
 
     try:
-        with urlopen(Request(url, headers={"User-Agent": user_agent,
-                                           "Accept-Encoding": "identity"}),  # noqa: S310
-                     timeout=45) as response:
+        opener = build_opener(_NoRedirect())
+        with opener.open(Request(url, headers={"User-Agent": user_agent,
+                                              "Accept-Encoding": "identity"}),  # noqa: S310
+                         timeout=45) as response:
             payload = response.read(_LIVE_MAX_BYTES + 1)
     except Exception:  # noqa: BLE001 - unavailable network is reported, not raised
         return None
@@ -502,6 +512,47 @@ def verify_payload(payload: Mapping[str, Any], *, evidence: TrustedEvidence | No
                       "accession is not pinned in the source manifest"):
         return report.as_dict()
     assert manifest_entry is not None
+
+    issuer_identity = payload.get("issuer_identity") or {}
+    if not isinstance(issuer_identity, Mapping):
+        report.add("issuer_identity", False, "issuer identity is not an object")
+        return report.as_dict()
+    for name in ("issuer_id", "cik", "issuer_name"):
+        if not report.add(f"manifest_{name}",
+                          _normalise(issuer_identity.get(name)) ==
+                          _normalise(manifest_entry.get(name)),
+                          f"certificate {name} differs from pinned source"):
+            return report.as_dict()
+    if not report.add("binding_issuer",
+                      all(_normalise(b.get("issuer_id")) ==
+                          _normalise(manifest_entry.get("issuer_id")) for b in bindings),
+                      "input binding issuer differs from pinned source"):
+        return report.as_dict()
+
+    # Selected source records are signed claims too. They must not silently
+    # contradict the bound cells or the independently pinned accession.
+    selected = payload.get("selected_sources")
+    if not report.add("selected_source_count",
+                      isinstance(selected, list) and len(selected) == len(bindings) and
+                      all(isinstance(item, Mapping) for item in selected),
+                      "selected source records do not match bound inputs"):
+        return report.as_dict()
+    assert isinstance(selected, list)
+    for index, (source, binding) in enumerate(zip(selected, bindings)):
+        for name in ("accession", "document_sha256", "source_table_sha256",
+                     "document_id", "table_id", "unit_id", "cell_id",
+                     "availability_time", "rights"):
+            if not report.add(f"selected_{name}_{index}",
+                              _normalise(source.get(name)) == _normalise(binding.get(name)),
+                              f"selected source {name} differs from bound input"):
+                return report.as_dict()
+        for name in ("form_type", "primary_document_url"):
+            if not report.add(f"manifest_source_{name}_{index}",
+                              _normalise(source.get(name)) ==
+                              _normalise(manifest_entry.get(name)),
+                              f"selected source {name} differs from pinned document"):
+                return report.as_dict()
+
     claimed_document = bindings[0].get("document_sha256")
     if not report.add("document_digest_present", bool(claimed_document),
                       "certificate does not record a document digest"):

@@ -397,3 +397,38 @@ def test_strict_verifier_rejects_cross_document_input(fixture):
     payload["input_bindings"][0]["accession"] = "0000000000-00-000000"
     report = verify_payload(_resign(payload), evidence=fixture["evidence"])
     assert report["level"] == VerificationLevel.INVALID.value
+
+
+
+def test_binding_issuer_claim_cannot_diverge_from_manifest(fixture):
+    payload = copy.deepcopy(fixture["certificate"])
+    payload["input_bindings"][0]["issuer_id"] = "ISS-FORGED"
+    report = verify_payload(_resign(payload), evidence=fixture["evidence"])
+    assert report["level"] == VerificationLevel.INVALID.value
+    assert any("binding_issuer" in reason for reason in report["reasons"])
+
+
+def test_selected_source_identity_cannot_diverge_from_binding(fixture):
+    payload = copy.deepcopy(fixture["certificate"])
+    payload["selected_sources"][0]["accession"] = "0000000000-00-000000"
+    report = verify_payload(_resign(payload), evidence=fixture["evidence"])
+    assert report["level"] == VerificationLevel.INVALID.value
+    assert any("selected_accession" in reason for reason in report["reasons"])
+
+
+def test_selected_source_url_must_match_pinned_manifest(fixture):
+    payload = copy.deepcopy(fixture["certificate"])
+    payload["selected_sources"][0]["primary_document_url"] = (
+        "https://www.sec.gov/Archives/edgar/data/31/forged.htm")
+    report = verify_payload(_resign(payload), evidence=fixture["evidence"])
+    assert report["level"] == VerificationLevel.INVALID.value
+    assert any("manifest_source_primary_document_url" in reason
+               for reason in report["reasons"])
+
+
+def test_false_issuer_name_is_rejected_even_with_matching_source_bytes(fixture):
+    payload = copy.deepcopy(fixture["certificate"])
+    payload["issuer_identity"]["issuer_name"] = "Not Fixture Co"
+    report = verify_payload(_resign(payload), evidence=fixture["evidence"])
+    assert report["level"] == VerificationLevel.INVALID.value
+    assert any("manifest_issuer_name" in reason for reason in report["reasons"])

@@ -24,6 +24,10 @@ from atlas.research.certificate_verify import (
     "https://www.sec.gov/submissions/CIK0000066740.json",
     "https://www.sec.gov/Archives/../../etc/passwd",
     "file:///etc/passwd",
+    "https://www.sec.gov/Archives/edgar/data/1/%2e%2e/private",
+    "https://www.sec.gov/Archives/edgar/data/1/../../etc/passwd",
+    "https://www.sec.gov/Archives/edgar/data/1/doc.htm?redirect=evil",
+    "https://user:pass@www.sec.gov/Archives/edgar/data/1/doc.htm",
     "",
     None,
 ])

@@ -55,7 +55,7 @@ one real gap among two policy successes.
 ## Certificate matrix
 
 Ten answered cases produce ten certificates. Every one verifies at `SOURCE_VERIFIED` when checked with
-the pinned manifest and archived bytes; the flagship certificate passes 34/34 individual checks.
+the pinned manifest and archived bytes; the flagship certificate passes its full source and arithmetic verification checklist.
 
 | Property | Value |
 |----------|-------|
