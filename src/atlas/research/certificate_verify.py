@@ -40,6 +40,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from datetime import datetime, timezone
 from dataclasses import dataclass, field
 from decimal import Decimal
 from enum import Enum
@@ -304,6 +305,19 @@ def _normalise(text: Any) -> str:
     return " ".join(str(text or "").split())
 
 
+def _instant(value: Any) -> datetime | None:
+    """Parse offset-aware ISO timestamps to UTC before comparison."""
+    if not isinstance(value, str) or not value.strip():
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if parsed.tzinfo is None or parsed.utcoffset() is None:
+            return None
+        return parsed.astimezone(timezone.utc)
+    except (TypeError, ValueError, OverflowError):
+        return None
+
+
 def resolve_operator(payload: Mapping[str, Any]) -> str | None:
     """The operator is a fact the certificate states; never infer it from prose."""
     requirement = payload.get("normalized_requirement") or {}
@@ -337,12 +351,14 @@ def verify_payload(payload: Mapping[str, Any], *, evidence: TrustedEvidence | No
                    trusted_sources: Mapping[str, Mapping[str, Any]] | None = None
                    ) -> dict[str, Any]:
     """Verify a certificate payload and return a machine-readable report."""
-    report = VerificationReport(level=VerificationLevel.INVALID,
-                                certificate_fingerprint=str(
-                                    payload.get("certificate_fingerprint") or "") or None)
     if not isinstance(payload, Mapping):
+        report = VerificationReport(level=VerificationLevel.INVALID, certificate_fingerprint=None)
         report.add("structure", False, "certificate is not an object")
         return report.as_dict()
+    report = VerificationReport(
+        level=VerificationLevel.INVALID,
+        certificate_fingerprint=str(payload.get("certificate_fingerprint") or "") or None,
+    )
     if not report.add("schema", payload.get("schema") == SCHEMA,
                       f"expected {SCHEMA}, found {payload.get('schema')!r}"):
         return report.as_dict()
@@ -356,6 +372,9 @@ def verify_payload(payload: Mapping[str, Any], *, evidence: TrustedEvidence | No
     bindings = list(payload.get("input_bindings") or [])
     if not report.add("bindings", bool(bindings), "no input bindings"):
         return report.as_dict()
+    if not report.add("binding_objects", all(isinstance(b, Mapping) for b in bindings),
+                      "all input bindings must be objects"):
+        return report.as_dict()
     operator = resolve_operator(payload)
     if not report.add("operator", operator in OPERATORS,
                       f"cannot resolve operator from {payload.get('normalized_requirement')!r}"):
@@ -367,19 +386,30 @@ def verify_payload(payload: Mapping[str, Any], *, evidence: TrustedEvidence | No
             f"{operator} needs {expected_inputs[operator]} inputs, certificate has {len(bindings)}"):
         return report.as_dict()
 
-    # Temporal: the certificate must not rest on evidence newer than its own cutoff.
-    cutoff = str(payload.get("information_cutoff") or "")
+    # Compare actual instants, not strings: +00:00 and Z sort differently.
+    cutoff = payload.get("information_cutoff")
+    cutoff_instant = _instant(cutoff)
+    if cutoff_instant is None:
+        report.add("cutoff_valid", False, "an explicit offset-aware ISO cutoff is required")
+        return report.as_dict()
     for index, binding in enumerate(bindings):
         available = binding.get("availability_time")
         if not report.add(f"availability_present_{index}", bool(available),
                           "binding has no availability time"):
             return report.as_dict()
-        if cutoff and not report.add(f"not_future_evidence_{index}",
-                                     str(available) <= cutoff,
-                                     f"available {available} after cutoff {cutoff}"):
+        available_instant = _instant(available)
+        if available_instant is None:
+            report.add(f"availability_valid_{index}", False,
+                       f"invalid or timezone-naive availability timestamp: {available!r}")
             return report.as_dict()
-        if not report.add(f"scale_present_{index}", binding.get("scale") is not None,
-                          "binding has no scale"):
+        if not report.add(f"not_future_evidence_{index}",
+                          available_instant <= cutoff_instant,
+                          f"available {available} after cutoff {cutoff}"):
+            return report.as_dict()
+        scale = binding.get("scale")
+        if not report.add(f"scale_present_{index}",
+                          type(scale) is int and -12 <= scale <= 18,
+                          "scale must be an integer exponent between -12 and 18"):
             return report.as_dict()
 
     # Arithmetic over the inputs the certificate carries.
@@ -390,7 +420,15 @@ def verify_payload(payload: Mapping[str, Any], *, evidence: TrustedEvidence | No
         report.add("independent_arithmetic", False, str(exc))
         return report.as_dict()
     result = payload.get("result") or {}
-    places = int(result.get("display_places") or 2)
+    try:
+        raw_places = result.get("display_places")
+        places = 2 if raw_places is None else int(raw_places)
+    except (TypeError, ValueError, OverflowError):
+        report.add("display_places_valid", False, "display precision is not an integer")
+        return report.as_dict()
+    if not 0 <= places <= 12:
+        report.add("display_places_valid", False, "display precision outside 0..12")
+        return report.as_dict()
     displayed = round_half_up(computed, places=places)
     report.recomputed_value = str(displayed)
     report.method = "fraction_reimplementation_v2"
@@ -445,8 +483,21 @@ def verify_payload(payload: Mapping[str, Any], *, evidence: TrustedEvidence | No
             "certificate carries; whether those inputs match the filing was not established.")
         return report.as_dict()
 
+    # One document per certificate is the verifier's current trust scope. Do not use
+    # source bytes for the first accession to validate inputs from another filing.
+    first_accession = str(bindings[0].get("accession") or "")
+    first_issuer = bindings[0].get("issuer_id")
+    first_digest = bindings[0].get("document_sha256")
+    if not report.add("single_source_document",
+                      all(str(b.get("accession") or "") == first_accession
+                          and b.get("issuer_id") == first_issuer
+                          and b.get("document_sha256") == first_digest
+                          for b in bindings),
+                      "all inputs must refer to the same accession, issuer and document"):
+        return report.as_dict()
+
     # --- pinned manifest: semantics the certificate does not control -----------------------
-    manifest_entry = evidence.document_entry(str(bindings[0].get("accession") or ""))
+    manifest_entry = evidence.document_entry(first_accession)
     if not report.add("manifest_document", manifest_entry is not None,
                       "accession is not pinned in the source manifest"):
         return report.as_dict()

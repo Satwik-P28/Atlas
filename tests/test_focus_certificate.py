@@ -347,3 +347,53 @@ def test_cli_accepts_verified_certificate_and_rejects_tampered(tmp_path: Path, f
     # Strict mode also refuses a merely arithmetic result.
     code, _payload = _run_cli(["verify-certificate", str(path), "--strict"])
     assert code == 1
+
+
+# ------------------------------------------------------------------ verifier boundary regressions
+def test_malformed_root_is_invalid_not_an_exception():
+    for malformed in (None, [], "not a certificate", 42):
+        report = verify_payload(malformed)
+        assert report["level"] == VerificationLevel.INVALID.value
+        assert any("structure" in reason for reason in report["reasons"])
+
+
+@pytest.mark.parametrize("invalid_cutoff", ["", "2024-01-01T00:00:00", "not-a-date"])
+def test_invalid_or_timezone_naive_cutoff_is_refused(fixture, invalid_cutoff):
+    payload = copy.deepcopy(fixture["certificate"])
+    payload["information_cutoff"] = invalid_cutoff
+    report = verify_payload(_resign(payload))
+    assert report["level"] == VerificationLevel.INVALID.value
+    assert any("cutoff_valid" in reason for reason in report["reasons"])
+
+
+def test_offset_timestamp_cannot_disguise_future_evidence(fixture):
+    payload = copy.deepcopy(fixture["certificate"])
+    payload["information_cutoff"] = "2024-01-01T00:00:00Z"
+    payload["input_bindings"][0]["availability_time"] = "2024-01-01T00:01:00+00:00"
+    report = verify_payload(_resign(payload))
+    assert report["level"] == VerificationLevel.INVALID.value
+    assert any("not_future_evidence" in reason for reason in report["reasons"])
+
+
+def test_equivalent_utc_offsets_compare_as_instants(fixture):
+    payload = copy.deepcopy(fixture["certificate"])
+    payload["information_cutoff"] = "2024-01-01T00:00:00Z"
+    payload["input_bindings"][0]["availability_time"] = "2023-12-31T19:00:00-05:00"
+    report = verify_payload(_resign(payload))
+    assert report["level"] == VerificationLevel.ARITHMETIC_VERIFIED.value
+
+
+@pytest.mark.parametrize("places", ["nan", 1000000, -1])
+def test_malformed_or_unbounded_display_precision_is_refused(fixture, places):
+    payload = copy.deepcopy(fixture["certificate"])
+    payload["result"]["display_places"] = places
+    report = verify_payload(_resign(payload))
+    assert report["level"] == VerificationLevel.INVALID.value
+    assert any("display_places_valid" in reason for reason in report["reasons"])
+
+
+def test_strict_verifier_rejects_cross_document_input(fixture):
+    payload = copy.deepcopy(fixture["certificate"])
+    payload["input_bindings"][0]["accession"] = "0000000000-00-000000"
+    report = verify_payload(_resign(payload), evidence=fixture["evidence"])
+    assert report["level"] == VerificationLevel.INVALID.value
