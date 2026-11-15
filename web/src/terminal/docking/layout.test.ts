@@ -10,11 +10,11 @@ import {
   layoutSummary,
   locateTabs,
   movePanelBeside,
+  splitBeside,
   parseSerializedLayout,
   removePanel,
   resizeWeights,
   serializeLayout,
-  splitBeside,
   validateLayout,
   type LayoutNode,
 } from './layout'
@@ -169,5 +169,48 @@ describe('serialization', () => {
   it('refuses a serialized layout that references a missing panel', () => {
     const parsed = parseSerializedLayout(serializeLayout(tabs('a', ['a'])), ['a', 'b'])
     expect(parsed.ok).toBe(false)
+  })
+})
+
+describe('phase 9.6.2 single-panel invariants', () => {
+  const ids = ['a', 'b', 'c', 'd', 'e', 'f']
+
+  it('collapses six panels down to a valid single tabs node', () => {
+    let layout = defaultWorkstationLayout(ids)
+    for (const id of ids.slice(1)) {
+      layout = removePanel(layout, id) as LayoutNode
+    }
+    expect(layout.type).toBe('tabs')
+    expect(validateLayout(layout, ['a']).ok).toBe(true)
+  })
+
+  it('builds a valid one-panel default layout', () => {
+    const layout = defaultWorkstationLayout(['a'])
+    expect(layout).toEqual({ type: 'tabs', active: 'a', panels: ['a'] })
+    expect(validateLayout(layout, ['a']).ok).toBe(true)
+  })
+
+  it('grows one panel back to two without a lone split child', () => {
+    const one = defaultWorkstationLayout(['a'])
+    const two = splitBeside(one, [], 'right', 'b')
+    expect(validateLayout(two, ['a', 'b']).ok).toBe(true)
+    const again = removePanel(two, 'b') as LayoutNode
+    expect(again.type).toBe('tabs')
+  })
+
+  it('survives repeated add/remove cycles', () => {
+    let layout = defaultWorkstationLayout(['a'])
+    for (let cycle = 0; cycle < 5; cycle += 1) {
+      layout = splitBeside(layout, [], 'right', 'b')
+      layout = removePanel(layout, 'b') as LayoutNode
+      expect(validateLayout(layout, ['a']).ok).toBe(true)
+    }
+  })
+
+  it('closing the active tab keeps a valid active panel', () => {
+    const two = splitBeside(defaultWorkstationLayout(['a']), [], 'right', 'b')
+    const closed = removePanel(two, 'b') as LayoutNode
+    expect(closed.type).toBe('tabs')
+    expect(validateLayout(closed, ['a']).ok).toBe(true)
   })
 })

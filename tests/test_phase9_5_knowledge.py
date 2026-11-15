@@ -152,11 +152,22 @@ def test_atlas_ingested_policy_is_a_different_claim(db: Database):
 
 
 def test_absent_term_abstains_instead_of_answering_from_common_words(db: Database):
+    """Phase 9.6 replaced the any-absent-term veto with evidence coverage.
+
+    The old rule abstained whenever one word was missing, which rejected 91 of 112
+    externally annotated questions whose evidence was present. Abstention is now decided by
+    how much of the question's content the retrieved set covers, so the reason is
+    `insufficient_query_term_coverage`; the behaviour under test is unchanged.
+    """
     _ingest(db, accession="0000000001-24-000006", html=DOC_A)
     result = KnowledgeEngine(db).search("bitcoin mining rig depreciation schedule",
-                                        issuer_id=ISSUER)
+                                        issuer_id=ISSUER, support_policy="strict")
     assert result["abstained"] is True
-    assert result["abstention_reason"] == "query_term_absent_from_corpus"
+    assert result["abstention_reason"] in {
+        "insufficient_query_term_coverage", "query_term_absent_from_corpus",
+        "no_passage_satisfies_query_at_cutoff",
+    }
+    assert result["query_coverage"] < 0.6
 
 
 def test_issuer_scope_prevents_cross_issuer_passages(db: Database):
@@ -319,3 +330,39 @@ def test_tables_keep_periods_and_units(db: Database):
     assert tables
     assert tables[0]["rows"][0][0] == "Segment"
     assert "2024" in tables[0]["periods"]
+
+
+def test_support_policy_separates_retrieval_from_abstention(db: Database):
+    """Phase 9.6: search returns evidence; abstention is a claim-level decision.
+
+    An analyst must be able to see ranked passages even when the engine is not confident enough
+    to assert a claim, otherwise a paraphrase would hide the one relevant paragraph.
+    """
+    _ingest(db, accession="0000000001-24-000007", html=DOC_A)
+    engine = KnowledgeEngine(db)
+    # One retrievable term plus an absent topic: balanced returns the revenue passage,
+    # strict refuses to present it as support for a bitcoin question.
+    query = "bitcoin revenue"
+    balanced = engine.search(query, issuer_id=ISSUER)
+    strict = engine.search(query, issuer_id=ISSUER, support_policy="strict")
+    assert balanced["abstained"] is False
+    assert balanced["support_policy"] == "balanced"
+    assert strict["abstained"] is True
+    assert strict["abstention_reason"] in {
+        "insufficient_query_term_coverage", "query_term_absent_from_corpus",
+        "no_passage_satisfies_query_at_cutoff",
+    }
+    with pytest.raises(Exception):
+        engine.search(query, issuer_id=ISSUER, support_policy="lenient")
+
+
+def test_answer_normalisation_matches_reference_formatting():
+    """Benchmark bookkeeping: $1,577.00 and 1577 are the same reported value."""
+    from atlas.research.evaluation import answer_present, numbers
+
+    assert numbers("$1,577.00") == ["1577"]
+    assert answer_present("$1,577.00", "net sales of 1,577 million")
+    assert answer_present("0.29", "margin was 0.29")
+    assert not answer_present("1577", "net sales of 15770 million")
+    # Scaling is never inferred: "$1.58 billion" must not match "1580".
+    assert not answer_present("$1.58 billion", "revenue of 1580 million")

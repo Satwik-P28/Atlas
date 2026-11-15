@@ -86,7 +86,8 @@ assert result["execution"]["differences"] == {}, result["execution"]["difference
 assert result["package"]["sha256"] == result["package"]["package_sha256"]
 assert result["package"]["contains_restricted_price_289_91"] is False
 assert result["source_reconciliation"]["parent_form"] == "FR Y-9C"
-assert result["fresh_schema"] == 13
+from atlas.storage.migrations import LATEST_VERSION
+assert result["fresh_schema"] == LATEST_VERSION
 outputs = result["execution"]["outputs"]
 assert outputs["book_value_basis"] == "sec_total_stockholders_equity_less_preferred_stock"
 assert outputs["common_equity_status"] == "derived_total_equity_less_preferred_stock"

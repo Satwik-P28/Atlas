@@ -11,7 +11,7 @@
     "parent_regulatory": "available"
   },
   "fresh_database": "temporary directory, removed after execution",
-  "fresh_schema": 13,
+  "fresh_schema": 15,
   "migrations": [
     1,
     2,
@@ -25,7 +25,9 @@
     10,
     11,
     12,
-    13
+    13,
+    14,
+    15
   ],
   "install": {
     "status": "installed",

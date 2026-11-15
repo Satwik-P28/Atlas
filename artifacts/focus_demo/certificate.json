@@ -1,0 +1,175 @@
+{
+  "assumptions": [
+    "Selected cells are the consolidated primary statement for the requested concept.",
+    "Printed scale metadata on the statement applies to every bound cell."
+  ],
+  "certificate_fingerprint": "50eff373a4736458dc689e3074347009647d1662101f8fd755c6087e02c90d52",
+  "certificate_version": "1.1.0",
+  "financial_concepts": [
+    "revenue"
+  ],
+  "independent_verification": {
+    "display_places": 2,
+    "independent_recomputation": true,
+    "method": "Fraction verifier over raw text vs FEC execution",
+    "rounding_policy": "typed_half_up_by_answer_type",
+    "verifier_version": "9.6.4"
+  },
+  "information_cutoff": "2023-06-30T00:00:00Z",
+  "input_bindings": [
+    {
+      "accession": "0000021344-23-000011",
+      "availability_time": "2023-02-21T21:18:20Z",
+      "cell_id": "CELL-e2c46b0dc7f9c1c5",
+      "column": 2,
+      "column_label": "2021",
+      "concept": "revenue",
+      "currency": null,
+      "document_id": "DOC-f69998da52b54907",
+      "document_sha256": "df1877fd85ec0598f85faf476ed161617403b1fe9c383e456860b9c3f7ee70d4",
+      "entity_scope": "consolidated",
+      "issuer_id": "ISS-CIK0000021344",
+      "period": "2022",
+      "rationale": "label match score 6.50; statement=income/consolidated; period=2022; scale=6",
+      "raw": "43,004",
+      "resolver_version": "9.6.4",
+      "rights": "public_domain",
+      "row": 1,
+      "row_label": "Net Operating Revenues",
+      "scale": 6,
+      "source_table_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+      "statement_family": "income",
+      "statement_title": "CONSOLIDATED STATEMENTS OF INCOME",
+      "table_id": "TAB-745bbb7ca834321c",
+      "unit_id": "UNI-745bbb7ca834321c",
+      "value": "43004"
+    }
+  ],
+  "issued_at": "2026-11-14T22:37:00Z",
+  "issuer_identity": {
+    "cik": "0000021344",
+    "issuer_id": "ISS-CIK0000021344",
+    "issuer_name": "COCA COLA CO",
+    "reporting_entity_scope": "consolidated",
+    "schema": "atlas.research_certificate.issuer.v1"
+  },
+  "limitations": [
+    "Value is quoted from one verified cell bound by the resolver.",
+    "Computed values are never presented as quoted filings; the source cells are the authoritative statement.",
+    "Display rounding is applied only after exact verification; intermediates stay exact.",
+    "The certificate fingerprint proves internal consistency only. It is not a signature, it confers no authority on the values it covers, and it cannot detect an attacker who recomputes it over altered inputs.",
+    "Source authenticity and semantic intent require independent evidence: verify with atlas.research.certificate_verify against a pinned source manifest and the original document bytes."
+  ],
+  "normalized_requirement": {
+    "concept": "revenue",
+    "issuer": "COCA COLA CO",
+    "operator": "lookup",
+    "period": "2022"
+  },
+  "reporting_entity_scope": "consolidated",
+  "research_question": "COCA COLA CO: lookup {'concept': 'revenue', 'period': '2022'}",
+  "result": {
+    "currency": null,
+    "display_places": 2,
+    "economic_amount": "43004000000",
+    "period": "2022",
+    "unit": {
+      "kind": null,
+      "scale": 6
+    },
+    "value": "43004.00",
+    "value_exact": "43004"
+  },
+  "schema": "atlas.research_certificate.v1",
+  "selected_sources": [
+    {
+      "accession": "0000021344-23-000011",
+      "availability_time": "2023-02-21T21:18:20Z",
+      "cell_id": "CELL-e2c46b0dc7f9c1c5",
+      "document_id": "DOC-f69998da52b54907",
+      "document_sha256": "df1877fd85ec0598f85faf476ed161617403b1fe9c383e456860b9c3f7ee70d4",
+      "form_type": "10-K",
+      "primary_document_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134423000011/ko-20221231.htm",
+      "rights": "public_domain",
+      "source_table_sha256": "cfab18c0a4f5c8049cb7ff0b05bff7d1e1737d9e3f48112cf3769ae72bb08279",
+      "table_id": "TAB-745bbb7ca834321c",
+      "unit_id": "UNI-745bbb7ca834321c"
+    }
+  ],
+  "typed_computation": {
+    "answer_type": "reported_value",
+    "engine_version": "9.6.4",
+    "execution_fingerprint": "acd517361db11ea4c7334bce040c43309747c5e88ebce821a63023b212e42b46",
+    "fec": {
+      "compiler_version": "atlas.fec.compiler.v1",
+      "model_fingerprint": "acd517361db11ea4c7334bce040c43309747c5e88ebce821a63023b212e42b46",
+      "operator_versions": {
+        "abs": "atlas.fec.operators.v1",
+        "add": "atlas.fec.operators.v1",
+        "after_tax_cost_impact": "atlas.fec.operators.v1",
+        "bond_macaulay_duration": "atlas.fec.operators.v1",
+        "bond_price": "atlas.fec.operators.v1",
+        "delta": "atlas.fec.operators.v1",
+        "diff": "atlas.fec.operators.v1",
+        "discount": "atlas.fec.operators.v1",
+        "discount_factor": "atlas.fec.operators.v1",
+        "div": "atlas.fec.operators.v1",
+        "energy_cost_impact": "atlas.fec.operators.v1",
+        "forecast_series": "atlas.fec.operators.v1",
+        "growth": "atlas.fec.operators.v1",
+        "margin_impact": "atlas.fec.operators.v1",
+        "max": "atlas.fec.operators.v1",
+        "mean": "atlas.fec.operators.v1",
+        "min": "atlas.fec.operators.v1",
+        "mul": "atlas.fec.operators.v1",
+        "neg": "atlas.fec.operators.v1",
+        "npv": "atlas.fec.operators.v1",
+        "option_greek": "atlas.fec.operators.v1",
+        "option_price": "atlas.fec.operators.v1",
+        "portfolio_variance": "atlas.fec.operators.v1",
+        "portfolio_volatility": "atlas.fec.operators.v1",
+        "pow": "atlas.fec.operators.v1",
+        "probability_brier": "atlas.fec.operators.v1",
+        "probability_calibration_error": "atlas.fec.operators.v1",
+        "probability_log_loss": "atlas.fec.operators.v1",
+        "risk_contributions": "atlas.fec.operators.v1",
+        "sub": "atlas.fec.operators.v1",
+        "sum": "atlas.fec.operators.v1",
+        "terminal_value": "atlas.fec.operators.v1"
+      },
+      "plan": {
+        "inputs": [
+          {
+            "name": "value",
+            "required": true,
+            "type": "Scalar"
+          }
+        ],
+        "interface": "graph",
+        "name": "Reported value",
+        "nodes": [],
+        "outputs": {
+          "value": "value"
+        },
+        "schema_version": "atlas.model.v1",
+        "version": "1.0.0"
+      },
+      "run_id": "RUN-947fa0d08d32dc62bbf7bf7c",
+      "trace": [
+        {
+          "duration_ms": 0.0042,
+          "node": "value",
+          "op": "input",
+          "position": 0,
+          "status": "input",
+          "type": "Scalar",
+          "value_digest": "849bb34277cf5fbe"
+        }
+      ]
+    },
+    "formula": "lookup(cell)",
+    "operator": "lookup",
+    "operator_version": "atlas.fec.compiler.v1"
+  },
+  "vintage_selection_policy": "filing whose own period is the requested year; disagreements refused"
+}

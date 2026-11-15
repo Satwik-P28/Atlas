@@ -1087,12 +1087,92 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     serve.set_defaults(func=cmd_serve)
+
+    verify_certificate = subparsers.add_parser(
+        "verify-certificate",
+        help="independently verify an atlas.research_certificate.v1 JSON file",
+    )
+    _add_certificate_arguments(verify_certificate)
+    verify_certificate.set_defaults(func=cmd_verify_certificate)
+
+    # Compatibility alias: the same handler under a grouped command name.
+    certificate = subparsers.add_parser("certificate", help="research certificate tools")
+    certificate_sub = certificate.add_subparsers(dest="certificate_command", required=True)
+    certificate_verify = certificate_sub.add_parser("verify", help="verify a certificate")
+    _add_certificate_arguments(certificate_verify)
+    certificate_verify.set_defaults(func=cmd_verify_certificate)
     return parser
+
+
+def _add_certificate_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("certificate", help="path to the certificate JSON file")
+    parser.add_argument(
+        "--manifest", default=None,
+        help="pinned source manifest to compare against (required for SOURCE_VERIFIED)",
+    )
+    parser.add_argument(
+        "--snapshots", default=None,
+        help="directory of original document bytes, named <accession>.html",
+    )
+    parser.add_argument(
+        "--live-sec", dest="live_sec", action="store_true",
+        help="fetch original bytes from www.sec.gov instead of local snapshots",
+    )
+    parser.add_argument(
+        "--trusted-sources", default=None,
+        help="legacy JSON map of accession → claimed hashes; insufficient for SOURCE_VERIFIED",
+    )
+    parser.add_argument(
+        "--strict", action="store_true",
+        help="exit nonzero unless the certificate reaches SOURCE_VERIFIED",
+    )
+
+
+def cmd_verify_certificate(_db: Database | None, args: argparse.Namespace) -> int:
+    """Verify a research certificate without the production answer pipeline.
+
+    The exit status follows the verification level, because a caller scripting this needs to
+    distinguish "arithmetic matched the inputs it was handed" from "the source was authenticated".
+    """
+    from .research.certificate_verify import TrustedEvidence, verify_certificate_file
+
+    evidence = None
+    trusted = None
+    if args.manifest:
+        snapshots: dict[str, bytes] = {}
+        if args.snapshots:
+            directory = Path(args.snapshots)
+            if not directory.is_dir():
+                raise ValidationError("snapshot directory does not exist",
+                                      path=str(directory))
+            for path in sorted(directory.glob("*.htm*")):
+                snapshots[path.stem] = path.read_bytes()
+        evidence = TrustedEvidence.from_manifest_file(
+            args.manifest, snapshots=snapshots, live_sec=args.live_sec,
+            user_agent=os.environ.get("ATLAS_SEC_USER_AGENT") or None)
+    elif args.trusted_sources:
+        trusted = json.loads(Path(args.trusted_sources).read_text(encoding="utf-8"))
+    result = verify_certificate_file(args.certificate, evidence=evidence,
+                                     trusted_sources=trusted)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    level = result.get("level")
+    if level == "SOURCE_VERIFIED":
+        return 0
+    if level in {"ARITHMETIC_VERIFIED", "SOURCE_UNVERIFIED"}:
+        return 0 if not args.strict else 1
+    return 1
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    # Certificate verification is intentionally database-free.
+    if getattr(args, "command", None) in {"verify-certificate", "certificate"}:
+        try:
+            return cmd_verify_certificate(None, args)
+        except (OSError, json.JSONDecodeError, AtlasError) as exc:
+            print(json.dumps({"error": str(exc)}) if args.json else f"error: {exc}", file=sys.stderr)
+            return 2
     try:
         db = Database(args.db) if getattr(args, "command", None) == "migrate" else open_database(args.db)
     except AtlasError as exc:
