@@ -21,14 +21,14 @@ documents; one filing contributes no answered cell), nine pinned cells, ten answ
 
 | Case | Issuer | Question | Answer | Level |
 |------|--------|----------|--------|-------|
-| FOCUS-01 | Coca-Cola | Net operating revenues FY2022 | `43,004.00` (→ 43,004,000,000 USD) | `SOURCE_VERIFIED` |
-| FOCUS-02 | Coca-Cola | Gross profit FY2022 | `9,571.00` | `SOURCE_VERIFIED` |
+| FOCUS-01 | Coca-Cola | Net operating revenues FY2022 | `43,004.00` (millions; certificate currency unresolved) | `SOURCE_VERIFIED` |
+| FOCUS-02 | Coca-Cola | Consolidated net income FY2022 | `9,571.00` (millions; certificate currency unresolved) | `SOURCE_VERIFIED` |
 | FOCUS-03 | Coca-Cola | Revenue change FY2022 vs FY2021 | `11.25` % | `SOURCE_VERIFIED` |
-| FOCUS-04 | Coca-Cola | Gross margin FY2022 | `25.37` % | `SOURCE_VERIFIED` |
-| FOCUS-05 | Coca-Cola | Operating expense ratio | `2.1571` | `SOURCE_VERIFIED` |
-| FOCUS-06 | JPMorgan | Total net revenue FY2022 | `3,665,743.00` (→ 3,665,743,000,000 USD) | `SOURCE_VERIFIED` |
+| FOCUS-04 | Coca-Cola | Operating margin FY2022 | `25.37` % | `SOURCE_VERIFIED` |
+| FOCUS-05 | Coca-Cola | Total assets / revenue FY2022 | `2.1571` | `SOURCE_VERIFIED` |
+| FOCUS-06 | JPMorgan | Total assets FY2022 | `3,665,743.00` (→ 3,665,743,000,000 USD) | `SOURCE_VERIFIED` |
 | FOCUS-07 | JPMorgan | Net income FY2022 | `37,676.00` | `SOURCE_VERIFIED` |
-| FOCUS-08 | JPMorgan | Net income / revenue | `0.0103` | `SOURCE_VERIFIED` |
+| FOCUS-08 | JPMorgan | Net income / total assets | `0.0103` | `SOURCE_VERIFIED` |
 | FOCUS-10 | 3M | Net sales FY2022 | `34,229.00` (→ 34,229,000,000 USD) | `SOURCE_VERIFIED` |
 | FOCUS-11 | 3M | Net sales change FY2022 vs FY2021 | `-3.18` % | `SOURCE_VERIFIED` |
 | FOCUS-09 | JPMorgan | Gross profit | refused | justified unanswerability |
@@ -133,3 +133,7 @@ demonstration keeps the two passes separate and refuses to call arithmetic-only 
 - **Browser acceptance** could not be executed in the integration environment (Chromium requires system
   libraries that need root). The frontend unit suite, typecheck and production build pass; the
   Playwright journeys are left for CI, which installs browser dependencies.
+
+## Additional evidence boundary
+
+The case runner requests FY2022 for Coca-Cola, and the extracted numbers have been checked arithmetically. Some source-bound cells nonetheless retain a flattened `column_label` of `2021` while their normalized `period` is `2022`. Thus `SOURCE_VERIFIED` confirms pinned raw text and the original snapshot, **not** independent correctness of the normalized period-to-column association. XBRL and full HTML geometry checks remain outstanding.

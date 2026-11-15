@@ -16,14 +16,14 @@ machine-readable form is `artifacts/focus_demo/report.json`.
 
 | Case | Issuer | Filing | Question | Printed | Scale | Answer |
 |------|--------|--------|----------|---------|-------|--------|
-| FOCUS-01 | Coca-Cola | FY2022 10-K | Net operating revenues | `43,004` | 6 | `43,004.00` → 43,004,000,000 USD |
-| FOCUS-02 | Coca-Cola | FY2022 10-K | Gross profit | `9,571` | 6 | `9,571.00` → 9,571,000,000 USD |
+| FOCUS-01 | Coca-Cola | FY2022 10-K | Net operating revenues | `43,004` | 6 | `43,004.00` (millions; currency unresolved in this binding) |
+| FOCUS-02 | Coca-Cola | FY2022 10-K | Consolidated net income | `9,571` | 6 | `9,571.00` (millions; currency unresolved in this binding) |
 | FOCUS-03 | Coca-Cola | FY2022 10-K | Revenue change YoY | `43,004` / `38,655` | 6 | `11.25` % |
-| FOCUS-04 | Coca-Cola | FY2022 10-K | Gross margin | `9,571` / `37,728` | 6 | `25.37` % |
-| FOCUS-05 | Coca-Cola | FY2022 10-K | Operating expense ratio | `12,853` / `5,958` | 6 | `2.1571` |
-| FOCUS-06 | JPMorgan | FY2022 10-K | Total net revenue | `3,665,743` | 6 | `3,665,743.00` → 3,665,743,000,000 USD |
+| FOCUS-04 | Coca-Cola | FY2022 10-K | Operating margin | `10,909` / `43,004` | 6 | `25.37` % |
+| FOCUS-05 | Coca-Cola | FY2022 10-K | Total assets / revenue | `92,763` / `43,004` | 6 | `2.1571` |
+| FOCUS-06 | JPMorgan | FY2022 10-K | Total assets | `3,665,743` | 6 | `3,665,743.00` → 3,665,743,000,000 USD |
 | FOCUS-07 | JPMorgan | FY2022 10-K | Net income | `37,676` | 6 | `37,676.00` → 37,676,000,000 USD |
-| FOCUS-08 | JPMorgan | FY2022 10-K | Net income / revenue | `37,676` / `3,665,743` | 6 | `0.0103` |
+| FOCUS-08 | JPMorgan | FY2022 10-K | Net income / total assets | `37,676` / `3,665,743` | 6 | `0.0103` |
 | FOCUS-10 | 3M | FY2022 10-K | Net sales | `34,229` | 6 | `34,229.00` → 34,229,000,000 USD |
 | FOCUS-11 | 3M | FY2022 10-K | Net sales change YoY | `34,229` / `35,355` | 6 | `-3.18` % |
 
@@ -56,3 +56,5 @@ leak backwards.
 A resolver that recognises the FY2018 statement layout and its row label, plus a scale banner read from
 that filing's header row, then a manifest cell for `(table_sha256, row, column)` covering the new cell.
 Until then the case stays a refusal, and the report keeps saying so.
+
+**Evidence limitation:** Several Coca-Cola FY2022 cells have a flattened-table `column_label` of `2021` despite a normalized `period` of `2022`. The printed values and arithmetic were checked, but the certificate does not independently establish the fiscal period encoded by merged HTML headers. Original-statement inspection and XBRL/geometry corroboration remain necessary.
