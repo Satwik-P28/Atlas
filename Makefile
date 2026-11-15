@@ -1,6 +1,6 @@
 # Atlas Quant — developer tasks
 #
-# Everything here is offline except `sync-live`, which requires network access and a
+# Most tasks are offline. `sync-live` and `focus-corpus` need SEC network access and a
 # contact User-Agent as required by SEC fair-access policy.
 
 PYTHON ?= python3
@@ -18,7 +18,7 @@ CERT   ?= $(FOCUS_OUT)/certificate.json
 
 help:
 	@echo "install    create the virtualenv and install the package (editable, dev extras)"
-	@echo "test       run the full offline test suite (186 tests)"
+	@echo "test       run the full offline test suite (count reported by pytest)"
 	@echo "demo       run the offline end-to-end demonstration"
 	@echo "focus-corpus  fetch and archive the FOCUS 10-K corpus (network; needs ATLAS_SEC_USER_AGENT)"
 	@echo "focus-manifest  pin the source manifest that strict verification compares against"

@@ -18,7 +18,7 @@ Network ingestion and offline verification are separate steps. The first fetches
 exact bytes it received; the second pins a manifest over those bytes; the third replays everything offline.
 
 ```bash
-python3 -m pip install -e ".[dev]"
+make install              # create .venv and install Atlas with development dependencies
 export ATLAS_SEC_USER_AGENT='AtlasQuant/0.1 you@example.com'
 make focus-corpus     # network: fetch 4 filings, archive bytes under var/focus/snapshots/
 make focus-manifest   # explicit trust anchor: artifacts/focus_source_manifest.json
