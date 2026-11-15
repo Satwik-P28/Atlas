@@ -9,8 +9,8 @@ reproduced by a command in this repository.
 Python + TypeScript)
 
 - Designed a point-in-time financial research pipeline that ingests historical SEC 10-K filings, extracts
-  table cells with period, scale and currency, and refuses to answer when any of those cannot be
-  established. Evidence: `src/atlas/research/table_cells.py`, `financial_concepts.py`; three distinct
+  table cells with period, scale, source coordinates and optional currency, refusing unsupported
+  required inputs. Evidence: `src/atlas/research/table_cells.py`, `financial_concepts.py`; three distinct
   refusal classes reproduced by `make focus-demo`.
 - Built a research-certificate format (`atlas.research_certificate.v1`) that binds each answer to its
   source coordinates, raw strings, document digest and availability time, with a canonical fingerprint

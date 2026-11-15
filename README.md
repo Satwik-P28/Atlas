@@ -10,7 +10,7 @@ This repository is an engineering research project. It does not claim institutio
 
 ## The technical problem
 
-Public filings are revised, restated, segmented, and scaled. A printed number without statement identity, period, currency, scale, and availability time is not a research answer. Atlas treats those fields as part of the computation, refuses when they cannot be established, and packages accepted answers as independently verifiable research certificates.
+Public filings are revised, restated, segmented, and scaled. A printed number without statement identity, period, currency, scale, and availability time is not a research answer. Atlas records those fields, refuses unsupported required inputs, and explicitly preserves unresolved metadata such as currency. Accepted computations can be checked against source snapshots using research certificates.
 
 ## Working result (FOCUS demo)
 
@@ -55,7 +55,7 @@ A refusal that happens to be correct is not counted as an answered question.
 ## Architecture
 
 1. **Ingest** SEC HTML 10-Ks into a local SQLite knowledge store with availability timestamps.
-2. **Extract** verified table cells (period, currency, scale, coordinates) or leave them unresolved.
+2. **Extract** cells with period, scale, coordinates and optional currency, or refuse when required information is unresolved.
 3. **Resolve** a financial concept to one cell with statement family and entity scope; refuse conflicts.
 4. **Bind** the selected evidence identity (`ResolvedFinancialInput`) so later steps cannot silently re-search by row label.
 5. **Compile** through the Financial-Economic Compiler (FEC) and recompute with an independent Fraction verifier.

@@ -5,23 +5,23 @@ a test or an artifact in this repository.
 
 ## One-line description
 
-Built a point-in-time financial research system that answers questions from historical SEC filings only
-when period, scale, currency and availability can be established, and emits each answer as a research
-certificate that an independent verifier can re-check.
+Built a point-in-time financial research system that binds historical SEC evidence to typed
+computations, preserves unresolved source metadata, and emits certificates that can be checked
+against pinned source snapshots.
 
 ## Problem statement
 
 Financial answers are unreliable in a specific, boring way: the number is real but its context is wrong.
 The filing says `34,229`, the reader assumes units, and the answer is off by six orders of magnitude while
-looking precise. Atlas treats period, statement identity, scale, currency and publication time as part of
-the computation, and refuses when any of them is unresolved.
+looking precise. Atlas records statement identity, reporting period, scale, currency when available,
+and modelled availability, refusing when required evidence is unresolved.
 
 ## What was built
 
 - **Ingestion with availability semantics.** SEC 10-K HTML is stored with exact bytes, a digest and an
   EDGAR acceptance timestamp, so "was this public at the cutoff?" is answerable.
-- **Cell-level extraction that abstains.** A flattened-row table reader emits a cell only with period,
-  scale and currency; unknown scale is recorded as unknown rather than zero.
+- **Cell-level extraction that abstains.** A flattened-row reader records period, scale, source
+  coordinates and optional currency; unknown required scale is recorded as unknown rather than zero.
 - **Evidence binding.** A resolved cell is frozen into a typed binding (digest, coordinates, raw text,
   period, scale, currency) so downstream arithmetic cannot silently re-select a different row.
 - **Two independent arithmetic implementations.** The compiler and a `Fraction` verifier must agree.

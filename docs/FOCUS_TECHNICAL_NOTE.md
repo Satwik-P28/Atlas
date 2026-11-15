@@ -20,8 +20,8 @@ Six stages, each refusing rather than guessing:
 1. **Ingest** — SEC HTML 10-K filings are stored with their exact bytes, a SHA-256 digest, and the
    document's acceptance timestamp (EDGAR `acceptance-datetime`), which becomes its availability time.
 2. **Extract** — a flattened HTML row reader separates header rows from data rows and emits a cell only
-   when period, scale, currency and coordinates are all established. A cell whose scale cannot be read is
-   `unresolved` with the scale recorded as unknown, never as `0`.
+   with period, scale and coordinates, preserving unknown currency when it cannot be inferred. A
+   cell whose required scale cannot be read is `unresolved`, never silently assigned scale `0`.
 3. **Resolve** — a concept (`revenue`, `gross_profit`, …) is mapped to exactly one cell, with statement
    family and entity scope checked. Two candidates with different values is a conflict, not a coin flip.
 4. **Bind** — the selected evidence is frozen into a `ResolvedFinancialInput` carrying document id,
@@ -148,3 +148,7 @@ separate.
 - The 3M FY2018 consolidated figure (`32,765`) is not resolved by the current resolver. This is a
   capability gap and is recorded as a refusal, not an answer.
 - Manifest authenticity depends on how the manifest is stored and distributed, not on the checker.
+
+## Period interpretation boundary
+
+Some Coca-Cola FY2022 selected values retain a flattened table `column_label` of `2021` although their normalized `period` is `2022`. Source verification authenticates the original text and pinned manifest, not the independent correctness of the normalized merged-header interpretation. Geometry-aware reconstruction and XBRL corroboration remain outstanding.
