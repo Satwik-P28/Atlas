@@ -106,11 +106,11 @@ demonstration keeps the two passes separate and refuses to call arithmetic-only 
 
 | Check | Result |
 |-------|--------|
-| Backend suite | 812 passed (158.10 s) |
+| Backend suite | 812 passed at the earlier integration checkpoint (158.10 s); new verifier-hardening tests were added subsequently, consult latest CI |
 | Frontend unit tests | 50 passed, 4 files |
 | TypeScript project build | clean |
 | Production web build | built in 3.33 s |
-| Certificate/mutation tests | 40 passed |
+| Certificate/mutation tests | 40 passed at the earlier integration checkpoint; additional hardening tests were added afterward |
 | `scripts/reproduce_phase9_2.py` | `exit: 0`, package sha256 `3bbaca54…`, value per share `295.464…`, no differences |
 | `scripts/verify_clean_install.py` | `status: pass`, `reproduced: true`, value per share `101.2157…` |
 | Distributable fixtures | 10,580 rows, project-authored synthetic market fixture |

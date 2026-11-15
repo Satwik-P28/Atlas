@@ -36,7 +36,7 @@ Python + TypeScript)
   and never regenerated a missing trust anchor during verification. Evidence: `scripts/focus_demo.py`.
 - Ran thirteen controlled real-filing cases across Coca-Cola, JPMorgan and 3M: ten answered, three
   refused, with the 3M FY2018 case reported as a resolver capability gap rather than a success.
-- Maintained a 812-test backend suite and a 50-test frontend suite with typecheck and production build
+- Maintained backend and frontend regression suites, plus targeted certificate tampering tests, with typechecking and production build
   green, plus offline reproduction of research packages from archived fixtures.
 
 ## Interview talking points

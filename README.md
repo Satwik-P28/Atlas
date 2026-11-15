@@ -98,7 +98,7 @@ See `docs/FOCUS_ARCHITECTURE.md`.
 | `make focus-verify` | Strictly verify the demo certificates against the pinned manifest |
 | `python3 scripts/phase9_6_4_case_studies.py` | Re-run the 13 real-filing cases (expects `var/phase9_6.db`) |
 | `python3 -m atlas verify-certificate artifacts/focus_demo/certificate.json --manifest artifacts/focus_source_manifest.json --snapshots var/focus/snapshots --strict` | Independent strict certificate check |
-| `python3 -m pytest -q` | Offline unit/property suite (812 tests) |
+| `python3 -m pytest -q` | Offline unit/property suite (current count reported by pytest and CI) |
 
 FinanceBench evaluation (`scripts/phase9_6_4_evaluate.py`) requires licensed reference rows out-of-band. Without them the evaluator exits `2` and writes `unavailable_reference_data` — it does not invent scores.
 
