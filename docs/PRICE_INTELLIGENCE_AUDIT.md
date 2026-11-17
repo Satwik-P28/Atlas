@@ -10,9 +10,9 @@ program (factor research, ML integrity, compute, institutional risk) was impleme
 
 | Check | Command | Result |
 | --- | --- | --- |
-| Python suite | `.venv/bin/python -m pytest -o addopts='' -q` | **732 passed, 1 skipped, 0 failed** (733 collected), 133 s |
-| Feature tests | `.venv/bin/python -m pytest -o addopts='' -q tests/test_price_explanations.py` | **34 passed** |
-| Test inventory | `.venv/bin/python scripts/verify_test_inventory.py` | baseline 699 + feature 34 = 733, **verified** |
+| Python suite | `.venv/bin/python -m pytest -o addopts='' -q` | **733 passed, 1 skipped, 0 failed** (734 collected), 134 s |
+| Feature tests | `.venv/bin/python -m pytest -o addopts='' -q tests/test_price_explanations.py` | **35 passed** |
+| Test inventory | `.venv/bin/python scripts/verify_test_inventory.py` | baseline 699 + feature 35 = 734, **verified** |
 | TypeScript | `cd web && npx tsc -b --noEmit` | exit 0 |
 | Frontend unit tests | `cd web && npx vitest run` | 5 files, **50 tests passed** |
 | Production build | `cd web && npm run build` | exit 0 |
@@ -37,7 +37,7 @@ repository tests and, where stated, a real browser exercise the behaviour at thi
 | Trading calendar + gap detection | `implemented_verified` | rule-based XNYS/XNAS; unscheduled closures remain a documented limitation |
 | Corporate actions | `implemented_verified` for split/reverse split/dividend; merger, spin-off and distribution are **declared, not computed** | `src/atlas/market/actions.py` |
 | SEC filing/evidence kernel with availability precision | `implemented_verified` within archived fixtures | `src/atlas/evidence/kernel.py`; no independent XBRL challenger exists |
-| **Price Movement Intelligence engine** | `implemented_verified` | `src/atlas/research/move_intelligence.py`, 34 adversarial tests |
+| **Price Movement Intelligence engine** | `implemented_verified` | `src/atlas/research/move_intelligence.py`, 35 adversarial tests |
 | **Price-explanation API** | `implemented_verified` | `POST /api/securities/{id}/price-explanations`; additive OpenAPI path |
 | **Chart interval selection (mouse/touch/keyboard)** | `implemented_verified` in Chromium | `web/src/components/Chart.tsx`, `chartSelection.ts`, 19 browser checks |
 | **Investigation panel** | `implemented_verified` in Chromium | desktop + 390×844 mobile, loading/error/empty/export states |

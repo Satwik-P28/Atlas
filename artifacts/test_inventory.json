@@ -10,15 +10,15 @@
     "baseline_tests": 699,
     "baseline_note": "Measured before this feature: 720 collected at c6ba985 minus the 21 feature tests added by that commit.",
     "feature_file": "tests/test_price_explanations.py",
-    "feature_tests": 34,
+    "feature_tests": 35,
     "other_added_tests": 0,
-    "expected_total": 733,
+    "expected_total": 734,
     "command": ".venv/bin/python -m pytest -o addopts='' -q",
     "last_result": {
-      "passed": 732,
+      "passed": 733,
       "skipped": 1,
       "failed": 0,
-      "collected": 733
+      "collected": 734
     }
   },
   "frontend": {

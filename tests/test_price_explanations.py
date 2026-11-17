@@ -808,6 +808,56 @@ def test_missing_session_inside_the_window_is_reported(db):
     assert any(warning["code"] == mi.W_MISSING_SESSIONS for warning in result["warnings"])
 
 
+def test_duplicate_and_corrected_actions_are_not_double_counted(db):
+    _, _, security_id = _identity(db)
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 100.0), (DAY_THREE, 100.0)])
+    store = ActionStore(db)
+    original = CorporateAction(
+        security_id=security_id,
+        action_type="cash_dividend",
+        source_id="sec-edgar",
+        ex_date=DAY_TWO,
+        cash_amount=Decimal("2"),
+        currency="USD",
+        availability_time=f"{DAY_ONE}T12:00:00Z",
+    )
+    first_id = store.add(original)
+    # A re-delivery of the same terms resolves to the same deterministic action id.
+    assert store.add(original) == first_id
+
+    first = mi.explain_range(db, _request(security_id))
+    actions = [item for item in first["events"]["items"] if item["kind"] == "corporate_action"]
+    assert len(actions) == 1
+    assert first["price_statistics"]["basis_reconciliation"]["total_return"] == pytest.approx(0.02)
+    supporting = [
+        evidence_id
+        for hypothesis in first["hypotheses"]
+        for evidence_id in hypothesis["relevance"]["supporting_evidence"]
+    ]
+    assert len(supporting) == len(set(supporting)), "duplicate evidence ids in the ranking"
+
+    # A provider correction replaces the original rather than adding a second dividend.
+    store.correct(
+        first_id,
+        CorporateAction(
+            security_id=security_id,
+            action_type="cash_dividend",
+            source_id="sec-edgar",
+            ex_date=DAY_TWO,
+            cash_amount=Decimal("3"),
+            currency="USD",
+            availability_time=f"{DAY_ONE}T12:00:00Z",
+        ),
+        reason="issuer revised the dividend",
+    )
+    corrected = mi.explain_range(db, _request(security_id))
+    actions = [item for item in corrected["events"]["items"] if item["kind"] == "corporate_action"]
+    assert len(actions) == 1
+    assert actions[0]["status"] == "corrected"
+    assert corrected["price_statistics"]["basis_reconciliation"]["total_return"] == pytest.approx(0.03)
+    assert corrected["revision_check"]["corrected_corporate_actions"] == 1
+
+
 def test_after_hours_acceptance_is_not_shifted_to_the_previous_session(db):
     _, issuer_id, security_id = _identity(db)
     _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 101.0), (DAY_THREE, 102.0)])

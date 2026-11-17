@@ -268,7 +268,8 @@ directions, one candle, keyboard range, wheel zoom with an active band, resize, 
 change, three repeated investigations, benchmark-unavailable state, delayed API with a
 visible loading state, injected API error with retry recovery, authorized export download,
 restricted-export disabling, closing the mode, mobile layout without horizontal overflow,
-touch drag, and mobile rights. Screenshots are written to `artifacts/`. The run found and
+touch drag, and mobile rights. Duplicate and corrected corporate actions are covered by
+Python tests, not by a separate browser click. Screenshots are written to `artifacts/`. The run found and
 fixed a real defect: the feature stylesheet was imported only by the equity page, so on the
 company page the overlay had zero height and could not be dragged. The styles now live in
 the global `styles.css`, and the mobile metric card wraps long policy tokens.
@@ -295,9 +296,9 @@ the global `styles.css`, and the mobile metric card wraps long policy tokens.
 
 | Check | Command | Result |
 | --- | --- | --- |
-| Python suite | `.venv/bin/python -m pytest -o addopts='' -q` | 732 passed, 1 skipped, 0 failed (733 collected) |
-| Feature tests | `.venv/bin/python -m pytest -o addopts='' -q tests/test_price_explanations.py` | 34 passed |
-| Inventory | `.venv/bin/python scripts/verify_test_inventory.py` | baseline 699 + feature 34 = 733, verified |
+| Python suite | `.venv/bin/python -m pytest -o addopts='' -q` | 733 passed, 1 skipped, 0 failed (734 collected) |
+| Feature tests | `.venv/bin/python -m pytest -o addopts='' -q tests/test_price_explanations.py` | 35 passed |
+| Inventory | `.venv/bin/python scripts/verify_test_inventory.py` | baseline 699 + feature 35 = 734, verified |
 | TypeScript | `cd web && npx tsc -b --noEmit` | exit 0 |
 | Frontend unit | `cd web && npx vitest run` | 5 files, 50 passed |
 | Production build | `cd web && npm run build` | exit 0 |
