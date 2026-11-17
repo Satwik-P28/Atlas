@@ -10,15 +10,17 @@ program (factor research, ML integrity, compute, institutional risk) was impleme
 
 | Check | Command | Result |
 | --- | --- | --- |
-| Python suite | `.venv/bin/python -m pytest -o addopts='' -q` | **733 passed, 1 skipped, 0 failed** (734 collected), 134 s |
+| Python suite | `.venv/bin/python -m pytest -o addopts='' -q` | **752 passed, 0 failed, 0 skipped** (752 collected), 149 s — integrity pass |
 | Feature tests | `.venv/bin/python -m pytest -o addopts='' -q tests/test_price_explanations.py` | **35 passed** |
-| Test inventory | `.venv/bin/python scripts/verify_test_inventory.py` | baseline 699 + feature 35 = 734, **verified** |
+| Integrity tests | `.venv/bin/python -m pytest -o addopts='' -q tests/test_price_evidence_integrity.py` | **18 passed** |
+| Test inventory | `.venv/bin/python scripts/verify_test_inventory.py` | observed 752/35/18; baseline 699 **reconstructed**, **verified** |
 | TypeScript | `cd web && npx tsc -b --noEmit` | exit 0 |
 | Frontend unit tests | `cd web && npx vitest run` | 5 files, **50 tests passed** |
 | Production build | `cd web && npm run build` | exit 0 |
-| Browser acceptance | `cd web && node e2e/price-explanation.mjs` | **19 checks passed, 0 failed** |
+| Browser acceptance | `cd web && node e2e/price-explanation.mjs` | 19 checks passed at `747871b`; **not rerun** (no browser in this environment) |
 | Spec checksum | `.venv/bin/python scripts/verify_master_spec.py` | v3.2, 357970 bytes, SHA-256 **verified** |
-| Live API | `POST /api/securities/{id}/price-explanations` against the demo DB | 200, `atlas.price_explanation.v2` |
+| Live API | `POST /api/securities/{id}/price-explanations` against the demo DB | 200, `atlas.price_explanation.v3` |
+| End-to-end acceptance | `.venv/bin/python scripts/accept_price_integrity.py` | **32 checks passed, 0 failed** |
 
 The four Phase 6 learning tests that failed before were caused only by the optional
 `learning` extra (`scipy`, `scikit-learn`) missing in the restored environment. After
@@ -37,12 +39,14 @@ repository tests and, where stated, a real browser exercise the behaviour at thi
 | Trading calendar + gap detection | `implemented_verified` | rule-based XNYS/XNAS; unscheduled closures remain a documented limitation |
 | Corporate actions | `implemented_verified` for split/reverse split/dividend; merger, spin-off and distribution are **declared, not computed** | `src/atlas/market/actions.py` |
 | SEC filing/evidence kernel with availability precision | `implemented_verified` within archived fixtures | `src/atlas/evidence/kernel.py`; no independent XBRL challenger exists |
-| **Price Movement Intelligence engine** | `implemented_verified` | `src/atlas/research/move_intelligence.py`, 35 adversarial tests |
+| **Price Movement Intelligence engine** | `implemented_verified` | `src/atlas/research/move_intelligence.py`, 35 adversarial tests + 18 integrity tests |
+| **Original SEC document pathway** | `implemented_verified` against archived fixture bytes; **not** against live EDGAR | `src/atlas/research/filing_evidence.py`; locator, hash, spans, cutoff and rights enforcement |
+| **Saved price investigations** | `implemented_verified` | `src/atlas/research/investigations.py` on the UROS contract; reproduce/impact/export |
 | **Price-explanation API** | `implemented_verified` | `POST /api/securities/{id}/price-explanations`; additive OpenAPI path |
 | **Chart interval selection (mouse/touch/keyboard)** | `implemented_verified` in Chromium | `web/src/components/Chart.tsx`, `chartSelection.ts`, 19 browser checks |
 | **Investigation panel** | `implemented_verified` in Chromium | desktop + 390×844 mobile, loading/error/empty/export states |
 | Source-rights decision over every contributor | `implemented_verified` | fails closed for unregistered, unlicenced or restricted sources |
-| News archive, press releases, consensus, estimate revisions | **absent** | no licence; the response says `unavailable` and abstains |
+| News archive, press releases, consensus, estimate revisions | **absent** | no licence; the response says `unavailable` and abstains. Other providers were assessed by class in `PRICE_EVIDENCE_INTEGRITY_PASS.md` §3 |
 | Macro-release calendar linked to a security | **absent** | no point-in-time release source wired |
 | Intraday bars / intraday selection | **absent** | requests for any timeframe other than `1d` are refused |
 | Provider price-vintage archive | **absent** | `selection.price_vintage` is always `unverified`; historical mode qualifies the claim |
@@ -179,6 +183,12 @@ Blockers:
 3. Repository licence decision.
 4. ICB-65…ICB-75 scoring. The feature exists and is browser-verified, but none of those
    benchmark proposals has been executed or scored.
+
+Integrity pass (2026-11-17): publication-time policy reconciled with the Temporal
+Evidence Kernel, timeline ordering fixed, original-document resolution and citable spans
+added, saved investigations added, and 18 adversarial tests plus a 31-check end-to-end
+acceptance recorded. No ICB-65…75 status changed. Live EDGAR retrieval and the browser run
+remain undemonstrated here.
 
 Next milestone: add a licensed, cutoff-aware news source behind the existing event contract,
 then execute the Appendix E benchmark proposals without changing Sections 1–61.

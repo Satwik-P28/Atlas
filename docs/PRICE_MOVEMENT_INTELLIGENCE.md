@@ -1,7 +1,9 @@
 # Price Movement Intelligence — "Explain This Move"
 
-Contract: `atlas.price_explanation.v2`
-Engine: `src/atlas/research/move_intelligence.py` (`atlas.price_explanation.engine` 2.0.0)
+Contract: `atlas.price_explanation.v3`
+Engine: `src/atlas/research/move_intelligence.py` (`atlas.price_explanation.engine` 3.0.0)
+Integrity pass: `docs/PRICE_EVIDENCE_INTEGRITY_PASS.md` (publication-time policy, original
+SEC document pathway, saved investigations)
 API: `POST /api/securities/{security_id}/price-explanations`
 Status: engine, API, chart interaction and panel `implemented_verified` by repository tests
 and a real-Chromium acceptance run (desktop and mobile). See
@@ -62,7 +64,7 @@ silently produce an unbounded retrospective answer.
 
 ```json
 {
-  "schema": "atlas.price_explanation.v1",
+  "schema": "atlas.price_explanation.v3",
   "selection": { "start_session": "...", "end_session": "...", "sessions": 83,
                  "return_convention": "interval_close_to_close",
                  "price_vintage": { "status": "unverified", "verified_at_cutoff": false },
@@ -177,6 +179,29 @@ Two modes, never mixed:
 the interval cannot be a contemporaneous event. An after-hours acceptance stays on its own
 calendar date; it is not shifted to the preceding session.
 
+**Availability precision follows the Temporal Evidence Kernel.** An SEC acceptance
+timestamp is exact. A filing with only a `filed_date` is date-precision evidence pinned to
+`23:59:59Z` on that UTC day — never the start of the day — and carries
+`availability_basis: sec_submissions.filed_date_end_of_day_utc`. A filing with no
+evidenced publication time is excluded and counted. The timeline is ordered by the
+availability instant, while `filed_date` remains metadata. Every filing also reports its
+local time, session phase and first tradable stored session, so a cross-timezone or
+after-close publication cannot be attributed to the wrong session.
+
+**Original documents.** Each filing resolves through the Financial Knowledge Engine to its
+accession, primary document, document hash and SEC archive locator. An 8-K item disclosed
+in the archived text (for example item 2.02) is named and quoted with a section path and
+character span; when the bytes are not archived, Atlas returns the locator, states
+`document.status: not_ingested`, and makes no item or excerpt claim. Documents published
+after the cutoff are excluded from citations, and non-redistributable text is withheld.
+
+**Saved investigations.** `POST /api/securities/{id}/price-investigations` stores an
+immutable, versioned `price_investigation` research object on the existing UROS contract:
+interval, observations, events and document spans, assumptions, calculations, rights and
+reproduction manifest. `.../reproduce` rechecks the hash, `.../impact` reports later price
+revisions, new or amended filings or rights changes without modifying the original, and
+`.../export` refuses when a cited source is restricted.
+
 **Price vintage.** Atlas stores the latest revision of each session, not the provider's
 publication history. `selection.price_vintage` is therefore always
 `status: unverified`, `verified_at_cutoff: false`, with
@@ -281,8 +306,8 @@ the global `styles.css`, and the mobile metric card wraps long policy tokens.
   unavailable and the engine abstains instead of inventing a headline.
 - No causal identification, counterfactual simulation or probability attached to a
   hypothesis.
-- No saving of an investigation as a research object; the auditable JSON report is
-  exported instead.
+- Saving uses the UROS contract (`price_investigation`); the report JSON is also
+  exportable when every cited source permits it.
 - No peer selection in the UI. `peer_security_ids` is implemented and tested at the API
   and engine level: each peer is measured on its own stored series over the same date
   bounds, and a different currency is reported as `comparable: false` rather than
@@ -296,13 +321,15 @@ the global `styles.css`, and the mobile metric card wraps long policy tokens.
 
 | Check | Command | Result |
 | --- | --- | --- |
-| Python suite | `.venv/bin/python -m pytest -o addopts='' -q` | 733 passed, 1 skipped, 0 failed (734 collected) |
+| Python suite | `.venv/bin/python -m pytest -o addopts='' -q` | 752 passed, 0 failed, 0 skipped (752 collected) — integrity pass |
 | Feature tests | `.venv/bin/python -m pytest -o addopts='' -q tests/test_price_explanations.py` | 35 passed |
-| Inventory | `.venv/bin/python scripts/verify_test_inventory.py` | baseline 699 + feature 35 = 734, verified |
+| Integrity tests | `.venv/bin/python -m pytest -o addopts='' -q tests/test_price_evidence_integrity.py` | 18 passed |
+| Inventory | `.venv/bin/python scripts/verify_test_inventory.py` | observed 752/35/18; baseline 699 labelled reconstructed |
 | TypeScript | `cd web && npx tsc -b --noEmit` | exit 0 |
 | Frontend unit | `cd web && npx vitest run` | 5 files, 50 passed |
 | Production build | `cd web && npm run build` | exit 0 |
-| Browser | `cd web && node e2e/price-explanation.mjs` | 19 passed, 0 failed |
+| Browser | `cd web && node e2e/price-explanation.mjs` | 19 passed at `747871b`; **not rerun** in the integrity pass (no browser installed) |
+| End-to-end acceptance | `.venv/bin/python scripts/accept_price_integrity.py` | 32 checks passed, 0 failed |
 | Spec checksum | `.venv/bin/python scripts/verify_master_spec.py` | v3.2, 357970 bytes, SHA-256 verified |
 
 The browser run used Chromium 1248 with a locally extracted library bundle because the

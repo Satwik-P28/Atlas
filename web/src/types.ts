@@ -517,13 +517,84 @@ export interface PriceExplanationWarning {
   context?: Record<string, unknown>
 }
 
+export interface PriceExplanationPassage {
+  unit_id: string
+  section_path: string
+  heading: string | null
+  unit_kind: string
+  char_start: number
+  char_end: number
+  sha256: string
+  excerpt: string | null
+  excerpt_truncated: boolean | null
+  excerpt_withheld: string | null
+  citation: string
+}
+
+export interface PriceExplanationDocument {
+  status: string
+  accession: string
+  filed_date: string
+  form_type: string
+  is_amendment: boolean
+  amends_accession: string | null
+  filing_version: string
+  primary_document: string | null
+  source_locator: { status: string; url: string | null; reason?: string }
+  document_id: string | null
+  sha256: string | null
+  byte_size: number | null
+  media_type: string | null
+  parser_version: string | null
+  availability_time: string | null
+  availability_precision: string | null
+  rights: { redistribution: string; redistributable: boolean } | null
+  items: Array<{ item: string; label: string; section_path: string | null }>
+  passages: PriceExplanationPassage[]
+  passage_status: string
+  reason: string | null
+}
+
+export interface PriceExplanationDisclosedItem {
+  item: string
+  label: string
+  observed_heading: string | null
+  section_path: string | null
+  unit_id: string | null
+}
+
 export interface PriceExplanationEvent {
   event_id: string
   kind: string
   title: string
   date: string
+  filed_date?: string
+  publication_date?: string
   availability_time: string | null
   availability_precision?: string | null
+  availability_basis?: string | null
+  acceptance_datetime?: string | null
+  publication?: {
+    local_time: string | null
+    timezone: string
+    phase: string
+    phase_basis: string
+    tradable_session: string | null
+  }
+  publication_local_date_differs?: boolean
+  source_url?: string | null
+  document?: PriceExplanationDocument | null
+  disclosed_items?: PriceExplanationDisclosedItem[]
+  passages?: PriceExplanationPassage[]
+  novelty?: {
+    basis: string
+    first_disclosure_items: string[]
+    repeated_items: string[]
+    prior_documents: Array<{ accession: string; availability_time: string }>
+    coverage_note: string
+  } | null
+  supersedes_event_id?: string | null
+  duplicate_document_of?: string | null
   form_type?: string
   form_label?: string
   period_of_report?: string | null
@@ -552,6 +623,22 @@ export interface PriceExplanationHypothesis {
     basis: string
     supporting_evidence: string[]
     contradicting_evidence: string[]
+    citations: Array<{
+      kind: string
+      accession: string | null
+      document_id: string | null
+      document_sha256: string | null
+      section_path: string | null
+      unit_id: string | null
+      char_start: number | null
+      char_end: number | null
+      span_sha256: string | null
+      excerpt: string | null
+      excerpt_withheld: string | null
+      source_url: string | null
+    }>
+    alternatives: Array<{ kind: string; statement: string; evidence: string[] }>
+    counterevidence: Array<Record<string, unknown>>
     inputs: Record<string, unknown>
   }
   limitations: string[]
@@ -686,6 +773,12 @@ export interface PriceExplanation {
     in_window_count: number
     subsequent_count: number
     coverage: Record<string, unknown>
+  }
+  analysis?: {
+    narrative: string
+    ai_used: boolean
+    epistemic_classes: Record<string, string>
+    note: string
   }
   observations: Array<{
     observation_id: string

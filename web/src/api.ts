@@ -235,6 +235,35 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(body),
     }),
+  savePriceInvestigation: (
+    securityId: string,
+    body: PriceExplanationRequest & { name?: string | null; version?: string },
+  ) =>
+    request<{
+      object_id: string
+      kind: string
+      name: string
+      version: string
+      status: string
+      content_hash: string
+      created_at: string
+      as_of: string
+      reproducibility_hash: string
+      rights: PriceExplanation['rights']
+    }>(`/api/securities/${enc(securityId)}/price-investigations`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  investigationImpact: (objectId: string) =>
+    request<{
+      object_id: string
+      status: string
+      original_hash: string
+      current_hash: string
+      categories: string[]
+      findings: Record<string, unknown>
+      note: string
+    }>(`/api/research/price-investigations/${enc(objectId)}/impact`),
   history: (identifier: string, options: { asOf?: string | null; mode: AsOfMode; limit?: number; concepts?: string[] }) =>
     request<FinancialHistory>(
       `/api/companies/${enc(identifier)}/history${qs({

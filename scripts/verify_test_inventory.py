@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
-"""Reconcile the declared test inventory with the tests pytest actually collects.
+"""Reconcile the declared test inventory with what pytest actually collects.
 
 This exists because a hand-written "718 passed / 19 tests" claim drifted from the real
-suite. The inventory is the single machine-readable source; this script fails when the
-baseline, feature count or total no longer add up, or when the browser harness no longer
-contains the number of checks it claims.
+suite. The inventory separates two kinds of number and refuses to conflate them:
+
+* **observed** — counted by collecting or running the tests at this revision;
+* **reconstructed** — derived by subtraction from observed totals, which is not the
+  same as having counted the baseline independently.
+
+The script fails when an observed count disagrees with collection, when the declared
+parts no longer add up, or when a reconstructed number is presented as observed.
 
 Usage:
     .venv/bin/python scripts/verify_test_inventory.py
@@ -20,7 +25,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INVENTORY = ROOT / "artifacts" / "test_inventory.json"
-FEATURE = ROOT / "tests" / "test_price_explanations.py"
 BROWSER = ROOT / "web" / "e2e" / "price-explanation.mjs"
 
 
@@ -43,24 +47,47 @@ def collected(node: str | None = None) -> int:
 def main() -> int:
     inventory = json.loads(INVENTORY.read_text())
     python = inventory["python"]
-
-    actual_total = collected()
-    actual_feature = collected("tests/test_price_explanations.py")
-    declared_total = (
-        python["baseline_tests"] + python["feature_tests"] + python["other_added_tests"]
-    )
+    observed = python["observed"]
+    reconstructed = python["reconstructed"]
 
     failures: list[str] = []
-    if declared_total != python["expected_total"]:
+    lines: list[str] = []
+
+    actual_total = collected()
+    lines.append(f"observed total (collected): {actual_total}")
+    if actual_total != observed["total_collected"]:
         failures.append(
-            f"declared parts sum to {declared_total}, expected_total says {python['expected_total']}"
+            f"pytest collects {actual_total}, inventory observed total says {observed['total_collected']}"
         )
-    if actual_total != python["expected_total"]:
-        failures.append(f"pytest collects {actual_total}, inventory expects {python['expected_total']}")
-    if actual_feature != python["feature_tests"]:
+
+    observed_sum = 0
+    for entry in observed["files"]:
+        if entry.get("method") != "observed":
+            failures.append(f"{entry['file']} is listed as observed but carries no observed method")
+        actual = collected(entry["file"])
+        lines.append(f"observed {entry['file']}: {actual}")
+        if actual != entry["count"]:
+            failures.append(f"{entry['file']} collects {actual}, inventory says {entry['count']}")
+        observed_sum += actual
+
+    baseline = reconstructed["baseline_tests"]
+    if baseline.get("method") != "reconstructed_by_subtraction":
         failures.append(
-            f"{FEATURE.name} collects {actual_feature}, inventory says {python['feature_tests']}"
+            "the baseline count is derived by subtraction; it must be labelled "
+            "reconstructed_by_subtraction, not presented as an independent measurement"
         )
+    derived_baseline = actual_total - observed_sum
+    lines.append(
+        f"reconstructed baseline (total - observed feature files): {derived_baseline}"
+    )
+    if derived_baseline != baseline["count"]:
+        failures.append(
+            f"derived baseline is {derived_baseline}, inventory says {baseline['count']}"
+        )
+    lines.append(
+        "provenance: total and feature counts observed; baseline reconstructed, "
+        "not independently counted at the earlier revision"
+    )
 
     browser_source = BROWSER.read_text()
     browser_checks = len(re.findall(r"\n  await check\(", browser_source))
@@ -69,14 +96,18 @@ def main() -> int:
             f"browser harness has {browser_checks} checks, inventory says "
             f"{inventory['frontend']['browser_checks']}"
         )
+    lines.append(f"browser harness checks: {browser_checks}")
+    if not inventory["frontend"].get("rerun_in_this_pass"):
+        lines.append(
+            "browser harness result is historical: " + inventory["frontend"]["browser_result"]
+        )
 
-    print(f"baseline={python['baseline_tests']} feature={actual_feature} total={actual_total}")
-    print(f"browser_checks={browser_checks}")
+    print("\n".join(lines))
     if failures:
         for failure in failures:
             print(f"FAIL: {failure}", file=sys.stderr)
         return 1
-    print("VERIFIED: test inventory matches collected tests")
+    print("VERIFIED: observed counts match collection; reconstructed counts are labelled")
     return 0
 
 

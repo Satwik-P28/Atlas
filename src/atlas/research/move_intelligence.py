@@ -44,9 +44,15 @@ from typing import Any, Mapping, Sequence
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from ..core.errors import UnknownEntity, ValidationError
-from ..core.temporal import iso_date, parse_date
+from ..core.temporal import (
+    availability_from_date,
+    iso_date,
+    parse_date,
+    parse_iso,
+)
 from ..entities.master import SecurityMaster
 from ..market import evidence
+from . import filing_evidence as fe
 from ..market.actions import ActionStore, SPLIT_TYPES, CorporateAction
 from ..market.adjust import split_adjust, total_return
 from ..market.bars import Bar
@@ -54,8 +60,8 @@ from ..market.calendar import TradingCalendar
 from ..storage.db import Database
 
 ENGINE_NAME = "atlas.price_explanation.engine"
-ENGINE_VERSION = "2.0.0"
-CONTRACT_VERSION = "atlas.price_explanation.v2"
+ENGINE_VERSION = "3.0.0"
+CONTRACT_VERSION = "atlas.price_explanation.v3"
 
 MODE_HISTORICAL = "historical_reconstruction"
 MODE_RETROSPECTIVE = "retrospective_investigation"
@@ -64,8 +70,11 @@ MODES = (MODE_HISTORICAL, MODE_RETROSPECTIVE)
 SUPPORTED_TIMEFRAMES = ("1d",)
 RETURN_CONVENTIONS = ("interval_close_to_close", "single_session_close_to_close")
 RETURN_CONVENTION_AUTO = "auto"
-CALCULATION_VERSION = "atlas.price_explanation.calculation.v2"
+CALCULATION_VERSION = "atlas.price_explanation.calculation.v3"
 MARKET_MODEL_VERSION = "atlas.price_explanation.market_model.v2"
+#: The availability policy this engine applies to every publication time. It is the
+#: Temporal Evidence Kernel's policy, referenced rather than re-implemented.
+AVAILABILITY_POLICY = "atlas.temporal_evidence.availability.v1"
 ANNUALIZATION_SESSIONS = 252
 #: Minimum share of the security's window sessions a benchmark must cover before a
 #: relative statistic is claimed. Below this, the comparison is refused, not shrunk.
@@ -95,6 +104,12 @@ W_BENCHMARK_CURRENCY = "benchmark_currency_mismatch"
 W_ESTIMATION_SHORT = "estimation_window_too_short"
 W_SUBSEQUENT_EVIDENCE = "subsequent_evidence_excluded"
 W_UNKNOWN_AVAILABILITY = "evidence_availability_unknown"
+W_UNKNOWN_FILING_AVAILABILITY = "filing_availability_unknown"
+W_DOCUMENT_NOT_INGESTED = "original_document_not_ingested"
+W_DOCUMENT_NOT_AT_CUTOFF = "document_not_available_at_cutoff"
+W_TIMEZONE_SHIFT = "publication_local_date_differs"
+W_EVENT_DUPLICATE = "duplicate_event_suppressed"
+W_DOCUMENT_RESTRICTED = "document_text_not_redistributable"
 W_RESTRICTED_EXPORT = "restricted_source_not_exportable"
 W_PARAMETRIC_HINDSIGHT = "parametric_hindsight_disclosed"
 W_PROVIDER_VINTAGE = "provider_vintage_not_proven"
@@ -168,6 +183,7 @@ class _Resolved:
     requested_end: str
     start_session: str
     end_session: str
+    action_exclusions: dict[str, int] = field(default_factory=dict)
     warnings: list[dict[str, Any]] = field(default_factory=list)
 
 
@@ -322,8 +338,9 @@ def _resolve(db: Database, request: ExplanationRequest) -> _Resolved:
         warnings.append(
             _warning(
                 W_SINGLE_SESSION,
-                "the interval contains one stored session; a return needs two observations "
-                "and is therefore reported as zero with this limitation, not inferred",
+                "the interval contains one stored session; the move is measured from the "
+                "previous eligible close when one is stored, and refused with a reason "
+                "when none is. Atlas never reports a flat 0% for a one-candle selection.",
                 session=start_session,
             )
         )
@@ -337,9 +354,26 @@ def _resolve(db: Database, request: ExplanationRequest) -> _Resolved:
         )
     )
 
+    all_actions = ActionStore(db).list(request.security_id)
     actions = ActionStore(db).list(
         request.security_id, knowledge_as_of=cutoff if request.mode == MODE_HISTORICAL else None
     )
+    kept_action_ids = {action.action_id for action in actions}
+    action_exclusions = {
+        "excluded_unknown_availability": sum(
+            1
+            for action in all_actions
+            if action.action_id not in kept_action_ids and action.availability_time is None
+        ),
+        "excluded_after_cutoff": sum(
+            1
+            for action in all_actions
+            if action.action_id not in kept_action_ids
+            and action.availability_time is not None
+            and cutoff is not None
+            and iso_date(action.availability_time) > cutoff
+        ),
+    }
 
     # Context is the same provider's series over a bounded lookback. It supplies the
     # previous eligible session for a one-candle return, the trailing volume baseline and
@@ -370,6 +404,7 @@ def _resolve(db: Database, request: ExplanationRequest) -> _Resolved:
         series=series,
         points=points,
         actions=actions,
+        action_exclusions=action_exclusions,
         context=context,
         previous_point=previous_point,
         requested_start=start,
@@ -490,6 +525,36 @@ _FORM_LABELS = {
 }
 
 
+def _window_instant(day: str, *, end_of_day: bool) -> str:
+    """A session-date boundary as a UTC instant.
+
+    The window *ends* at end-of-day, matching the kernel's conservative date policy for
+    date-only evidence. It *begins* at 00:00:00Z: a filing published during the first
+    session's day is inside the interval. Using the end-of-day pin for both boundaries
+    silently dropped every publication before 23:59:59 on the first day.
+    """
+    if end_of_day:
+        return availability_from_date(day, "price_explanation.window_end_end_of_day_utc").iso
+    return f"{iso_date(day)}T00:00:00Z"
+
+
+def _session_bounds(db: Database, mic: str, start: str, end: str) -> dict[str, tuple[str, str]]:
+    """Stored venue open/close instants for the sessions around the interval.
+
+    A calendar is optional metadata: without one the phase is reported as unknown rather
+    than assumed from a hard-coded market open.
+    """
+    try:
+        calendar = TradingCalendar(db)
+        calendar.ensure_range(mic, start, end)
+        return {
+            session.session_date: (session.open_ts, session.close_ts)
+            for session in calendar.sessions(mic, start, end)
+        }
+    except Exception:  # noqa: BLE001 - a missing calendar must not fail an investigation
+        return {}
+
+
 def _filing_events(
     db: Database,
     *,
@@ -499,71 +564,125 @@ def _filing_events(
     mode: str,
     cutoff: str | None,
     limit: int,
+    timezone: str,
+    mic: str,
+    stored_sessions: Sequence[str],
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Filings inside the interval, with availability and relation to the window."""
+    """Filings whose *publication* time is evidenced, ordered by that time.
+
+    Ordering and admissibility use the availability instant produced by the Temporal
+    Evidence Kernel policy: an SEC acceptance timestamp is exact, a filed date alone is
+    pinned to the end of its UTC day, and a filing with no publication time is never
+    admitted to the ranking. The SEC filed date is retained separately as metadata.
+    """
     rows = db.query(
         "SELECT * FROM filing WHERE issuer_id=? ORDER BY filed_date, accession_number",
         (issuer_id,),
+    )
+    cutoff_at = fe.cutoff_instant(cutoff)
+    window_start_at = _window_instant(start, end_of_day=False)
+    window_end_at = _window_instant(end, end_of_day=True)
+    session_bound_rows = _session_bounds(
+        db, mic, (parse_date(start) - timedelta(days=7)).isoformat(),
+        (parse_date(end) + timedelta(days=14)).isoformat(),
     )
     in_window: list[dict[str, Any]] = []
     after_window: list[dict[str, Any]] = []
     subsequent: list[dict[str, Any]] = []
     excluded_after_cutoff = 0
+    unknown_availability = 0
     before_window = 0
+    timezone_shifted = 0
     in_window_accessions: set[str] = set()
+    document_counts = {
+        fe.DOC_RESOLVED: 0,
+        fe.DOC_NOT_INGESTED: 0,
+        fe.DOC_NOT_AT_CUTOFF: 0,
+        fe.DOC_UNKNOWN_AVAILABILITY: 0,
+        fe.DOC_UNAVAILABLE: 0,
+        "text_unavailable": 0,
+    }
 
-    def _item(row: Any, availability: str, precision: str) -> dict[str, Any]:
+    def _item(row: Any, availability: str, precision: str, basis: str) -> dict[str, Any]:
+        locator = fe.source_locator(row["cik"], row["accession_number"], row["primary_document"])
+        publication = fe.publication_context(
+            availability=availability,
+            precision=precision,
+            timezone=timezone,
+            session_bounds=session_bound_rows,
+            stored_sessions=stored_sessions,
+        )
+        availability_date = iso_date(availability)
+        local_date = publication["local_time"][:10] if publication["local_time"] else None
         return {
             "event_id": f"FIL-{row['filing_id']}",
             "kind": "sec_filing",
             "form_type": row["form_type"],
             "form_label": _FORM_LABELS.get(row["form_type"], row["form_type"]),
             "title": f"{row['form_type']} filed",
+            # `date` and `filed_date` are the SEC calendar filing date, kept as metadata.
             "date": row["filed_date"],
+            "filed_date": row["filed_date"],
+            "acceptance_datetime": row["acceptance_datetime"],
+            # The ordering key and the published date are the availability instant.
+            "publication_date": availability_date,
             "availability_time": availability,
             "availability_precision": precision,
+            "availability_basis": basis,
+            "publication": publication,
+            "publication_local_date_differs": bool(local_date and local_date != availability_date),
             "period_of_report": row["period_of_report"],
             "accession_number": row["accession_number"],
             "is_amendment": bool(row["is_amendment"]),
             "amends_accession": row["amends_accession"],
+            "filing_version": "amendment" if row["is_amendment"] else "original",
             "source_id": row["source_id"],
-            "source_url": None,
+            "source_url": locator.get("url"),
+            "source_locator": locator,
+            "document": None,
+            "disclosed_items": [],
+            "passages": [],
+            "novelty": None,
+            "issuer_relevance": {
+                "level": "direct",
+                "basis": "the filing is registered to this investigation's issuer",
+            },
             "epistemic_status": "observed",
         }
 
     # A filing is public when it was *accepted*, not when its calendar date says it was
-    # filed. Classifying by publication time is what stops a document accepted after the
-    # interval from being presented as a contemporaneous event.
+    # filed. A date-only filing is available at end-of-day UTC, never at its first second.
     pending: list[tuple[dict[str, Any], str]] = []
     for row in rows:
-        availability = row["acceptance_datetime"] or row["filed_date"]
-        if not availability:
+        available, precision, basis = fe.filing_availability(row)
+        if available is None:
+            unknown_availability += 1
             continue
-        precision = "exact" if row["acceptance_datetime"] else "date"
-        available_date = iso_date(availability)
-        item = _item(row, availability, precision)
-        if available_date < start:
+        if available < window_start_at:
             before_window += 1
             continue
-        if available_date <= end:
+        item = _item(row, available, precision, basis)
+        if item["publication_local_date_differs"]:
+            timezone_shifted += 1
+        if available <= window_end_at:
             in_window_accessions.add(row["accession_number"])
-            if mode == MODE_HISTORICAL and cutoff and available_date > cutoff:
+            if mode == MODE_HISTORICAL and cutoff_at and available > cutoff_at:
                 excluded_after_cutoff += 1
                 continue
             item["relation"] = "in_window"
             item["known_at_range_end"] = True
             in_window.append(item)
             continue
-        pending.append((item, available_date))
+        pending.append((item, available))
 
-    for item, available_date in pending:
+    for item, available in pending:
         is_revision_of_window = bool(
             item["is_amendment"] and item["amends_accession"] in in_window_accessions
         )
         if mode == MODE_HISTORICAL:
             # Knowable by the cutoff, but published after the move: context, never an
             # explanation of the interval.
-            if cutoff and available_date <= cutoff:
+            if cutoff_at and available <= cutoff_at:
                 item["relation"] = "after_window"
                 item["known_at_range_end"] = False
                 after_window.append(item)
@@ -576,6 +695,73 @@ def _filing_events(
             item["known_at_range_end"] = False
             subsequent.append(item)
 
+    # Order by evidenced publication time, not by the SEC calendar date. Ties break on
+    # the event id so the order is reproducible.
+    ordered = sorted(
+        in_window + after_window + subsequent,
+        key=lambda item: (item["availability_time"], item["event_id"]),
+    )[:limit]
+
+    duplicates: list[dict[str, Any]] = []
+    seen_identity: dict[str, str] = {}
+    seen_document: dict[str, str] = {}
+    kept: list[dict[str, Any]] = []
+    for item in ordered:
+        identity = f"{item['kind']}:{item.get('accession_number') or item['event_id']}"
+        if identity in seen_identity:
+            duplicates.append({"event_id": item["event_id"], "duplicate_of": seen_identity[identity]})
+            continue
+        seen_identity[identity] = item["event_id"]
+        if item["kind"].startswith("sec_filing"):
+            document = fe.resolve_document(
+                db,
+                row=db.query_one(
+                    "SELECT * FROM filing WHERE accession_number = ?",
+                    (item["accession_number"],),
+                ),
+                cutoff=cutoff_at,
+                mode_historical=mode == MODE_HISTORICAL,
+            )
+            item["document"] = document
+            item["disclosed_items"] = document.get("items", [])
+            item["passages"] = document.get("passages", [])
+            status = document.get("status")
+            document_counts[status] = document_counts.get(status, 0) + 1
+            if document.get("source_locator", {}).get("url"):
+                item["source_url"] = document["source_locator"]["url"]
+            sha = document.get("sha256")
+            if sha:
+                if sha in seen_document:
+                    item["duplicate_document_of"] = seen_document[sha]
+                    duplicates.append(
+                        {
+                            "event_id": item["event_id"],
+                            "duplicate_document_of": seen_document[sha],
+                            "reason": "identical primary-document bytes",
+                        }
+                    )
+                else:
+                    seen_document[sha] = item["event_id"]
+            if document.get("items"):
+                item["novelty"] = fe.prior_item_disclosure(
+                    db,
+                    issuer_id=issuer_id,
+                    items=[entry["item"] for entry in document["items"]],
+                    before_instant=item["availability_time"],
+                )
+            if item["is_amendment"] and item.get("amends_accession"):
+                prior = db.query_one(
+                    "SELECT filing_id FROM filing WHERE accession_number = ?",
+                    (item["amends_accession"],),
+                )
+                item["supersedes_event_id"] = (
+                    f"FIL-{prior['filing_id']}" if prior is not None else None
+                )
+                item["original_evidence_retained"] = True
+        kept.append(item)
+
+    kept.sort(key=lambda item: (item["availability_time"], item["event_id"]))
+    resolved = sum(1 for item in kept if (item.get("document") or {}).get("status") == fe.DOC_RESOLVED)
     coverage = {
         "filings_total_for_issuer": len(rows),
         "in_window": len(in_window),
@@ -583,13 +769,20 @@ def _filing_events(
         "subsequent": len(subsequent),
         "before_window": before_window,
         "excluded_after_cutoff": excluded_after_cutoff,
-        "excluded_unknown_availability": 0,
+        "excluded_unknown_availability": unknown_availability,
+        "publications_with_local_date_shift": timezone_shifted,
+        "duplicates_suppressed": len(duplicates),
+        "documents": {
+            **document_counts,
+            "resolved_in_returned_items": resolved,
+            "note": (
+                "a document is resolved only when Atlas archived its bytes and, in "
+                "historical mode, it was publicly available at the cutoff"
+            ),
+        },
+        "availability_policy": AVAILABILITY_POLICY,
     }
-    items = sorted(
-        in_window + after_window + subsequent, key=lambda item: (item["date"], item["event_id"])
-    )[:limit]
-    return items, coverage
-
+    return kept, coverage, duplicates
 
 def _action_events(
     actions: Sequence[CorporateAction],
@@ -602,6 +795,7 @@ def _action_events(
     items: list[dict[str, Any]] = []
     excluded_after_cutoff = 0
     excluded_unknown = 0
+    unknown_availability = 0
     for action in actions:
         event_date = action.ex_date or action.effective_date
         if not event_date or not (start <= event_date <= end):
@@ -613,6 +807,12 @@ def _action_events(
             if cutoff and iso_date(action.availability_time) > cutoff:
                 excluded_after_cutoff += 1
                 continue
+        relation = "in_window"
+        if action.availability_time is None:
+            # Retrospective mode may show the action, but an unevidenced publication time
+            # cannot be placed inside the window or used as a contemporaneous explanation.
+            unknown_availability += 1
+            relation = "unknown_availability"
         items.append(
             {
                 "event_id": f"ACT-{action.action_id}",
@@ -632,14 +832,15 @@ def _action_events(
                 "source_id": action.source_id,
                 "evidence_id": action.evidence_id,
                 "epistemic_status": "observed",
-                "relation": "in_window",
+                "relation": relation,
                 "known_at_range_end": (
                     action.availability_time is not None and iso_date(action.availability_time) <= end
                 ),
             }
         )
     return items, {
-        "in_window": len(items),
+        "in_window": sum(1 for item in items if item["relation"] == "in_window"),
+        "unknown_availability": unknown_availability,
         "excluded_after_cutoff": excluded_after_cutoff,
         "excluded_unknown_availability": excluded_unknown,
     }
@@ -739,6 +940,9 @@ def _hypothesis(
     contradicting: Sequence[str] = (),
     inputs: Mapping[str, Any] | None = None,
     limitations: Sequence[str] = (),
+    citations: Sequence[Mapping[str, Any]] = (),
+    alternatives: Sequence[Mapping[str, Any]] = (),
+    counterevidence: Sequence[Mapping[str, Any]] = (),
     causal_status: str = "not_identified",
 ) -> dict[str, Any]:
     payload = {
@@ -750,12 +954,71 @@ def _hypothesis(
             "basis": basis,
             "supporting_evidence": list(supporting),
             "contradicting_evidence": list(contradicting),
+            "citations": [dict(citation) for citation in citations],
+            "alternatives": [dict(alternative) for alternative in alternatives],
+            "counterevidence": [dict(entry) for entry in counterevidence],
             "inputs": dict(inputs or {}),
         },
         "limitations": list(limitations),
     }
     payload["hypothesis_id"] = "HYP-" + _sha256(payload)[:16]
     return payload
+
+
+def _publication_sentence(event: Mapping[str, Any]) -> str:
+    publication = event.get("publication") or {}
+    when = event.get("availability_time")
+    precision = event.get("availability_precision")
+    local = publication.get("local_time")
+    zone = publication.get("timezone")
+    phase = publication.get("phase")
+    tradable = publication.get("tradable_session")
+    pieces = [f"published {when}"]
+    if precision == "date":
+        pieces.append("(date-precision availability, pinned to end-of-day UTC)")
+    if local and local != when:
+        pieces.append(f"which is {local} in {zone}")
+    if phase and phase != "unknown":
+        pieces.append(f"during {phase.replace('_', ' ')}")
+    if tradable:
+        pieces.append(f"with {tradable} the first tradable stored session")
+    return ", ".join(pieces)
+
+
+def _document_citations(
+    event: Mapping[str, Any], *, item: Mapping[str, Any] | None = None, limit: int = 2
+) -> list[dict[str, Any]]:
+    """Citations to exact stored spans, preferring the passage for this item."""
+    document = event.get("document") or {}
+    passages = list(event.get("passages") or [])
+    if item is not None and item.get("section_path"):
+        matching = [p for p in passages if p.get("section_path") == item["section_path"]]
+        passages = matching or passages
+    return [fe.citation_for(document, passage) for passage in passages[:limit]]
+
+
+def _novelty_sentence(event: Mapping[str, Any], item_code: str) -> str | None:
+    novelty = event.get("novelty") or {}
+    if not novelty:
+        return None
+    if item_code in (novelty.get("repeated_items") or []):
+        prior = [
+            entry["accession"]
+            for entry in novelty.get("prior_documents", [])
+            if item_code in (entry.get("items") or [])
+        ]
+        return (
+            " The same item appeared in previously archived filing(s) "
+            f"{', '.join(prior[:3])}, so this is a repeat disclosure in the archived record."
+        )
+    if item_code in (novelty.get("first_disclosure_items") or []):
+        if novelty.get("basis") == "archived_prior_filings":
+            return (
+                " It does not appear in the issuer's previously archived filings held here, "
+                "so it is a new item in the archived record (not necessarily in the world)."
+            )
+        return " No earlier filing for this issuer is archived, so Atlas cannot assess novelty."
+    return None
 
 
 # ------------------------------------------------------------------------- engine
@@ -948,7 +1211,10 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
     )
 
     # --- evidence --------------------------------------------------------------
-    filing_items, filing_coverage = _filing_events(
+    stored_sessions = sorted(
+        {point.session_date for point in points} | {point.session_date for point in context.points}
+    )
+    filing_items, filing_coverage, filing_duplicates = _filing_events(
         db,
         issuer_id=resolved.security["issuer_id"],
         start=start,
@@ -956,11 +1222,30 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
         mode=request.mode,
         cutoff=cutoff,
         limit=request.evidence_limit,
+        timezone=request.timezone,
+        mic=resolved.mic,
+        stored_sessions=stored_sessions,
     )
     action_items, action_coverage = _action_events(
         resolved.actions, start=start, end=end, mode=request.mode, cutoff=cutoff
     )
-    events = sorted(filing_items + action_items, key=lambda item: (item["date"], item["event_id"]))
+    # The cutoff filter runs inside ActionStore, so exclusions it made are merged into the
+    # coverage rather than reported as zero.
+    action_coverage["excluded_unknown_availability"] += (
+        resolved.action_exclusions.get("excluded_unknown_availability", 0)
+    )
+    action_coverage["excluded_after_cutoff"] += (
+        resolved.action_exclusions.get("excluded_after_cutoff", 0)
+    )
+    # Chronological order is the evidenced publication instant. A corporate action with
+    # date-only availability is placed at the end of that day, conservatively.
+    events = sorted(
+        filing_items + action_items,
+        key=lambda item: (
+            item.get("availability_time") or f"{item['date']}T23:59:59Z",
+            item["event_id"],
+        ),
+    )
     in_window_events = [item for item in events if item.get("relation") == "in_window"]
     subsequent_events = [item for item in events if item.get("relation") == "subsequent"]
     if subsequent_events:
@@ -972,6 +1257,72 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
                 count=len(subsequent_events),
             )
         )
+    if filing_coverage["excluded_unknown_availability"]:
+        warnings.append(
+            _warning(
+                W_UNKNOWN_FILING_AVAILABILITY,
+                "filings with no evidenced publication time are excluded from the timeline "
+                "and the ranking; a calendar date was not invented for them",
+                count=filing_coverage["excluded_unknown_availability"],
+            )
+        )
+    documents_not_ingested = filing_coverage["documents"].get(fe.DOC_NOT_INGESTED, 0)
+    if documents_not_ingested:
+        warnings.append(
+            _warning(
+                W_DOCUMENT_NOT_INGESTED,
+                "some filing primary documents are not archived in this deployment; Atlas "
+                "shows their original SEC locator and form but does not claim what they say",
+                count=documents_not_ingested,
+            )
+        )
+    documents_excluded_at_cutoff = filing_coverage["documents"].get(fe.DOC_NOT_AT_CUTOFF, 0)
+    if documents_excluded_at_cutoff:
+        warnings.append(
+            _warning(
+                W_DOCUMENT_NOT_AT_CUTOFF,
+                "some archived documents were published after the information cutoff and are "
+                "neither quoted nor used as contemporaneous evidence",
+                count=documents_excluded_at_cutoff,
+            )
+        )
+    if filing_coverage["publications_with_local_date_shift"]:
+        warnings.append(
+            _warning(
+                W_TIMEZONE_SHIFT,
+                "some publications fall on a different calendar date in the display "
+                "timezone than in UTC; ordering uses the UTC instant, and the local date "
+                "is reported alongside it",
+                count=filing_coverage["publications_with_local_date_shift"],
+                timezone=request.timezone,
+            )
+        )
+    if filing_duplicates:
+        warnings.append(
+            _warning(
+                W_EVENT_DUPLICATE,
+                "duplicate events were suppressed rather than counted twice",
+                count=len(filing_duplicates),
+                duplicates=filing_duplicates,
+            )
+        )
+    restricted_documents = [
+        item["event_id"]
+        for item in events
+        if (item.get("document") or {}).get("rights")
+        and not item["document"]["rights"]["redistributable"]
+    ]
+    if restricted_documents:
+        warnings.append(
+            _warning(
+                W_DOCUMENT_RESTRICTED,
+                "a resolved document's redistribution class does not permit its text to "
+                "travel in an export; the locator, hash and span identifiers are kept and "
+                "the excerpt is withheld",
+                count=len(restricted_documents),
+                event_ids=restricted_documents,
+            )
+        )
     if filing_coverage["excluded_after_cutoff"] or action_coverage["excluded_after_cutoff"]:
         warnings.append(
             _warning(
@@ -981,13 +1332,15 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
                 corporate_actions=action_coverage["excluded_after_cutoff"],
             )
         )
-    if action_coverage["excluded_unknown_availability"]:
+    if action_coverage["excluded_unknown_availability"] or action_coverage["unknown_availability"]:
         warnings.append(
             _warning(
                 W_UNKNOWN_AVAILABILITY,
-                "corporate actions with no recorded availability were excluded from the "
-                "historical reconstruction",
-                count=action_coverage["excluded_unknown_availability"],
+                "corporate actions with no recorded publication time are excluded from the "
+                "historical reconstruction and are never placed inside the window; in "
+                "retrospective mode they are shown with relation unknown_availability",
+                excluded_count=action_coverage["excluded_unknown_availability"],
+                shown_but_unplaced=action_coverage["unknown_availability"],
             )
         )
     warnings.append(
@@ -1017,6 +1370,16 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
 
     coverage = {
         "sec_filings": filing_coverage,
+        "original_documents": {
+            "status": (
+                "available"
+                if filing_coverage["documents"].get(fe.DOC_RESOLVED, 0)
+                else "unavailable"
+            ),
+            "basis": "archived primary documents via the Financial Knowledge Engine",
+            "excerpts_only_from_stored_bytes": True,
+            "locators_without_bytes_are_not_quoted": True,
+        },
         "corporate_actions": action_coverage,
         "news_archive": {
             "status": "unavailable",
@@ -1055,6 +1418,23 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
             "at the requested cutoff"
         ),
     }
+    date_only = [
+        item
+        for item in events
+        if item.get("availability_precision") == "date"
+        and item.get("relation") in ("in_window", "after_window", "subsequent")
+    ]
+    if date_only:
+        warnings.append(
+            _warning(
+                W_DATE_PRECISION,
+                "evidence with date-only availability is pinned to the end of that UTC "
+                "day under the Temporal Evidence Kernel policy, never to its first "
+                "second; intraday ordering within that date is unknown",
+                count=len(date_only),
+                availability_policy=AVAILABILITY_POLICY,
+            )
+        )
     if request.mode == MODE_HISTORICAL:
         warnings.append(
             _warning(
@@ -1066,22 +1446,6 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
                 price_vintage_status=price_vintage["status"],
             )
         )
-        date_only = [
-            item
-            for item in events
-            if item.get("availability_precision") == "date"
-            and item.get("relation") in ("in_window", "after_window", "subsequent")
-        ]
-        if date_only:
-            warnings.append(
-                _warning(
-                    W_DATE_PRECISION,
-                    "evidence with date-only availability is treated as available at the "
-                    "start of that date; a submission accepted later that day is not "
-                    "shifted to the preceding session, but intraday ordering is unknown",
-                    count=len(date_only),
-                )
-            )
 
     # Every source that contributed a value, an adjustment, a peer or an event is in the
     # rights decision. A source that is not registered fails closed rather than defaulting
@@ -1192,9 +1556,36 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
                 "event_id": item["event_id"],
                 "kind": item.get("kind"),
                 "date": item.get("date"),
+                "filed_date": item.get("filed_date"),
+                "publication_date": item.get("publication_date", item.get("date")),
+                "publication_local_time": (item.get("publication") or {}).get("local_time"),
                 "relation": item.get("relation"),
                 "source_id": item.get("source_id"),
+                "availability_time": item.get("availability_time"),
                 "availability_precision": item.get("availability_precision"),
+                "availability_basis": item.get("availability_basis"),
+                "document": (
+                    {
+                        "status": (item.get("document") or {}).get("status"),
+                        "document_id": (item.get("document") or {}).get("document_id"),
+                        "sha256": (item.get("document") or {}).get("sha256"),
+                        "availability_time": (item.get("document") or {}).get("availability_time"),
+                    }
+                    if item.get("document")
+                    else None
+                ),
+                "disclosed_items": [entry["item"] for entry in item.get("disclosed_items") or []],
+                "passage_spans": [
+                    {
+                        "unit_id": passage["unit_id"],
+                        "section_path": passage["section_path"],
+                        "char_start": passage["char_start"],
+                        "char_end": passage["char_end"],
+                        "sha256": passage["sha256"],
+                    }
+                    for passage in item.get("passages") or []
+                ],
+                "source_url": item.get("source_url"),
             }
             for item in events
         ],
@@ -1243,9 +1634,24 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
             "in_window_count": len(in_window_events),
             "subsequent_count": len(subsequent_events),
             "coverage": coverage,
+            "availability_policy": AVAILABILITY_POLICY,
+            "chronological_order": "evidenced publication instant (UTC), not filing date",
         },
         "observations": observations,
         "hypotheses": hypotheses,
+        "analysis": {
+            "narrative": "deterministic_templates_over_observed_evidence",
+            "ai_used": False,
+            "epistemic_classes": {
+                "observed": "values, timestamps, document spans and item codes read from stored records",
+                "inferred": "relevance ranking and mechanical basis reconciliation",
+                "unresolved": "causal attribution; every hypothesis is not_identified",
+            },
+            "note": (
+                "no language model contributed text to this response, so no unsupported "
+                "narrative can be introduced; a future AI layer must keep these classes apart"
+            ),
+        },
         "revision_check": revision_check,
         "rights": rights,
         "warnings": warnings,
@@ -1873,7 +2279,12 @@ def _interpret(
     benchmark: Mapping[str, Any],
     volume_ratio: float | None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    """Separate confirmed observations from competing, unproven explanations."""
+    """Separate confirmed observations from competing, unproven explanations.
+
+    Every explanatory claim that quotes a filing cites the exact document version and
+    character span it came from. A filing whose bytes Atlas does not hold is described
+    as a timing fact only: the form is named, the disclosed event is not.
+    """
     total = returns[request.price_basis]
     convention = str(price_statistics.get("return_convention"))
     if total is None:
@@ -1925,7 +2336,7 @@ def _interpret(
             {
                 "observation_id": "OBS-market-model",
                 "statement": (
-                    f"Over the estimation window the security's daily returns had a beta of "
+                    "Over the estimation window the security's daily returns had a beta of "
                     f"{market_model['beta']:.4f} and R-squared of "
                     f"{(market_model['r_squared'] if market_model['r_squared'] is not None else float('nan')):.4f} "
                     "against the selected benchmark."
@@ -1953,34 +2364,184 @@ def _interpret(
         )
 
     hypotheses: list[dict[str, Any]] = []
-    filing_events = [item for item in events if item["kind"] == "sec_filing"]
+    filing_events = [
+        item for item in events if item["kind"] in ("sec_filing", "sec_filing_amendment")
+    ]
     action_events = [item for item in events if item["kind"] == "corporate_action"]
     material_filings = [
         item for item in filing_events if str(item.get("form_type")) in MATERIAL_FORMS
     ]
     routine_filings = len(filing_events) - len(material_filings)
+    disclosed = [item for item in material_filings if item.get("disclosed_items")]
+    undisclosed_material = [item for item in material_filings if not item.get("disclosed_items")]
 
-    if material_filings:
-        forms = sorted({str(item["form_type"]) for item in material_filings})
+    alternatives_pool: list[dict[str, Any]] = []
+    if market_model.get("status") == "available":
+        alternatives_pool.append(
+            {
+                "kind": "market_co_movement",
+                "statement": (
+                    "Common market exposure could account for part of the move; the one-factor "
+                    "model's compounded expected return is "
+                    f"{market_model['expected_return_compounded']:.6f}."
+                ),
+                "evidence": list(resolved.series.observation_ids()[-3:]),
+            }
+        )
+    if routine_filings:
+        alternatives_pool.append(
+            {
+                "kind": "routine_filing",
+                "statement": (
+                    f"{routine_filings} routine administrative filing(s) are present; they are "
+                    "shown in the timeline but are not treated as a repricing explanation."
+                ),
+                "evidence": [],
+            }
+        )
+    alternatives_pool.append(
+        {
+            "kind": "unidentified_information",
+            "statement": (
+                "An unobserved information event (news, analyst action, sector flow) could have "
+                "moved the price; Atlas holds no licensed news or consensus history to test it."
+            ),
+            "evidence": [],
+        }
+    )
+
+    for event in disclosed:
+        accession = event.get("accession_number")
+        for item in event["disclosed_items"]:
+            code = item["item"]
+            citations = _document_citations(event, item=item)
+            quoted = next((citation for citation in citations if citation.get("excerpt")), None)
+            sentence = (
+                f"Form {event.get('form_type')} Item {code} ({item['label']}) was disclosed in a "
+                f"filing for this issuer {_publication_sentence(event)}."
+            )
+            if quoted is not None:
+                sentence += (
+                    f' The stored filing text at section "{quoted["section_path"]}" '
+                    f'(chars {quoted["char_start"]}-{quoted["char_end"]}) reads: '
+                    f'"{quoted["excerpt"]}".'
+                )
+            elif item.get("section_path"):
+                sentence += (
+                    f' The document records the item under section "{item["section_path"]}"; '
+                    "its redistribution class does not permit quoting the text in this response."
+                )
+            novelty = _novelty_sentence(event, code)
+            if novelty:
+                sentence += novelty
+            counter: list[dict[str, Any]] = []
+            novelty_data = event.get("novelty") or {}
+            if code in (novelty_data.get("repeated_items") or []):
+                counter.append(
+                    {
+                        "kind": "repeat_disclosure",
+                        "statement": (
+                            "The item was already disclosed in an earlier archived filing, so a "
+                            "novel-information interpretation is weaker."
+                        ),
+                        "prior_documents": [
+                            entry["accession"]
+                            for entry in novelty_data.get("prior_documents", [])
+                            if code in (entry.get("items") or [])
+                        ],
+                    }
+                )
+            if market_model.get("status") == "available" and total:
+                expected = float(market_model["expected_return_compounded"])
+                if expected and abs(expected / float(total)) >= 0.5:
+                    counter.append(
+                        {
+                            "kind": "market_co_movement",
+                            "statement": (
+                                "The compounded market-model expectation already accounts for at "
+                                "least half of the move, so issuer-specific attribution is weaker."
+                            ),
+                            "evidence": list(resolved.series.observation_ids()[-3:]),
+                        }
+                    )
+            hypotheses.append(
+                _hypothesis(
+                    statement=sentence,
+                    tier=2,
+                    basis=(
+                        "the filing's archived primary document names this 8-K item and the "
+                        "passage is citable to an exact span"
+                    ),
+                    supporting=[event["event_id"]],
+                    citations=citations,
+                    alternatives=alternatives_pool,
+                    counterevidence=counter,
+                    inputs={
+                        "accession_number": accession,
+                        "document_id": (event.get("document") or {}).get("document_id"),
+                        "document_sha256": (event.get("document") or {}).get("sha256"),
+                        "item": code,
+                        "item_label": item.get("label"),
+                        "publication_time": event.get("availability_time"),
+                        "publication_precision": event.get("availability_precision"),
+                        "tradable_session": (event.get("publication") or {}).get("tradable_session"),
+                        "novelty": (event.get("novelty") or {}).get("basis"),
+                        "quoted_span_id": quoted.get("unit_id") if quoted else None,
+                    },
+                    limitations=[
+                        "the document reports the disclosed event; Atlas has not measured how "
+                        "expectations changed",
+                        "a disclosure inside the interval does not establish that it moved the price",
+                        "no consensus, estimate-revision or news archive is licensed, so the "
+                        "surprise component is unmeasured",
+                    ],
+                )
+            )
+
+    if undisclosed_material:
+        forms = sorted({str(item["form_type"]) for item in undisclosed_material})
+        citations = [
+            citation
+            for event in undisclosed_material
+            for citation in _document_citations(event, limit=1)
+        ]
+        statuses = sorted(
+            {
+                str((event.get("document") or {}).get("status") or "unknown")
+                for event in undisclosed_material
+            }
+        )
         hypotheses.append(
             _hypothesis(
                 statement=(
-                    "A reported disclosure was published during the interval "
-                    f"({', '.join(forms)}). The move may reflect how that disclosure changed "
-                    "expectations, but Atlas has not measured an expectations revision."
+                    "A material SEC disclosure was published inside the interval "
+                    f"({', '.join(forms)}), but Atlas has not archived the filing's primary "
+                    "document, so it cannot identify the disclosed event. The publication is a "
+                    "timing fact, not an explanation. Document status: "
+                    + ", ".join(statuses)
+                    + "."
                 ),
                 tier=2,
-                basis="a material SEC disclosure was published inside the selected interval",
-                supporting=[item["event_id"] for item in material_filings],
+                basis=(
+                    "a material filing was published inside the interval, but no stored document "
+                    "identifies the item disclosed"
+                ),
+                supporting=[item["event_id"] for item in undisclosed_material],
+                citations=citations,
+                alternatives=alternatives_pool,
                 inputs={
                     "forms": forms,
-                    "count": len(material_filings),
+                    "count": len(undisclosed_material),
+                    "document_statuses": statuses,
+                    "accessions": [
+                        item.get("accession_number") for item in undisclosed_material
+                    ],
                     "routine_filings_not_ranked": routine_filings,
                 },
                 limitations=[
+                    "the form alone does not say what was disclosed",
+                    "Atlas does not quote or paraphrase a document it has not retrieved",
                     "publication inside the interval does not establish that the filing moved the price",
-                    "Atlas holds no consensus history, so the surprise component is unmeasured",
-                    "an 8-K may describe an event that occurred before the interval",
                 ],
             )
         )
@@ -2002,12 +2563,25 @@ def _interpret(
                 tier=1,
                 basis="a corporate action with a computable, arithmetic price effect has an ex-date inside the interval; this outranks any narrative because the effect is certain",
                 supporting=[item["event_id"] for item in mechanical],
+                counterevidence=[
+                    {
+                        "kind": "basis_effect_only",
+                        "statement": (
+                            "The action explains a change of basis, not the economic direction of "
+                            "the move; the split-adjusted and total-return figures are the check."
+                        ),
+                        "evidence": [],
+                    }
+                ],
+                alternatives=alternatives_pool,
                 inputs={
                     "raw_return": returns["price"],
                     "split_adjusted_return": returns["split_adjusted"],
                     "total_return": returns["total_return"],
                 },
-                limitations=["the action explains a basis change, not the economic direction of the move"],
+                limitations=[
+                    "the action explains a basis change, not the economic direction of the move"
+                ],
             )
         )
 
@@ -2039,6 +2613,17 @@ def _interpret(
                 tier=3,
                 basis=basis,
                 supporting=list(resolved.series.observation_ids()[-3:]),
+                counterevidence=[
+                    {
+                        "kind": "residual_is_not_a_cause",
+                        "statement": (
+                            "The abnormal return is what this one-factor model does not explain; "
+                            "it is not evidence of a specific issuer event."
+                        ),
+                        "evidence": [],
+                    }
+                ],
+                alternatives=alternatives_pool,
                 inputs={
                     "beta": market_model["beta"],
                     "alpha_daily": market_model["alpha_daily"],
@@ -2063,12 +2648,23 @@ def _interpret(
             _hypothesis(
                 statement=(
                     f"Trading volume in the interval averaged {volume_ratio:.2f} times its "
-                    "trailing median. Unusual participation is consistent with a "
+                    "trailing median. Unusual participation is consistent with an "
                     "information-driven repricing, but volume does not identify the information."
                 ),
                 tier=4,
                 basis="mean window volume is at least twice the trailing median",
                 supporting=list(resolved.series.observation_ids()[-3:]),
+                counterevidence=[
+                    {
+                        "kind": "descriptive_only",
+                        "statement": (
+                            "Volume is descriptive: index rebalancing, option expiry and liquidity "
+                            "events also raise it."
+                        ),
+                        "evidence": [],
+                    }
+                ],
+                alternatives=alternatives_pool,
                 inputs={"average_to_trailing_median": volume_ratio},
                 limitations=[
                     "volume can rise for index rebalancing, option expiry or liquidity reasons",
@@ -2077,12 +2673,18 @@ def _interpret(
             )
         )
 
-    if not material_filings and not mechanical:
+    if not disclosed and not mechanical:
         statement = (
             "No material company-specific SEC disclosure or corporate action inside this "
             "interval is stored. Atlas cannot explain the move from its sources and abstains "
             "rather than inferring a cause."
         )
+        if undisclosed_material:
+            statement = (
+                "A material filing was published inside this interval, but no archived primary "
+                "document identifies what it disclosed. Atlas abstains from explaining the move "
+                "rather than treating the filing itself as the explanation."
+            )
         if routine_filings:
             statement += (
                 f" {routine_filings} routine filing(s) (for example Form 4 ownership reports or "
@@ -2092,9 +2694,13 @@ def _interpret(
             _hypothesis(
                 statement=statement,
                 tier=5,
-                basis="no material in-window disclosure or corporate action is present in the store",
+                basis="no material in-window disclosure with an archived document, and no corporate action, is present in the store",
                 supporting=[],
-                inputs={"routine_filings_not_ranked": routine_filings},
+                alternatives=alternatives_pool,
+                inputs={
+                    "routine_filings_not_ranked": routine_filings,
+                    "undocumented_material_filings": len(undisclosed_material),
+                },
                 limitations=[
                     "absence of stored evidence is not absence of news",
                     "routine administrative filings are not treated as explanations",
@@ -2107,7 +2713,6 @@ def _interpret(
     for rank, hypothesis in enumerate(hypotheses, start=1):
         hypothesis["rank"] = rank
     return hypotheses, observations
-
 
 __all__ = [
     "CONTRACT_VERSION",

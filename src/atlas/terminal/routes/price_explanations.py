@@ -11,12 +11,13 @@ The request forbids unknown fields: a client that sends a misspelled
 
 from __future__ import annotations
 
+import json
 from typing import Any, Callable, Literal
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, ConfigDict, Field
 
-from ...research import move_intelligence
+from ...research import investigations, move_intelligence
 from ...storage.db import Database
 
 
@@ -65,8 +66,38 @@ class PriceExplanationRequest(BaseModel):
     )
 
 
+class SaveInvestigationRequest(PriceExplanationRequest):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str | None = Field(
+        default=None, max_length=200, description="Display name; defaults to ticker and interval"
+    )
+    version: str = Field(
+        default="1.0.0",
+        pattern=r"^\d+\.\d+\.\d+$",
+        description="Immutable version; an existing name+version is refused",
+    )
+
+
 def build_price_explanations_router(get_db: Callable[..., Any]) -> APIRouter:
     router = APIRouter()
+
+    def _request(security_id: str, body: PriceExplanationRequest) -> move_intelligence.ExplanationRequest:
+        return move_intelligence.ExplanationRequest(
+            security_id=security_id,
+            start_session=body.start_session,
+            end_session=body.end_session,
+            timeframe=body.timeframe,
+            timezone=body.timezone,
+            price_basis=body.price_basis,
+            mode=body.mode,
+            information_cutoff=body.information_cutoff,
+            benchmark_security_id=body.benchmark_security_id,
+            peer_security_ids=tuple(body.peer_security_ids),
+            estimation_sessions=body.estimation_sessions,
+            evidence_limit=body.evidence_limit,
+            return_convention=body.return_convention,
+        )
 
     @router.post("/api/securities/{security_id}/price-explanations", tags=["research"])
     def price_explanations(
@@ -74,24 +105,70 @@ def build_price_explanations_router(get_db: Callable[..., Any]) -> APIRouter:
         body: PriceExplanationRequest,
         db: Database = Depends(get_db),
     ) -> dict[str, Any]:
-        return move_intelligence.explain_range(
-            db,
-            move_intelligence.ExplanationRequest(
-                security_id=security_id,
-                start_session=body.start_session,
-                end_session=body.end_session,
-                timeframe=body.timeframe,
-                timezone=body.timezone,
-                price_basis=body.price_basis,
-                mode=body.mode,
-                information_cutoff=body.information_cutoff,
-                benchmark_security_id=body.benchmark_security_id,
-                peer_security_ids=tuple(body.peer_security_ids),
-                estimation_sessions=body.estimation_sessions,
-                evidence_limit=body.evidence_limit,
-                return_convention=body.return_convention,
-            ),
-        )
+        return move_intelligence.explain_range(db, _request(security_id, body))
+
+    @router.post(
+        "/api/securities/{security_id}/price-investigations",
+        tags=["research"],
+        status_code=201,
+    )
+    def save_investigation(
+        security_id: str,
+        body: SaveInvestigationRequest,
+        db: Database = Depends(get_db),
+    ) -> dict[str, Any]:
+        # The server recomputes the investigation: a client cannot save a report it
+        # assembled itself. Reuse of an existing name+version is refused by the store.
+        report = move_intelligence.explain_range(db, _request(security_id, body))
+        return investigations.save(db, report, name=body.name, version=body.version)
+
+    @router.get("/api/securities/{security_id}/price-investigations", tags=["research"])
+    def list_investigations(
+        security_id: str,
+        db: Database = Depends(get_db),
+        limit: int = 50,
+    ) -> dict[str, Any]:
+        items = [
+            item
+            for item in investigations.list_investigations(db, limit=max(1, min(limit, 200)))
+            if item.get("kind") == investigations.KIND
+        ]
+        filtered = []
+        for item in items:
+            stored = db.query_one(
+                "SELECT document_json FROM research_object WHERE object_id = ?",
+                (item["object_id"],),
+            )
+            document = json.loads(stored["document_json"]) if stored is not None else {}
+            spec = document.get("spec") or {}
+            if spec.get("security_id") == security_id:
+                filtered.append(
+                    {
+                        **item,
+                        "start_session": (spec.get("interval") or {}).get("start_session"),
+                        "end_session": (spec.get("interval") or {}).get("end_session"),
+                        "reproducibility_hash": (spec.get("reproducibility") or {}).get("hash"),
+                    }
+                )
+        return {"schema": investigations.DOCUMENT_SCHEMA, "items": filtered}
+
+    @router.get("/api/research/price-investigations/{object_id}/reproduce", tags=["research"])
+    def reproduce_investigation(
+        object_id: str, db: Database = Depends(get_db)
+    ) -> dict[str, Any]:
+        return investigations.reproduce(db, object_id)
+
+    @router.get("/api/research/price-investigations/{object_id}/impact", tags=["research"])
+    def investigation_impact(
+        object_id: str, db: Database = Depends(get_db)
+    ) -> dict[str, Any]:
+        return investigations.impact(db, object_id)
+
+    @router.get("/api/research/price-investigations/{object_id}/export", tags=["research"])
+    def export_investigation(
+        object_id: str, db: Database = Depends(get_db)
+    ) -> dict[str, Any]:
+        return investigations.export(db, object_id)
 
     return router
 

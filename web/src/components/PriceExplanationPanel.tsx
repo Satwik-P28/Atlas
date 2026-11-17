@@ -4,6 +4,7 @@ import { useAsync } from '../state'
 import type {
   PriceExplanation,
   PriceExplanationBasis,
+  PriceExplanationDocument,
   PriceExplanationEvent,
   PriceExplanationMode,
   PriceExplanationRequest,
@@ -65,6 +66,19 @@ export default function PriceExplanationPanel({
     error?: string
     loading?: boolean
   } | null>(null)
+  const [saved, setSaved] = useState<{
+    object_id: string
+    version: string
+    content_hash: string
+    reproducibility_hash: string
+  } | null>(null)
+  const [impact, setImpact] = useState<{
+    status: string
+    categories: string[]
+    note: string
+  } | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   useEffect(() => {
     setCutoff((current) => (current < selection.end ? selection.end : current))
@@ -110,6 +124,36 @@ export default function PriceExplanationPanel({
     () => api.explainPriceRange(securityId, request),
     [securityId, key],
   )
+
+  async function saveInvestigation() {
+    setSaving(true)
+    setSaveError(null)
+    setImpact(null)
+    try {
+      const stored = await api.savePriceInvestigation(securityId, {
+        ...request,
+        version: '1.0.0',
+      })
+      setSaved({
+        object_id: stored.object_id,
+        version: stored.version,
+        content_hash: stored.content_hash,
+        reproducibility_hash: stored.reproducibility_hash,
+      })
+    } catch (caught) {
+      setSaveError((caught as Error).message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function checkForChanges(objectId: string) {
+    try {
+      setImpact(await api.investigationImpact(objectId))
+    } catch (caught) {
+      setSaveError((caught as Error).message)
+    }
+  }
 
   async function compare(start: string, end: string) {
     if (!start || !end) return
@@ -339,6 +383,61 @@ export default function PriceExplanationPanel({
                           </li>
                         ))}
                       </ul>
+                      {hypothesis.relevance.citations.length > 0 && (
+                        <>
+                          <h6>Cited document spans</h6>
+                          <ul className="small">
+                            {hypothesis.relevance.citations.map((citation) => (
+                              <li key={`${citation.document_id}-${citation.unit_id}`}>
+                                <span className="mono">
+                                  {citation.accession} · {citation.section_path} · chars{' '}
+                                  {citation.char_start}–{citation.char_end}
+                                </span>
+                                {citation.excerpt ? (
+                                  <blockquote className="small">“{citation.excerpt}”</blockquote>
+                                ) : (
+                                  <span className="muted small">
+                                    {' '}
+                                    {citation.excerpt_withheld ?? 'no text quoted'}
+                                  </span>
+                                )}
+                                {citation.source_url && (
+                                  <a
+                                    className="small"
+                                    href={citation.source_url}
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                  >
+                                    Open original SEC document
+                                  </a>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
+                      {hypothesis.relevance.counterevidence.length > 0 && (
+                        <>
+                          <h6>Counterevidence</h6>
+                          <ul className="small muted">
+                            {hypothesis.relevance.counterevidence.map((entry, index) => (
+                              <li key={index}>
+                                {String((entry as { statement?: string }).statement ?? '')}
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
+                      {hypothesis.relevance.alternatives.length > 0 && (
+                        <>
+                          <h6>Alternative explanations</h6>
+                          <ul className="small muted">
+                            {hypothesis.relevance.alternatives.map((alternative) => (
+                              <li key={alternative.kind}>{alternative.statement}</li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
                     </details>
                   </li>
                 ))}
@@ -526,6 +625,38 @@ export default function PriceExplanationPanel({
 
           <div className="explain-actions">
             <button
+              className="button"
+              onClick={() => void saveInvestigation()}
+              disabled={saving || !data.reproducibility.hash}
+              title="Save an immutable, versioned research investigation on the UROS contract"
+            >
+              {saving ? 'Saving…' : 'Save investigation'}
+            </button>
+            {saved && (
+              <span className="small">
+                <span className="mono">{saved.object_id}</span> v{saved.version} ·{' '}
+                <span className="mono wrap">{saved.content_hash.slice(0, 12)}…</span>{' '}
+                <button
+                  className="button secondary"
+                  onClick={() => void checkForChanges(saved.object_id)}
+                >
+                  Check for changes
+                </button>
+              </span>
+            )}
+            {impact && (
+              <span className="small muted">
+                {impact.status}
+                {impact.categories.length > 0 ? `: ${impact.categories.join(', ')}` : ''} —{' '}
+                {impact.note}
+              </span>
+            )}
+            {saveError && (
+              <span className="small" role="alert">
+                {saveError}
+              </span>
+            )}
+            <button
               className="button secondary"
               onClick={() => downloadReport(data)}
               disabled={!data.rights.export_allowed}
@@ -609,17 +740,78 @@ export default function PriceExplanationPanel({
   )
 }
 
+function DocumentEvidence({ document }: { document: PriceExplanationDocument }) {
+  const openable = document.source_locator?.url
+  return (
+    <div className="document-evidence small">
+      <div className="event-head">
+        <Badge tone={document.status === 'resolved' ? 'accent' : 'warn'}>
+          {document.status.replace(/_/g, ' ')}
+        </Badge>
+        {document.is_amendment && <Badge tone="warn">amends {document.amends_accession}</Badge>}
+      </div>
+      <div className="muted">
+        Filed {document.filed_date} · version {document.filing_version} · document{' '}
+        {document.primary_document ?? 'not recorded'}
+      </div>
+      {document.sha256 && (
+        <div className="mono wrap">sha256 {document.sha256}</div>
+      )}
+      {openable ? (
+        <a href={openable} target="_blank" rel="noreferrer noopener">
+          Open original SEC document
+        </a>
+      ) : (
+        <span className="muted">{document.source_locator?.reason ?? 'original locator unavailable'}</span>
+      )}
+      {document.items.length > 0 && (
+        <div>
+          Disclosed items:{' '}
+          {document.items.map((item) => (
+            <span key={item.item} className="mono">
+              {item.item} {item.label}{' '}
+            </span>
+          ))}
+        </div>
+      )}
+      {document.passages.length > 0 && (
+        <details>
+          <summary>Supporting passages ({document.passages.length})</summary>
+          <ul>
+            {document.passages.map((passage) => (
+              <li key={passage.unit_id}>
+                <div className="mono">
+                  {passage.section_path} · chars {passage.char_start}–{passage.char_end}
+                </div>
+                {passage.excerpt ? (
+                  <blockquote>“{passage.excerpt}”</blockquote>
+                ) : (
+                  <span className="muted">{passage.excerpt_withheld ?? 'text not quoted'}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+      {document.reason && <p className="muted">{document.reason}</p>}
+    </div>
+  )
+}
+
 function EventRow({ event }: { event: PriceExplanationEvent }) {
   const label =
     event.kind === 'corporate_action'
       ? event.title
       : `${event.form_type ?? event.kind} · ${event.form_label ?? 'SEC filing'}`
+  const filed = event.filed_date ?? event.date
+  const published = event.availability_time
   return (
     <li>
       <div className="event-head">
-        <span className="mono small">{event.date}</span>
+        <span className="mono small">{published ?? filed}</span>
         <Badge tone={event.relation === 'in_window' ? 'accent' : 'neutral'}>{event.relation}</Badge>
         {event.is_amendment && <Badge tone="warn">amendment</Badge>}
+        {event.duplicate_document_of && <Badge tone="neutral">duplicate document</Badge>}
       </div>
       <div>{label}</div>
       <div className="muted small">
@@ -628,9 +820,27 @@ function EventRow({ event }: { event: PriceExplanationEvent }) {
         ) : (
           <span className="mono">{event.event_id}</span>
         )}
-        {event.availability_time && <> · public {fmtDateTime(event.availability_time)}</>}
+        {published && (
+          <>
+            {' '}
+            · public {fmtDateTime(published)}
+            {event.availability_precision === 'date' ? ' (end of day, date precision)' : ''}
+          </>
+        )}
+        {filed !== event.date && <> · filed {fmtDate(filed)}</>}
+        {event.publication?.local_time && (
+          <> · local {event.publication.local_time} ({event.publication.timezone})</>
+        )}
+        {event.publication?.phase && event.publication.phase !== 'unknown' && (
+          <> · {event.publication.phase.replace(/_/g, ' ')}</>
+        )}
+        {event.publication?.tradable_session && (
+          <> · first tradable session {event.publication.tradable_session}</>
+        )}
         {event.known_at_range_end === false && <> · not known at the interval's end</>}
+        {event.supersedes_event_id && <> · keeps original {event.supersedes_event_id}</>}
       </div>
+      {event.document && <DocumentEvidence document={event.document} />}
     </li>
   )
 }

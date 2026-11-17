@@ -1,24 +1,50 @@
 {
-  "schema": "atlas.test_inventory.v1",
-  "generated_at": "2026-11-17",
+  "schema": "atlas.test_inventory.v2",
+  "measured_at": "2026-11-17",
   "repository_state": {
-    "branch": "review/price-intelligence-v3.2",
-    "feature_commit": "fd5d29d",
-    "spec_merge_commit": "442a304"
+    "branch": "review/price-intelligence-v3.2-integrity",
+    "base_branch": "review/price-intelligence-v3.2",
+    "base_commit": "747871b"
+  },
+  "measurement_policy": {
+    "observed": "counted by running pytest --collect-only at this revision, or by a test run in this revision",
+    "reconstructed": "derived by arithmetic from observed totals; it is NOT an independent count at the earlier revision",
+    "rule": "a reconstructed number is never labelled observed, and this script fails if one is"
   },
   "python": {
-    "baseline_tests": 699,
-    "baseline_note": "Measured before this feature: 720 collected at c6ba985 minus the 21 feature tests added by that commit.",
-    "feature_file": "tests/test_price_explanations.py",
-    "feature_tests": 35,
-    "other_added_tests": 0,
-    "expected_total": 734,
-    "command": ".venv/bin/python -m pytest -o addopts='' -q",
+    "observed": {
+      "total_collected": 752,
+      "total_command": ".venv/bin/python -m pytest -o addopts='' --collect-only -q",
+      "files": [
+        {
+          "file": "tests/test_price_explanations.py",
+          "count": 35,
+          "method": "observed",
+          "note": "the original feature suite, unchanged in this pass"
+        },
+        {
+          "file": "tests/test_price_evidence_integrity.py",
+          "count": 18,
+          "method": "observed",
+          "note": "adversarial tests added by the integrity pass"
+        }
+      ]
+    },
+    "reconstructed": {
+      "baseline_tests": {
+        "count": 699,
+        "method": "reconstructed_by_subtraction",
+        "formula": "752 collected - 35 feature - 18 integrity",
+        "note": "The earlier inventory asserted 699 as measured. No independent count at commit c6ba985 exists in this environment, so it is reported as the residual it is; the two feature files are the observed parts."
+      }
+    },
     "last_result": {
-      "passed": 733,
-      "skipped": 1,
+      "passed": 752,
+      "skipped": 0,
       "failed": 0,
-      "collected": 734
+      "collected": 752,
+      "method": "observed",
+      "command": ".venv/bin/python -m pytest -o addopts='' -q"
     }
   },
   "frontend": {
@@ -26,10 +52,13 @@
     "unit_files": 5,
     "unit_tests": 50,
     "typecheck_command": "cd web && npx tsc -b --noEmit",
+    "build_command": "cd web && npm run build",
     "browser_command": "cd web && node e2e/price-explanation.mjs",
     "browser_file": "web/e2e/price-explanation.mjs",
     "browser_checks": 19,
-    "browser_result": "19 passed, 0 failed"
+    "browser_result": "19 passed, 0 failed at commit 747871b on 2026-11-17",
+    "rerun_in_this_pass": false,
+    "rerun_note": "No browser is installed in this environment. The pre-existing 19-check result is reported as history, not as a result of this pass."
   },
   "specification": {
     "file": "ATLAS_MASTER_SPEC.md",
@@ -42,6 +71,8 @@
   "claims_not_made": [
     "No ICB-65 through ICB-75 benchmark is marked passed.",
     "No performance or historical-accuracy claim is made.",
-    "No news, consensus or macro-release source is licensed or simulated."
+    "No news, consensus or macro-release source is licensed or simulated.",
+    "No live SEC retrieval was performed in this environment; original-document inspection was exercised against archived offline fixtures only.",
+    "No browser run was performed in this pass."
   ]
 }
