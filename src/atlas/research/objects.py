@@ -62,7 +62,7 @@ SPEC_FIELDS = {
         "security_id", "interval", "mode", "price_basis", "historical_cutoff",
         "request", "statistics", "benchmark", "market_model", "events",
         "observations", "hypotheses", "rights", "reproducibility", "calculations",
-        "manifest",
+        "manifest", "temporal", "source_vintages",
     ),
 }
 FORBIDDEN_KEYS = {"code", "sql", "python", "javascript", "executable", "script", "lambda"}
@@ -153,7 +153,13 @@ class ResearchObjectStore:
     def __init__(self, db: Database):
         self.db = db
 
-    def create(self, document: dict[str, Any], *, owner_id: str = "local") -> dict[str, Any]:
+    def create(
+        self,
+        document: dict[str, Any],
+        *,
+        owner_id: str = "local",
+        created_at: str | None = None,
+    ) -> dict[str, Any]:
         validate_document(document)
         evidence_ids = list(dict.fromkeys(document["evidence_ids"]))
         object_ids = list(dict.fromkeys(document.get("object_ids", [])))
@@ -200,7 +206,7 @@ class ResearchObjectStore:
                 "this research object version already exists; create a new version instead",
                 object_id=existing["object_id"],
             )
-        now = iso(utcnow())
+        now = created_at or iso(utcnow())
         object_id = f"URO-{document['kind'][:3].upper()}-{uuid.uuid4().hex[:12]}"
         digest = content_hash(document)
         with self.db.transaction():

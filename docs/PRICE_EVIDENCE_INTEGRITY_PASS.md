@@ -160,3 +160,23 @@ operation id, parameter, request body or response changed. The OpenAPI fixture w
 regenerated after a programmatic diff confirmed four added paths, five added operations,
 no removed path and no changed existing path; the test now asserts 162 operations across
 147 paths.
+
+## 8. Follow-up pass (temporal semantics, 2026-11-17)
+
+A follow-up review on `review/price-intelligence-v3.2-temporal` (based on `5b8605e`)
+resolved the four audit findings recorded above and completed the browser acceptance that
+this pass could not run. The numbers in this document stay as the measurements of the
+integrity pass; the current state is:
+
+* Python suite: **762 passed** (36 feature tests, 27 integrity tests; 699 baseline
+  reconstructed by subtraction).
+* Browser acceptance: **27 checks passed, 0 failed, 0 console/page errors** on desktop and
+  a 390x844 mobile viewport, with 12 screenshots in `artifacts/`.
+* End-to-end acceptance: **46 checks passed, 0 failed**, now including the end-of-window
+  eligibility boundary, saved clocks, current-state reproduction labels and reopen.
+* No live EDGAR retrieval was performed; the demo database still has no archived filing
+  HTML and its prices are synthetic. The browser passage/citation path used a clearly
+  labelled offline fixture.
+
+No ICB-65 … ICB-75 benchmark status changed. Details, evidence and remaining gaps:
+[`PRICE_TEMPORAL_SEMANTICS_PASS.md`](PRICE_TEMPORAL_SEMANTICS_PASS.md).

@@ -450,9 +450,9 @@ def test_amendment_links_to_original_and_keeps_both_documents(db):
     amendment = "0000000000-25-900111"
     _filing(
         db, issuer_id=issuer_id, accession=original,
-        filed_date=DAY_TWO, acceptance=f"{DAY_TWO}T21:05:00Z",
+        filed_date=DAY_TWO, acceptance=f"{DAY_TWO}T20:05:00Z",
     )
-    _ingest(db, issuer_id=issuer_id, accession=original, acceptance=f"{DAY_TWO}T21:05:00Z")
+    _ingest(db, issuer_id=issuer_id, accession=original, acceptance=f"{DAY_TWO}T20:05:00Z")
     _filing(
         db, issuer_id=issuer_id, accession=amendment, form_type="8-K/A",
         filed_date=DAY_THREE, acceptance=f"{DAY_THREE}T21:05:00Z",
@@ -643,3 +643,295 @@ def test_historical_provider_revision_changes_the_hash_and_stays_unverified(db):
     assert corrected["selection"]["price_vintage"]["status"] == "unverified"
     assert corrected["selection"]["price_vintage"]["verified_at_cutoff"] is False
     assert mi.W_VINTAGE_AT_CUTOFF in _codes(corrected)
+
+
+# ------------------------------------------------- end-of-window explanatory eligibility
+def test_publication_after_final_session_close_is_not_a_candidate_explanation(db):
+    issuer_id, security_id = _identity(db)
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 104.0), (DAY_THREE, 102.0)])
+    before_close = "0000000000-25-900160"
+    after_close = "0000000000-25-900161"
+    for accession, acceptance in (
+        (before_close, f"{DAY_TWO}T20:05:00Z"),
+        (after_close, f"{DAY_TWO}T21:05:00Z"),
+    ):
+        _filing(
+            db, issuer_id=issuer_id, accession=accession,
+            filed_date=DAY_TWO, acceptance=acceptance,
+        )
+        _ingest(db, issuer_id=issuer_id, accession=accession, acceptance=acceptance)
+
+    # The selected interval ends at the 3 January close; the 21:05Z release is five
+    # minutes too late to explain that close even though its date is inside the range.
+    report = mi.explain_range(
+        db, _request(security_id, start_session=DAY_ONE, end_session=DAY_TWO)
+    )
+    early = _event(report, before_close)
+    late = _event(report, after_close)
+
+    assert early["relation"] == "in_window"
+    assert early["explanatory_eligible"] is True
+    assert late["relation"] == "subsequent_to_price_window"
+    assert late["explanatory_eligible"] is False
+    assert late["explanatory_eligibility"]["eligible"] is False
+    assert "at or after" in late["explanatory_eligibility"]["basis"]
+    assert "precedes" in early["explanatory_eligibility"]["basis"]
+    assert late["explanatory_eligibility"]["final_session"] == DAY_TWO
+    assert late["explanatory_eligibility"]["first_eligible_session"] == DAY_THREE
+    assert "cannot explain that close" in late["explanatory_eligibility"]["reason"]
+    # It is visible, but never cited as support for an explanation.
+    assert late["document"]["status"] == fe.DOC_RESOLVED
+    supporting = {
+        evidence_id
+        for hypothesis in report["hypotheses"]
+        for evidence_id in hypothesis["relevance"]["supporting_evidence"]
+    }
+    assert early["event_id"] in supporting
+    assert late["event_id"] not in supporting
+    assert report["events"]["coverage"]["sec_filings"][
+        "published_after_final_session_close"
+    ] == 1
+    assert mi.W_AFTER_FINAL_CLOSE in _codes(report)
+
+
+def test_weekend_publication_after_the_final_session_is_never_ranked(db):
+    issuer_id, security_id = _identity(db)
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 104.0)])
+    accession = "0000000000-25-900170"
+    _filing(
+        db, issuer_id=issuer_id, accession=accession,
+        filed_date="2025-01-04", acceptance="2025-01-04T15:00:00Z",
+    )
+    _ingest(
+        db, issuer_id=issuer_id, accession=accession, acceptance="2025-01-04T15:00:00Z",
+        filed_date="2025-01-04",
+    )
+
+    report = mi.explain_range(
+        db, _request(security_id, start_session=DAY_ONE, end_session=DAY_TWO)
+    )
+
+    # The Saturday release is outside the selected calendar interval and cannot explain
+    # Friday's close; it is not silently folded into the window or the ranking.
+    assert all(
+        item.get("accession_number") != accession for item in report["events"]["items"]
+    )
+    assert not any(
+        accession in hypothesis["statement"] for hypothesis in report["hypotheses"]
+    )
+    context = fe.publication_context(
+        availability="2025-01-04T15:00:00Z",
+        precision="exact",
+        timezone="America/New_York",
+        venue_timezone="America/New_York",
+        session_bounds=_january_bounds(db),
+        stored_sessions=[DAY_ONE, DAY_TWO, DAY_THREE],
+    )
+    assert context["phase"] == "non_session"
+    assert context["tradable_session"] == DAY_THREE
+
+
+def _january_bounds(db):
+    cal = TradingCalendar(db)
+    cal.build("XNYS", "2024-10-31", "2025-03-15")
+    sessions = cal.sessions("XNYS", "2024-10-31", "2025-03-15")
+    return {s.session_date: (s.open_ts, s.close_ts) for s in sessions}
+
+
+def test_publication_context_dates_sessions_in_venue_local_time(db):
+    bounds = _january_bounds(db)
+    # 2 January 2025, 7:30 p.m. Eastern is 3 January 2025, 00:30Z. The SEC's UTC date
+    # is one day later than the venue's session date; the publication belongs to the
+    # 2 January session, after its close, and first trades on 3 January.
+    context = fe.publication_context(
+        availability="2025-01-03T00:30:00Z",
+        precision="exact",
+        timezone="UTC",
+        venue_timezone="America/New_York",
+        session_bounds=bounds,
+        stored_sessions=sorted(bounds),
+    )
+
+    assert context["utc_date"] == "2025-01-03"
+    assert context["local_date"] == "2025-01-03"
+    assert context["session_date"] == "2025-01-02"
+    assert context["phase"] == "after_close"
+    assert context["is_trading_session"] is True
+    assert context["tradable_session"] == "2025-01-03"
+    assert context["local_time"] == "2025-01-03T00:30:00+00:00"
+
+
+def test_publication_context_handles_weekends_holidays_and_dst(db):
+    bounds = _january_bounds(db)
+
+    def context(instant: str) -> dict:
+        return fe.publication_context(
+            availability=instant,
+            precision="exact",
+            timezone="America/New_York",
+            venue_timezone="America/New_York",
+            session_bounds=bounds,
+            stored_sessions=sorted(bounds),
+        )
+
+    saturday = context("2025-01-04T15:00:00Z")
+    assert saturday["phase"] == "non_session"
+    assert saturday["is_trading_session"] is False
+    assert saturday["tradable_session"] == "2025-01-06"
+
+    holiday = context("2025-01-01T06:30:00Z")
+    assert holiday["session_date"] == "2025-01-01"
+    assert holiday["phase"] == "non_session"
+    assert holiday["tradable_session"] == "2025-01-02"
+
+    # US daylight saving began on 9 March 2025. At 00:30Z it is still Sunday evening in
+    # New York (20:30 EDT), so the first eligible session is Monday 10 March.
+    spring = context("2025-03-10T00:30:00Z")
+    assert spring["session_date"] == "2025-03-09"
+    assert spring["phase"] == "non_session"
+    assert spring["tradable_session"] == "2025-03-10"
+    assert context("2025-03-10T13:31:00Z")["phase"] == "regular_session"
+
+    # After the 3 November 2024 change, 14:31Z is 09:31 EST.
+    fall = context("2024-11-04T14:31:00Z")
+    assert fall["session_date"] == "2024-11-04"
+    assert fall["phase"] == "regular_session"
+    late = context("2024-11-04T22:00:00Z")
+    assert late["phase"] == "after_close"
+    assert late["tradable_session"] == "2024-11-05"
+
+
+# --------------------------------------------------- saved-investigation temporal semantics
+def test_retrospective_saved_investigation_is_as_of_run_time_not_period_end(db):
+    _, security_id = _identity(db)
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 104.0), (DAY_THREE, 102.0)])
+    report = mi.explain_range(
+        db, _request(security_id, start_session=DAY_ONE, end_session=DAY_TWO)
+    )
+    saved = investigations.save(db, report, name="retrospective clocks", version="1.0.0")
+    stored = investigations.ResearchObjectStore(db).get(saved["object_id"])
+    temporal = stored["document"]["spec"]["temporal"]
+
+    assert temporal["retrospective"] is True
+    assert temporal["mode"] == mi.MODE_RETROSPECTIVE
+    assert temporal["observation_period"]["end_session"] == DAY_TWO
+    assert temporal["public_knowledge_cutoff"]["basis"] == "analysis_run_time_retrospective"
+    assert temporal["public_knowledge_cutoff"]["instant"] != f"{DAY_TWO}T23:59:59Z"
+    assert stored["document"]["as_of"] == temporal["analysis_time"]
+    assert stored["document"]["as_of"] == temporal["object_created_at"]
+    assert stored["created_at"] == temporal["object_created_at"]
+    assert temporal["source_vintages"]["prices"]["status"] == "unverified"
+    assert "not the end of the price observation period" in temporal["as_of_basis"]
+
+
+def test_historical_saved_investigation_uses_the_cutoff_as_knowledge_time(db):
+    _, security_id = _identity(db)
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 104.0), (DAY_THREE, 102.0)])
+    report = mi.explain_range(
+        db,
+        _request(
+            security_id, start_session=DAY_ONE, end_session=DAY_TWO,
+            mode=mi.MODE_HISTORICAL, information_cutoff=DAY_TWO,
+        ),
+    )
+    saved = investigations.save(db, report, name="historical clocks", version="1.0.0")
+    temporal = investigations.ResearchObjectStore(db).get(
+        saved["object_id"]
+    )["document"]["spec"]["temporal"]
+
+    assert temporal["retrospective"] is False
+    assert temporal["public_knowledge_cutoff"]["instant"] == f"{DAY_TWO}T23:59:59Z"
+    assert temporal["public_knowledge_cutoff"]["basis"] == "information_cutoff_end_of_day_utc"
+    assert saved["as_of"] == f"{DAY_TWO}T23:59:59Z"
+
+
+def test_reproduce_is_labelled_a_current_state_comparison_and_reports_real_time(db):
+    _, security_id = _identity(db)
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 104.0), (DAY_THREE, 102.0)])
+    report = mi.explain_range(db, _request(security_id))
+    saved = investigations.save(db, report, name="replay scope", version="1.0.0")
+
+    result = investigations.reproduce(db, saved["object_id"])
+
+    assert result["comparison_kind"] == "current_state_recomputation"
+    assert result["pinned_input_replay"] is False
+    assert result["matches"] is True
+    assert result["recomputed_at"] >= result["recompute_started_at"]
+    assert result["recomputed_at"] != report["selection"]["end_session"]
+    assert result["recomputed_at"][:4] >= "2026"
+    assert "does not prove" in result["guarantee_scope"]
+    assert result["saved_temporal"]["retrospective"] is True
+
+
+def test_later_amendment_changes_drift_but_not_the_saved_knowledge_claim(db):
+    issuer_id, security_id = _identity(db)
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 104.0), (DAY_THREE, 102.0)])
+    original = "0000000000-25-900180"
+    _filing(
+        db, issuer_id=issuer_id, accession=original,
+        filed_date=DAY_TWO, acceptance=f"{DAY_TWO}T20:05:00Z",
+    )
+    _ingest(db, issuer_id=issuer_id, accession=original, acceptance=f"{DAY_TWO}T20:05:00Z")
+    report = mi.explain_range(
+        db, _request(security_id, start_session=DAY_ONE, end_session=DAY_TWO)
+    )
+    saved = investigations.save(db, report, name="amended later", version="1.0.0")
+    before = investigations.ResearchObjectStore(db).get(saved["object_id"])["document"]
+
+    # The amendment arrives after the saved run. It must change drift, not the saved
+    # object's knowledge cutoff or its as_of claim.
+    amendment = "0000000000-25-900181"
+    _filing(
+        db, issuer_id=issuer_id, accession=amendment, form_type="8-K/A",
+        filed_date=DAY_THREE, acceptance=f"{DAY_THREE}T15:00:00Z",
+        is_amendment=True, amends=original,
+    )
+    _ingest(
+        db, issuer_id=issuer_id, accession=amendment,
+        acceptance=f"{DAY_THREE}T15:00:00Z", form_type="8-K/A",
+    )
+
+    change = investigations.impact(db, saved["object_id"])
+    after = investigations.ResearchObjectStore(db).get(saved["object_id"])["document"]
+    replay = investigations.reproduce(db, saved["object_id"])
+
+    assert change["status"] == "changes_detected"
+    assert change["comparison_kind"] == "current_state_drift_check"
+    assert "amended_filing" in change["categories"]
+    assert after["as_of"] == before["as_of"]
+    assert after["spec"]["temporal"] == before["spec"]["temporal"]
+    assert replay["matches"] is False
+    assert replay["pinned_input_replay"] is False
+    assert replay["saved_as_of"] == before["as_of"]
+
+
+def test_legacy_saved_document_is_readable_with_an_explicit_legacy_label(db):
+    import json
+
+    _, security_id = _identity(db)
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 104.0), (DAY_THREE, 102.0)])
+    report = mi.explain_range(db, _request(security_id))
+    saved = investigations.save(db, report, name="legacy clocks", version="1.0.0")
+
+    # Simulate a document saved by the previous schema: no explicit clocks.
+    row = db.query_one(
+        "SELECT document_json FROM research_object WHERE object_id = ?",
+        (saved["object_id"],),
+    )
+    document = json.loads(row["document_json"])
+    document["spec"].pop("temporal", None)
+    document["spec"].pop("source_vintages", None)
+    document["as_of"] = f"{DAY_TWO}T23:59:59Z"
+    db.execute(
+        "UPDATE research_object SET document_json = ? WHERE object_id = ?",
+        (json.dumps(document), saved["object_id"]),
+    )
+
+    replay = investigations.reproduce(db, saved["object_id"])
+
+    assert replay["saved_temporal"]["legacy_document"] is True
+    assert replay["saved_temporal"]["public_knowledge_cutoff"]["basis"] == (
+        "legacy_as_of_field_unverified"
+    )
+    assert "must not be read as a verified knowledge cutoff" in replay["saved_temporal"]["as_of_basis"]
+    assert replay["comparison_kind"] == "current_state_recomputation"

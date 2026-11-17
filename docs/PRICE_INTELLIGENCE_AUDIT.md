@@ -187,8 +187,15 @@ Blockers:
 Integrity pass (2026-11-17): publication-time policy reconciled with the Temporal
 Evidence Kernel, timeline ordering fixed, original-document resolution and citable spans
 added, saved investigations added, and 18 adversarial tests plus a 31-check end-to-end
-acceptance recorded. No ICB-65…75 status changed. Live EDGAR retrieval and the browser run
-remain undemonstrated here.
+acceptance recorded. No ICB-65…75 status changed. Live EDGAR retrieval remains
+undemonstrated here.
+
+Temporal-semantics pass (2026-11-17, `review/price-intelligence-v3.2-temporal`): the four
+draft-PR audit findings are resolved (strict pre-close eligibility, venue-local session
+classification, separated saved-object clocks, labelled current-state reproduction) and
+the browser acceptance was run: 27 checks passed with no console or page errors. The Python
+suite is 762 passed and the end-to-end acceptance 45 passed. See
+[`PRICE_TEMPORAL_SEMANTICS_PASS.md`](PRICE_TEMPORAL_SEMANTICS_PASS.md).
 
 Next milestone: add a licensed, cutoff-aware news source behind the existing event contract,
 then execute the Appendix E benchmark proposals without changing Sections 1–61.

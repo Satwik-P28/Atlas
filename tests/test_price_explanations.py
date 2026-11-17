@@ -872,8 +872,15 @@ def test_after_hours_acceptance_is_not_shifted_to_the_previous_session(db):
     )
 
     assert event["date"] == DAY_THREE
-    assert event["relation"] == "in_window"
+    # It remains a 6 January publication, but it is after that session's close, so it
+    # cannot explain the 6 January close and is not ranked.
+    assert event["relation"] == "subsequent_to_price_window"
     assert event["availability_time"] == f"{DAY_THREE}T23:30:00Z"
+    assert event["publication"]["session_date"] == DAY_THREE
+    assert event["publication"]["phase"] == "after_close"
+    assert event["explanatory_eligible"] is False
+    assert event["publication"]["tradable_session"] > DAY_THREE
+    assert mi.W_AFTER_FINAL_CLOSE in {warning["code"] for warning in result["warnings"]}
 
 
 # ------------------------------------------------------------------------ API
@@ -988,3 +995,42 @@ def test_api_refuses_unknown_security_and_unknown_fields(file_db):
     )
     assert typo.status_code == 422
     assert typo.json()["error"]["code"] == "invalid_request"
+
+
+def test_saved_investigation_api_reopens_stored_document_and_labels_its_clocks(file_db):
+    _, issuer_id, security_id = _identity(file_db)
+    _import(file_db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 104.0), (DAY_THREE, 102.0)])
+    client = TestClient(create_app(file_db.path))
+    body = {
+        "start_session": DAY_ONE,
+        "end_session": DAY_TWO,
+        "price_basis": "split_adjusted",
+        "mode": "retrospective_investigation",
+    }
+
+    saved = client.post(
+        f"/api/securities/{security_id}/price-investigations", json=body
+    )
+    assert saved.status_code == 201, saved.text
+    record = saved.json()
+    assert record["as_of"] != f"{DAY_TWO}T23:59:59Z"
+    assert record["temporal"]["retrospective"] is True
+    assert record["temporal"]["public_knowledge_cutoff"]["basis"] == (
+        "analysis_run_time_retrospective"
+    )
+
+    reopened = client.get(f"/api/research/price-investigations/{record['object_id']}")
+    assert reopened.status_code == 200, reopened.text
+    snapshot = reopened.json()
+    assert snapshot["document"]["spec"]["temporal"] == record["temporal"]
+    assert snapshot["as_of"] == record["as_of"]
+    assert snapshot["document"]["spec"]["interval"]["start_session"] == DAY_ONE
+
+    listed = client.get(f"/api/securities/{security_id}/price-investigations")
+    assert listed.status_code == 200
+    assert [item["object_id"] for item in listed.json()["items"]] == [record["object_id"]]
+
+    impact = client.get(f"/api/research/price-investigations/{record['object_id']}/impact")
+    assert impact.status_code == 200
+    assert impact.json()["comparison_kind"] == "current_state_drift_check"
+    assert impact.json()["status"] == "unchanged"

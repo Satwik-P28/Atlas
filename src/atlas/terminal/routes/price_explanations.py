@@ -147,10 +147,15 @@ def build_price_explanations_router(get_db: Callable[..., Any]) -> APIRouter:
                         **item,
                         "start_session": (spec.get("interval") or {}).get("start_session"),
                         "end_session": (spec.get("interval") or {}).get("end_session"),
+                        "as_of": document.get("as_of"),
                         "reproducibility_hash": (spec.get("reproducibility") or {}).get("hash"),
                     }
                 )
         return {"schema": investigations.DOCUMENT_SCHEMA, "items": filtered}
+
+    @router.get("/api/research/price-investigations/{object_id}", tags=["research"])
+    def get_investigation(object_id: str, db: Database = Depends(get_db)) -> dict[str, Any]:
+        return investigations.get(db, object_id)
 
     @router.get("/api/research/price-investigations/{object_id}/reproduce", tags=["research"])
     def reproduce_investigation(

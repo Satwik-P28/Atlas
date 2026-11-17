@@ -176,64 +176,99 @@ def publication_context(
     timezone: str,
     session_bounds: Mapping[str, tuple[str, str]],
     stored_sessions: Sequence[str],
+    venue_timezone: str | None = None,
 ) -> dict[str, Any]:
     """Where a publication sits relative to the selected venue's trading sessions.
 
-    Ordering and cutoff decisions use the UTC availability instant. The local time and
-    the session phase are presentation, so a cross-timezone comparison can see that a
-    `2025-01-03T00:30:00Z` acceptance is still 2 January in New York and lands after the
-    close of that session.
+    Ordering and cutoff decisions use the UTC availability instant. The exchange-local
+    session date is derived by converting that instant into the *venue's* timezone, not
+    by taking the UTC date: an SEC acceptance at ``2025-01-03T00:30:00Z`` is 2 January
+    19:30 in New York and therefore an after-close release for the 2 January session,
+    with 3 January as its first tradable session. Weekends, exchange holidays, early
+    closes and daylight-saving changes are all resolved from the stored session bounds;
+    when a date has no stored bounds the phase says so rather than assuming one.
     """
     if availability is None:
         return {
             "local_time": None,
+            "local_date": None,
+            "utc_date": None,
+            "session_date": None,
             "timezone": timezone,
+            "venue_timezone": venue_timezone or timezone,
             "phase": "unknown",
             "phase_basis": "public availability time is not evidenced",
+            "is_trading_session": None,
             "tradable_session": None,
+            "tradable_session_basis": "no publication instant to place",
+            "date_precision_note": None,
         }
     moment = parse_iso(availability)
-    local = _local_time(availability, timezone)
+    venue_zone = venue_timezone or timezone
+    local_time = _local_time(availability, timezone)
+    local_date = local_time[:10] if local_time else None
+    venue_local = _local_time(availability, venue_zone)
+    session_date = venue_local[:10] if venue_local else moment.date().isoformat()
+    all_sessions = sorted(set(session_bounds) | set(stored_sessions))
+    next_session = next((day for day in all_sessions if day > session_date), None)
     phase = "unknown"
-    basis = "no stored session bounds for the publication date"
+    basis = "no stored session bounds for the venue-local publication date"
     tradable: str | None = None
-    same_day = session_bounds.get(moment.date().isoformat())
-    if same_day is not None:
-        open_instant, close_instant = same_day
+    tradable_basis = "no stored session follows the publication"
+    is_session: bool | None = None
+    bounds = session_bounds.get(session_date)
+    if bounds is not None:
+        is_session = True
+        open_instant, close_instant = bounds
         if moment < parse_iso(open_instant):
             phase = "before_open"
-            tradable = moment.date().isoformat()
+            tradable = session_date
+            tradable_basis = "the publication precedes this venue-local session's open"
         elif moment < parse_iso(close_instant):
             phase = "regular_session"
-            tradable = moment.date().isoformat()
+            tradable = session_date
+            tradable_basis = "the publication falls inside this venue-local session"
         else:
             phase = "after_close"
-        basis = "stored venue session open/close bounds"
-    elif moment.date().isoformat() in stored_sessions:
+            tradable = next_session
+            tradable_basis = (
+                "the publication follows this venue-local session's close, so the first "
+                "eligible trading session is the next stored session"
+            )
+        basis = "stored venue session open/close bounds for the venue-local session date"
+    elif session_date in stored_sessions:
+        is_session = True
         phase = "no_stored_session_bounds"
-        tradable = moment.date().isoformat()
+        tradable = session_date
+        tradable_basis = "a stored observation exists for the date but no calendar bounds do"
         basis = "a stored observation exists for the date but no calendar bounds do"
     else:
+        is_session = False
         phase = "non_session"
-        basis = "the publication date is not a stored venue session"
-    if tradable is None and stored_sessions:
-        later = [day for day in sorted(stored_sessions) if day > moment.date().isoformat()]
-        tradable = later[0] if later else None
-        if tradable is not None:
-            basis += "; the first stored session after publication is the tradable session"
+        tradable = next_session
+        tradable_basis = (
+            "the venue-local date is a weekend, exchange holiday or unscheduled closure; "
+            "the first eligible trading session is the next stored session"
+        )
+        basis = "the venue-local publication date is not a stored venue session"
     return {
-        "local_time": local,
+        "local_time": local_time,
+        "local_date": local_date,
+        "utc_date": moment.date().isoformat(),
+        "session_date": session_date,
         "timezone": timezone,
+        "venue_timezone": venue_zone,
         "phase": phase,
         "phase_basis": basis,
+        "is_trading_session": is_session,
         "tradable_session": tradable,
+        "tradable_session_basis": tradable_basis,
         "date_precision_note": (
             "date-only availability is pinned to 23:59:59Z, so its phase is conservative"
             if precision == "date"
             else None
         ),
     }
-
 
 def _units(db: Database, document_id: str) -> list[dict[str, Any]]:
     return [

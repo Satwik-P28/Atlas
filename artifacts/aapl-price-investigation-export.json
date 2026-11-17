@@ -1,17 +1,17 @@
 {
   "schema": "atlas.reproducibility.v1",
-  "exported_at": "2026-11-17T20:05:49Z",
+  "exported_at": "2026-11-17T23:04:03Z",
   "object": {
-    "object_id": "URO-PRI-6df32ca68cec",
+    "object_id": "URO-PRI-0bb65cf5c902",
     "kind": "price_investigation",
     "name": "AAPL 2024-10-31 8-K review",
     "version": "1.0.0",
     "status": "validated",
-    "content_hash": "6d958f18109040c71c665d32e6be514266f30b34fbc62350b8164309283d5cd7",
+    "content_hash": "55da4196b6431b49cb660d1aa4a28a9523c5cc7fe537a3f3e1f5f575f83d55f2",
     "schema_version": "atlas.research_object.v1"
   },
   "document": {
-    "as_of": "2024-11-01T23:59:59Z",
+    "as_of": "2026-11-17T22:59:29Z",
     "assumptions": [
       "return basis: split_adjusted",
       "return convention: interval_close_to_close",
@@ -117,6 +117,15 @@
           },
           "epistemic_status": "observed",
           "event_id": "FIL-FIL-21e3c5b84c945b7f851e",
+          "explanatory_eligibility": {
+            "basis": "publication instant precedes the final selected session's close",
+            "eligible": true,
+            "final_session": "2024-11-01",
+            "final_session_close": "2024-11-01T20:00:00Z",
+            "first_eligible_session": "2024-11-01",
+            "reason": null
+          },
+          "explanatory_eligible": true,
           "filed_date": "2024-10-31",
           "filing_version": "original",
           "form_label": "Current report",
@@ -133,11 +142,17 @@
           "period_of_report": "2024-10-31",
           "publication": {
             "date_precision_note": null,
+            "is_trading_session": true,
+            "local_date": "2024-10-31",
             "local_time": "2024-10-31T16:30:25-04:00",
             "phase": "after_close",
-            "phase_basis": "stored venue session open/close bounds; the first stored session after publication is the tradable session",
+            "phase_basis": "stored venue session open/close bounds for the venue-local session date",
+            "session_date": "2024-10-31",
             "timezone": "America/New_York",
-            "tradable_session": "2024-11-01"
+            "tradable_session": "2024-11-01",
+            "tradable_session_basis": "the publication follows this venue-local session's close, so the first eligible trading session is the next stored session",
+            "utc_date": "2024-10-31",
+            "venue_timezone": "America/New_York"
           },
           "publication_date": "2024-10-31",
           "publication_local_date_differs": false,
@@ -198,6 +213,15 @@
           },
           "epistemic_status": "observed",
           "event_id": "FIL-FIL-846168b3af5658a9bb35",
+          "explanatory_eligibility": {
+            "basis": "publication instant precedes the final selected session's close",
+            "eligible": true,
+            "final_session": "2024-11-01",
+            "final_session_close": "2024-11-01T20:00:00Z",
+            "first_eligible_session": "2024-11-01",
+            "reason": null
+          },
+          "explanatory_eligible": true,
           "filed_date": "2024-11-01",
           "filing_version": "original",
           "form_label": "Annual report",
@@ -214,11 +238,17 @@
           "period_of_report": "2024-09-28",
           "publication": {
             "date_precision_note": null,
+            "is_trading_session": true,
+            "local_date": "2024-11-01",
             "local_time": "2024-11-01T06:01:36-04:00",
             "phase": "before_open",
-            "phase_basis": "stored venue session open/close bounds",
+            "phase_basis": "stored venue session open/close bounds for the venue-local session date",
+            "session_date": "2024-11-01",
             "timezone": "America/New_York",
-            "tradable_session": "2024-11-01"
+            "tradable_session": "2024-11-01",
+            "tradable_session_basis": "the publication precedes this venue-local session's open",
+            "utc_date": "2024-11-01",
+            "venue_timezone": "America/New_York"
           },
           "publication_date": "2024-11-01",
           "publication_local_date_differs": false,
@@ -279,6 +309,15 @@
           },
           "epistemic_status": "observed",
           "event_id": "FIL-FIL-55690d3e5fb255308484",
+          "explanatory_eligibility": {
+            "basis": "publication instant precedes the final selected session's close",
+            "eligible": true,
+            "final_session": "2024-11-01",
+            "final_session_close": "2024-11-01T20:00:00Z",
+            "first_eligible_session": "2024-11-01",
+            "reason": null
+          },
+          "explanatory_eligible": true,
           "filed_date": "2024-11-01",
           "filing_version": "original",
           "form_label": "S-3ASR",
@@ -295,11 +334,17 @@
           "period_of_report": null,
           "publication": {
             "date_precision_note": null,
+            "is_trading_session": true,
+            "local_date": "2024-11-01",
             "local_time": "2024-11-01T06:49:43-04:00",
             "phase": "before_open",
-            "phase_basis": "stored venue session open/close bounds",
+            "phase_basis": "stored venue session open/close bounds for the venue-local session date",
+            "session_date": "2024-11-01",
             "timezone": "America/New_York",
-            "tradable_session": "2024-11-01"
+            "tradable_session": "2024-11-01",
+            "tradable_session_basis": "the publication precedes this venue-local session's open",
+            "utc_date": "2024-11-01",
+            "venue_timezone": "America/New_York"
           },
           "publication_date": "2024-11-01",
           "publication_local_date_differs": false,
@@ -395,10 +440,16 @@
           "duplicates_suppressed": 0,
           "excluded_after_cutoff": 0,
           "excluded_unknown_availability": 0,
+          "explanatory_eligibility_basis": "a publication is explainable only if its availability instant precedes the final selected session's close",
           "filings_total_for_issuer": 2272,
+          "final_session": "2024-11-01",
+          "final_session_close": "2024-11-01T20:00:00Z",
+          "first_session_after_final": "2024-11-04",
           "in_window": 3,
           "publications_with_local_date_shift": 2,
-          "subsequent": 0
+          "published_after_final_session_close": 0,
+          "subsequent": 0,
+          "subsequent_to_price_window": 0
         }
       },
       "historical_cutoff": null,
@@ -456,7 +507,7 @@
         {
           "causal_status": "not_identified",
           "epistemic_status": "hypothesized",
-          "hypothesis_id": "HYP-670744546b8a0cd9",
+          "hypothesis_id": "HYP-221d72c718c94087",
           "limitations": [
             "absence of stored evidence is not absence of news",
             "routine administrative filings are not treated as explanations",
@@ -481,6 +532,7 @@
             "contradicting_evidence": [],
             "counterevidence": [],
             "inputs": {
+              "post_close_filings_not_ranked": 0,
               "routine_filings_not_ranked": 1,
               "undocumented_material_filings": 2
             },
@@ -2274,7 +2326,7 @@
             "availability_time": "2019-03-14T12:00:00Z",
             "effective_date": null,
             "ex_date": "2019-03-14",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2286,7 +2338,7 @@
             "availability_time": "2019-06-13T12:00:00Z",
             "effective_date": null,
             "ex_date": "2019-06-13",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2298,7 +2350,7 @@
             "availability_time": "2019-09-12T12:00:00Z",
             "effective_date": null,
             "ex_date": "2019-09-12",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2310,7 +2362,7 @@
             "availability_time": "2019-12-12T12:00:00Z",
             "effective_date": null,
             "ex_date": "2019-12-12",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2322,7 +2374,7 @@
             "availability_time": "2020-03-14T12:00:00Z",
             "effective_date": null,
             "ex_date": "2020-03-14",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2334,7 +2386,7 @@
             "availability_time": "2020-06-13T12:00:00Z",
             "effective_date": null,
             "ex_date": "2020-06-13",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2346,7 +2398,7 @@
             "availability_time": "2020-08-28T12:00:00Z",
             "effective_date": null,
             "ex_date": "2020-08-28",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2358,7 +2410,7 @@
             "availability_time": "2020-09-12T12:00:00Z",
             "effective_date": null,
             "ex_date": "2020-09-12",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2370,7 +2422,7 @@
             "availability_time": "2020-12-12T12:00:00Z",
             "effective_date": null,
             "ex_date": "2020-12-12",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2382,7 +2434,7 @@
             "availability_time": "2021-03-14T12:00:00Z",
             "effective_date": null,
             "ex_date": "2021-03-14",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2394,7 +2446,7 @@
             "availability_time": "2021-06-13T12:00:00Z",
             "effective_date": null,
             "ex_date": "2021-06-13",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2406,7 +2458,7 @@
             "availability_time": "2021-09-12T12:00:00Z",
             "effective_date": null,
             "ex_date": "2021-09-12",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2418,7 +2470,7 @@
             "availability_time": "2021-12-12T12:00:00Z",
             "effective_date": null,
             "ex_date": "2021-12-12",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2430,7 +2482,7 @@
             "availability_time": "2022-03-14T12:00:00Z",
             "effective_date": null,
             "ex_date": "2022-03-14",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2442,7 +2494,7 @@
             "availability_time": "2022-06-13T12:00:00Z",
             "effective_date": null,
             "ex_date": "2022-06-13",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2454,7 +2506,7 @@
             "availability_time": "2022-09-12T12:00:00Z",
             "effective_date": null,
             "ex_date": "2022-09-12",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2466,7 +2518,7 @@
             "availability_time": "2022-12-12T12:00:00Z",
             "effective_date": null,
             "ex_date": "2022-12-12",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2478,7 +2530,7 @@
             "availability_time": "2023-03-14T12:00:00Z",
             "effective_date": null,
             "ex_date": "2023-03-14",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2490,7 +2542,7 @@
             "availability_time": "2023-06-13T12:00:00Z",
             "effective_date": null,
             "ex_date": "2023-06-13",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2502,7 +2554,7 @@
             "availability_time": "2023-09-12T12:00:00Z",
             "effective_date": null,
             "ex_date": "2023-09-12",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2514,7 +2566,7 @@
             "availability_time": "2023-12-12T12:00:00Z",
             "effective_date": null,
             "ex_date": "2023-12-12",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2526,7 +2578,7 @@
             "availability_time": "2024-03-14T12:00:00Z",
             "effective_date": null,
             "ex_date": "2024-03-14",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2538,7 +2590,7 @@
             "availability_time": "2024-06-13T12:00:00Z",
             "effective_date": null,
             "ex_date": "2024-06-13",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2550,7 +2602,7 @@
             "availability_time": "2024-09-12T12:00:00Z",
             "effective_date": null,
             "ex_date": "2024-09-12",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -2562,7 +2614,7 @@
             "availability_time": "2024-12-12T12:00:00Z",
             "effective_date": null,
             "ex_date": "2024-12-12",
-            "observed_at": "2026-11-17T20:00:27Z",
+            "observed_at": "2026-11-17T22:55:45Z",
             "source_id": "synthetic-demo",
             "status": "confirmed",
             "supersedes": null
@@ -4433,7 +4485,7 @@
               "availability_time": "2019-03-14T12:00:00Z",
               "effective_date": null,
               "ex_date": "2019-03-14",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4445,7 +4497,7 @@
               "availability_time": "2019-06-13T12:00:00Z",
               "effective_date": null,
               "ex_date": "2019-06-13",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4457,7 +4509,7 @@
               "availability_time": "2019-09-12T12:00:00Z",
               "effective_date": null,
               "ex_date": "2019-09-12",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4469,7 +4521,7 @@
               "availability_time": "2019-12-12T12:00:00Z",
               "effective_date": null,
               "ex_date": "2019-12-12",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4481,7 +4533,7 @@
               "availability_time": "2020-03-14T12:00:00Z",
               "effective_date": null,
               "ex_date": "2020-03-14",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4493,7 +4545,7 @@
               "availability_time": "2020-06-13T12:00:00Z",
               "effective_date": null,
               "ex_date": "2020-06-13",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4505,7 +4557,7 @@
               "availability_time": "2020-08-28T12:00:00Z",
               "effective_date": null,
               "ex_date": "2020-08-28",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4517,7 +4569,7 @@
               "availability_time": "2020-09-12T12:00:00Z",
               "effective_date": null,
               "ex_date": "2020-09-12",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4529,7 +4581,7 @@
               "availability_time": "2020-12-12T12:00:00Z",
               "effective_date": null,
               "ex_date": "2020-12-12",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4541,7 +4593,7 @@
               "availability_time": "2021-03-14T12:00:00Z",
               "effective_date": null,
               "ex_date": "2021-03-14",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4553,7 +4605,7 @@
               "availability_time": "2021-06-13T12:00:00Z",
               "effective_date": null,
               "ex_date": "2021-06-13",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4565,7 +4617,7 @@
               "availability_time": "2021-09-12T12:00:00Z",
               "effective_date": null,
               "ex_date": "2021-09-12",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4577,7 +4629,7 @@
               "availability_time": "2021-12-12T12:00:00Z",
               "effective_date": null,
               "ex_date": "2021-12-12",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4589,7 +4641,7 @@
               "availability_time": "2022-03-14T12:00:00Z",
               "effective_date": null,
               "ex_date": "2022-03-14",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4601,7 +4653,7 @@
               "availability_time": "2022-06-13T12:00:00Z",
               "effective_date": null,
               "ex_date": "2022-06-13",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4613,7 +4665,7 @@
               "availability_time": "2022-09-12T12:00:00Z",
               "effective_date": null,
               "ex_date": "2022-09-12",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4625,7 +4677,7 @@
               "availability_time": "2022-12-12T12:00:00Z",
               "effective_date": null,
               "ex_date": "2022-12-12",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4637,7 +4689,7 @@
               "availability_time": "2023-03-14T12:00:00Z",
               "effective_date": null,
               "ex_date": "2023-03-14",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4649,7 +4701,7 @@
               "availability_time": "2023-06-13T12:00:00Z",
               "effective_date": null,
               "ex_date": "2023-06-13",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4661,7 +4713,7 @@
               "availability_time": "2023-09-12T12:00:00Z",
               "effective_date": null,
               "ex_date": "2023-09-12",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4673,7 +4725,7 @@
               "availability_time": "2023-12-12T12:00:00Z",
               "effective_date": null,
               "ex_date": "2023-12-12",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4685,7 +4737,7 @@
               "availability_time": "2024-03-14T12:00:00Z",
               "effective_date": null,
               "ex_date": "2024-03-14",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4697,7 +4749,7 @@
               "availability_time": "2024-06-13T12:00:00Z",
               "effective_date": null,
               "ex_date": "2024-06-13",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4709,7 +4761,7 @@
               "availability_time": "2024-09-12T12:00:00Z",
               "effective_date": null,
               "ex_date": "2024-09-12",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4721,7 +4773,7 @@
               "availability_time": "2024-12-12T12:00:00Z",
               "effective_date": null,
               "ex_date": "2024-12-12",
-              "observed_at": "2026-11-17T20:00:27Z",
+              "observed_at": "2026-11-17T22:55:45Z",
               "source_id": "synthetic-demo",
               "status": "confirmed",
               "supersedes": null
@@ -4883,7 +4935,7 @@
             }
           ]
         },
-        "hash": "8be89e9f60023cb087c79806a44a7b7507f2757bdfdae1fd39efb7a78b6c9bad",
+        "hash": "6caf68fbd92a6174f9568ceed651621adf662ad257be2ce349b4039332443e1f",
         "hash_algorithm": "sha256",
         "note": "identical stored observations, revisions and evidence reproduce this hash; any provider correction or new filing changes it"
       },
@@ -4934,6 +4986,45 @@
         "unregistered_sources": []
       },
       "security_id": "SEC-e5a386bfda8e5d8f951b",
+      "source_vintages": {
+        "filings": [
+          {
+            "accession": "0000320193-24-000120",
+            "availability_precision": "exact",
+            "availability_time": "2024-10-31T20:30:25Z",
+            "document_sha256": null,
+            "document_status": "not_ingested",
+            "event_id": "FIL-FIL-21e3c5b84c945b7f851e",
+            "ingested_at": null
+          },
+          {
+            "accession": "0000320193-24-000123",
+            "availability_precision": "exact",
+            "availability_time": "2024-11-01T10:01:36Z",
+            "document_sha256": null,
+            "document_status": "not_ingested",
+            "event_id": "FIL-FIL-846168b3af5658a9bb35",
+            "ingested_at": null
+          },
+          {
+            "accession": "0001140361-24-044880",
+            "availability_precision": "exact",
+            "availability_time": "2024-11-01T10:49:43Z",
+            "document_sha256": null,
+            "document_status": "not_ingested",
+            "event_id": "FIL-FIL-55690d3e5fb255308484",
+            "ingested_at": null
+          }
+        ],
+        "note": "prices are stored session revisions, not the provider's publication history; documents are archived versions, not the SEC HTML as published",
+        "prices": {
+          "provider_publication_vintage": null,
+          "reason": "Atlas stores the latest revision of each session, not the provider's publication history, so a historical reconstruction cannot prove these prices were available at the requested cutoff",
+          "status": "unverified",
+          "verified_at_cutoff": false,
+          "vintage_kind": "market_session_date"
+        }
+      },
       "statistics": {
         "absolute_change": 1.77,
         "annualization": "sample standard deviation of daily returns x sqrt(252)",
@@ -4986,6 +5077,71 @@
           "observation_id": "MOB-a15c6174500e66359c5e4fec",
           "return": 0.000773874013310633,
           "session": "2024-10-30"
+        }
+      },
+      "temporal": {
+        "analysis_time": "2026-11-17T22:59:29Z",
+        "as_of_basis": "retrospective investigation: claims are as of the run time, not the end of the price observation period; later amendments and revisions may be present",
+        "limitations": [
+          "the observation period is not a knowledge cutoff",
+          "a retrospective report must not be read as what was knowable at the period end",
+          "no licensed news, consensus or macro-release vintage is present"
+        ],
+        "mode": "retrospective_investigation",
+        "object_created_at": "2026-11-17T22:59:29Z",
+        "observation_period": {
+          "end_session": "2024-11-01",
+          "price_basis": "split_adjusted",
+          "sessions": 5,
+          "start_session": "2024-10-28",
+          "timeframe": "1d",
+          "timezone": "America/New_York"
+        },
+        "public_knowledge_cutoff": {
+          "basis": "analysis_run_time_retrospective",
+          "date": "2026-11-17",
+          "instant": "2026-11-17T22:59:29Z"
+        },
+        "retrospective": true,
+        "schema": "atlas.price_investigation.temporal.v1",
+        "source_vintages": {
+          "filings": [
+            {
+              "accession": "0000320193-24-000120",
+              "availability_precision": "exact",
+              "availability_time": "2024-10-31T20:30:25Z",
+              "document_sha256": null,
+              "document_status": "not_ingested",
+              "event_id": "FIL-FIL-21e3c5b84c945b7f851e",
+              "ingested_at": null
+            },
+            {
+              "accession": "0000320193-24-000123",
+              "availability_precision": "exact",
+              "availability_time": "2024-11-01T10:01:36Z",
+              "document_sha256": null,
+              "document_status": "not_ingested",
+              "event_id": "FIL-FIL-846168b3af5658a9bb35",
+              "ingested_at": null
+            },
+            {
+              "accession": "0001140361-24-044880",
+              "availability_precision": "exact",
+              "availability_time": "2024-11-01T10:49:43Z",
+              "document_sha256": null,
+              "document_status": "not_ingested",
+              "event_id": "FIL-FIL-55690d3e5fb255308484",
+              "ingested_at": null
+            }
+          ],
+          "note": "prices are stored session revisions, not the provider's publication history; documents are archived versions, not the SEC HTML as published",
+          "prices": {
+            "provider_publication_vintage": null,
+            "reason": "Atlas stores the latest revision of each session, not the provider's publication history, so a historical reconstruction cannot prove these prices were available at the requested cutoff",
+            "status": "unverified",
+            "verified_at_cutoff": false,
+            "vintage_kind": "market_session_date"
+          }
         }
       },
       "ticker": null,
@@ -5089,7 +5245,7 @@
     "terminal_value": "atlas.fec.operators.v1"
   },
   "reproduction": {
-    "command": "atlas model export URO-PRI-6df32ca68cec",
+    "command": "atlas model export URO-PRI-0bb65cf5c902",
     "note": "Archive the document and cited evidence snapshots before relying on future reproduction."
   },
   "rights": {

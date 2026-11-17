@@ -837,3 +837,35 @@ p { margin: 0 0 8px; }
 .wrap {
   overflow-wrap: anywhere;
 }
+
+.saved-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+
+.saved-investigation-list {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.saved-investigation-list > li {
+  border-top: 1px solid rgba(139, 148, 158, 0.14);
+  padding-top: 10px;
+}
+
+.saved-snapshot {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid rgba(139, 148, 158, 0.2);
+  border-radius: 8px;
+}
+
+.saved-snapshot h5 {
+  margin: 0 0 6px;
+}

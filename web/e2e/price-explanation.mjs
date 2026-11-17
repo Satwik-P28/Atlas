@@ -10,7 +10,7 @@
  * export authorization, and a touch/mobile viewport. Screenshots land in ../artifacts.
  */
 import { chromium } from 'playwright'
-import { mkdir, readFile } from 'node:fs/promises'
+import { mkdir, readFile, readdir, unlink } from 'node:fs/promises'
 import path from 'node:path'
 
 const BASE = process.env.ATLAS_BASE ?? 'http://127.0.0.1:3002'
@@ -81,11 +81,23 @@ async function openDetail(page, title) {
   await page.waitForTimeout(100)
 }
 
-async function openCompany(page) {
-  await page.goto(`${BASE}/companies/${COMPANY}`, { waitUntil: 'domcontentloaded' })
+async function openTicker(page, ticker) {
+  await page.goto(`${BASE}/companies/${ticker}`, { waitUntil: 'domcontentloaded' })
   await page.getByRole('tab', { name: 'Charts' }).click()
   await page.getByTestId('explain-range-toggle').waitFor({ timeout: 20000 })
   await page.waitForSelector('canvas')
+}
+
+async function openCompany(page) {
+  await openTicker(page, COMPANY)
+}
+
+async function selectRange(page, start, end) {
+  await page.getByLabel('Selection start session').fill(start)
+  await page.waitForTimeout(150)
+  await page.getByLabel('Selection end session').fill(end)
+  await loadedPanel(page)
+  await page.waitForTimeout(300)
 }
 
 async function enableExplain(page) {
@@ -137,6 +149,9 @@ async function loadedPanel(page) {
 }
 
 await mkdir(OUT, { recursive: true })
+for (const entry of await readdir(OUT)) {
+  if (/^\d+-audit-.*\.png$/.test(entry)) await unlink(path.join(OUT, entry))
+}
 const browser = await chromium.launch(LAUNCH)
 const context = await browser.newContext({ viewport: { width: 1440, height: 960 } })
 const page = await context.newPage()
@@ -338,6 +353,170 @@ try {
     await loadedPanel(page)
   })
 
+  // The next checks move to Apple: its 31 October 2024 8-K was accepted at 20:30Z,
+  // after that session's 20:00Z close, so it must be visible but not ranked. The
+  // document text is an explicit offline UI fixture because this demo has no archived
+  // filing HTML; the locator, accession and timestamp are the real stored values.
+  await check('after-close filing is visible but marked not a candidate explanation', async () => {
+    await openTicker(page, 'AAPL')
+    await enableExplain(page)
+    await selectRange(page, '2024-10-28', '2024-10-31')
+    const panel = page.locator('.price-explanation')
+    const text = await panel.innerText()
+    assert(/after final close|subsequent to price window/i.test(text), 'after-close relation not shown')
+    assert(/Not a candidate explanation/.test(text), 'eligibility reason not shown')
+    assert(/2024-10-31T20:30:25Z/.test(text), 'real acceptance instant not shown')
+    assert(!/NaN|undefined/.test(text), 'panel contains NaN or undefined')
+  })
+
+  await check('original SEC document link, passages and citation spans render', async () => {
+    const fixtureText =
+      'TEST FIXTURE: offline UI fixture for the original-document panel; not a real Apple excerpt.'
+    await page.route('**/api/securities/*/price-explanations', async (route) => {
+      const response = await route.fetch()
+      const payload = await response.json()
+      const target = payload.events.items.find(
+        (item) =>
+          item.kind === 'sec_filing' && item.accession_number === '0000320193-24-000120',
+      )
+      if (target) target.document = {
+        ...(target.document ?? {}),
+        status: 'resolved',
+        sha256: 'f'.repeat(64),
+        availability_time: '2024-10-31T20:30:25Z',
+        availability_precision: 'exact',
+        rights: { redistribution: 'public_domain', redistributable: true, retention_policy: 'archive' },
+        items: [
+          {
+            item: '2.02',
+            label: 'Results of Operations and Financial Condition',
+            observed_heading: 'Item 2.02. Results of Operations and Financial Condition',
+            section_path: 'Item 2.02',
+            unit_id: 'KU-fixture-1',
+          },
+        ],
+        passages: [
+          {
+            unit_id: 'KU-fixture-1',
+            section_path: 'Item 2.02',
+            heading: 'Item 2.02. Results of Operations and Financial Condition',
+            unit_kind: 'paragraph',
+            char_start: 100,
+            char_end: 260,
+            sha256: 'e'.repeat(64),
+            excerpt: fixtureText,
+            excerpt_truncated: false,
+            excerpt_withheld: null,
+            citation:
+              'accession 0000320193-24-000120 section Item 2.02 chars 100-260',
+          },
+        ],
+        passage_status: 'available',
+        reason: null,
+      }
+      await route.fulfill({ response, json: payload })
+    })
+    // Force a new request after installing the fixture route: re-selecting the same
+    // interval would leave the already-loaded response in place.
+    await selectRange(page, '2024-10-28', '2024-10-30')
+    await selectRange(page, '2024-10-28', '2024-10-31')
+    const link = page.getByTestId('document-link').first()
+    await link.waitFor({ timeout: 10000 })
+    assert(
+      (await link.getAttribute('href')) ===
+        'https://www.sec.gov/Archives/edgar/data/320193/000032019324000120/aapl-20241031.htm',
+      'original SEC locator is not the stored accession and primary document',
+    )
+    await page.locator('.document-evidence details summary').first().click()
+    const citation = page.getByTestId('passage-citation').first()
+    await citation.waitFor({ timeout: 5000 })
+    assert(
+      (await citation.innerText()).includes('accession 0000320193-24-000120 section Item 2.02'),
+      'citation does not name the accession and section',
+    )
+    assert(
+      (await page.locator('blockquote').first().innerText()).includes('TEST FIXTURE'),
+      'stored fixture passage was not rendered',
+    )
+    await shot(page, 'document-passages')
+    await page.unroute('**/api/securities/*/price-explanations')
+  })
+
+  await check('saving an investigation shows its retrospective as-of time', async () => {
+    const save = page.getByRole('button', { name: 'Save investigation' })
+    await save.click()
+    const savedAsOf = page.getByTestId('saved-as-of')
+    await savedAsOf.waitFor({ timeout: 15000 })
+    const value = await savedAsOf.innerText()
+    assert(/^\d{4}-\d{2}-\d{2}T/.test(value), `saved as_of is not a timestamp: ${value}`)
+    assert(value.slice(0, 10) >= '2026', `retrospective as_of leaked back to the period: ${value}`)
+    const text = await page.locator('.price-explanation').innerText()
+    assert(/retrospective run/.test(text), 'retrospective label missing beside saved time')
+    await shot(page, 'saved-investigation')
+  })
+
+  await check('saving the same version again is refused, not overwritten', async () => {
+    // This request is expected to fail, so its 4xx console line is not a defect.
+    page.__tolerateHttpErrors = true
+    await page.getByRole('button', { name: 'Save investigation' }).click()
+    const alert = page.locator('.price-explanation [role="alert"]')
+    await alert.waitFor({ timeout: 10000 })
+    assert(/already exists/i.test(await alert.innerText()), 'duplicate save was not refused')
+    page.__tolerateHttpErrors = false
+  })
+
+  await check('check for changes reports a labelled current-state comparison', async () => {
+    await page.getByRole('button', { name: 'Check for changes' }).first().click()
+    const impact = page.getByTestId('impact-status')
+    await impact.waitFor({ timeout: 10000 })
+    const text = await impact.innerText()
+    assert(/unchanged/.test(text), `unexpected impact status: ${text}`)
+    assert(/current_state_drift_check/.test(text), 'drift comparison is not labelled')
+    assert(/drift check, not a replay/i.test(text), 'drift guarantee is overstated')
+  })
+
+  await check('saved work can be reopened with its knowledge cutoff', async () => {
+    const savedSection = page.getByTestId('saved-investigations')
+    await savedSection.evaluate((element) => {
+      element.open = true
+    })
+    const item = savedSection.locator('li').first()
+    await item.waitFor({ timeout: 10000 })
+    const itemText = await item.innerText()
+    assert(
+      /2024-10-28|2024-10-29/.test(itemText) && /URO-PRI-/.test(itemText),
+      `saved list does not show the saved interval and object: ${itemText}`,
+    )
+    await page.getByTestId('reopen-investigation').first().click()
+    const snapshot = page.getByTestId('saved-snapshot')
+    await snapshot.waitFor({ timeout: 10000 })
+    const text = await snapshot.innerText()
+    assert(/Retrospective investigation/.test(text), 'reopened snapshot lost its retrospective label')
+    assert(/Knowledge cutoff/.test(text), 'reopened snapshot has no knowledge cutoff')
+    assert(/analysis_run_time_retrospective/.test(text), 'cutoff basis is missing')
+    assert(/URO-PRI-/.test(text), 'reopened snapshot does not identify the stored object')
+    await shot(page, 'reopened-saved-work')
+  })
+
+  await check('a failed saved-work request shows a retryable error', async () => {
+    page.__tolerateHttpErrors = true
+    await page.route('**/api/research/price-investigations/*', async (route) => {
+      await route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          error: { code: 'acceptance_injected', message: 'synthetic reopen failure' },
+        }),
+      })
+    })
+    await page.getByTestId('reopen-investigation').first().click()
+    const error = page.getByTestId('reopen-error')
+    await error.waitFor({ timeout: 10000 })
+    assert(/synthetic reopen failure/.test(await error.innerText()), 'reopen failure not surfaced')
+    await page.unroute('**/api/research/price-investigations/*')
+    page.__tolerateHttpErrors = false
+  })
+
   await check('closing Explain mode restores normal chart interaction', async () => {
     await page.getByRole('button', { name: 'Close investigation' }).click()
     await page.waitForTimeout(300)
@@ -392,6 +571,20 @@ try {
     )
     assert(overflow <= 1, `panel causes ${overflow}px horizontal overflow on mobile`)
     await shot(phone, 'mobile-panel', true)
+  })
+
+  await check('mobile save and saved-work layout fit the viewport', async () => {
+    await selectRange(phone, '2024-10-29', '2024-11-01')
+    await phone.getByRole('button', { name: 'Save investigation' }).click()
+    await phone.getByTestId('saved-as-of').waitFor({ timeout: 15000 })
+    await phone.getByTestId('saved-investigations').locator('summary').click()
+    const overflow = await phone.evaluate(
+      () => document.documentElement.scrollWidth - window.innerWidth,
+    )
+    assert(overflow <= 1, `saved work causes ${overflow}px horizontal overflow on mobile`)
+    const text = await phone.locator('.price-explanation').innerText()
+    assert(/retrospective run/.test(text), 'mobile saved time lost its retrospective label')
+    await shot(phone, 'mobile-saved')
   })
 
   await check('mobile panel exposes export and rights', async () => {

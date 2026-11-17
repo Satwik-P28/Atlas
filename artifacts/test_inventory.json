@@ -2,9 +2,9 @@
   "schema": "atlas.test_inventory.v2",
   "measured_at": "2026-11-17",
   "repository_state": {
-    "branch": "review/price-intelligence-v3.2-integrity",
-    "base_branch": "review/price-intelligence-v3.2",
-    "base_commit": "747871b"
+    "branch": "review/price-intelligence-v3.2-temporal",
+    "base_branch": "review/price-intelligence-v3.2-integrity",
+    "base_commit": "5b8605e"
   },
   "measurement_policy": {
     "observed": "counted by running pytest --collect-only at this revision, or by a test run in this revision",
@@ -13,20 +13,20 @@
   },
   "python": {
     "observed": {
-      "total_collected": 752,
+      "total_collected": 762,
       "total_command": ".venv/bin/python -m pytest -o addopts='' --collect-only -q",
       "files": [
         {
           "file": "tests/test_price_explanations.py",
-          "count": 35,
+          "count": 36,
           "method": "observed",
-          "note": "the original feature suite, unchanged in this pass"
+          "note": "feature suite plus the new saved-object reopen API test"
         },
         {
           "file": "tests/test_price_evidence_integrity.py",
-          "count": 18,
+          "count": 27,
           "method": "observed",
-          "note": "adversarial tests added by the integrity pass"
+          "note": "adversarial temporal, eligibility, venue-time and amendment tests added in this pass"
         }
       ]
     },
@@ -34,17 +34,18 @@
       "baseline_tests": {
         "count": 699,
         "method": "reconstructed_by_subtraction",
-        "formula": "752 collected - 35 feature - 18 integrity",
-        "note": "The earlier inventory asserted 699 as measured. No independent count at commit c6ba985 exists in this environment, so it is reported as the residual it is; the two feature files are the observed parts."
+        "formula": "762 collected - 36 feature - 27 integrity",
+        "note": "Residual derived by subtraction; no independent count at commit c6ba985 exists in this environment."
       }
     },
     "last_result": {
-      "passed": 752,
+      "passed": 762,
       "skipped": 0,
       "failed": 0,
-      "collected": 752,
+      "collected": 762,
       "method": "observed",
-      "command": ".venv/bin/python -m pytest -o addopts='' -q"
+      "command": ".venv/bin/python -m pytest -o addopts='' -q",
+      "duration_seconds": 140.26
     }
   },
   "frontend": {
@@ -55,10 +56,10 @@
     "build_command": "cd web && npm run build",
     "browser_command": "cd web && node e2e/price-explanation.mjs",
     "browser_file": "web/e2e/price-explanation.mjs",
-    "browser_checks": 19,
-    "browser_result": "19 passed, 0 failed at commit 747871b on 2026-11-17",
-    "rerun_in_this_pass": false,
-    "rerun_note": "No browser is installed in this environment. The pre-existing 19-check result is reported as history, not as a result of this pass."
+    "browser_checks": 27,
+    "browser_result": "27 passed, 0 failed, 0 console/page errors on 2026-11-17 against a freshly rebuilt demo database; 12 screenshots",
+    "rerun_in_this_pass": true,
+    "rerun_note": "Chromium 156 headless through Playwright, driven by web/e2e/price-explanation.mjs. Desktop and 390x844 mobile layouts; saved-work list requires a fresh database because the save contract refuses duplicates."
   },
   "specification": {
     "file": "ATLAS_MASTER_SPEC.md",
@@ -70,9 +71,9 @@
   },
   "claims_not_made": [
     "No ICB-65 through ICB-75 benchmark is marked passed.",
-    "No performance or historical-accuracy claim is made.",
+    "No historical-accuracy, predictive or performance claim is made.",
     "No news, consensus or macro-release source is licensed or simulated.",
-    "No live SEC retrieval was performed in this environment; original-document inspection was exercised against archived offline fixtures only.",
-    "No browser run was performed in this pass."
+    "No live SEC retrieval was performed in this pass; original-document rendering was exercised against a clearly labelled offline UI fixture.",
+    "No archived filing HTML exists in the demo database, and the demo price series is synthetic."
   ]
 }

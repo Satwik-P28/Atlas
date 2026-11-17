@@ -108,6 +108,7 @@ W_UNKNOWN_FILING_AVAILABILITY = "filing_availability_unknown"
 W_DOCUMENT_NOT_INGESTED = "original_document_not_ingested"
 W_DOCUMENT_NOT_AT_CUTOFF = "document_not_available_at_cutoff"
 W_TIMEZONE_SHIFT = "publication_local_date_differs"
+W_AFTER_FINAL_CLOSE = "filing_after_final_session_close"
 W_EVENT_DUPLICATE = "duplicate_event_suppressed"
 W_DOCUMENT_RESTRICTED = "document_text_not_redistributable"
 W_RESTRICTED_EXPORT = "restricted_source_not_exportable"
@@ -555,6 +556,15 @@ def _session_bounds(db: Database, mic: str, start: str, end: str) -> dict[str, t
         return {}
 
 
+def _venue_timezone(db: Database, mic: str) -> str | None:
+    """The exchange's own timezone, used to date a publication in venue-local time."""
+    try:
+        row = db.query_one("SELECT timezone FROM venue WHERE mic = ?", (mic.upper(),))
+    except Exception:  # noqa: BLE001 - a missing venue row is a display limitation
+        return None
+    return str(row["timezone"]) if row is not None and row["timezone"] else None
+
+
 def _filing_events(
     db: Database,
     *,
@@ -567,13 +577,19 @@ def _filing_events(
     timezone: str,
     mic: str,
     stored_sessions: Sequence[str],
-) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+) -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]]:
     """Filings whose *publication* time is evidenced, ordered by that time.
 
     Ordering and admissibility use the availability instant produced by the Temporal
     Evidence Kernel policy: an SEC acceptance timestamp is exact, a filed date alone is
     pinned to the end of its UTC day, and a filing with no publication time is never
     admitted to the ranking. The SEC filed date is retained separately as metadata.
+
+    Explanatory eligibility is not the calendar interval. A filing published after the
+    final selected session's close cannot explain that closed candle even when its
+    publication date is inside the interval: its first eligible trading session is a
+    later session that the reader has not selected. Such evidence stays visible with
+    relation ``subsequent_to_price_window`` and is excluded from the ranking.
     """
     rows = db.query(
         "SELECT * FROM filing WHERE issuer_id=? ORDER BY filed_date, accession_number",
@@ -584,15 +600,23 @@ def _filing_events(
     window_end_at = _window_instant(end, end_of_day=True)
     session_bound_rows = _session_bounds(
         db, mic, (parse_date(start) - timedelta(days=7)).isoformat(),
-        (parse_date(end) + timedelta(days=14)).isoformat(),
+        (parse_date(end) + timedelta(days=21)).isoformat(),
+    )
+    venue_timezone = _venue_timezone(db, mic)
+    final_bounds = session_bound_rows.get(end)
+    final_close_at = final_bounds[1] if final_bounds else None
+    next_after_final = next(
+        (day for day in sorted(session_bound_rows) if day > end), None
     )
     in_window: list[dict[str, Any]] = []
     after_window: list[dict[str, Any]] = []
     subsequent: list[dict[str, Any]] = []
+    subsequent_to_window: list[dict[str, Any]] = []
     excluded_after_cutoff = 0
     unknown_availability = 0
     before_window = 0
     timezone_shifted = 0
+    published_after_final_close = 0
     in_window_accessions: set[str] = set()
     document_counts = {
         fe.DOC_RESOLVED: 0,
@@ -609,6 +633,7 @@ def _filing_events(
             availability=availability,
             precision=precision,
             timezone=timezone,
+            venue_timezone=venue_timezone,
             session_bounds=session_bound_rows,
             stored_sessions=stored_sessions,
         )
@@ -648,6 +673,56 @@ def _filing_events(
                 "basis": "the filing is registered to this investigation's issuer",
             },
             "epistemic_status": "observed",
+            "explanatory_eligible": False,
+            "explanatory_eligibility": {
+                "eligible": False,
+                "basis": "not evaluated",
+                "final_session": end,
+                "final_session_close": final_close_at,
+                "first_eligible_session": publication.get("tradable_session"),
+                "reason": None,
+            },
+        }
+
+    def _eligibility(available: str, publication: Mapping[str, Any]) -> dict[str, Any]:
+        """Whether a publication could have been reflected in the final selected close."""
+        tradable = publication.get("tradable_session")
+        if final_close_at is None:
+            eligible = available <= window_end_at
+            return {
+                "eligible": eligible,
+                "basis": (
+                    "no stored venue session close for the final selected session; "
+                    "end-of-day UTC is used conservatively"
+                ),
+                "final_session": end,
+                "final_session_close": None,
+                "first_eligible_session": tradable,
+                "reason": (
+                    None
+                    if eligible
+                    else "published after the end-of-day fallback boundary for the window"
+                ),
+            }
+        eligible = parse_iso(available) < parse_iso(final_close_at)
+        reason = None
+        if not eligible:
+            reason = (
+                f"published at {available}, at or after the close of the final selected "
+                f"session {end} ({final_close_at}); its first eligible trading session is "
+                f"{tradable or 'not stored'}, so it cannot explain that close"
+            )
+        return {
+            "eligible": eligible,
+            "basis": (
+                "publication instant precedes the final selected session's close"
+                if eligible
+                else "publication instant is at or after the final selected session's close"
+            ),
+            "final_session": end,
+            "final_session_close": final_close_at,
+            "first_eligible_session": tradable,
+            "reason": reason,
         }
 
     # A filing is public when it was *accepted*, not when its calendar date says it was
@@ -664,14 +739,24 @@ def _filing_events(
         item = _item(row, available, precision, basis)
         if item["publication_local_date_differs"]:
             timezone_shifted += 1
+        eligibility = _eligibility(available, item["publication"])
+        item["explanatory_eligible"] = eligibility["eligible"]
+        item["explanatory_eligibility"] = eligibility
         if available <= window_end_at:
             in_window_accessions.add(row["accession_number"])
             if mode == MODE_HISTORICAL and cutoff_at and available > cutoff_at:
                 excluded_after_cutoff += 1
                 continue
-            item["relation"] = "in_window"
-            item["known_at_range_end"] = True
-            in_window.append(item)
+            if eligibility["eligible"]:
+                item["relation"] = "in_window"
+                item["known_at_range_end"] = True
+                in_window.append(item)
+            else:
+                # Visible, but not a candidate explanation of the final closed candle.
+                item["relation"] = "subsequent_to_price_window"
+                item["known_at_range_end"] = True
+                published_after_final_close += 1
+                subsequent_to_window.append(item)
             continue
         pending.append((item, available))
 
@@ -688,17 +773,30 @@ def _filing_events(
                 after_window.append(item)
             else:
                 excluded_after_cutoff += 1
-        elif is_revision_of_window:
+            continue
+        item["explanatory_eligible"] = False
+        item["known_at_range_end"] = False
+        item["explanatory_eligibility"] = {
+            **item["explanatory_eligibility"],
+            "eligible": False,
+            "reason": (
+                f"published at {available}, after the selected interval ended on {end}; "
+                "it is retrospective context, not contemporaneous evidence"
+            ),
+        }
+        if is_revision_of_window:
             item["kind"] = "sec_filing_amendment"
             item["title"] = f"{item['form_type']} amending {item['amends_accession']}"
             item["relation"] = "subsequent"
-            item["known_at_range_end"] = False
             subsequent.append(item)
+        # A later non-amendment filing is outside the selected calendar interval, so it is
+        # not part of this investigation's timeline. The in-interval after-close case is
+        # handled above and stays visible as subsequent_to_price_window.
 
     # Order by evidenced publication time, not by the SEC calendar date. Ties break on
     # the event id so the order is reproducible.
     ordered = sorted(
-        in_window + after_window + subsequent,
+        in_window + after_window + subsequent + subsequent_to_window,
         key=lambda item: (item["availability_time"], item["event_id"]),
     )[:limit]
 
@@ -767,11 +865,20 @@ def _filing_events(
         "in_window": len(in_window),
         "after_window": len(after_window),
         "subsequent": len(subsequent),
+        "subsequent_to_price_window": len(subsequent_to_window),
+        "published_after_final_session_close": published_after_final_close,
         "before_window": before_window,
         "excluded_after_cutoff": excluded_after_cutoff,
         "excluded_unknown_availability": unknown_availability,
         "publications_with_local_date_shift": timezone_shifted,
         "duplicates_suppressed": len(duplicates),
+        "final_session": end,
+        "final_session_close": final_close_at,
+        "first_session_after_final": next_after_final,
+        "explanatory_eligibility_basis": (
+            "a publication is explainable only if its availability instant precedes the "
+            "final selected session's close"
+        ),
         "documents": {
             **document_counts,
             "resolved_in_returned_items": resolved,
@@ -783,6 +890,7 @@ def _filing_events(
         "availability_policy": AVAILABILITY_POLICY,
     }
     return kept, coverage, duplicates
+
 
 def _action_events(
     actions: Sequence[CorporateAction],
@@ -1257,6 +1365,23 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
                 count=len(subsequent_events),
             )
         )
+    post_close_events = [
+        item for item in events if item.get("relation") == "subsequent_to_price_window"
+    ]
+    if post_close_events:
+        warnings.append(
+            _warning(
+                W_AFTER_FINAL_CLOSE,
+                "some filings were published after the final selected session's close; "
+                "their first eligible trading session is outside the selected interval, so "
+                "they are visible as subsequent evidence and are not ranked as explanations "
+                "of that close",
+                count=len(post_close_events),
+                final_session=end,
+                final_session_close=filing_coverage.get("final_session_close"),
+                event_ids=[item["event_id"] for item in post_close_events],
+            )
+        )
     if filing_coverage["excluded_unknown_availability"]:
         warnings.append(
             _warning(
@@ -1405,6 +1530,7 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
         market_model=market_model,
         benchmark=benchmark,
         volume_ratio=volume_ratio,
+        post_close_events=post_close_events,
     )
 
     price_vintage = {
@@ -2278,6 +2404,7 @@ def _interpret(
     market_model: Mapping[str, Any],
     benchmark: Mapping[str, Any],
     volume_ratio: float | None,
+    post_close_events: Sequence[Mapping[str, Any]] = (),
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Separate confirmed observations from competing, unproven explanations.
 
@@ -2679,7 +2806,21 @@ def _interpret(
             "interval is stored. Atlas cannot explain the move from its sources and abstains "
             "rather than inferring a cause."
         )
-        if undisclosed_material:
+        if post_close_events:
+            count = len(post_close_events)
+            subject = "1 SEC filing was" if count == 1 else f"{count} SEC filings were"
+            statement = (
+                f"{subject} published inside the calendar interval but after the final "
+                "selected session's close. The first eligible trading session is later, so "
+                "the filing is visible as subsequent evidence and is not a candidate "
+                "explanation of this close. Atlas abstains from attributing the move to it."
+                if count == 1
+                else f"{subject} published inside the calendar interval but after the final "
+                "selected session's close. Their first eligible trading session is later, so "
+                "they are visible as subsequent evidence and are not candidate explanations "
+                "of this close. Atlas abstains from attributing the move to them."
+            )
+        elif undisclosed_material:
             statement = (
                 "A material filing was published inside this interval, but no archived primary "
                 "document identifies what it disclosed. Atlas abstains from explaining the move "
@@ -2700,6 +2841,7 @@ def _interpret(
                 inputs={
                     "routine_filings_not_ranked": routine_filings,
                     "undocumented_material_filings": len(undisclosed_material),
+                    "post_close_filings_not_ranked": len(post_close_events),
                 },
                 limitations=[
                     "absence of stored evidence is not absence of news",

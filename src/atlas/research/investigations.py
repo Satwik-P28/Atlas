@@ -21,12 +21,14 @@ from typing import Any, Mapping
 
 from ..core.errors import ValidationError
 from ..core.temporal import iso, utcnow
+from ..entities.master import SecurityMaster
 from ..storage.db import Database
 from . import move_intelligence
 from .objects import SCHEMA_VERSION, ResearchObjectStore
 
 KIND = "price_investigation"
-DOCUMENT_SCHEMA = "atlas.price_investigation.v1"
+DOCUMENT_SCHEMA = "atlas.price_investigation.v2"
+TEMPORAL_SCHEMA = "atlas.price_investigation.temporal.v1"
 
 
 def investigation_name(report: Mapping[str, Any]) -> str:
@@ -35,17 +37,100 @@ def investigation_name(report: Mapping[str, Any]) -> str:
     return f"{ticker} {selection['start_session']}..{selection['end_session']}"
 
 
-def _knowledge_as_of(report: Mapping[str, Any]) -> str:
-    """The instant the investigation's claims are as-of.
+def _temporal_semantics(
+    report: Mapping[str, Any], created_at: str
+) -> tuple[str, dict[str, Any]]:
+    """Separate the five clocks a saved investigation can otherwise conflate.
 
-    A historical reconstruction is as-of its cutoff (end of that UTC day). A
-    retrospective investigation uses the last selected session's end of day, because
-    that is the newest market evidence it could contain.
+    The market observation period is historical; the knowledge cutoff is when the
+    evidence used became public; the analysis time and the saved-object creation time
+    are when this investigation was actually produced; and the source vintages record
+    which provider revisions and archived document versions were used.
+
+    A retrospective investigation is **not** knowledge that was public at the end of its
+    price window. Its knowledge cutoff is the run time, because it can contain later
+    amendments and later provider revisions. Only a historical reconstruction has a
+    cutoff inside the observation period, and even then the provider price vintage is
+    unverified.
     """
+    selection = report["selection"]
     request = report["request"]
-    if request.get("information_cutoff"):
-        return f"{request['information_cutoff']}T23:59:59Z"
-    return f"{report['selection']['end_session']}T23:59:59Z"
+    historical = request.get("mode") == move_intelligence.MODE_HISTORICAL
+    cutoff = request.get("information_cutoff")
+    if historical:
+        knowledge = f"{cutoff}T23:59:59Z" if cutoff else created_at
+        basis = (
+            "information_cutoff_end_of_day_utc"
+            if cutoff
+            else "analysis_run_time_no_cutoff"
+        )
+        as_of_basis = (
+            "historical reconstruction: claims are as of the end of the requested "
+            "information-cutoff day, and later evidence is excluded"
+        )
+    else:
+        knowledge = created_at
+        basis = "analysis_run_time_retrospective"
+        as_of_basis = (
+            "retrospective investigation: claims are as of the run time, not the end of "
+            "the price observation period; later amendments and revisions may be present"
+        )
+    documents = []
+    for event in report["events"]["items"]:
+        document = event.get("document") or {}
+        if not document.get("accession"):
+            continue
+        documents.append(
+            {
+                "event_id": event["event_id"],
+                "accession": document["accession"],
+                "document_sha256": document.get("sha256"),
+                "availability_time": (
+                    document.get("availability_time") or event.get("availability_time")
+                ),
+                "availability_precision": (
+                    document.get("availability_precision")
+                    or event.get("availability_precision")
+                ),
+                "ingested_at": document.get("ingested_at"),
+                "document_status": document.get("status"),
+            }
+        )
+    temporal = {
+        "schema": TEMPORAL_SCHEMA,
+        "observation_period": {
+            "start_session": selection["start_session"],
+            "end_session": selection["end_session"],
+            "sessions": selection["sessions"],
+            "timeframe": selection["timeframe"],
+            "timezone": selection["timezone"],
+            "price_basis": request.get("price_basis"),
+        },
+        "public_knowledge_cutoff": {
+            "instant": knowledge,
+            "date": knowledge[:10],
+            "basis": basis,
+        },
+        "analysis_time": created_at,
+        "object_created_at": created_at,
+        "mode": request.get("mode"),
+        "retrospective": not historical,
+        "as_of_basis": as_of_basis,
+        "source_vintages": {
+            "prices": dict(report["selection"].get("price_vintage") or {}),
+            "filings": documents,
+            "note": (
+                "prices are stored session revisions, not the provider's publication "
+                "history; documents are archived versions, not the SEC HTML as published"
+            ),
+        },
+        "limitations": [
+            "the observation period is not a knowledge cutoff",
+            "a retrospective report must not be read as what was knowable at the period end",
+            "no licensed news, consensus or macro-release vintage is present",
+        ],
+    }
+    return knowledge, temporal
 
 
 def build_document(
@@ -54,8 +139,11 @@ def build_document(
     name: str | None = None,
     version: str = "1.0.0",
     status: str = "validated",
+    created_at: str | None = None,
 ) -> dict[str, Any]:
     """Turn an engine report into a UROS ``price_investigation`` document."""
+    created_at = created_at or iso(utcnow())
+    as_of, temporal = _temporal_semantics(report, created_at)
     selection = report["selection"]
     statistics = report["price_statistics"]
     request = report["request"]
@@ -82,7 +170,9 @@ def build_document(
             f"over {selection['start_session']}..{selection['end_session']} on the "
             f"{statistics['basis_label']} basis, with its evidence, calculations and rights."
         ),
-        "as_of": _knowledge_as_of(report),
+        "as_of": as_of,
+        # All contributing evidence was public at `as_of`. For a retrospective report
+        # `as_of` is the run time, not the end of the price window.
         "mode": "public_available",
         "evidence_ids": [],
         "source_ids": source_ids,
@@ -116,6 +206,8 @@ def build_document(
             "mode": request.get("mode"),
             "price_basis": request.get("price_basis"),
             "request": dict(request),
+            "temporal": temporal,
+            "source_vintages": temporal["source_vintages"],
             "statistics": dict(statistics),
             "benchmark": dict(report["benchmark"]),
             "market_model": dict(report["market_model"]),
@@ -173,8 +265,25 @@ def save(
     owner_id: str = "local",
 ) -> dict[str, Any]:
     """Persist an investigation immutably. A duplicate name/version is refused."""
-    document = build_document(report, name=name, version=version)
-    stored = ResearchObjectStore(db).create(document, owner_id=owner_id)
+    created_at = iso(utcnow())
+    display_name = name
+    if display_name is None and not report["selection"].get("ticker"):
+        # The ticker in force at the historical end date may not be stored, but a saved
+        # object still needs a readable name. Use the current ticker as a display label,
+        # never as the ticker in force at the observation date.
+        current = SecurityMaster(db).current_ticker(report["selection"]["security_id"])
+        label = current.get("ticker") if current else None
+        if label:
+            display_name = (
+                f"{label} {report['selection']['start_session']}.."
+                f"{report['selection']['end_session']}"
+            )
+    document = build_document(
+        report, name=display_name, version=version, created_at=created_at
+    )
+    stored = ResearchObjectStore(db).create(
+        document, owner_id=owner_id, created_at=created_at
+    )
     return {
         "object_id": stored["object_id"],
         "kind": stored["kind"],
@@ -184,6 +293,7 @@ def save(
         "content_hash": stored["content_hash"],
         "created_at": stored["created_at"],
         "as_of": document["as_of"],
+        "temporal": document["spec"]["temporal"],
         "rights": report["rights"],
         "reproducibility_hash": report["reproducibility"]["hash"],
     }
@@ -209,13 +319,82 @@ def _request_from_object(stored: Mapping[str, Any]) -> move_intelligence.Explana
     )
 
 
+def _temporal_from_document(document: Mapping[str, Any]) -> dict[str, Any]:
+    """Read temporal semantics, including documents saved before they were explicit."""
+    spec = document.get("spec") or {}
+    temporal = spec.get("temporal")
+    if temporal:
+        return dict(temporal)
+    return {
+        "schema": None,
+        "legacy_document": True,
+        "observation_period": {
+            "start_session": (spec.get("interval") or {}).get("start_session"),
+            "end_session": (spec.get("interval") or {}).get("end_session"),
+            "timezone": (spec.get("interval") or {}).get("timezone"),
+            "price_basis": spec.get("price_basis"),
+        },
+        "public_knowledge_cutoff": {
+            "instant": document.get("as_of"),
+            "basis": "legacy_as_of_field_unverified",
+        },
+        "analysis_time": document.get("as_of"),
+        "object_created_at": None,
+        "retrospective": (spec.get("request") or {}).get("mode")
+        == move_intelligence.MODE_RETROSPECTIVE,
+        "as_of_basis": (
+            "saved before the five clocks were separated; the as_of value is preserved "
+            "for compatibility and must not be read as a verified knowledge cutoff"
+        ),
+        "source_vintages": spec.get("source_vintages") or {},
+        "limitations": ["legacy saved document: temporal semantics are incomplete"],
+    }
+
+
+def get(db: Database, object_id: str) -> dict[str, Any]:
+    """Reopen a saved investigation exactly as stored, with its temporal semantics."""
+    stored = ResearchObjectStore(db).get(object_id)
+    if stored["kind"] != KIND:
+        raise ValidationError(
+            "this research object is not a price investigation",
+            object_id=object_id,
+            kind=stored["kind"],
+        )
+    document = stored["document"]
+    return {
+        "schema": DOCUMENT_SCHEMA,
+        "object_id": stored["object_id"],
+        "kind": stored["kind"],
+        "name": stored["name"],
+        "version": stored["version"],
+        "status": stored["status"],
+        "content_hash": stored["content_hash"],
+        "created_at": stored["created_at"],
+        "as_of": document.get("as_of"),
+        "temporal": _temporal_from_document(document),
+        "document": document,
+        "note": (
+            "this is the stored document, not a recomputation; use the reproduce endpoint "
+            "for a current-state drift comparison"
+        ),
+    }
+
+
 def reproduce(db: Database, object_id: str) -> dict[str, Any]:
-    """Recompute a saved investigation from stored state and compare its hash."""
+    """Current-state reproducibility comparison, not a pinned historical replay.
+
+    The request is re-run against the database **as it is now**. A matching hash means
+    today's stored observations, filings and calculation inputs still produce the same
+    reproducibility digest; it does not prove that a historical run could be replayed
+    from the inputs captured at save time. Atlas does not yet store a pinned input
+    snapshot, so this endpoint is explicit about the weaker guarantee.
+    """
     stored = ResearchObjectStore(db).get(object_id)
     if stored["kind"] != KIND:
         raise ValidationError(
             "this research object is not a price investigation", object_id=object_id, kind=stored["kind"]
         )
+    started = iso(utcnow())
     request = _request_from_object(stored)
     current = move_intelligence.explain_range(db, request)
     original_hash = stored["document"]["spec"]["reproducibility"]["hash"]
@@ -223,10 +402,26 @@ def reproduce(db: Database, object_id: str) -> dict[str, Any]:
     return {
         "object_id": object_id,
         "content_hash": stored["content_hash"],
+        "comparison_kind": "current_state_recomputation",
+        "pinned_input_replay": False,
+        "guarantee": (
+            "re-running the saved request against the current database reproduces the "
+            "same reproducibility hash"
+            if original_hash == current_hash
+            else "the current database no longer produces the saved reproducibility hash"
+        ),
+        "guarantee_scope": (
+            "a match does not prove that the original run is replayable from pinned "
+            "inputs, that no source changed, or that a historical reader could have known "
+            "the same values; inspect the change-impact report for what moved"
+        ),
+        "saved_as_of": stored["document"].get("as_of"),
+        "saved_temporal": _temporal_from_document(stored["document"]),
         "original_reproducibility_hash": original_hash,
         "current_reproducibility_hash": current_hash,
         "matches": original_hash == current_hash,
-        "recomputed_at": current["selection"]["end_session"],
+        "recomputed_at": iso(utcnow()),
+        "recompute_started_at": started,
     }
 
 
@@ -250,10 +445,16 @@ def impact(db: Database, object_id: str) -> dict[str, Any]:
         return {
             "object_id": object_id,
             "status": "unchanged",
+            "comparison_kind": "current_state_drift_check",
             "original_hash": original_hash,
             "current_hash": current_hash,
             "categories": [],
-            "note": "the stored state still reproduces the investigation exactly",
+            "saved_temporal": _temporal_from_document(document),
+            "computed_at": iso(utcnow()),
+            "note": (
+                "the current stored state still produces the saved reproducibility hash; "
+                "this is a drift check, not a replay of pinned historical inputs"
+            ),
         }
 
     categories: list[str] = []
@@ -361,17 +562,21 @@ def impact(db: Database, object_id: str) -> dict[str, Any]:
     return {
         "object_id": object_id,
         "status": "changes_detected",
+        "comparison_kind": "current_state_drift_check",
         "original_hash": original_hash,
         "current_hash": current_hash,
         "categories": sorted(set(categories)),
         "findings": findings,
+        "saved_temporal": _temporal_from_document(document),
         "comparison_as_of": {
             "original": document["as_of"],
             "now": iso(utcnow()),
         },
+        "computed_at": iso(utcnow()),
         "note": (
-            "the saved investigation is unchanged; this report describes how later stored "
-            "state differs from it, and a new version is needed to record the new state"
+            "the saved investigation is unchanged; this report describes how the current "
+            "stored state differs from it, and a new version is needed to record the new "
+            "state. It is a drift comparison, not a pinned-input replay."
         ),
     }
 
@@ -410,6 +615,7 @@ __all__ = [
     "KIND",
     "build_document",
     "export",
+    "get",
     "impact",
     "investigation_name",
     "list_investigations",

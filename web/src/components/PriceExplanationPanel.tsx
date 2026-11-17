@@ -8,6 +8,9 @@ import type {
   PriceExplanationEvent,
   PriceExplanationMode,
   PriceExplanationRequest,
+  PriceExplanationTemporal,
+  ReopenedPriceInvestigation,
+  SavedPriceInvestigationSummary,
 } from '../types'
 import { fmtDate, fmtDateTime, fmtNumber, fmtSignedPct, toneForNumber } from '../format'
 import { Badge, ErrorState, Loading } from './ui'
@@ -28,16 +31,22 @@ interface Props {
   onClose: () => void
 }
 
-function downloadReport(report: PriceExplanation) {
-  const payload = JSON.stringify(report, null, 2)
-  const blob = new Blob([payload], { type: 'application/json' })
+function downloadJson(payload: unknown, filename: string) {
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const anchor = document.createElement('a')
-  const ticker = report.selection.ticker ?? report.selection.security_id
   anchor.href = url
-  anchor.download = `atlas-price-explanation-${ticker}-${report.selection.start_session}-${report.selection.end_session}.json`
+  anchor.download = filename
   anchor.click()
   URL.revokeObjectURL(url)
+}
+
+function downloadReport(report: PriceExplanation) {
+  const ticker = report.selection.ticker ?? report.selection.security_id
+  downloadJson(
+    report,
+    `atlas-price-explanation-${ticker}-${report.selection.start_session}-${report.selection.end_session}.json`,
+  )
 }
 
 function coverageValue(report: PriceExplanation, key: string): string {
@@ -71,18 +80,40 @@ export default function PriceExplanationPanel({
     version: string
     content_hash: string
     reproducibility_hash: string
+    as_of: string
+    temporal?: PriceExplanationTemporal
   } | null>(null)
   const [impact, setImpact] = useState<{
     status: string
+    comparison_kind?: string
     categories: string[]
     note: string
+    computed_at?: string
   } | null>(null)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [savedList, setSavedList] = useState<SavedPriceInvestigationSummary[]>([])
+  const [reopened, setReopened] = useState<ReopenedPriceInvestigation | null>(null)
+  const [reopenError, setReopenError] = useState<string | null>(null)
 
   useEffect(() => {
     setCutoff((current) => (current < selection.end ? selection.end : current))
   }, [selection.end])
+
+  useEffect(() => {
+    let cancelled = false
+    api
+      .priceInvestigations(securityId)
+      .then((result) => {
+        if (!cancelled) setSavedList(result.items)
+      })
+      .catch(() => {
+        /* a missing saved-work list must not block a new investigation */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [securityId])
 
   useEffect(() => {
     let cancelled = false
@@ -139,7 +170,11 @@ export default function PriceExplanationPanel({
         version: stored.version,
         content_hash: stored.content_hash,
         reproducibility_hash: stored.reproducibility_hash,
+        as_of: stored.as_of,
+        temporal: stored.temporal,
       })
+      const listed = await api.priceInvestigations(securityId)
+      setSavedList(listed.items)
     } catch (caught) {
       setSaveError((caught as Error).message)
     } finally {
@@ -148,10 +183,22 @@ export default function PriceExplanationPanel({
   }
 
   async function checkForChanges(objectId: string) {
+    setSaveError(null)
     try {
       setImpact(await api.investigationImpact(objectId))
     } catch (caught) {
       setSaveError((caught as Error).message)
+    }
+  }
+
+  async function reopenInvestigation(objectId: string) {
+    setReopenError(null)
+    setSaveError(null)
+    try {
+      setReopened(await api.priceInvestigation(objectId))
+    } catch (caught) {
+      setReopened(null)
+      setReopenError((caught as Error).message)
     }
   }
 
@@ -633,23 +680,30 @@ export default function PriceExplanationPanel({
               {saving ? 'Saving…' : 'Save investigation'}
             </button>
             {saved && (
-              <span className="small">
-                <span className="mono">{saved.object_id}</span> v{saved.version} ·{' '}
-                <span className="mono wrap">{saved.content_hash.slice(0, 12)}…</span>{' '}
+              <div className="small saved-summary">
+                <span>
+                  <span className="mono">{saved.object_id}</span> v{saved.version} ·{' '}
+                  <span className="mono wrap">{saved.content_hash.slice(0, 12)}…</span> · saved
+                  as of <strong data-testid="saved-as-of">{saved.as_of}</strong>{' '}
+                  {saved.temporal?.retrospective
+                    ? '(retrospective run)'
+                    : '(historical cutoff)'}
+                </span>
                 <button
                   className="button secondary"
                   onClick={() => void checkForChanges(saved.object_id)}
                 >
                   Check for changes
                 </button>
-              </span>
+              </div>
             )}
             {impact && (
-              <span className="small muted">
+              <div className="small muted saved-summary" data-testid="impact-status">
                 {impact.status}
+                {impact.comparison_kind ? ` (${impact.comparison_kind})` : ''}
                 {impact.categories.length > 0 ? `: ${impact.categories.join(', ')}` : ''} —{' '}
                 {impact.note}
-              </span>
+              </div>
             )}
             {saveError && (
               <span className="small" role="alert">
@@ -673,6 +727,95 @@ export default function PriceExplanationPanel({
               hash — not restricted vendor values.
             </span>
           </div>
+
+          <details className="explain-detail" data-testid="saved-investigations">
+            <summary>Saved investigations ({savedList.length})</summary>
+            {savedList.length === 0 ? (
+              <p className="muted small">
+                No saved investigation for this security yet. Saving stores an immutable,
+                versioned object; it is not overwritten by later data.
+              </p>
+            ) : (
+              <ul className="saved-investigation-list small">
+                {savedList.map((item) => (
+                  <li key={item.object_id}>
+                    <div>
+                      <strong>{item.name}</strong> v{item.version} ·{' '}
+                      <span className="mono wrap">{item.object_id}</span>
+                    </div>
+                    <div className="muted">
+                      observed {item.start_session ?? '—'} → {item.end_session ?? '—'} · as of{' '}
+                      {item.as_of ?? '—'}
+                    </div>
+                    <div className="toolbar wrap">
+                      <button
+                        className="button secondary"
+                        data-testid="reopen-investigation"
+                        onClick={() => void reopenInvestigation(item.object_id)}
+                      >
+                        Reopen saved work
+                      </button>
+                      <button
+                        className="button secondary"
+                        onClick={() => void checkForChanges(item.object_id)}
+                      >
+                        Check for changes
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {reopenError && (
+              <p className="small" role="alert" data-testid="reopen-error">
+                {reopenError}
+              </p>
+            )}
+            {reopened && (
+              <div className="saved-snapshot" data-testid="saved-snapshot">
+                <h5>
+                  {reopened.name} v{reopened.version}
+                </h5>
+                <p className="small">
+                  Reopened stored object <span className="mono">{reopened.object_id}</span> · saved
+                  as of <strong>{reopened.as_of}</strong>
+                </p>
+                <p className="small">
+                  <strong>
+                    {reopened.temporal.retrospective
+                      ? 'Retrospective investigation'
+                      : 'Historical reconstruction'}
+                  </strong>
+                </p>
+                <p className="small muted">{reopened.temporal.as_of_basis}</p>
+                <p className="small muted">
+                  Observation period {reopened.document.spec.interval.start_session} →{' '}
+                  {reopened.document.spec.interval.end_session} ·{' '}
+                  {reopened.document.spec.statistics.sessions} session(s) ·{' '}
+                  {fmtSignedPct(reopened.document.spec.statistics.interval_return)} ·{' '}
+                  {reopened.document.spec.hypotheses.length} hypothesis(es)
+                </p>
+                <p className="small muted">
+                  Knowledge cutoff {reopened.temporal.public_knowledge_cutoff.instant} (
+                  {reopened.temporal.public_knowledge_cutoff.basis}) · repro hash{' '}
+                  <span className="mono wrap">
+                    {reopened.document.spec.reproducibility.hash.slice(0, 16)}…
+                  </span>
+                </p>
+                <button
+                  className="button secondary"
+                  onClick={() =>
+                    downloadJson(
+                      reopened.document,
+                      `atlas-saved-investigation-${reopened.object_id}.json`,
+                    )
+                  }
+                >
+                  Download saved JSON
+                </button>
+              </div>
+            )}
+          </details>
 
           <details className="explain-detail">
             <summary>Compare with another interval</summary>
@@ -758,7 +901,12 @@ function DocumentEvidence({ document }: { document: PriceExplanationDocument }) 
         <div className="mono wrap">sha256 {document.sha256}</div>
       )}
       {openable ? (
-        <a href={openable} target="_blank" rel="noreferrer noopener">
+        <a
+          href={openable}
+          target="_blank"
+          rel="noreferrer noopener"
+          data-testid="document-link"
+        >
           Open original SEC document
         </a>
       ) : (
@@ -781,7 +929,11 @@ function DocumentEvidence({ document }: { document: PriceExplanationDocument }) 
             {document.passages.map((passage) => (
               <li key={passage.unit_id}>
                 <div className="mono">
-                  {passage.section_path} · chars {passage.char_start}–{passage.char_end}
+                  {passage.section_path} · chars {passage.char_start}–{passage.char_end} · span{' '}
+                  {passage.sha256.slice(0, 12)}…
+                </div>
+                <div className="mono small muted" data-testid="passage-citation">
+                  {passage.citation}
                 </div>
                 {passage.excerpt ? (
                   <blockquote>“{passage.excerpt}”</blockquote>
@@ -809,7 +961,19 @@ function EventRow({ event }: { event: PriceExplanationEvent }) {
     <li>
       <div className="event-head">
         <span className="mono small">{published ?? filed}</span>
-        <Badge tone={event.relation === 'in_window' ? 'accent' : 'neutral'}>{event.relation}</Badge>
+        <Badge
+          tone={
+            event.relation === 'in_window'
+              ? 'accent'
+              : event.relation === 'subsequent_to_price_window'
+                ? 'warn'
+                : 'neutral'
+          }
+        >
+          {event.explanatory_eligible === false && event.relation === 'subsequent_to_price_window'
+            ? 'after final close'
+            : event.relation.replace(/_/g, ' ')}
+        </Badge>
         {event.is_amendment && <Badge tone="warn">amendment</Badge>}
         {event.duplicate_document_of && <Badge tone="neutral">duplicate document</Badge>}
       </div>
@@ -840,6 +1004,11 @@ function EventRow({ event }: { event: PriceExplanationEvent }) {
         {event.known_at_range_end === false && <> · not known at the interval's end</>}
         {event.supersedes_event_id && <> · keeps original {event.supersedes_event_id}</>}
       </div>
+      {event.explanatory_eligibility && event.explanatory_eligibility.eligible === false && (
+        <div className="small muted" data-testid="ineligible-reason">
+          Not a candidate explanation: {event.explanatory_eligibility.reason}
+        </div>
+      )}
       {event.document && <DocumentEvidence document={event.document} />}
     </li>
   )

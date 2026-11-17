@@ -576,10 +576,25 @@ export interface PriceExplanationEvent {
   acceptance_datetime?: string | null
   publication?: {
     local_time: string | null
+    local_date?: string | null
+    utc_date?: string | null
+    session_date?: string | null
     timezone: string
+    venue_timezone?: string
     phase: string
     phase_basis: string
+    is_trading_session?: boolean | null
     tradable_session: string | null
+    tradable_session_basis?: string
+  }
+  explanatory_eligible?: boolean
+  explanatory_eligibility?: {
+    eligible: boolean
+    basis: string
+    final_session: string
+    final_session_close: string | null
+    first_eligible_session: string | null
+    reason: string | null
   }
   publication_local_date_differs?: boolean
   source_url?: string | null
@@ -607,9 +622,81 @@ export interface PriceExplanationEvent {
   cash_amount?: string | null
   status?: string
   source_id?: string | null
-  relation: 'in_window' | 'after_window' | 'subsequent'
+  relation: 'in_window' | 'after_window' | 'subsequent' | 'subsequent_to_price_window'
   known_at_range_end?: boolean
   epistemic_status: string
+}
+
+export interface PriceExplanationTemporal {
+  schema?: string | null
+  legacy_document?: boolean
+  observation_period: {
+    start_session: string | null
+    end_session: string | null
+    sessions?: number
+    timeframe?: string
+    timezone?: string
+    price_basis?: string | null
+  }
+  public_knowledge_cutoff: { instant: string | null; date?: string; basis: string }
+  analysis_time: string | null
+  object_created_at: string | null
+  mode?: string | null
+  retrospective: boolean
+  as_of_basis: string
+  source_vintages?: {
+    prices?: { status?: string; verified_at_cutoff?: boolean; reason?: string }
+    filings?: Array<{
+      event_id: string
+      accession: string
+      document_sha256: string | null
+      availability_time: string | null
+      availability_precision?: string | null
+      ingested_at?: string | null
+      document_status?: string | null
+    }>
+    note?: string
+  }
+  limitations?: string[]
+}
+
+export interface SavedPriceInvestigationSummary {
+  object_id: string
+  kind: string
+  name: string
+  version: string
+  status: string
+  content_hash?: string
+  created_at: string
+  as_of?: string
+  start_session?: string | null
+  end_session?: string | null
+  reproducibility_hash?: string | null
+}
+
+export interface ReopenedPriceInvestigation {
+  schema: string
+  object_id: string
+  kind: string
+  name: string
+  version: string
+  status: string
+  content_hash: string
+  created_at: string
+  as_of: string | null
+  temporal: PriceExplanationTemporal
+  document: {
+    schema_version: string
+    spec: {
+      ticker: string | null
+      interval: { start_session: string; end_session: string }
+      statistics: { interval_return: number | null; sessions: number; basis_label: string }
+      hypotheses: Array<{ hypothesis_id: string; rank: number; statement: string }>
+      temporal: PriceExplanationTemporal
+      reproducibility: { hash: string }
+    }
+  }
+  note: string
 }
 
 export interface PriceExplanationHypothesis {
