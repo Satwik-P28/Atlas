@@ -8,13 +8,13 @@ byte-verified. This proves the document's identity, not implementation conforman
 | Property | Verified value |
 | --- | --- |
 | File | `ATLAS_MASTER_SPEC.md` (repository root) |
-| Version | 3.1.0 |
-| Date | 2026-11-11 |
-| Size | 333,547 bytes |
-| SHA-256 | `d1800cfea35d973e2ff2b3570f8bf564fd3a7aceabca2f623ec5de17931a1111` |
-| Sections | 1–61 (all present) |
-| Integrity verified | 2026-11-11 by `scripts/verify_master_spec.py` |
-| Verification commit | `8b094eb7434b75d461bf32543290fdfb47c21639` |
+| Version | 3.2.0 |
+| Date | 2026-11-16 |
+| Size | 357,970 bytes |
+| SHA-256 | `6ab1a00569a29830deda050c44eaa93dc0f65081be53966ed2a6d00b164447e2` |
+| Sections | 1–61 plus Appendices A–E (all present) |
+| Integrity verified | 2026-11-16 by `scripts/verify_master_spec.py` |
+| Verification commit | `d2ca1662a40618f62e1c3d13ca6f4fe00121c6f7` (spec-content update; fresh verifier execution pending) |
 
 Reproduce:
 
@@ -57,7 +57,7 @@ and operating gates for a named scope, and none has been run.
 
 Machine-readable source: `artifacts/master_spec_requirements.json`.
 
-**Audit boundary:** Existing implementation statuses are inherited from earlier scoped code reviews; the v3.1 additions are proposals, not newly executed tests.
+**Audit boundary:** Existing implementation statuses are inherited from earlier scoped code reviews; the v3.1 and v3.2 additions are proposals, not newly executed tests.
 
 | ID | § | Section | Subsystem | Status | Partial | Evidence | Unimplemented dependency | Sev | Pri |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -135,3 +135,7 @@ is v3.1.0 at the size and hash above; the v1.2/v3.0 hashes are historical snapsh
 The earlier statement that "the only ICB identifiers defined anywhere in this repository are
 ICB-04 and ICB-09" was also correct at that time: ICB-01 through ICB-64 are now read from
 the canonical document and registered in `artifacts/icb_registry.json`.
+
+## v3.2 Appendix E traceability note
+
+Appendix E extends the existing 61 section requirements without renumbering them. ICB-65 through ICB-75 are proposed, not executed, and have not been added to the scored 64-item registry. All counts above are inherited implementation assessments and do not prove Appendix E features. Verify the SHA-256 gate in a clean checkout and update registries only when the proposed benchmarks are formally accepted.
