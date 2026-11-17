@@ -2,10 +2,10 @@
   "schema": "atlas.master_spec_requirements.v1",
   "specification": {
     "path": "ATLAS_MASTER_SPEC.md",
-    "version": "3.1.0",
+    "version": "3.2.0",
     "date": "2026-11-11",
-    "bytes": 333547,
-    "sha256": "d1800cfea35d973e2ff2b3570f8bf564fd3a7aceabca2f623ec5de17931a1111",
+    "bytes": 357970,
+    "sha256": "6ab1a00569a29830deda050c44eaa93dc0f65081be53966ed2a6d00b164447e2",
     "sections": [
       1,
       2,
@@ -94,7 +94,7 @@
   "requirements": [
     {
       "requirement_id": "MS3-01",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 1,
       "section_title": "Mission, positioning, and the standard of success",
       "requirement": "Provide the most capable open, locally runnable, programmable financial research environment, with a free core whose mathematics, methods and interfaces are not artificially paywalled.",
@@ -112,7 +112,7 @@
     },
     {
       "requirement_id": "MS3-02",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 2,
       "section_title": "Product model: Eight integrated systems, one experience",
       "requirement": "Keep the eight original systems as one product on one evidence substrate rather than eight separate tools.",
@@ -141,7 +141,7 @@
     },
     {
       "requirement_id": "MS3-03",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 3,
       "section_title": "Interface: almost limitless depth with minimal visible clutter",
       "requirement": "Restrict principal navigation to Explore, Studio, Lab and Monitor while exposing depth progressively.",
@@ -161,7 +161,7 @@
     },
     {
       "requirement_id": "MS3-04",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 4,
       "section_title": "Replaceability and competition",
       "requirement": "Benchmark against professional terminals on capability and openness instead of copying them, and publish comparative evidence.",
@@ -179,7 +179,7 @@
     },
     {
       "requirement_id": "MS3-05",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 5,
       "section_title": "Architecture: the unified financial computing substrate",
       "requirement": "One adaptive-workspace substrate beneath the four spaces, with universal research objects, a compiler and one evidence kernel.",
@@ -206,7 +206,7 @@
     },
     {
       "requirement_id": "MS3-06",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 6,
       "section_title": "Universal Research Object System (UROS)",
       "requirement": "Give every research asset a stable identity, type, version, lineage, permissions, time semantics and interface contract.",
@@ -231,7 +231,7 @@
     },
     {
       "requirement_id": "MS3-07",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 7,
       "section_title": "Data Fabric, Temporal Evidence Kernel, and source quality",
       "requirement": "Preserve the point-in-time evidence kernel and entity master with immutable records, availability semantics and source quality.",
@@ -258,7 +258,7 @@
     },
     {
       "requirement_id": "MS3-08",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 8,
       "section_title": "Financial-Economic Ontology and entity graph",
       "requirement": "Distinguish Event, Outcome, Contract, ResolutionRule and Forecast, and never infer payoff equivalence from titles.",
@@ -282,7 +282,7 @@
     },
     {
       "requirement_id": "MS3-09",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 9,
       "section_title": "Data Rights Engine and sustainable open-source economics",
       "requirement": "Require a rights manifest for every dataset and artefact, and fail closed when redistribution is unknown or restricted.",
@@ -307,7 +307,7 @@
     },
     {
       "requirement_id": "MS3-10",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 10,
       "section_title": "Financial-Economic Compiler: the central original engineering asset",
       "requirement": "Compile typed financial equations, model graphs and scenarios into well-typed, evidence-aware plans with an IR.",
@@ -330,7 +330,7 @@
     },
     {
       "requirement_id": "MS3-11",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 11,
       "section_title": "Universal Execution Runtime and storage/compute architecture",
       "requirement": "Coordinate compatible compute engines while holding identity, job, provenance and artefact contracts constant.",
@@ -354,7 +354,7 @@
     },
     {
       "requirement_id": "MS3-12",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 12,
       "section_title": "Model Forge: unrestricted model creativity with enforced contracts",
       "requirement": "Support configure, compose, code and invent authoring paths with enforced typing and reproducibility.",
@@ -378,7 +378,7 @@
     },
     {
       "requirement_id": "MS3-13",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 13,
       "section_title": "Quant Lab, Alpha Foundry, and historical strategy simulation",
       "requirement": "Provide three simulation fidelities with mandatory timing, cost and survivorship disclosures.",
@@ -402,7 +402,7 @@
     },
     {
       "requirement_id": "MS3-14",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 14,
       "section_title": "Institutional valuation, fixed income, derivatives, and portfolio risk",
       "requirement": "Deliver company models, fixed income, derivatives and portfolio risk to an institutional standard.",
@@ -428,7 +428,7 @@
     },
     {
       "requirement_id": "MS3-15",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 15,
       "section_title": "Atlas Intelligence: a real brain, not a mandatory chatbot",
       "requirement": "Provide optional language reasoning, statistical and neural learning, experiment planning and user context as separate services.",
@@ -450,7 +450,7 @@
     },
     {
       "requirement_id": "MS3-16",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 16,
       "section_title": "Global OSINT, news intelligence, and the Economic Reality Engine",
       "requirement": "Answer financial questions about real economic systems from legally usable sources, separating observed from inferred claims.",
@@ -471,7 +471,7 @@
     },
     {
       "requirement_id": "MS3-17",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 17,
       "section_title": "Research Operating System, Time Capsule, and Sentinel",
       "requirement": "Make each investigation a durable versioned project with hypotheses, evidence, methods and a replayable time capsule.",
@@ -495,7 +495,7 @@
     },
     {
       "requirement_id": "MS3-18",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 18,
       "section_title": "Financial Application Compiler and plugin ecosystem",
       "requirement": "Compile typed application specifications into interfaces that reuse the same objects, evidence and permissions.",
@@ -518,7 +518,7 @@
     },
     {
       "requirement_id": "MS3-19",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 19,
       "section_title": "API, SDK, scripting, and extension contracts",
       "requirement": "Expose a documented stable API for discovery, evidence, market and fundamental data, metrics, models and applications.",
@@ -543,7 +543,7 @@
     },
     {
       "requirement_id": "MS3-20",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 20,
       "section_title": "Security, privacy, safety, and operational governance",
       "requirement": "Enforce local-first operation, bounded request bodies and compressed responses, and explicit authorisation for connected actions.",
@@ -567,7 +567,7 @@
     },
     {
       "requirement_id": "MS3-21",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 21,
       "section_title": "Stack evolution and implementation discipline",
       "requirement": "Treat prior phase reports as agent-reported until independently audited and keep one canonical architecture.",
@@ -590,7 +590,7 @@
     },
     {
       "requirement_id": "MS3-22",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 22,
       "section_title": "Institutional Capability Benchmark (ICB)",
       "requirement": "Measure institutional claims in a public ICB suite with declared data rights, hardware and independent baselines.",
@@ -614,7 +614,7 @@
     },
     {
       "requirement_id": "MS3-23",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 23,
       "section_title": "Development roadmap, priorities, and release gates",
       "requirement": "Stage the roadmap by dependency order with explicit release gates rather than calendar promises.",
@@ -634,7 +634,7 @@
     },
     {
       "requirement_id": "MS3-24",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 24,
       "section_title": "Architecture decision record and contribution governance",
       "requirement": "Require an ADR covering problem, alternatives, licensing, correctness, benchmark, decision and reversibility.",
@@ -656,7 +656,7 @@
     },
     {
       "requirement_id": "MS3-25",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 25,
       "section_title": "Strategic risks and mitigation",
       "requirement": "Maintain a risk register (licensed data, dependency fragility, over-claiming) with mitigations.",
@@ -676,7 +676,7 @@
     },
     {
       "requirement_id": "MS3-26",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 26,
       "section_title": "Canonical end-to-end research demonstrations",
       "requirement": "Demonstrate a fundamental underwrite end to end: filings, statements, assumptions, scenarios, provenance and a saved thesis.",
@@ -700,7 +700,7 @@
     },
     {
       "requirement_id": "MS3-27",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 27,
       "section_title": "Research source and software inventory",
       "requirement": "Treat candidate repositories as evaluation candidates until licence, maintenance and security are verified.",
@@ -720,7 +720,7 @@
     },
     {
       "requirement_id": "MS3-28",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 28,
       "section_title": "Instructions for all future Atlas engineering agents",
       "requirement": "Read the specification and inspect the working tree before planning, and never fabricate implementation status.",
@@ -741,7 +741,7 @@
     },
     {
       "requirement_id": "MS3-29",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 29,
       "section_title": "Expansion decision and domain boundaries",
       "requirement": "Remain financial-first while making the substrate event-aware, probabilistic and decision-capable.",
@@ -759,7 +759,7 @@
     },
     {
       "requirement_id": "MS3-30",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 30,
       "section_title": "Universal Event and Probability Engine",
       "requirement": "Provide reusable probability machinery with domain-specific evidence, calibration and settlement semantics.",
@@ -777,7 +777,7 @@
     },
     {
       "requirement_id": "MS3-31",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 31,
       "section_title": "Causal, decision, and opportunity intelligence",
       "requirement": "Distinguish observed relations, mechanism hypotheses and identified causal claims with estimands and null results.",
@@ -797,7 +797,7 @@
     },
     {
       "requirement_id": "MS3-32",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 32,
       "section_title": "Domain packs, implementation gates, and event benchmarks",
       "requirement": "Package additional domains as optional packs on the shared substrate with their own gates and ICB-11..18.",
@@ -820,7 +820,7 @@
     },
     {
       "requirement_id": "MS3-33",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 33,
       "section_title": "Atlas Real Estate Investment Intelligence",
       "requirement": "Underwrite property, lease and debt cash flows with evidence-backed assumptions, separating facts from model outputs.",
@@ -840,7 +840,7 @@
     },
     {
       "requirement_id": "MS3-34",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 34,
       "section_title": "Platform constitution: the universal financial operating system",
       "requirement": "Serve novice and specialist users with one adaptive system rather than separate products.",
@@ -858,7 +858,7 @@
     },
     {
       "requirement_id": "MS3-35",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 35,
       "section_title": "Users, complete jobs and adoption-critical workflows",
       "requirement": "Deliver complete role-based jobs (investor, analyst, quant, banker, advisor) with finished deliverables.",
@@ -878,7 +878,7 @@
     },
     {
       "requirement_id": "MS3-36",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 36,
       "section_title": "Universal investment model library and coverage contracts",
       "requirement": "Maintain a registry of models, strategies and indicators with kind, coverage, provenance and status.",
@@ -901,7 +901,7 @@
     },
     {
       "requirement_id": "MS3-37",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 37,
       "section_title": "Model composition, invention and computational research",
       "requirement": "Make every compatible model a node in a nested, versioned, callable graph with typed contracts.",
@@ -924,7 +924,7 @@
     },
     {
       "requirement_id": "MS3-38",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 38,
       "section_title": "Global financial terminal and market intelligence",
       "requirement": "Provide instrument-aware search, charting, screening and comparison with correct time, source and rights status.",
@@ -950,7 +950,7 @@
     },
     {
       "requirement_id": "MS3-39",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 39,
       "section_title": "Equity, fundamental, accounting and research desk",
       "requirement": "Create a financial statement graph with restatements, segments, leases and derived metrics carrying evidence ids.",
@@ -976,7 +976,7 @@
     },
     {
       "requirement_id": "MS3-40",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 40,
       "section_title": "Quantitative trading, strategy science and execution research",
       "requirement": "Support strategy families with point-in-time validation, cost-aware backtesting and execution research.",
@@ -1000,7 +1000,7 @@
     },
     {
       "requirement_id": "MS3-41",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 41,
       "section_title": "Institutional portfolio management, risk and operations",
       "requirement": "Provide positions, cash, orders, cost basis, FX, benchmarks and risk with correct accounting.",
@@ -1018,7 +1018,7 @@
     },
     {
       "requirement_id": "MS3-42",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 42,
       "section_title": "Investment banking and transaction intelligence",
       "requirement": "Deliver comps, precedents, three-statement forecasts, debt schedules and merger consequences with provenance.",
@@ -1036,7 +1036,7 @@
     },
     {
       "requirement_id": "MS3-43",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 43,
       "section_title": "Venture capital, private equity, private credit and fund intelligence",
       "requirement": "Model private company identity, cap tables, financing events and fund economics.",
@@ -1054,7 +1054,7 @@
     },
     {
       "requirement_id": "MS3-44",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 44,
       "section_title": "Personal finance, wealth and consumer decision support",
       "requirement": "Help a user understand flows, holdings and risks and how choices change outcomes without unsupported guarantees.",
@@ -1072,7 +1072,7 @@
     },
     {
       "requirement_id": "MS3-45",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 45,
       "section_title": "Adaptive experience, human factors and professional workflow design",
       "requirement": "Keep four permanent root spaces and adapt depth to skill without changing the mathematics.",
@@ -1090,7 +1090,7 @@
     },
     {
       "requirement_id": "MS3-46",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 46,
       "section_title": "Quant Stack compatibility and migration contract",
       "requirement": "Reconstruct the user's existing Quant Stack workflows and migrate them with declared differences.",
@@ -1108,7 +1108,7 @@
     },
     {
       "requirement_id": "MS3-47",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 47,
       "section_title": "Enterprise, institutions, connectivity and deliverable interoperability",
       "requirement": "Support spreadsheet, notebook and document interchange with audited calculation parity.",
@@ -1126,7 +1126,7 @@
     },
     {
       "requirement_id": "MS3-48",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 48,
       "section_title": "Release strategy, external benchmarks and ecosystem growth",
       "requirement": "Sequence depth before catalogue inflation and add ICB-21..32 with evidence criteria.",
@@ -1146,7 +1146,7 @@
     },
     {
       "requirement_id": "MS3-49",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 49,
       "section_title": "Financial Knowledge Engine: unified, evidence-preserving retrieval",
       "requirement": "Provide retrieval and evidence assembly with historical resolution, factual grounding and explicit abstention.",
@@ -1164,7 +1164,7 @@
     },
     {
       "requirement_id": "MS3-50",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 50,
       "section_title": "Compression, CDG and evidence-preserving data research",
       "requirement": "Research representations that reduce total bytes and cost while preserving exact source reconstruction.",
@@ -1182,7 +1182,7 @@
     },
     {
       "requirement_id": "MS3-51",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 51,
       "section_title": "Intent-to-Research Compiler and adaptive workflows",
       "requirement": "Translate a goal into an editable, typed, permission-aware research plan.",
@@ -1200,7 +1200,7 @@
     },
     {
       "requirement_id": "MS3-52",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 52,
       "section_title": "Research Integrity Engine: evidence, mathematics and decisions",
       "requirement": "Unify evidence, computational, statistical and decision checks into explicit findings, never a single trust score.",
@@ -1225,7 +1225,7 @@
     },
     {
       "requirement_id": "MS3-53",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 53,
       "section_title": "Atlas Resource Optimization Engine: the industrial engineering core",
       "requirement": "Select compute, data, retrieval and storage policies under explicit resource and correctness constraints.",
@@ -1243,7 +1243,7 @@
     },
     {
       "requirement_id": "MS3-54",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 54,
       "section_title": "Data Coverage, Integrity and Service Health Center",
       "requirement": "Report for every displayed number what Atlas can observe, how fresh it is and where the gaps are.",
@@ -1267,7 +1267,7 @@
     },
     {
       "requirement_id": "MS3-55",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 55,
       "section_title": "Model Experience System and adaptive human-computer interaction",
       "requirement": "Present one model through synchronized visual, equation, table and code views without separate implementations.",
@@ -1285,7 +1285,7 @@
     },
     {
       "requirement_id": "MS3-56",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 56,
       "section_title": "Workflow Portability, Migration and Professional Deliverables",
       "requirement": "Let users import and export professional workflows and artefacts without silent differences.",
@@ -1307,7 +1307,7 @@
     },
     {
       "requirement_id": "MS3-57",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 57,
       "section_title": "ResearchOS scientific program for AI, RAG, compression and IE",
       "requirement": "Produce academically defensible research with pre-registered, replicated evaluations and published negative results.",
@@ -1325,7 +1325,7 @@
     },
     {
       "requirement_id": "MS3-58",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 58,
       "section_title": "Open-source integration and dependency evaluation registry",
       "requirement": "Maintain a machine-checked registry of candidate integrations with licence, maintenance and security status.",
@@ -1345,7 +1345,7 @@
     },
     {
       "requirement_id": "MS3-59",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 59,
       "section_title": "Product delivery sequence and cross-domain user adoption",
       "requirement": "Deliver one complete flagship workflow from company selection through evidence, model, scenarios, export, thesis and monitoring (Section 59.1).",
@@ -1370,7 +1370,7 @@
     },
     {
       "requirement_id": "MS3-60",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 60,
       "section_title": "New Institutional Capability Benchmarks and acceptance matrix",
       "requirement": "Add ICB-33..48 with reproducible fixtures, independent baselines, negative tests and quantitative pass conditions, and publish the Section 60.2 status.",
@@ -1393,7 +1393,7 @@
     },
     {
       "requirement_id": "MS3-61",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "section": 61,
       "section_title": "Final platform definition and strategic charter",
       "requirement": "Make research more correct, accessible, reproducible and economical rather than merely adding features.",

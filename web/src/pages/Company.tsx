@@ -5,11 +5,13 @@ import Chart from '../components/Chart'
 import CompanyHeader from '../components/CompanyHeader'
 import FilingsTable from '../components/FilingsTable'
 import MetricGrid from '../components/MetricGrid'
+import PriceExplanationPanel from '../components/PriceExplanationPanel'
 import StatementTable from '../components/StatementTable'
 import XrayPanel from '../components/XrayPanel'
 import { Badge, DataStatusBadge, EmptyState, ErrorState, Loading, SectionHeader } from '../components/ui'
 import { fmtDate, fmtDateTime } from '../format'
 import { useAsync, useSettings } from '../state'
+import type { SessionSelection } from '../components/chartSelection'
 import type { AsOfMode, CompanyDetail, IndicatorConfig, PriceView } from '../types'
 
 const STATEMENTS = [
@@ -436,6 +438,28 @@ function ChartTab({ company, asOf, advanced }: { company: CompanyDetail; asOf: s
   const [smaWindow, setSmaWindow] = useState(50)
   const [rsiWindow, setRsiWindow] = useState(14)
   const [indicators, setIndicators] = useState<IndicatorConfig[]>([{ key: 'sma', params: { window: 50 } }])
+  const [explainMode, setExplainMode] = useState(false)
+  const [selection, setSelection] = useState<SessionSelection | null>(null)
+
+  // A selection belongs to one security's stored sessions. Switching share class or
+  // timeframe must not leave a range that refers to candles no longer on screen.
+  useEffect(() => {
+    setSelection(null)
+  }, [securityId, range])
+
+  const basis =
+    view === 'raw' ? 'price' : view === 'split' ? 'split_adjusted' : 'total_return'
+
+  function setDateBound(which: 'start' | 'end', value: string) {
+    if (!value) {
+      setSelection(null)
+      return
+    }
+    const current = selection ?? { start: value, end: value }
+    const next =
+      which === 'start' ? { start: value, end: current.end } : { start: current.start, end: value }
+    setSelection(next.start <= next.end ? next : { start: next.end, end: next.start })
+  }
 
   const indicatorKey = useMemo(() => JSON.stringify(indicators), [indicators])
   const market = useAsync(
@@ -480,7 +504,52 @@ function ChartTab({ company, asOf, advanced }: { company: CompanyDetail; asOf: s
             <option value="line">Line</option>
             <option value="area">Area</option>
           </select>
+          <button
+            className={`chip ${explainMode ? 'is-on' : ''}`}
+            aria-pressed={explainMode}
+            data-testid="explain-range-toggle"
+            onClick={() => {
+              setExplainMode((current) => !current)
+              setSelection(null)
+            }}
+          >
+            Explain this move
+          </button>
         </div>
+
+        {explainMode && (
+          <div className="toolbar wrap explain-controls">
+            <span className="muted small">
+              Drag across candles to investigate an interval, or select dates directly.
+              {selection ? ` Selected ${selection.start} → ${selection.end}.` : ''}
+            </span>
+            <label className="inline-field small">
+              Start
+              <input
+                className="field mono"
+                type="date"
+                aria-label="Selection start session"
+                value={selection?.start ?? ''}
+                onChange={(event) => setDateBound('start', event.target.value)}
+              />
+            </label>
+            <label className="inline-field small">
+              End
+              <input
+                className="field mono"
+                type="date"
+                aria-label="Selection end session"
+                value={selection?.end ?? ''}
+                onChange={(event) => setDateBound('end', event.target.value)}
+              />
+            </label>
+            {selection && (
+              <button className="button secondary" onClick={() => setSelection(null)}>
+                Reset selection
+              </button>
+            )}
+          </div>
+        )}
 
         <div className="toolbar wrap">
           <span className="muted small">Indicators</span>
@@ -567,6 +636,9 @@ function ChartTab({ company, asOf, advanced }: { company: CompanyDetail; asOf: s
                     : 'RAW PRICE'
               }
               actions={market.data.actions}
+              selectionEnabled={explainMode}
+              selection={selection}
+              onSelect={setSelection}
             />
             <div className="chart-facts small muted">
               <span>
@@ -587,6 +659,22 @@ function ChartTab({ company, asOf, advanced }: { company: CompanyDetail; asOf: s
           </>
         )}
       </section>
+
+      {explainMode && selection && market.data && (
+        <PriceExplanationPanel
+          securityId={securityId}
+          selection={selection}
+          basis={basis}
+          advanced={advanced}
+          onBasisChange={(next) =>
+            setView(next === 'price' ? 'raw' : next === 'split_adjusted' ? 'split' : 'total_return')
+          }
+          onClose={() => {
+            setSelection(null)
+            setExplainMode(false)
+          }}
+        />
+      )}
 
       <section className="card">
         <SectionHeader

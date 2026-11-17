@@ -17,6 +17,15 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import type { BarPoint, IndicatorResult } from '../types'
 import { fmtCompact, fmtDate, fmtNumber } from '../format'
+import {
+  indexFromLogical,
+  keyboardSelection,
+  orderedRange,
+  rangeForSessions,
+  sessionsForRange,
+  type IndexRange,
+  type SessionSelection,
+} from './chartSelection'
 
 const PALETTE = ['#4cc9f0', '#f4a261', '#b5a642', '#9d8df1', '#5dd39e', '#ef6f6c']
 
@@ -29,6 +38,12 @@ interface ChartProps {
   height?: number
   actions?: Array<Record<string, unknown>>
   viewLabel: string
+  /** "Explain This Move" selection mode. Off by default, so normal chart scrolling is untouched. */
+  selectionEnabled?: boolean
+  /** The committed interval, kept in sync with date inputs elsewhere on the page. */
+  selection?: SessionSelection | null
+  /** Called when a drag or keyboard action commits or clears a selection. */
+  onSelect?: (selection: SessionSelection | null) => void
 }
 
 function toTime(value: string | Time): string {
@@ -47,9 +62,24 @@ export default function Chart({
   height = 380,
   actions = [],
   viewLabel,
+  selectionEnabled = false,
+  selection = null,
+  onSelect,
 }: ChartProps) {
   const hostRef = useRef<HTMLDivElement>(null)
   const [hover, setHover] = useState<{ date: string; open?: number; high?: number; low?: number; close: number } | null>(null)
+  const selectionRef = useRef<SessionSelection | null>(selection)
+  const onSelectRef = useRef<ChartProps['onSelect']>(onSelect)
+  const redrawSelectionRef = useRef<(() => void) | null>(null)
+
+  useEffect(() => {
+    selectionRef.current = selection
+    redrawSelectionRef.current?.()
+  }, [selection])
+
+  useEffect(() => {
+    onSelectRef.current = onSelect
+  }, [onSelect])
 
   useEffect(() => {
     const host = hostRef.current
@@ -90,6 +120,7 @@ export default function Chart({
     mainEl.style.height = `${height}px`
     mainEl.style.width = '100%'
     host.appendChild(mainEl)
+    mainEl.style.position = 'relative'
     const main = createChart(mainEl, { ...common, width: mainEl.clientWidth || 600, height })
     charts.push(main)
 
@@ -188,6 +219,155 @@ export default function Chart({
       .sort((a, b) => String(a.time).localeCompare(String(b.time)))
     if (markers.length > 0) createSeriesMarkers(series, markers)
 
+    // ---------------------------------------------------------------- range selection
+    // The overlay only exists in Explain mode. When it is absent the chart keeps its own
+    // scroll, crosshair and pinch behaviour, which is why this is conditional rather than a
+    // transparent always-on layer.
+    const dates = bars.map((bar) => bar.date)
+    let stopSelecting: (() => void) | null = null
+    if (selectionEnabled && bars.length > 0 && indexPoints.length === 0) {
+      const overlay = document.createElement('div')
+      overlay.className = 'chart-range-overlay'
+      overlay.tabIndex = 0
+      overlay.setAttribute('role', 'application')
+      overlay.setAttribute(
+        'aria-label',
+        'Chart range selection. Drag across candles, or use arrow keys; Shift plus arrow extends; Enter confirms; Escape clears.',
+      )
+      const band = document.createElement('div')
+      band.className = 'chart-range-band'
+      band.style.display = 'none'
+      overlay.appendChild(band)
+      mainEl.appendChild(overlay)
+
+      let draft: IndexRange | null = null
+      let anchor: number | null = null
+
+      const drawBand = () => {
+        const range = draft ?? rangeForSessions(dates, selectionRef.current)
+        if (!range) {
+          band.style.display = 'none'
+          return
+        }
+        const leftEdge = main.timeScale().logicalToCoordinate(range.from as never)
+        const rightEdge = main.timeScale().logicalToCoordinate(range.to as never)
+        if (leftEdge == null || rightEdge == null) {
+          band.style.display = 'none'
+          return
+        }
+        // A single candle has zero width; show it as a visible 2px band rather than nothing.
+        const left = Math.min(leftEdge, rightEdge)
+        const width = Math.max(2, Math.abs(rightEdge - leftEdge))
+        band.style.display = 'block'
+        band.style.left = `${left}px`
+        band.style.width = `${width}px`
+      }
+      redrawSelectionRef.current = drawBand
+
+      const indexAt = (clientX: number): number | null => {
+        const rect = overlay.getBoundingClientRect()
+        const logical = main.timeScale().coordinateToLogical(clientX - rect.left)
+        return indexFromLogical(logical, dates.length)
+      }
+
+      const commit = () => {
+        if (!draft) return
+        const resolved = sessionsForRange(dates, draft)
+        draft = null
+        overlay.classList.remove('is-selecting')
+        drawBand()
+        if (resolved) onSelectRef.current?.(resolved)
+      }
+
+      const onPointerDown = (event: PointerEvent) => {
+        if (event.button !== 0) return
+        const index = indexAt(event.clientX)
+        if (index === null) return
+        anchor = index
+        draft = { from: index, to: index }
+        overlay.classList.add('is-selecting')
+        try {
+          overlay.setPointerCapture(event.pointerId)
+        } catch {
+          /* capture is an optimisation; the drag still works without it */
+        }
+        drawBand()
+        event.preventDefault()
+      }
+
+      const onPointerMove = (event: PointerEvent) => {
+        if (anchor === null) return
+        const index = indexAt(event.clientX)
+        if (index === null) return
+        draft = orderedRange(anchor, index, dates.length)
+        drawBand()
+        event.preventDefault()
+      }
+
+      const onPointerUp = (event: PointerEvent) => {
+        if (anchor === null) return
+        anchor = null
+        try {
+          overlay.releasePointerCapture(event.pointerId)
+        } catch {
+          /* already released */
+        }
+        commit()
+      }
+
+      const onPointerCancel = () => {
+        anchor = null
+        draft = null
+        overlay.classList.remove('is-selecting')
+        drawBand()
+      }
+
+      const onKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          draft = null
+          drawBand()
+          onSelectRef.current?.(null)
+          event.preventDefault()
+          return
+        }
+        if (event.key === 'Enter') {
+          commit()
+          event.preventDefault()
+          return
+        }
+        if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+          draft = keyboardSelection(
+            dates,
+            selectionRef.current,
+            event.key as 'ArrowLeft' | 'ArrowRight' | 'Home' | 'End',
+            event.shiftKey,
+          )
+          drawBand()
+          event.preventDefault()
+        }
+      }
+
+      overlay.addEventListener('pointerdown', onPointerDown)
+      overlay.addEventListener('pointermove', onPointerMove)
+      overlay.addEventListener('pointerup', onPointerUp)
+      overlay.addEventListener('pointercancel', onPointerCancel)
+      overlay.addEventListener('keydown', onKeyDown)
+      const onScaleChange = () => drawBand()
+      main.timeScale().subscribeVisibleLogicalRangeChange(onScaleChange)
+
+      stopSelecting = () => {
+        main.timeScale().unsubscribeVisibleLogicalRangeChange(onScaleChange)
+        overlay.removeEventListener('pointerdown', onPointerDown)
+        overlay.removeEventListener('pointermove', onPointerMove)
+        overlay.removeEventListener('pointerup', onPointerUp)
+        overlay.removeEventListener('pointercancel', onPointerCancel)
+        overlay.removeEventListener('keydown', onKeyDown)
+        redrawSelectionRef.current = null
+        overlay.remove()
+      }
+      drawBand()
+    }
+
     for (const indicator of indicators.filter((item) => item.pane === 'separate').slice(0, 3)) {
       const paneEl = document.createElement('div')
       paneEl.style.height = '120px'
@@ -231,15 +411,17 @@ export default function Chart({
       for (const chart of charts) {
         chart.applyOptions({ width: chart === main ? mainEl.clientWidth : host.clientWidth })
       }
+      redrawSelectionRef.current?.()
     })
     observer.observe(host)
 
     return () => {
+      stopSelecting?.()
       observer.disconnect()
       for (const chart of charts) chart.remove()
       host.innerHTML = ''
     }
-  }, [bars, indexPoints, indicators, chartType, theme, height, actions])
+  }, [bars, indexPoints, indicators, chartType, theme, height, actions, selectionEnabled])
 
   const last = bars[bars.length - 1]
   const shown = hover ?? (last ? { date: last.date, open: last.open, high: last.high, low: last.low, close: last.close } : null)
