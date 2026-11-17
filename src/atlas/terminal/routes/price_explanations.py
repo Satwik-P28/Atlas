@@ -53,6 +53,16 @@ class PriceExplanationRequest(BaseModel):
     peer_security_ids: list[str] = Field(default_factory=list, max_length=10)
     estimation_sessions: int = Field(default=120, ge=30, le=10_000)
     evidence_limit: int = Field(default=50, ge=1, le=200)
+    return_convention: Literal[
+        "auto", "interval_close_to_close", "single_session_close_to_close"
+    ] = Field(
+        default="auto",
+        description=(
+            "auto uses an interval close-to-close return for a range and a previous-session "
+            "close-to-close return for a one-candle selection; the engine refuses a "
+            "one-session return when no prior eligible close is stored"
+        ),
+    )
 
 
 def build_price_explanations_router(get_db: Callable[..., Any]) -> APIRouter:
@@ -79,6 +89,7 @@ def build_price_explanations_router(get_db: Callable[..., Any]) -> APIRouter:
                 peer_security_ids=tuple(body.peer_security_ids),
                 estimation_sessions=body.estimation_sessions,
                 evidence_limit=body.evidence_limit,
+                return_convention=body.return_convention,
             ),
         )
 

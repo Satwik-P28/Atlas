@@ -19,6 +19,7 @@ from fastapi.testclient import TestClient
 from atlas.core.errors import ValidationError
 from atlas.entities.master import SecurityMaster
 from atlas.market.actions import ActionStore, CorporateAction
+from atlas.market.calendar import TradingCalendar
 from atlas.research import move_intelligence as mi
 from atlas.research import prices
 from atlas.terminal.api import create_app
@@ -161,8 +162,15 @@ def test_requested_interval_is_snapped_to_actual_sessions(db):
     assert result["selection"]["start_session"] == DAY_THREE
     assert mi.W_RANGE_SNAPPED in codes
     assert mi.W_SINGLE_SESSION in codes
-    assert result["price_statistics"]["interval_return"] == pytest.approx(0.0)
-    assert result["price_statistics"]["start_observation_id"] == result["price_statistics"]["end_observation_id"]
+    # The one selected session is measured from the previous eligible session (101 -> 102),
+    # not silently reported as a flat 0%.
+    assert result["price_statistics"]["return_convention"] == "single_session_close_to_close"
+    assert result["price_statistics"]["interval_return"] == pytest.approx(102.0 / 101.0 - 1)
+    assert result["price_statistics"]["calculation_sessions"] == 2
+    assert (
+        result["price_statistics"]["start_observation_id"]
+        != result["price_statistics"]["end_observation_id"]
+    )
 
 
 def test_reversed_drag_direction_is_normalised_and_reported(db):
@@ -352,12 +360,19 @@ def test_market_model_uses_only_pre_interval_sessions_and_reports_beta(db):
     assert model["status"] == "available"
     assert model["beta"] == pytest.approx(2.0, abs=1e-9)
     assert model["estimation"]["last_session"] < days[-3]
-    # The residual is essentially zero because the security is exactly twice the benchmark
-    # daily. It is not *exactly* zero: the decomposition multiplies beta by the benchmark's
-    # compounded interval return, and cross terms do not vanish. That is the declared
-    # limitation, so a tight-but-nonzero tolerance is the honest assertion.
-    assert model["residual_return_arithmetic"] == pytest.approx(0.0, abs=5e-5)
-    assert model["residual_return_arithmetic"] != 0.0
+    # Security returns are exactly twice the benchmark's *daily* returns, so compounding
+    # the model's daily expected return reproduces the security return and leaves no
+    # abnormal return. The old beta x compounded-benchmark shortcut did not, because its
+    # cross terms do not vanish.
+    assert model["expected_return_compounded"] == pytest.approx(
+        model["security_return_aligned"], abs=1e-12
+    )
+    assert model["abnormal_return_difference"] == pytest.approx(0.0, abs=1e-12)
+    assert model["abnormal_return_ratio"] == pytest.approx(0.0, abs=1e-12)
+    assert model["attribution_convention"]
+    assert model["first_order_approximation"]["beta_times_benchmark"] == pytest.approx(
+        2.0 * model["benchmark_return_aligned"], abs=1e-12
+    )
     assert result["benchmark"]["excess_return_arithmetic"] is not None
     # A residual is not rendered as a cause.
     assert any(
@@ -530,16 +545,285 @@ def test_restricted_source_blocks_export_and_says_so(db):
     assert any(warning["code"] == mi.W_RESTRICTED_EXPORT for warning in result["warnings"])
 
 
-def test_one_candle_selection_reports_a_session_not_a_return_estimate(db):
+def test_one_candle_selection_uses_the_previous_eligible_session(db):
     _, _, security_id = _identity(db)
     _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 101.0), (DAY_THREE, 102.0)])
 
     result = mi.explain_range(db, _request(security_id, start_session=DAY_TWO, end_session=DAY_TWO))
+    stats = result["price_statistics"]
 
-    assert result["price_statistics"]["sessions"] == 1
-    assert result["price_statistics"]["interval_return"] == pytest.approx(0.0)
-    assert result["price_statistics"]["daily_volatility"] is None
+    assert stats["sessions"] == 1
+    assert stats["return_convention"] == "single_session_close_to_close"
+    assert stats["calculation_sessions"] == 2
+    assert stats["start_price"] == pytest.approx(100.0)
+    assert stats["interval_return"] == pytest.approx(0.01)
+    assert stats["daily_volatility"] is None
     assert any(warning["code"] == mi.W_SINGLE_SESSION for warning in result["warnings"])
+    assert any(
+        warning["code"] == mi.W_SINGLE_SESSION_PREVIOUS for warning in result["warnings"]
+    )
+
+
+def test_one_candle_at_the_first_stored_session_refuses_the_return(db):
+    _, _, security_id = _identity(db)
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 101.0), (DAY_THREE, 102.0)])
+
+    result = mi.explain_range(
+        db, _request(security_id, start_session=DAY_ONE, end_session=DAY_ONE)
+    )
+    stats = result["price_statistics"]
+
+    assert stats["sessions"] == 1
+    assert stats["return_convention"] == "unavailable"
+    assert stats["interval_return"] is None
+    assert stats["start_price"] is None
+    assert stats["end_price"] is None
+    assert stats["absolute_change"] is None
+    assert any(
+        warning["code"] == mi.W_SINGLE_SESSION_UNAVAILABLE for warning in result["warnings"]
+    )
+    assert result["refusals"][0]["code"] == "return_unavailable"
+
+
+def test_benchmark_with_no_in_window_observation_is_unavailable_not_zero(db):
+    _, _, security_id = _identity(db)
+    _, _, benchmark_id = _identity(db, ticker="BMK", cik="1000002")
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 101.0), (DAY_THREE, 102.0)])
+    _import(db, "BMK", [(DAY_ONE, 50.0)])
+
+    result = mi.explain_range(
+        db,
+        _request(
+            security_id,
+            start_session=DAY_TWO,
+            end_session=DAY_THREE,
+            benchmark_security_id=benchmark_id,
+        ),
+    )
+
+    assert result["benchmark"]["status"] == "unavailable"
+    assert "return" not in result["benchmark"]
+    assert result["benchmark"]["sessions"] == 0
+    assert result["market_model"]["status"] == "unavailable"
+    assert any(warning["code"] == mi.W_BENCHMARK_EMPTY for warning in result["warnings"])
+
+
+def test_benchmark_with_one_in_window_observation_is_unavailable(db):
+    _, _, security_id = _identity(db)
+    _, _, benchmark_id = _identity(db, ticker="BMK", cik="1000002")
+    _import(db, "TST", [(DAY_TWO, 101.0), (DAY_THREE, 102.0)])
+    _import(db, "BMK", [(DAY_TWO, 50.0)])
+
+    result = mi.explain_range(
+        db, _request(security_id, benchmark_security_id=benchmark_id)
+    )
+
+    assert result["benchmark"]["status"] == "unavailable"
+    assert "return" not in result["benchmark"]
+    assert any(warning["code"] == mi.W_BENCHMARK_EMPTY for warning in result["warnings"])
+
+
+def test_benchmark_with_insufficient_alignment_is_refused(db):
+    _, _, security_id = _identity(db)
+    _, _, benchmark_id = _identity(db, ticker="BMK", cik="1000002")
+    days = _business_days(DAY_ONE, "2025-01-17")
+    _import(db, "TST", [(day, 100.0 + index) for index, day in enumerate(days)])
+    # Only the first two security sessions have a benchmark: 20% coverage, below the
+    # declared 50% minimum, so no relative statistic may be claimed.
+    _import(db, "BMK", [(days[0], 50.0), (days[1], 50.5)])
+
+    result = mi.explain_range(
+        db,
+        _request(
+            security_id,
+            start_session=days[0],
+            end_session=days[-1],
+            benchmark_security_id=benchmark_id,
+        ),
+    )
+
+    assert result["benchmark"]["status"] == "insufficient_alignment"
+    assert result["benchmark"]["coverage_ratio"] < mi.MIN_BENCHMARK_COVERAGE
+    assert "return" not in result["benchmark"]
+    assert result["market_model"]["status"] == "unavailable"
+    assert any(
+        warning["code"] == mi.W_BENCHMARK_ALIGNMENT for warning in result["warnings"]
+    )
+
+
+def test_compounded_expected_return_matches_an_independent_scalar_calculation(db):
+    _, _, security_id = _identity(db)
+    _, _, benchmark_id = _identity(db, ticker="BMK", cik="1000002")
+    days = _business_days("2024-09-02", DAY_THREE)
+    benchmark_close, security_close = 100.0, 100.0
+    security_pairs, benchmark_pairs = [], []
+    for index, day in enumerate(days):
+        if index:
+            if day in (days[-2], days[-1]):
+                benchmark_return = 0.10 if day == days[-2] else -0.10
+            else:
+                benchmark_return = 0.01 if index % 2 else -0.01
+            benchmark_close *= 1 + benchmark_return
+            security_close *= 1 + 2 * benchmark_return
+        security_pairs.append((day, security_close))
+        benchmark_pairs.append((day, benchmark_close))
+    _import(db, "TST", security_pairs)
+    _import(db, "BMK", benchmark_pairs)
+
+    result = mi.explain_range(
+        db,
+        _request(
+            security_id,
+            start_session=days[-3],
+            end_session=days[-1],
+            benchmark_security_id=benchmark_id,
+            estimation_sessions=30,
+        ),
+    )
+    model = result["market_model"]
+
+    # Independent scalar implementation: benchmark daily returns in the aligned window,
+    # alpha 0 and beta 2 by construction, compounded without any vector helper.
+    scalar_benchmark = [0.10, -0.10]
+    expected_level = 1.0
+    for benchmark_daily in scalar_benchmark:
+        expected_level *= 1 + 0.0 + 2.0 * benchmark_daily
+    scalar_expected = expected_level - 1
+    scalar_security = 1.20 * 0.80 - 1
+
+    assert model["beta"] == pytest.approx(2.0, abs=1e-12)
+    assert model["benchmark_return_aligned"] == pytest.approx(1.10 * 0.90 - 1, abs=1e-12)
+    assert model["security_return_aligned"] == pytest.approx(scalar_security, abs=1e-12)
+    assert model["expected_return_compounded"] == pytest.approx(scalar_expected, abs=1e-12)
+    assert model["abnormal_return_difference"] == pytest.approx(
+        scalar_security - scalar_expected, abs=1e-12
+    )
+    # beta x compounded benchmark is a first-order figure and differs materially here.
+    assert model["first_order_approximation"]["beta_times_benchmark"] == pytest.approx(
+        2 * (1.10 * 0.90 - 1), abs=1e-12
+    )
+
+
+def test_unregistered_and_unlicenced_sources_fail_export_closed(db):
+    # An id that is not in the source table is not implicitly redistributable.
+    unknown = mi._source_rights(db, ["SRC-not-registered"])
+    assert unknown["export_allowed"] is False
+    assert unknown["unregistered_sources"] == ["SRC-not-registered"]
+    assert unknown["sources"][0]["redistribution"] == "unregistered"
+    # An empty source set cannot authorise an export either.
+    assert mi._source_rights(db, [])["export_allowed"] is False
+
+    _, _, security_id = _identity(db)
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 101.0), (DAY_THREE, 102.0)])
+    db.execute("UPDATE source SET licence=NULL WHERE name='Provider A'")
+    result = mi.explain_range(db, _request(security_id))
+    assert result["rights"]["export_allowed"] is False
+    assert result["rights"]["missing_licence_sources"]
+    assert any(warning["code"] == mi.W_MISSING_LICENCE for warning in result["warnings"])
+
+
+def test_restricted_peer_source_blocks_the_whole_export(db):
+    _, _, security_id = _identity(db)
+    _, _, peer_id = _identity(db, ticker="PRX", cik="1000003")
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 101.0), (DAY_THREE, 102.0)])
+    _import(
+        db, "PRX", [(DAY_ONE, 50.0), (DAY_TWO, 51.0), (DAY_THREE, 52.0)],
+        source="Vendor Peer", redistribution="restricted", licence="Peer terms",
+    )
+
+    result = mi.explain_range(db, _request(security_id, peer_security_ids=(peer_id,)))
+
+    assert result["rights"]["export_allowed"] is False
+    assert any(
+        source.startswith("SRC-") or source for source in result["rights"]["restricted_sources"]
+    )
+    assert any(warning["code"] == mi.W_RESTRICTED_EXPORT for warning in result["warnings"])
+
+
+def test_reproducibility_manifest_covers_observations_estimation_and_sources(db):
+    _, _, security_id = _identity(db)
+    _, _, benchmark_id = _identity(db, ticker="BMK", cik="1000002")
+    days = _business_days("2024-09-02", DAY_THREE)
+    _import(db, "TST", [(day, 100.0 + index) for index, day in enumerate(days)])
+    _import(db, "BMK", [(day, 50.0 + 0.1 * index) for index, day in enumerate(days)])
+
+    request = _request(
+        security_id,
+        start_session=days[-3],
+        end_session=days[-1],
+        benchmark_security_id=benchmark_id,
+        estimation_sessions=60,
+    )
+    first = mi.explain_range(db, request)
+    components = first["reproducibility"]["components"]
+
+    assert components["calculation"]["version"] == mi.CALCULATION_VERSION
+    assert components["calculation"]["return_convention"] == "interval_close_to_close"
+    assert len(components["selected_series"]["points"]) == 3
+    assert len(components["context_series"]["points"]) > 3
+    assert len(components["benchmark"]["window_points"]) == 3
+    assert components["market_model"]["estimation_points"]
+    assert components["sources"]
+    assert all("licence" in source for source in components["sources"])
+
+    # A provider correction is a new revision, and it must change the reproducibility hash.
+    _import(db, "TST", [(day, 100.0 + index) for index, day in enumerate(days[:-1])] + [(days[-1], 999.0)])
+    corrected = mi.explain_range(db, request)
+    assert corrected["price_statistics"]["end_revision_seq"] >= 2
+    assert corrected["reproducibility"]["hash"] != first["reproducibility"]["hash"]
+
+
+def test_historical_mode_qualifies_price_vintage_and_date_only_evidence(db):
+    _, issuer_id, security_id = _identity(db)
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 101.0), (DAY_THREE, 102.0)])
+    _add_filing(
+        db, issuer_id=issuer_id, accession="0001000001-25-000020", form_type="8-K",
+        filed_date=DAY_TWO, acceptance=None,
+    )
+
+    result = mi.explain_range(
+        db,
+        _request(security_id, mode=mi.MODE_HISTORICAL, information_cutoff=DAY_THREE),
+    )
+
+    vintage = result["selection"]["price_vintage"]
+    assert vintage["status"] == "unverified"
+    assert vintage["verified_at_cutoff"] is False
+    assert vintage["provider_publication_vintage"] is None
+    assert any(warning["code"] == mi.W_VINTAGE_AT_CUTOFF for warning in result["warnings"])
+    assert any(warning["code"] == mi.W_DATE_PRECISION for warning in result["warnings"])
+    assert any("not by the provider's publication vintage" in line for line in result["limitations"])
+
+
+def test_missing_session_inside_the_window_is_reported(db):
+    _, _, security_id = _identity(db)
+    TradingCalendar(db).ensure_range("XNYS", DAY_ONE, DAY_THREE)
+    # Friday DAY_TWO is a venue session with no stored observation.
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_THREE, 102.0)])
+
+    result = mi.explain_range(db, _request(security_id))
+
+    assert result["selection"]["sessions"] == 2
+    assert result["selection"]["series"]["missing_sessions"] == 1
+    assert any(warning["code"] == mi.W_MISSING_SESSIONS for warning in result["warnings"])
+
+
+def test_after_hours_acceptance_is_not_shifted_to_the_previous_session(db):
+    _, issuer_id, security_id = _identity(db)
+    _import(db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 101.0), (DAY_THREE, 102.0)])
+    _add_filing(
+        db, issuer_id=issuer_id, accession="0001000001-25-000030", form_type="8-K",
+        filed_date=DAY_THREE, acceptance=f"{DAY_THREE}T23:30:00Z",
+    )
+
+    result = mi.explain_range(db, _request(security_id))
+    event = next(
+        item for item in result["events"]["items"] if item.get("accession_number") == "0001000001-25-000030"
+    )
+
+    assert event["date"] == DAY_THREE
+    assert event["relation"] == "in_window"
+    assert event["availability_time"] == f"{DAY_THREE}T23:30:00Z"
 
 
 # ------------------------------------------------------------------------ API
@@ -564,6 +848,76 @@ def test_api_exposes_the_versioned_contract(file_db):
     assert payload["selection"]["security_id"] == security_id
     assert payload["price_statistics"]["sessions"] == 3
     assert payload["reproducibility"]["hash"]
+
+
+def test_complete_research_workflow_over_http(file_db):
+    _, issuer_id, security_id = _identity(file_db)
+    _import(file_db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 104.0), (DAY_THREE, 102.0)])
+    _add_filing(
+        file_db, issuer_id=issuer_id, accession="0001000001-25-000040", form_type="8-K",
+        filed_date=DAY_TWO, acceptance=f"{DAY_TWO}T21:05:00Z",
+    )
+    ActionStore(file_db).add(
+        CorporateAction(
+            security_id=security_id,
+            action_type="cash_dividend",
+            source_id="sec-edgar",
+            ex_date=DAY_TWO,
+            cash_amount=Decimal("1"),
+            currency="USD",
+            availability_time=f"{DAY_ONE}T12:00:00Z",
+        )
+    )
+    client = TestClient(create_app(file_db.path))
+
+    response = client.post(
+        f"/api/securities/{security_id}/price-explanations",
+        json={
+            "start_session": DAY_ONE,
+            "end_session": DAY_THREE,
+            "price_basis": "split_adjusted",
+            "mode": "retrospective_investigation",
+            "benchmark_security_id": None,
+            "peer_security_ids": [],
+        },
+    )
+    assert response.status_code == 200, response.text
+    payload = response.json()
+
+    # 1. selected range and statistics
+    assert payload["selection"]["start_session"] == DAY_ONE
+    assert payload["price_statistics"]["interval_return"] == pytest.approx(0.02)
+    # 2. SEC / corporate-action timeline
+    kinds = {item["kind"] for item in payload["events"]["items"]}
+    assert {"sec_filing", "corporate_action"} <= kinds
+    # 3. competing hypotheses, none with a probability or a proven cause
+    assert payload["hypotheses"]
+    assert all(hypothesis["causal_status"] == "not_identified" for hypothesis in payload["hypotheses"])
+    # 4. source references and rights
+    source_ids = {source["source_id"] for source in payload["rights"]["sources"]}
+    assert payload["reproducibility"]["components"]["sources"]
+    assert source_ids
+    assert payload["rights"]["export_allowed"] is True
+    # 5. an authorized export is reproducible from its own manifest
+    assert payload["reproducibility"]["hash"]
+    assert payload["reproducibility"]["components"]["calculation"]["version"] == mi.CALCULATION_VERSION
+
+
+def test_api_refuses_a_single_session_without_a_previous_close(file_db):
+    _, _, security_id = _identity(file_db)
+    _import(file_db, "TST", [(DAY_ONE, 100.0), (DAY_TWO, 101.0)])
+    client = TestClient(create_app(file_db.path))
+
+    response = client.post(
+        f"/api/securities/{security_id}/price-explanations",
+        json={"start_session": DAY_ONE, "end_session": DAY_ONE},
+    )
+
+    assert response.status_code == 200, response.text
+    payload = response.json()
+    assert payload["price_statistics"]["interval_return"] is None
+    assert payload["price_statistics"]["return_convention"] == "unavailable"
+    assert payload["refusals"][0]["code"] == "return_unavailable"
 
 
 def test_api_refuses_unknown_security_and_unknown_fields(file_db):

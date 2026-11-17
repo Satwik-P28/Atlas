@@ -138,6 +138,20 @@ export default function PriceExplanationPanel({
             A pinned investigation: one provider, one revision per session, evidence filtered by
             publication time.
           </p>
+          {mode === 'historical_reconstruction' && (
+            <p className="small">
+              <Badge tone="warn">price vintage unverified</Badge>{' '}
+              <span className="muted">
+                sessions are filtered by date, not by the provider's publication vintage; Atlas
+                cannot prove these prices were published by the cutoff.
+              </span>
+            </p>
+          )}
+          {data?.selection.return_convention === 'single_session_close_to_close' && (
+            <p className="muted small">
+              A one-candle selection measures the move from the previous eligible session's close.
+            </p>
+          )}
         </div>
         <div className="price-explanation-controls">
           <label className="inline-field small">
@@ -376,23 +390,38 @@ export default function PriceExplanationPanel({
                 <span className="muted small">single-factor fit</span>
               </div>
               <div className="explain-metric">
-                <span className="muted small">Market component</span>
+                <span className="muted small">Expected return (compounded)</span>
                 <strong className="mono">
-                  {data.market_model.market_component_of_return === undefined
+                  {data.market_model.expected_return_compounded === undefined
                     ? '—'
-                    : fmtSignedPct(data.market_model.market_component_of_return)}
+                    : fmtSignedPct(data.market_model.expected_return_compounded)}
                 </strong>
-                <span className="muted small">beta × benchmark return</span>
+                <span className="muted small">alpha + beta × benchmark, compounded daily</span>
               </div>
               <div className="explain-metric">
-                <span className="muted small">Residual</span>
+                <span className="muted small">Abnormal return</span>
                 <strong className="mono">
-                  {data.market_model.residual_return_arithmetic === undefined
+                  {data.market_model.abnormal_return_difference === undefined
                     ? '—'
-                    : fmtSignedPct(data.market_model.residual_return_arithmetic)}
+                    : fmtSignedPct(data.market_model.abnormal_return_difference)}
                 </strong>
-                <span className="muted small">what the model does not explain</span>
+                <span className="muted small">
+                  return minus compounded expected return — what the model does not explain
+                </span>
               </div>
+              {data.market_model.first_order_approximation && (
+                <div className="explain-metric">
+                  <span className="muted small">First-order check</span>
+                  <strong className="mono">
+                    {fmtSignedPct(
+                      data.market_model.first_order_approximation.beta_times_benchmark,
+                    )}
+                  </strong>
+                  <span className="muted small">
+                    beta × benchmark return; an approximation, not the abnormal return
+                  </span>
+                </div>
+              )}
             </div>
             {data.market_model.applicability && (
               <ul className="small muted">
@@ -438,8 +467,21 @@ export default function PriceExplanationPanel({
                 </ul>
                 <p className="small">
                   Export allowed:{' '}
-                  <strong>{data.rights.export_allowed ? 'yes' : 'no — restricted source'}</strong>
+                  <strong>
+                    {data.rights.export_allowed
+                      ? 'yes'
+                      : data.rights.unregistered_sources?.length
+                        ? 'no — unregistered source'
+                        : 'no — restricted source'}
+                  </strong>
                 </p>
+                {!data.rights.export_allowed && (data.rights.reasons?.length ?? 0) > 0 && (
+                  <ul className="small muted">
+                    {data.rights.reasons?.map((reason) => (
+                      <li key={reason}>{reason}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
               <div>
                 <h5>Boundary observations</h5>
@@ -447,6 +489,11 @@ export default function PriceExplanationPanel({
                   start {data.price_statistics.start_observation_id} · end{' '}
                   {data.price_statistics.end_observation_id}
                 </p>
+                {data.price_statistics.return_convention === 'single_session_close_to_close' && (
+                  <p className="muted small">
+                    The start boundary is the previous eligible session, not the selected candle.
+                  </p>
+                )}
                 <h5>Reproducibility</h5>
                 <p className="mono small wrap">{data.reproducibility.hash}</p>
                 <p className="muted small">{data.reproducibility.note}</p>

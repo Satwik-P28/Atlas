@@ -62,6 +62,14 @@ MODE_RETROSPECTIVE = "retrospective_investigation"
 MODES = (MODE_HISTORICAL, MODE_RETROSPECTIVE)
 
 SUPPORTED_TIMEFRAMES = ("1d",)
+RETURN_CONVENTIONS = ("interval_close_to_close", "single_session_close_to_close")
+RETURN_CONVENTION_AUTO = "auto"
+CALCULATION_VERSION = "atlas.price_explanation.calculation.v2"
+MARKET_MODEL_VERSION = "atlas.price_explanation.market_model.v2"
+ANNUALIZATION_SESSIONS = 252
+#: Minimum share of the security's window sessions a benchmark must cover before a
+#: relative statistic is claimed. Below this, the comparison is refused, not shrunk.
+MIN_BENCHMARK_COVERAGE = 0.5
 DEFAULT_TIMEZONE = "America/New_York"
 MAX_HORIZON_SESSIONS = 10_000
 DEFAULT_ESTIMATION_SESSIONS = 120
@@ -76,6 +84,8 @@ REDISTRIBUTABLE = evidence.REDISTRIBUTABLE
 W_RANGE_REVERSED = "range_reversed"
 W_RANGE_SNAPPED = "range_snapped_to_nearest_session"
 W_SINGLE_SESSION = "single_session_interval"
+W_SINGLE_SESSION_PREVIOUS = "single_session_uses_previous_session"
+W_SINGLE_SESSION_UNAVAILABLE = "single_session_previous_unavailable"
 W_MISSING_SESSIONS = "missing_sessions_in_window"
 W_NO_NEWS_ARCHIVE = "news_archive_unavailable"
 W_NO_ANALYST_DATA = "analyst_consensus_unavailable"
@@ -88,6 +98,12 @@ W_UNKNOWN_AVAILABILITY = "evidence_availability_unknown"
 W_RESTRICTED_EXPORT = "restricted_source_not_exportable"
 W_PARAMETRIC_HINDSIGHT = "parametric_hindsight_disclosed"
 W_PROVIDER_VINTAGE = "provider_vintage_not_proven"
+W_VINTAGE_AT_CUTOFF = "price_vintage_unverified_at_cutoff"
+W_DATE_PRECISION = "date_precision_availability"
+W_UNKNOWN_SOURCE = "unregistered_source"
+W_MISSING_LICENCE = "source_licence_missing"
+W_BENCHMARK_EMPTY = "benchmark_no_comparable_observations"
+W_BENCHMARK_ALIGNMENT = "benchmark_alignment_insufficient"
 W_NO_COMPANY_EVIDENCE = "no_company_specific_evidence"
 W_REVISION_FOUND = "subsequent_revision_found"
 W_PEER_LIMIT = "peer_limit_applied"
@@ -133,6 +149,9 @@ class ExplanationRequest:
     peer_security_ids: tuple[str, ...] = ()
     estimation_sessions: int = DEFAULT_ESTIMATION_SESSIONS
     evidence_limit: int = 50
+    #: ``auto`` resolves to an interval close-to-close return for multi-session
+    #: selections and a prior-session close-to-close return for a one-candle selection.
+    return_convention: str = RETURN_CONVENTION_AUTO
 
 
 @dataclass(slots=True)
@@ -143,6 +162,8 @@ class _Resolved:
     series: evidence.MarketSeriesSelection
     points: list[evidence.MarketObservation]
     actions: list[CorporateAction]
+    context: evidence.MarketSeriesSelection
+    previous_point: evidence.MarketObservation | None
     requested_start: str
     requested_end: str
     start_session: str
@@ -189,6 +210,12 @@ def _validate(request: ExplanationRequest) -> tuple[str, str, str | None]:
         ZoneInfo(request.timezone)
     except (ZoneInfoNotFoundError, ValueError) as exc:
         raise ValidationError("unknown timezone", timezone=request.timezone) from exc
+    if request.return_convention not in (RETURN_CONVENTION_AUTO, *RETURN_CONVENTIONS):
+        raise ValidationError(
+            "unknown return convention",
+            requested=request.return_convention,
+            supported=[RETURN_CONVENTION_AUTO, *RETURN_CONVENTIONS],
+        )
     if request.estimation_sessions < MIN_MARKET_MODEL_SESSIONS:
         raise ValidationError(
             "the market-model estimation window must contain at least "
@@ -313,6 +340,29 @@ def _resolve(db: Database, request: ExplanationRequest) -> _Resolved:
     actions = ActionStore(db).list(
         request.security_id, knowledge_as_of=cutoff if request.mode == MODE_HISTORICAL else None
     )
+
+    # Context is the same provider's series over a bounded lookback. It supplies the
+    # previous eligible session for a one-candle return, the trailing volume baseline and
+    # the market-model estimation window. It never contributes a spliced price.
+    context_start = (
+        parse_date(start_session) - timedelta(days=request.estimation_sessions * 3)
+    ).isoformat()
+    context = evidence.select_series(
+        db,
+        request.security_id,
+        mic=mic,
+        start=context_start,
+        end=end_session,
+        anchor=evidence.select_price(db, request.security_id, end_session),
+    )
+    previous_point = next(
+        (
+            point
+            for point in reversed(list(context.points))
+            if point.session_date < start_session
+        ),
+        None,
+    )
     return _Resolved(
         security=security,
         mic=mic,
@@ -320,6 +370,8 @@ def _resolve(db: Database, request: ExplanationRequest) -> _Resolved:
         series=series,
         points=points,
         actions=actions,
+        context=context,
+        previous_point=previous_point,
         requested_start=start,
         requested_end=end,
         start_session=resolved_start,
@@ -594,31 +646,86 @@ def _action_events(
 
 
 def _source_rights(db: Database, source_ids: Sequence[str]) -> dict[str, Any]:
-    if not source_ids:
-        return {"export_allowed": False, "sources": [], "restricted_sources": []}
-    rows = db.query(
-        "SELECT source_id, name, licence, redistribution, kind FROM source WHERE source_id IN ("
-        + ",".join("?" for _ in source_ids)
-        + ") ORDER BY source_id",
-        list(source_ids),
-    )
-    sources = [
-        {
-            "source_id": row["source_id"],
-            "name": row["name"],
-            "licence": row["licence"],
-            "redistribution": row["redistribution"],
-            "kind": row["kind"],
+    """Decide export rights over every contributing source, failing closed.
+
+    Three states are refused, not assumed benign: a source id that is not registered at
+    all, a redistribution class outside :data:`REDISTRIBUTABLE`, and a registered source
+    with no recorded licence. An unknown class never becomes implicitly redistributable,
+    and an empty source set cannot authorise an export.
+    """
+    unique = sorted({str(source_id) for source_id in source_ids if source_id})
+    if not unique:
+        return {
+            "export_allowed": False,
+            "sources": [],
+            "restricted_sources": [],
+            "unregistered_sources": [],
+            "reasons": ["no source records were collected, so the export fails closed"],
         }
-        for row in rows
-    ]
-    restricted = [
-        row["source_id"] for row in sources if (row["redistribution"] or "") not in REDISTRIBUTABLE
-    ]
+    rows = {
+        row["source_id"]: row
+        for row in db.query(
+            "SELECT source_id, name, licence, redistribution, kind FROM source WHERE source_id IN ("
+            + ",".join("?" for _ in unique)
+            + ") ORDER BY source_id",
+            list(unique),
+        )
+    }
+    sources: list[dict[str, Any]] = []
+    restricted: list[str] = []
+    unregistered: list[str] = []
+    missing_licence: list[str] = []
+    reasons: list[str] = []
+    for source_id in unique:
+        row = rows.get(source_id)
+        if row is None:
+            sources.append(
+                {
+                    "source_id": source_id,
+                    "name": None,
+                    "licence": None,
+                    "redistribution": "unregistered",
+                    "kind": None,
+                    "registered": False,
+                    "export_allowed": False,
+                }
+            )
+            restricted.append(source_id)
+            unregistered.append(source_id)
+            reasons.append(f"{source_id}: not registered in the source table")
+            continue
+        redistribution = (row["redistribution"] or "").strip()
+        licence = (row["licence"] or "").strip()
+        permitted = redistribution in REDISTRIBUTABLE
+        reason = None
+        if not permitted:
+            reason = f"redistribution class {redistribution or 'unknown'!r} is not exportable"
+        if not licence:
+            missing_licence.append(source_id)
+            reason = "no licence recorded; export fails closed"
+            permitted = False
+        if not permitted:
+            restricted.append(source_id)
+            reasons.append(f"{source_id}: {reason}")
+        sources.append(
+            {
+                "source_id": source_id,
+                "name": row["name"],
+                "licence": row["licence"],
+                "redistribution": row["redistribution"],
+                "kind": row["kind"],
+                "registered": True,
+                "export_allowed": permitted,
+                "reason": reason,
+            }
+        )
     return {
-        "export_allowed": not restricted,
+        "export_allowed": bool(unique) and not restricted,
         "sources": sources,
         "restricted_sources": restricted,
+        "unregistered_sources": unregistered,
+        "missing_licence_sources": missing_licence,
+        "reasons": reasons,
     }
 
 
@@ -670,14 +777,50 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
         )
 
     # --- the three bases over exactly the same sessions -------------------------
+    requested_basis = request.price_basis
+    return_convention = "interval_close_to_close"
+    calculation_points = list(points)
+    start_observation = points[0]
+    end_observation = points[-1]
+    if len(points) == 1:
+        # A one-candle selection is a one-session move only if the immediately preceding
+        # eligible session is known. Otherwise the return is refused with a reason rather
+        # than assuming an unchanged prior close.
+        if resolved.previous_point is not None:
+            return_convention = "single_session_close_to_close"
+            calculation_points = [resolved.previous_point, points[0]]
+            start_observation = resolved.previous_point
+            warnings.append(
+                _warning(
+                    W_SINGLE_SESSION_PREVIOUS,
+                    "a one-candle selection measures the move from the previous eligible "
+                    "session's close to the selected session's close",
+                    previous_session=resolved.previous_point.session_date,
+                    selected_session=points[0].session_date,
+                )
+            )
+        else:
+            return_convention = "unavailable"
+            warnings.append(
+                _warning(
+                    W_SINGLE_SESSION_UNAVAILABLE,
+                    "the selected interval has one session and Atlas holds no previous "
+                    "eligible session for this listing's stored series; no return is "
+                    "computed rather than assuming a flat prior close",
+                    selected_session=points[0].session_date,
+                )
+            )
+    calculation_bars = [point.to_bar() for point in calculation_points]
     bases: dict[str, list[Decimal]] = {
-        basis: _basis_closes(bars, resolved.actions, basis)
+        basis: _basis_closes(calculation_bars, resolved.actions, basis)
         for basis in evidence.RETURN_BASES
     }
-    returns = {basis: _compound(closes) for basis, closes in bases.items()}
-    requested_basis = request.price_basis
-    chosen = bases[requested_basis]
-    chosen_returns = [value for _, value in _daily_returns(chosen)]
+    returns: dict[str, float | None] = {
+        basis: (_compound(closes) if return_convention != "unavailable" else None)
+        for basis, closes in bases.items()
+    }
+    chosen = bases[requested_basis] if return_convention != "unavailable" else []
+    chosen_returns = [value for _, value in _daily_returns(chosen)] if chosen else []
 
     split_count = sum(1 for action in resolved.actions if action.action_type in SPLIT_TYPES and action.ex_date and start <= action.ex_date <= end)
     dividend_count = sum(
@@ -696,11 +839,12 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
             )
         )
 
-    start_close, end_close = chosen[0], chosen[-1]
-    volatility = _stdev(chosen_returns)
+    start_close = chosen[0] if chosen else None
+    end_close = chosen[-1] if chosen else None
+    volatility = _stdev(chosen_returns) if chosen_returns else None
 
     # --- overnight versus intraday (split-adjusted opens) -----------------------
-    adjusted = split_adjust(bars, resolved.actions, include_dividends=False)
+    adjusted = split_adjust(calculation_bars, resolved.actions, include_dividends=False)
     overnight = 1.0
     intraday = 1.0
     overnight_sessions = 0
@@ -717,15 +861,7 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
             intraday_sessions += 1
 
     # --- volume against a trailing median --------------------------------------
-    context_start = (parse_date(start) - timedelta(days=request.estimation_sessions * 3)).isoformat()
-    context = evidence.select_series(
-        db,
-        request.security_id,
-        mic=resolved.mic,
-        start=context_start,
-        end=end,
-        anchor=evidence.select_price(db, request.security_id, end),
-    )
+    context = resolved.context
     context_points = [point for point in context.points if point.session_date < start]
     window_volumes = [float(point.volume) for point in points if point.volume is not None]
     context_volumes = [float(point.volume) for point in context_points if point.volume is not None]
@@ -743,21 +879,27 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
         "start_session": start,
         "end_session": end,
         "sessions": len(points),
+        "calculation_sessions": len(calculation_points),
+        "return_convention": return_convention,
         "calendar_days": (parse_date(end) - parse_date(start)).days + 1,
-        "start_price": float(start_close),
-        "end_price": float(end_close),
-        "absolute_change": float(end_close - start_close),
+        "start_price": float(start_close) if start_close is not None else None,
+        "end_price": float(end_close) if end_close is not None else None,
+        "absolute_change": (
+            float(end_close - start_close)
+            if start_close is not None and end_close is not None
+            else None
+        ),
         "interval_return": returns[requested_basis],
-        "start_observation_id": points[0].observation_id,
-        "end_observation_id": points[-1].observation_id,
-        "start_revision_seq": points[0].revision_seq,
-        "end_revision_seq": points[-1].revision_seq,
+        "start_observation_id": start_observation.observation_id,
+        "end_observation_id": end_observation.observation_id,
+        "start_revision_seq": start_observation.revision_seq,
+        "end_revision_seq": end_observation.revision_seq,
         "daily_volatility": volatility,
         "annualized_volatility": volatility * math.sqrt(252) if volatility is not None else None,
         "annualization": "sample standard deviation of daily returns x sqrt(252)" if volatility is not None else None,
         "max_drawdown": _max_drawdown(chosen),
-        "best_session": _extreme_session(points, chosen, best=True),
-        "worst_session": _extreme_session(points, chosen, best=False),
+        "best_session": _extreme_session(calculation_points, chosen, best=True),
+        "worst_session": _extreme_session(calculation_points, chosen, best=False),
         "overnight_compounded": overnight - 1 if overnight_sessions else None,
         "intraday_compounded": intraday - 1 if intraday_sessions else None,
         "gap_sessions": overnight_sessions,
@@ -795,14 +937,15 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
     }
 
     # --- benchmark, peers, market model ----------------------------------------
-    benchmark, market_model = _benchmark_block(
+    benchmark, market_model, model_manifest = _benchmark_block(
         db,
         request=request,
         resolved=resolved,
-        security_return=returns[requested_basis],
         warnings=warnings,
     )
-    peers = _peer_block(db, request=request, resolved=resolved, warnings=warnings)
+    peers, peer_manifest = _peer_block(
+        db, request=request, resolved=resolved, warnings=warnings
+    )
 
     # --- evidence --------------------------------------------------------------
     filing_items, filing_coverage = _filing_events(
@@ -901,12 +1044,85 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
         volume_ratio=volume_ratio,
     )
 
-    source_ids = sorted(
-        {point.source_id for point in points}
-        | {item["source_id"] for item in events if item.get("source_id")}
-        | ({benchmark["source_id"]} if benchmark.get("source_id") else set())
+    price_vintage = {
+        "status": "unverified",
+        "verified_at_cutoff": False,
+        "vintage_kind": "market_session_date",
+        "provider_publication_vintage": None,
+        "reason": (
+            "Atlas stores the latest revision of each session, not the provider's publication "
+            "history, so a historical reconstruction cannot prove these prices were available "
+            "at the requested cutoff"
+        ),
+    }
+    if request.mode == MODE_HISTORICAL:
+        warnings.append(
+            _warning(
+                W_VINTAGE_AT_CUTOFF,
+                "prices are filtered by session date, not by the provider's publication "
+                "vintage; this reconstruction does not claim the vendor had published these "
+                "values by the cutoff",
+                cutoff=cutoff,
+                price_vintage_status=price_vintage["status"],
+            )
+        )
+        date_only = [
+            item
+            for item in events
+            if item.get("availability_precision") == "date"
+            and item.get("relation") in ("in_window", "after_window", "subsequent")
+        ]
+        if date_only:
+            warnings.append(
+                _warning(
+                    W_DATE_PRECISION,
+                    "evidence with date-only availability is treated as available at the "
+                    "start of that date; a submission accepted later that day is not "
+                    "shifted to the preceding session, but intraday ordering is unknown",
+                    count=len(date_only),
+                )
+            )
+
+    # Every source that contributed a value, an adjustment, a peer or an event is in the
+    # rights decision. A source that is not registered fails closed rather than defaulting
+    # to redistributable.
+    contributing_sources: set[str] = {point.source_id for point in points}
+    contributing_sources.update(point.source_id for point in context.points)
+    contributing_sources.update(
+        item["source_id"] for item in events if item.get("source_id")
     )
-    rights = _source_rights(db, source_ids)
+    contributing_sources.update(
+        action.source_id for action in resolved.actions if action.source_id
+    )
+    if benchmark.get("source_id"):
+        contributing_sources.add(benchmark["source_id"])
+    for entry in (model_manifest.get("benchmark") or {}).get("window_points", []):
+        if entry.get("source_id"):
+            contributing_sources.add(entry["source_id"])
+    for entry in (model_manifest.get("benchmark") or {}).get("estimation_points", []):
+        if entry.get("source_id"):
+            contributing_sources.add(entry["source_id"])
+    contributing_sources.update(
+        peer["source_id"] for peer in peers if peer.get("source_id")
+    )
+    rights = _source_rights(db, sorted(contributing_sources))
+    if rights["unregistered_sources"]:
+        warnings.append(
+            _warning(
+                W_UNKNOWN_SOURCE,
+                "a contributing source is not registered, so its values are treated as "
+                "restricted and the export fails closed",
+                unregistered_sources=rights["unregistered_sources"],
+            )
+        )
+    if rights["missing_licence_sources"]:
+        warnings.append(
+            _warning(
+                W_MISSING_LICENCE,
+                "a contributing source has no recorded licence, so the export fails closed",
+                sources=rights["missing_licence_sources"],
+            )
+        )
     if not rights["export_allowed"]:
         warnings.append(
             _warning(
@@ -931,11 +1147,58 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
     components = {
         "engine": {"name": ENGINE_NAME, "version": ENGINE_VERSION},
         "schema": CONTRACT_VERSION,
+        "calculation": {
+            "version": CALCULATION_VERSION,
+            "market_model_version": MARKET_MODEL_VERSION,
+            "return_convention": return_convention,
+            "requested_basis": request.price_basis,
+            "annualization_sessions": ANNUALIZATION_SESSIONS,
+            "min_benchmark_coverage": MIN_BENCHMARK_COVERAGE,
+            "estimation_sessions": request.estimation_sessions,
+            "evidence_limit": request.evidence_limit,
+        },
         "request": _normalised_request(request, resolved),
-        "observations": [point.observation_id for point in points],
-        "actions": [action.action_id for action in resolved.actions],
-        "events": [item["event_id"] for item in events],
-        "peers": [peer["security_id"] for peer in peers],
+        "selected_series": {
+            "source_id": resolved.series.source_id,
+            "policy": resolved.series.policy,
+            "points": _point_manifest(calculation_points),
+        },
+        "context_series": {
+            "source_id": context.source_id,
+            "policy": context.policy,
+            "missing_status": context.missing_status,
+            "points": _point_manifest(context.points),
+        },
+        "benchmark": model_manifest.get("benchmark"),
+        "market_model": model_manifest.get("market_model"),
+        "peers": peer_manifest.get("peers"),
+        "corporate_actions": [
+            {
+                "action_id": action.action_id,
+                "source_id": action.source_id,
+                "action_type": action.action_type,
+                "status": action.status,
+                "ex_date": action.ex_date,
+                "effective_date": action.effective_date,
+                "availability_time": action.availability_time,
+                "availability_precision": action.availability_precision,
+                "observed_at": action.observed_at,
+                "supersedes": action.supersedes,
+            }
+            for action in resolved.actions
+        ],
+        "events": [
+            {
+                "event_id": item["event_id"],
+                "kind": item.get("kind"),
+                "date": item.get("date"),
+                "relation": item.get("relation"),
+                "source_id": item.get("source_id"),
+                "availability_precision": item.get("availability_precision"),
+            }
+            for item in events
+        ],
+        "sources": rights["sources"],
     }
     reproducibility = {
         "hash_algorithm": "sha256",
@@ -966,8 +1229,10 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
             "end_session": end,
             "sessions": len(points),
             "series": resolved.series.summary(),
-            "start_observation": points[0].identity(),
-            "end_observation": points[-1].identity(),
+            "start_observation": start_observation.identity(),
+            "end_observation": end_observation.identity(),
+            "return_convention": return_convention,
+            "price_vintage": price_vintage,
         },
         "price_statistics": price_statistics,
         "benchmark": benchmark,
@@ -984,7 +1249,21 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
         "revision_check": revision_check,
         "rights": rights,
         "warnings": warnings,
-        "refusals": [],
+        "refusals": (
+            [
+                {
+                    "code": "return_unavailable",
+                    "reason": "single session with no previous eligible session",
+                    "detail": (
+                        "Atlas will not assume an unchanged prior close. Select a range that "
+                        "includes the previous session, or start after the listing's first "
+                        "stored session."
+                    ),
+                }
+            ]
+            if return_convention == "unavailable"
+            else []
+        ),
         "reproducibility": reproducibility,
         "limitations": [
             "daily observations only; Atlas stores no intraday bars",
@@ -993,6 +1272,11 @@ def explain_range(db: Database, request: ExplanationRequest) -> dict[str, Any]:
             "timeline is incomplete by construction",
             "the provider's past vintage is not archived; a session's stored revision may "
             "have been published after that session",
+            (
+                "in historical mode the price series is filtered by session date, not by "
+                "the provider's publication vintage; the response labels that vintage "
+                "unverified rather than implying it was available at the cutoff"
+            ),
         ],
     }
 
@@ -1041,7 +1325,22 @@ def _normalised_request(
         "benchmark_security_id": request.benchmark_security_id,
         "peer_security_ids": list(request.peer_security_ids),
         "estimation_sessions": request.estimation_sessions,
+        "evidence_limit": request.evidence_limit,
+        "return_convention": request.return_convention,
     }
+
+
+def _point_manifest(points: Sequence[evidence.MarketObservation]) -> list[dict[str, Any]]:
+    return [
+        {
+            "observation_id": point.observation_id,
+            "session": point.session_date,
+            "revision_seq": point.revision_seq,
+            "content_hash": point.content_hash,
+            "source_id": point.source_id,
+        }
+        for point in points
+    ]
 
 
 def _benchmark_block(
@@ -1049,9 +1348,8 @@ def _benchmark_block(
     *,
     request: ExplanationRequest,
     resolved: _Resolved,
-    security_return: float,
     warnings: list[dict[str, Any]],
-) -> tuple[dict[str, Any], dict[str, Any]]:
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     unavailable = {
         "status": "unavailable",
         "security_id": request.benchmark_security_id,
@@ -1068,7 +1366,7 @@ def _benchmark_block(
         )
         unavailable["reason"] = "no benchmark_security_id was supplied"
         empty_model["reason"] = "no benchmark was supplied"
-        return unavailable, empty_model
+        return unavailable, empty_model, {"benchmark": None, "market_model": None}
     if request.benchmark_security_id == request.security_id:
         raise ValidationError(
             "a security cannot be its own benchmark", security_id=request.security_id
@@ -1086,14 +1384,14 @@ def _benchmark_block(
         )
         unavailable["reason"] = "unknown benchmark security"
         empty_model["reason"] = "unknown benchmark security"
-        return unavailable, empty_model
+        return unavailable, empty_model, {"benchmark": None, "market_model": None}
 
     try:
         benchmark_mic = _primary_mic(db, master, request.benchmark_security_id)
     except ValidationError:
         unavailable["reason"] = "benchmark has no listing"
         empty_model["reason"] = "benchmark has no listing"
-        return unavailable, empty_model
+        return unavailable, empty_model, {"benchmark": None, "market_model": None}
 
     context_start = (
         parse_date(resolved.start_session) - timedelta(days=request.estimation_sessions * 3)
@@ -1124,18 +1422,115 @@ def _benchmark_block(
         )
         unavailable["reason"] = "benchmark series is empty"
         empty_model["reason"] = "benchmark series is empty"
-        return unavailable, empty_model
+        return unavailable, empty_model, {"benchmark": None, "market_model": None}
 
     benchmark_currency = benchmark_series.points[-1].currency
+    security_currency = resolved.points[0].currency
+    manifest: dict[str, Any] = {"benchmark": None, "market_model": None}
     window_points = [
         point
         for point in benchmark_series.points
         if resolved.start_session <= point.session_date <= resolved.end_session
     ]
-    benchmark_basis = _basis_closes(
-        [point.to_bar() for point in window_points], benchmark_actions, request.price_basis
+    benchmark_by_date = {point.session_date: point for point in window_points}
+    security_by_date = {point.session_date: point for point in resolved.points}
+    common_window = sorted(set(benchmark_by_date) & set(security_by_date))
+    coverage = len(common_window) / len(resolved.points) if resolved.points else 0.0
+
+    # A benchmark with no comparable observations is reported as unavailable. Atlas does
+    # not invent a 0.0 return for it, and does not label it "available".
+    if len(window_points) < 2:
+        warnings.append(
+            _warning(
+                W_BENCHMARK_EMPTY,
+                "the benchmark has fewer than two stored observations inside the interval; "
+                "no benchmark return, excess return or beta is claimed",
+                benchmark_security_id=request.benchmark_security_id,
+                sessions=len(window_points),
+            )
+        )
+        unavailable.update(
+            {
+                "reason": "fewer than two benchmark observations inside the interval",
+                "sessions": len(window_points),
+                "source_id": benchmark_series.source_id,
+                "currency": benchmark_currency,
+            }
+        )
+        return (
+            unavailable,
+            {"status": "unavailable", "reason": unavailable["reason"], "sessions": len(window_points)},
+            manifest,
+        )
+    if len(common_window) < 2:
+        warnings.append(
+            _warning(
+                W_BENCHMARK_ALIGNMENT,
+                "the benchmark and the security share fewer than two sessions in the "
+                "interval; no relative statistic is claimed",
+                aligned_sessions=len(common_window),
+            )
+        )
+        unavailable.update(
+            {
+                "status": "insufficient_alignment",
+                "reason": "fewer than two aligned sessions",
+                "sessions": len(window_points),
+                "aligned_sessions": len(common_window),
+                "source_id": benchmark_series.source_id,
+                "currency": benchmark_currency,
+            }
+        )
+        return unavailable, {"status": "unavailable", "reason": unavailable["reason"], "aligned_sessions": len(common_window)}, manifest
+    if coverage < MIN_BENCHMARK_COVERAGE:
+        warnings.append(
+            _warning(
+                W_BENCHMARK_ALIGNMENT,
+                "the benchmark covers too little of the selected interval to support a "
+                "relative claim",
+                aligned_sessions=len(common_window),
+                security_sessions=len(resolved.points),
+                coverage_ratio=coverage,
+                required_coverage=MIN_BENCHMARK_COVERAGE,
+            )
+        )
+        unavailable.update(
+            {
+                "status": "insufficient_alignment",
+                "reason": "benchmark coverage of the interval is below the declared minimum",
+                "aligned_sessions": len(common_window),
+                "security_sessions": len(resolved.points),
+                "coverage_ratio": coverage,
+                "required_coverage": MIN_BENCHMARK_COVERAGE,
+                "source_id": benchmark_series.source_id,
+                "currency": benchmark_currency,
+            }
+        )
+        return unavailable, {
+            "status": "unavailable",
+            "reason": unavailable["reason"],
+            "aligned_sessions": len(common_window),
+            "coverage_ratio": coverage,
+        }, manifest
+
+    security_aligned = [security_by_date[day] for day in common_window]
+    benchmark_aligned = [benchmark_by_date[day] for day in common_window]
+    security_closes_window = _basis_closes(
+        [point.to_bar() for point in security_aligned], resolved.actions, request.price_basis
     )
-    benchmark_return = _compound(benchmark_basis)
+    benchmark_closes_window = _basis_closes(
+        [point.to_bar() for point in benchmark_aligned], benchmark_actions, request.price_basis
+    )
+    benchmark_return = _compound(benchmark_closes_window)
+    security_window_return = _compound(security_closes_window)
+    manifest["benchmark"] = {
+        "security_id": request.benchmark_security_id,
+        "mic": benchmark_mic,
+        "source_id": benchmark_series.source_id,
+        "currency": benchmark_currency,
+        "window_points": _point_manifest(benchmark_aligned),
+        "estimation_points": [],
+    }
     benchmark_block = {
         "status": "available",
         "security_id": request.benchmark_security_id,
@@ -1143,29 +1538,30 @@ def _benchmark_block(
         "mic": benchmark_mic,
         "source_id": benchmark_series.source_id,
         "currency": benchmark_currency,
-        "sessions": len(window_points),
-        "first_session": window_points[0].session_date if window_points else None,
-        "last_session": window_points[-1].session_date if window_points else None,
+        "sessions": len(common_window),
+        "benchmark_sessions": len(window_points),
+        "security_sessions": len(resolved.points),
+        "aligned_sessions": len(common_window),
+        "unaligned_sessions": len(resolved.points) - len(common_window),
+        "coverage_ratio": coverage,
+        "required_coverage": MIN_BENCHMARK_COVERAGE,
+        "first_session": common_window[0],
+        "last_session": common_window[-1],
         "return": benchmark_return,
+        "security_return_aligned": security_window_return,
         "basis": request.price_basis,
         "basis_label": evidence.RETURN_LABELS[request.price_basis],
+        "comparable": True,
         "reason": None,
         "note": (
-            "the benchmark is measured on its own stored series; if its sessions differ from "
-            "the security's, the comparison uses each series over the same date bounds"
+            "the benchmark return, excess return and market-model window are computed on "
+            "the sessions the two series share, so both sides describe the same days"
         ),
     }
 
     # Alignment for the market model: intersection of observed sessions, strictly before
     # the event window, so no in-window return estimates the model that scores it.
-    security_context = evidence.select_series(
-        db,
-        request.security_id,
-        mic=resolved.mic,
-        start=context_start,
-        end=resolved.end_session,
-        anchor=evidence.select_price(db, request.security_id, resolved.end_session),
-    )
+    security_context = resolved.context
     by_date_security = {
         point.session_date: point for point in security_context.points
         if point.session_date < resolved.start_session
@@ -1190,7 +1586,6 @@ def _benchmark_block(
     y, x = y[-usable:], x[-usable:]
     dates = common[1:][-usable:] if len(common) > 1 else []
 
-    security_currency = resolved.points[0].currency
     if benchmark_currency != security_currency:
         warnings.append(
             _warning(
@@ -1201,15 +1596,24 @@ def _benchmark_block(
                 benchmark_currency=benchmark_currency,
             )
         )
+        benchmark_block.update(
+            {
+                "status": "unavailable",
+                "comparable": False,
+                "return": None,
+                "security_return_aligned": None,
+                "reason": "currency mismatch between security and benchmark",
+            }
+        )
         return benchmark_block, {
             "status": "unavailable",
             "reason": "currency mismatch between security and benchmark",
-        }
+        }, manifest
 
-    excess = security_return - benchmark_return
+    excess = security_window_return - benchmark_return
     benchmark_block["excess_return_arithmetic"] = excess
     benchmark_block["excess_note"] = (
-        "a simple difference between two interval returns, not a compounded attribution"
+        "difference between the two aligned interval returns; not a compounded attribution"
     )
 
     if usable < MIN_MARKET_MODEL_SESSIONS:
@@ -1217,7 +1621,7 @@ def _benchmark_block(
             _warning(
                 W_ESTIMATION_SHORT,
                 "too few aligned pre-interval sessions estimate the market model; no beta or "
-                "residual is claimed",
+                "abnormal return is claimed",
                 aligned_sessions=usable,
                 required=MIN_MARKET_MODEL_SESSIONS,
             )
@@ -1226,7 +1630,7 @@ def _benchmark_block(
             "status": "unavailable",
             "reason": "insufficient aligned sessions before the interval",
             "aligned_sessions": usable,
-        }
+        }, manifest
 
     fit = _ols(y, x)
     if fit is None:
@@ -1234,7 +1638,7 @@ def _benchmark_block(
             "status": "unavailable",
             "reason": "benchmark returns have no variance in the estimation window",
             "aligned_sessions": usable,
-        }
+        }, manifest
     if usable < len(common) - 1:
         warnings.append(
             _warning(
@@ -1245,10 +1649,41 @@ def _benchmark_block(
                 used=usable,
             )
         )
-    market_component = fit["beta"] * benchmark_return
+
+    # Cumulative attribution: compound the model's own daily expected return over the
+    # aligned window instead of multiplying beta by one compounded benchmark return. The
+    # latter is a first-order approximation whose cross terms do not vanish; it is reported
+    # only inside `first_order_approximation` and is never the headline residual.
+    benchmark_window_daily = [value for _, value in _daily_returns(benchmark_closes_window)]
+    expected_level = 1.0
+    for benchmark_daily in benchmark_window_daily:
+        expected_daily = fit["alpha_daily"] + fit["beta"] * benchmark_daily
+        if expected_daily <= -1:
+            expected_level = 0.0
+            break
+        expected_level *= 1 + expected_daily
+    expected_return = expected_level - 1
+    abnormal_difference = security_window_return - expected_return
+    abnormal_ratio = (
+        (1 + security_window_return) / (1 + expected_return) - 1
+        if expected_return > -1
+        else None
+    )
+    manifest["market_model"] = {
+        "version": MARKET_MODEL_VERSION,
+        "status": "available",
+        "beta": fit["beta"],
+        "alpha_daily": fit["alpha_daily"],
+        "estimation_sessions": fit["observations"],
+        "estimation_points": _point_manifest(aligned_security[-usable:]) if usable else [],
+        "window_aligned_sessions": len(common_window),
+    }
+    if manifest["benchmark"] is not None:
+        manifest["benchmark"]["estimation_points"] = _point_manifest(aligned_benchmark[-usable:])
     return benchmark_block, {
         "status": "available",
         "model": "single-factor market model (OLS on daily simple returns)",
+        "version": MARKET_MODEL_VERSION,
         "basis": request.price_basis,
         "estimation": {
             "sessions": fit["observations"],
@@ -1257,21 +1692,43 @@ def _benchmark_block(
             "window_rule": "aligned sessions strictly before the selected interval, "
             "most recent sessions up to estimation_sessions",
             "aligned_available": max(0, len(common) - 1),
+            "interval_prices_used": False,
+        },
+        "window": {
+            "aligned_sessions": len(common_window),
+            "first_session": common_window[0],
+            "last_session": common_window[-1],
+            "coverage_ratio": coverage,
         },
         "alpha_daily": fit["alpha_daily"],
         "beta": fit["beta"],
         "r_squared": fit["r_squared"],
-        "benchmark_return": benchmark_return,
-        "market_component_of_return": market_component,
-        "residual_return_arithmetic": security_return - market_component,
+        "benchmark_return_aligned": benchmark_return,
+        "security_return_aligned": security_window_return,
+        "expected_return_compounded": expected_return,
+        "abnormal_return_difference": abnormal_difference,
+        "abnormal_return_ratio": abnormal_ratio,
+        "attribution_convention": (
+            "compound the model's daily expected return (alpha + beta x benchmark daily "
+            "return) over the aligned window; abnormal return is reported both as an "
+            "arithmetic difference and as a multiplicative ratio"
+        ),
+        "first_order_approximation": {
+            "beta_times_benchmark": fit["beta"] * benchmark_return,
+            "note": (
+                "beta x compounded benchmark return is a first-order approximation; its "
+                "cross terms do not vanish over multiple sessions and it is not the "
+                "abnormal return"
+            ),
+        },
         "applicability": [
             "the coefficients describe co-movement in the estimation window, not a stable law",
-            "the residual is what this one-factor model does not explain; it is not evidence of "
-            "an issuer-specific cause",
+            "the abnormal return is what this one-factor model does not explain; it is not "
+            "evidence of an issuer-specific cause",
             "a beta estimated on one benchmark does not identify sector or style exposures",
-            "arithmetic decomposition does not compound exactly over multiple sessions",
+            "estimation error in alpha and beta is not propagated into this point estimate",
         ],
-    }
+    }, manifest
 
 
 def _peer_block(
@@ -1280,7 +1737,7 @@ def _peer_block(
     request: ExplanationRequest,
     resolved: _Resolved,
     warnings: list[dict[str, Any]],
-) -> list[dict[str, Any]]:
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Window returns for an explicitly supplied peer universe.
 
     Each peer is measured on its own stored series over the same date bounds. No peer is
@@ -1288,7 +1745,7 @@ def _peer_block(
     than converted without an FX convention.
     """
     if not request.peer_security_ids:
-        return []
+        return [], {"peers": []}
     if len(request.peer_security_ids) > MAX_PEERS:
         warnings.append(
             _warning(
@@ -1306,6 +1763,7 @@ def _peer_block(
     )
     currency = resolved.points[0].currency
     items: list[dict[str, Any]] = []
+    peer_manifest: list[dict[str, Any]] = []
     for peer_id in list(dict.fromkeys(request.peer_security_ids))[:MAX_PEERS]:
         if peer_id == request.security_id:
             items.append(
@@ -1375,7 +1833,16 @@ def _peer_block(
                 "reason": None if same_currency else "peer trades in a different currency",
             }
         )
-    return items
+        peer_manifest.append(
+            {
+                "security_id": peer_id,
+                "mic": mic,
+                "source_id": series.source_id,
+                "currency": peer_currency,
+                "points": _point_manifest(series.points),
+            }
+        )
+    return items, {"peers": peer_manifest}
 
 
 def _revision_check(
@@ -1399,7 +1866,7 @@ def _interpret(
     *,
     resolved: _Resolved,
     request: ExplanationRequest,
-    returns: Mapping[str, float],
+    returns: Mapping[str, float | None],
     price_statistics: Mapping[str, Any],
     events: Sequence[Mapping[str, Any]],
     market_model: Mapping[str, Any],
@@ -1408,20 +1875,38 @@ def _interpret(
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Separate confirmed observations from competing, unproven explanations."""
     total = returns[request.price_basis]
+    convention = str(price_statistics.get("return_convention"))
+    if total is None:
+        return_statement = (
+            f"No {request.price_basis} return is computed for {resolved.start_session}: "
+            "the selection has one session and no previous eligible session is stored."
+        )
+        return_derivation = "refused: a prior eligible close is required and was not fabricated"
+    elif convention == "single_session_close_to_close":
+        return_statement = (
+            f"The {request.price_basis} single-session change into {resolved.end_session} "
+            f"from the previous eligible close is {total:.6f}."
+        )
+        return_derivation = (
+            "selected session close / previous eligible session close - 1 on the declared basis"
+        )
+    else:
+        return_statement = (
+            f"The {request.price_basis} change from {resolved.start_session} to "
+            f"{resolved.end_session} is {total:.6f}."
+        )
+        return_derivation = "last selected close / first selected close - 1 on the declared basis"
     observations: list[dict[str, Any]] = [
         {
             "observation_id": "OBS-interval-return",
-            "statement": (
-                f"The {request.price_basis} change from {resolved.start_session} to "
-                f"{resolved.end_session} is {total:.6f}."
-            ),
+            "statement": return_statement,
             "value": total,
             "unit": "ratio",
             "evidence": [
                 resolved.points[0].observation_id,
                 resolved.points[-1].observation_id,
             ],
-            "derivation": "last selected close / first selected close - 1 on the declared basis",
+            "derivation": return_derivation,
         },
         {
             "observation_id": "OBS-session-count",
@@ -1449,6 +1934,21 @@ def _interpret(
                 "unit": "beta",
                 "evidence": list(resolved.series.observation_ids()),
                 "derivation": "OLS of aligned daily simple returns before the interval",
+            }
+        )
+        observations.append(
+            {
+                "observation_id": "OBS-abnormal-return",
+                "statement": (
+                    "Compounding the model's daily expected return over the aligned window "
+                    f"gives {market_model['expected_return_compounded']:.6f}; the security "
+                    f"returned {market_model['security_return_aligned']:.6f}, leaving an "
+                    f"abnormal return of {market_model['abnormal_return_difference']:.6f}."
+                ),
+                "value": market_model["abnormal_return_difference"],
+                "unit": "ratio",
+                "evidence": list(resolved.series.observation_ids()[-3:]),
+                "derivation": market_model["attribution_convention"],
             }
         )
 
@@ -1511,25 +2011,28 @@ def _interpret(
             )
         )
 
-    if market_model.get("status") == "available" and total != 0:
-        component = float(market_model["market_component_of_return"])
-        residual = float(market_model["residual_return_arithmetic"])
-        explained_share = component / total
+    if market_model.get("status") == "available" and total:
+        expected = float(market_model["expected_return_compounded"])
+        abnormal = float(market_model["abnormal_return_difference"])
+        explained_share = expected / total
         if explained_share >= 0.5:
             statement = (
                 "Most of the interval's change is consistent with benchmark co-movement: "
-                f"beta {market_model['beta']:.3f} times the benchmark's {benchmark.get('return', 0.0):.4f} "
-                f"return accounts for {component:.4f} of the {total:.4f} move. The remaining "
-                f"{residual:.4f} is unexplained by this model."
+                f"compounding the model's daily expected return (alpha "
+                f"{market_model['alpha_daily']:.6f}, beta {market_model['beta']:.3f}) over "
+                f"the aligned window accounts for {expected:.4f} of the {total:.4f} move. "
+                f"The remaining {abnormal:.4f} is the abnormal return this model does not "
+                "explain."
             )
-            basis = "the market-model component has the same sign and at least half the magnitude of the move"
+            basis = "the compounded expected return has at least half the magnitude of the move"
         else:
             statement = (
-                "A company-specific component remains after market adjustment: of the "
-                f"{total:.4f} move, beta times the benchmark explains {component:.4f}, leaving "
-                f"{residual:.4f}. A company-specific event is plausible but not identified."
+                "An abnormal component remains after market adjustment: of the "
+                f"{total:.4f} move, the model's compounded expected return explains "
+                f"{expected:.4f}, leaving an abnormal return of {abnormal:.4f}. A "
+                "company-specific event is plausible but not identified."
             )
-            basis = "the market-model residual is larger than the explained component"
+            basis = "the abnormal return is larger than the compounded expected return"
         hypotheses.append(
             _hypothesis(
                 statement=statement,
@@ -1538,15 +2041,19 @@ def _interpret(
                 supporting=list(resolved.series.observation_ids()[-3:]),
                 inputs={
                     "beta": market_model["beta"],
-                    "benchmark_return": benchmark.get("return"),
-                    "market_component": component,
-                    "residual": residual,
+                    "alpha_daily": market_model["alpha_daily"],
+                    "benchmark_return_aligned": benchmark.get("return"),
+                    "expected_return_compounded": expected,
+                    "abnormal_return_difference": abnormal,
+                    "abnormal_return_ratio": market_model["abnormal_return_ratio"],
                     "explained_share_of_total": explained_share,
+                    "convention": market_model["attribution_convention"],
                 },
                 limitations=[
                     "one benchmark and one factor do not identify sector, style or idiosyncratic exposure",
-                    "the residual is not a cause; it is what the model does not explain",
-                    "beta instability and estimation error are not propagated into this arithmetic decomposition",
+                    "the abnormal return is not a cause; it is what the model does not explain",
+                    "beta instability and estimation error are not propagated into this point estimate",
+                    "the arithmetic difference and the ratio can disagree in sign when returns are large",
                 ],
             )
         )
@@ -1609,7 +2116,10 @@ __all__ = [
     "MODES",
     "MODE_HISTORICAL",
     "MODE_RETROSPECTIVE",
-    "SUPPORTED_TIMEFRAMES",
-    "ExplanationRequest",
+            "SUPPORTED_TIMEFRAMES",
+        "CALCULATION_VERSION",
+        "MARKET_MODEL_VERSION",
+        "RETURN_CONVENTIONS",
+        "ExplanationRequest",
     "explain_range",
 ]

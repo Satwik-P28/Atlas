@@ -508,6 +508,7 @@ export interface PriceExplanationRequest {
   information_cutoff?: string | null
   benchmark_security_id?: string | null
   estimation_sessions?: number
+  return_convention?: 'auto' | 'interval_close_to_close' | 'single_session_close_to_close'
 }
 
 export interface PriceExplanationWarning {
@@ -576,6 +577,14 @@ export interface PriceExplanation {
     series: Record<string, unknown>
     start_observation: Record<string, unknown>
     end_observation: Record<string, unknown>
+    return_convention: string
+    price_vintage: {
+      status: string
+      verified_at_cutoff: boolean
+      vintage_kind: string
+      provider_publication_vintage: string | null
+      reason: string
+    }
   }
   price_statistics: {
     requested_basis: PriceExplanationBasis
@@ -584,14 +593,16 @@ export interface PriceExplanation {
     start_session: string
     end_session: string
     sessions: number
+    calculation_sessions: number
+    return_convention: string
     calendar_days: number
-    start_price: number
-    end_price: number
-    absolute_change: number
-    interval_return: number
+    start_price: number | null
+    end_price: number | null
+    absolute_change: number | null
+    interval_return: number | null
     daily_volatility: number | null
     annualized_volatility: number | null
-    max_drawdown: number
+    max_drawdown: number | null
     overnight_compounded: number | null
     intraday_compounded: number | null
     gap_sessions: number
@@ -606,9 +617,9 @@ export interface PriceExplanation {
       note: string
     }
     basis_reconciliation: {
-      raw: number
-      split_adjusted: number
-      total_return: number
+      raw: number | null
+      split_adjusted: number | null
+      total_return: number | null
       splits_in_window: number
       dividends_in_window: number
       note: string
@@ -620,9 +631,15 @@ export interface PriceExplanation {
     status: string
     security_id: string | null
     ticker?: string | null
-    return?: number
-    excess_return_arithmetic?: number
+    return?: number | null
+    security_return_aligned?: number | null
+    excess_return_arithmetic?: number | null
     excess_note?: string
+    aligned_sessions?: number
+    security_sessions?: number
+    coverage_ratio?: number
+    required_coverage?: number
+    comparable?: boolean
     reason: string | null
   }
   peers: Array<{
@@ -642,8 +659,19 @@ export interface PriceExplanation {
     beta?: number
     r_squared?: number | null
     alpha_daily?: number
-    market_component_of_return?: number
-    residual_return_arithmetic?: number
+    benchmark_return_aligned?: number
+    security_return_aligned?: number
+    expected_return_compounded?: number
+    abnormal_return_difference?: number
+    abnormal_return_ratio?: number | null
+    attribution_convention?: string
+    first_order_approximation?: { beta_times_benchmark: number; note: string }
+    window?: {
+      aligned_sessions: number
+      first_session: string
+      last_session: string
+      coverage_ratio: number
+    }
     estimation?: {
       sessions: number
       first_session: string | null
@@ -662,7 +690,7 @@ export interface PriceExplanation {
   observations: Array<{
     observation_id: string
     statement: string
-    value: number | string
+    value: number | string | null
     unit: string
     evidence: string[]
     derivation: string
@@ -676,8 +704,20 @@ export interface PriceExplanation {
   }
   rights: {
     export_allowed: boolean
-    sources: Array<{ source_id: string; name: string; licence: string | null; redistribution: string; kind: string }>
+    sources: Array<{
+      source_id: string
+      name: string | null
+      licence: string | null
+      redistribution: string
+      kind: string | null
+      registered?: boolean
+      export_allowed?: boolean
+      reason?: string | null
+    }>
     restricted_sources: string[]
+    unregistered_sources?: string[]
+    missing_licence_sources?: string[]
+    reasons?: string[]
   }
   warnings: PriceExplanationWarning[]
   refusals: Array<Record<string, unknown>>
