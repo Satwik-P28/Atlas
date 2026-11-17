@@ -54,8 +54,8 @@ from ..market.calendar import TradingCalendar
 from ..storage.db import Database
 
 ENGINE_NAME = "atlas.price_explanation.engine"
-ENGINE_VERSION = "1.0.0"
-CONTRACT_VERSION = "atlas.price_explanation.v1"
+ENGINE_VERSION = "2.0.0"
+CONTRACT_VERSION = "atlas.price_explanation.v2"
 
 MODE_HISTORICAL = "historical_reconstruction"
 MODE_RETROSPECTIVE = "retrospective_investigation"

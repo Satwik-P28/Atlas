@@ -1,0 +1,47 @@
+{
+  "schema": "atlas.test_inventory.v1",
+  "generated_at": "2026-11-17",
+  "repository_state": {
+    "branch": "review/price-intelligence-v3.2",
+    "feature_commit": "fd5d29d",
+    "spec_merge_commit": "442a304"
+  },
+  "python": {
+    "baseline_tests": 699,
+    "baseline_note": "Measured before this feature: 720 collected at c6ba985 minus the 21 feature tests added by that commit.",
+    "feature_file": "tests/test_price_explanations.py",
+    "feature_tests": 34,
+    "other_added_tests": 0,
+    "expected_total": 733,
+    "command": ".venv/bin/python -m pytest -o addopts='' -q",
+    "last_result": {
+      "passed": 732,
+      "skipped": 1,
+      "failed": 0,
+      "collected": 733
+    }
+  },
+  "frontend": {
+    "unit_command": "cd web && npx vitest run",
+    "unit_files": 5,
+    "unit_tests": 50,
+    "typecheck_command": "cd web && npx tsc -b --noEmit",
+    "browser_command": "cd web && node e2e/price-explanation.mjs",
+    "browser_file": "web/e2e/price-explanation.mjs",
+    "browser_checks": 19,
+    "browser_result": "19 passed, 0 failed"
+  },
+  "specification": {
+    "file": "ATLAS_MASTER_SPEC.md",
+    "version": "3.2.0",
+    "bytes": 357970,
+    "sha256": "6ab1a00569a29830deda050c44eaa93dc0f65081be53966ed2a6d00b164447e2",
+    "verifier": "scripts/verify_master_spec.py",
+    "verified": true
+  },
+  "claims_not_made": [
+    "No ICB-65 through ICB-75 benchmark is marked passed.",
+    "No performance or historical-accuracy claim is made.",
+    "No news, consensus or macro-release source is licensed or simulated."
+  ]
+}

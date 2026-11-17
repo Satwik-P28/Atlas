@@ -25,3 +25,6 @@ web/*.tsbuildinfo
 .env
 .dev.vars
 *.local
+
+# Locally extracted Chromium support libraries (no root in the cloud container)
+.deps/
