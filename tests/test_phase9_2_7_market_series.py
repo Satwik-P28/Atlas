@@ -399,8 +399,13 @@ def test_openapi_contract_is_unchanged():
     current = _project(app.openapi())
     assert current == expected
     # Phase 9.3 adds eight memo routes (create, save, list, get, export, check, compare,
-    # revise). Nothing existing changed: paths, operation ids, parameters, request bodies and
-    # responses are byte-identical to the Phase 9.2.7 capture, which is why the fixture was
-    # regenerated rather than loosened.
-    assert sum(len(methods) for methods in current["paths"].values()) == 156
-    assert len(current["paths"]) == 142
+    # revise). Price Movement Intelligence adds one research route
+    # (POST /api/securities/{security_id}/price-explanations) and the integrity pass adds
+    # immutable saved investigations: five operations across four new paths
+    # (save/list a security's investigations, reproduce, change-impact, export). Nothing
+    # existing changed: paths, operation ids, parameters, request bodies and responses are
+    # byte-identical to the Phase 9.2.7 capture, which is why the fixture was regenerated
+    # rather than loosened. The regeneration diff was checked programmatically: four
+    # added paths, five added operations, no removed path and no changed existing path.
+    assert sum(len(methods) for methods in current["paths"].values()) == 162
+    assert len(current["paths"]) == 147

@@ -43,9 +43,9 @@ STATUS_VOCABULARY = [
     "deprecated_or_invalidated",
 ]
 STATUS_SET = set(STATUS_VOCABULARY)
-CURRENT_VERSION = "3.1.0"
-SPEC_BYTES = 333_547
-SPEC_SHA256 = "d1800cfea35d973e2ff2b3570f8bf564fd3a7aceabca2f623ec5de17931a1111"
+CURRENT_VERSION = "3.2.0"
+SPEC_BYTES = 357_970
+SPEC_SHA256 = "6ab1a00569a29830deda050c44eaa93dc0f65081be53966ed2a6d00b164447e2"
 SEVERITIES = {"critical", "high", "medium", "low"}
 REQUIREMENT_ID = re.compile(r"^MS3-\d{2}$")
 ICB_ID = re.compile(r"^ICB-\d{2}$")

@@ -1,0 +1,3128 @@
+{
+  "schema": "atlas.price_explanation.v1",
+  "engine": {
+    "name": "atlas.price_explanation.engine",
+    "version": "1.0.0"
+  },
+  "request": {
+    "security_id": "SEC-08d10fa2387454a895ab",
+    "requested_start": "2024-05-01",
+    "requested_end": "2024-05-15",
+    "resolved_start": "2024-05-01",
+    "resolved_end": "2024-05-15",
+    "timeframe": "1d",
+    "timezone": "America/New_York",
+    "price_basis": "split_adjusted",
+    "mode": "retrospective_investigation",
+    "information_cutoff": null,
+    "benchmark_security_id": null,
+    "peer_security_ids": [],
+    "estimation_sessions": 120,
+    "evidence_limit": 50,
+    "return_convention": "auto"
+  },
+  "selection": {
+    "security_id": "SEC-08d10fa2387454a895ab",
+    "issuer_id": "ISS-CIK0001652044",
+    "legal_name": "Alphabet Inc.",
+    "ticker": null,
+    "mic": "XNAS",
+    "timeframe": "1d",
+    "timezone": "America/New_York",
+    "requested_start": "2024-05-01",
+    "requested_end": "2024-05-15",
+    "start_session": "2024-05-01",
+    "end_session": "2024-05-15",
+    "sessions": 11,
+    "series": {
+      "schema": "atlas.market_evidence.v1",
+      "policy_version": "atlas.market_series.selection.v1",
+      "security_id": "SEC-08d10fa2387454a895ab",
+      "mic": "XNAS",
+      "interval": "1d",
+      "start": "2024-05-01",
+      "end": "2024-05-15",
+      "information_cutoff": "2024-05-15",
+      "policy": "single_provider_held_constant",
+      "source_id": "synthetic-demo",
+      "requested_source_id": null,
+      "sessions": 11,
+      "first_session": "2024-05-01",
+      "last_session": "2024-05-15",
+      "excluded_providers": [],
+      "coverage": {
+        "sessions": 11,
+        "first_session": "2024-05-01",
+        "last_session": "2024-05-15",
+        "requested_sessions": 11,
+        "missing_sessions": 0,
+        "providers": [
+          "synthetic-demo"
+        ],
+        "excluded_providers": [],
+        "revisions": 0
+      },
+      "missing_sessions": 0,
+      "limitations": [
+        "one provider (synthetic-demo) is held constant across the window; competing providers are stored but never spliced into this series",
+        "the series is a raw provider statement: vendor historical availability is not proven, so a price dated before the cutoff may have been revised afterwards"
+      ],
+      "missing_status": null,
+      "export_allowed": true
+    },
+    "start_observation": {
+      "observation_id": "MOB-8387570aebd5db8b3a0efff4",
+      "content_hash": "69fb00e8e0236e3a95b473350b851886d6ec2fe146693f3def8ebda0b78f4ea1",
+      "security_id": "SEC-08d10fa2387454a895ab",
+      "mic": "XNAS",
+      "interval": "1d",
+      "session": "2024-05-01T20:00:00Z",
+      "source_id": "synthetic-demo",
+      "revision_seq": 1,
+      "adjustment": "raw",
+      "currency": "USD",
+      "rights": "project_authored"
+    },
+    "end_observation": {
+      "observation_id": "MOB-dd063d06863f21a1ef1ee122",
+      "content_hash": "5390c4210358e73903471b57138714836a1117e04cc7671d10af930d5070e8ae",
+      "security_id": "SEC-08d10fa2387454a895ab",
+      "mic": "XNAS",
+      "interval": "1d",
+      "session": "2024-05-15T20:00:00Z",
+      "source_id": "synthetic-demo",
+      "revision_seq": 1,
+      "adjustment": "raw",
+      "currency": "USD",
+      "rights": "project_authored"
+    },
+    "return_convention": "interval_close_to_close",
+    "price_vintage": {
+      "status": "unverified",
+      "verified_at_cutoff": false,
+      "vintage_kind": "market_session_date",
+      "provider_publication_vintage": null,
+      "reason": "Atlas stores the latest revision of each session, not the provider's publication history, so a historical reconstruction cannot prove these prices were available at the requested cutoff"
+    }
+  },
+  "price_statistics": {
+    "requested_basis": "split_adjusted",
+    "basis_label": "split-adjusted price change (dividends not reinvested)",
+    "currency": "USD",
+    "start_session": "2024-05-01",
+    "end_session": "2024-05-15",
+    "sessions": 11,
+    "calculation_sessions": 11,
+    "return_convention": "interval_close_to_close",
+    "calendar_days": 15,
+    "start_price": 164.01,
+    "end_price": 168.01,
+    "absolute_change": 4,
+    "interval_return": 0.02438875678312298,
+    "start_observation_id": "MOB-8387570aebd5db8b3a0efff4",
+    "end_observation_id": "MOB-dd063d06863f21a1ef1ee122",
+    "start_revision_seq": 1,
+    "end_revision_seq": 1,
+    "daily_volatility": 0.01746410992240722,
+    "annualized_volatility": 0.27723415034271015,
+    "annualization": "sample standard deviation of daily returns x sqrt(252)",
+    "max_drawdown": -0.04307105278371972,
+    "best_session": {
+      "session": "2024-05-06",
+      "return": 0.03209610901918594,
+      "observation_id": "MOB-9f830e08936d1243192ceb65"
+    },
+    "worst_session": {
+      "session": "2024-05-09",
+      "return": -0.03025385417874116,
+      "observation_id": "MOB-6c6638f8a7146051a6f94c4a"
+    },
+    "overnight_compounded": -0.03504596773228896,
+    "intraday_compounded": 0.06159332209404478,
+    "gap_sessions": 10,
+    "gap_note": "overnight/intraday split uses split-adjusted opens and closes; the product of the two components telescopes from the session before the window, so it is a description of where the move occurred, not an additive decomposition",
+    "volume": {
+      "sessions_with_volume": 11,
+      "total": 43619321,
+      "average": 3965392.8181818184,
+      "trailing_median": 3896440,
+      "average_to_trailing_median": 1.017696363393718,
+      "context_sessions": 247,
+      "note": "the trailing median covers sessions strictly before the selected interval"
+    },
+    "basis_reconciliation": {
+      "raw": 0.02438875678312298,
+      "split_adjusted": 0.02438875678312298,
+      "total_return": 0.02438875678312298,
+      "splits_in_window": 0,
+      "dividends_in_window": 0,
+      "note": "the three figures are computed over the same sessions and are not interchangeable; total_return is an index level change, not a price change"
+    }
+  },
+  "benchmark": {
+    "status": "unavailable",
+    "security_id": null,
+    "reason": "no benchmark_security_id was supplied",
+    "source_id": null
+  },
+  "peers": [],
+  "market_model": {
+    "status": "unavailable",
+    "reason": "no benchmark was supplied"
+  },
+  "events": {
+    "items": [
+      {
+        "event_id": "FIL-FIL-3c02a62587245e42b157",
+        "kind": "sec_filing",
+        "form_type": "PX14A6G",
+        "form_label": "PX14A6G",
+        "title": "PX14A6G filed",
+        "date": "2024-05-01",
+        "availability_time": "2024-05-01T17:20:04Z",
+        "availability_precision": "exact",
+        "period_of_report": null,
+        "accession_number": "0001214659-24-007961",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-3e453b994c9d5c408822",
+        "kind": "sec_filing",
+        "form_type": "4",
+        "form_label": "4",
+        "title": "4 filed",
+        "date": "2024-05-01",
+        "availability_time": "2024-05-01T23:29:06Z",
+        "availability_precision": "exact",
+        "period_of_report": "2024-05-01",
+        "accession_number": "0001209191-24-005457",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-6ca18c50e2b35575861e",
+        "kind": "sec_filing",
+        "form_type": "144",
+        "form_label": "144",
+        "title": "144 filed",
+        "date": "2024-05-01",
+        "availability_time": "2024-05-01T20:31:57Z",
+        "availability_precision": "exact",
+        "period_of_report": null,
+        "accession_number": "0001950047-24-003290",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-bfc420b6f917543ab58a",
+        "kind": "sec_filing",
+        "form_type": "144",
+        "form_label": "144",
+        "title": "144 filed",
+        "date": "2024-05-01",
+        "availability_time": "2024-05-01T20:31:27Z",
+        "availability_precision": "exact",
+        "period_of_report": null,
+        "accession_number": "0001950047-24-003289",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-fff7782b1d495491823a",
+        "kind": "sec_filing",
+        "form_type": "PX14A6G",
+        "form_label": "PX14A6G",
+        "title": "PX14A6G filed",
+        "date": "2024-05-02",
+        "availability_time": "2024-05-02T00:59:49Z",
+        "availability_precision": "exact",
+        "period_of_report": null,
+        "accession_number": "0001214659-24-008099",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-554410e8fe175a6e8530",
+        "kind": "sec_filing",
+        "form_type": "4",
+        "form_label": "4",
+        "title": "4 filed",
+        "date": "2024-05-03",
+        "availability_time": "2024-05-03T20:51:06Z",
+        "availability_precision": "exact",
+        "period_of_report": "2024-05-01",
+        "accession_number": "0001209191-24-005501",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-57217a95f15759cbbd70",
+        "kind": "sec_filing",
+        "form_type": "4",
+        "form_label": "4",
+        "title": "4 filed",
+        "date": "2024-05-03",
+        "availability_time": "2024-05-03T20:48:08Z",
+        "availability_precision": "exact",
+        "period_of_report": "2024-05-01",
+        "accession_number": "0001209191-24-005499",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-a27ea161b17e53ca95e2",
+        "kind": "sec_filing",
+        "form_type": "4",
+        "form_label": "4",
+        "title": "4 filed",
+        "date": "2024-05-03",
+        "availability_time": "2024-05-03T21:06:28Z",
+        "availability_precision": "exact",
+        "period_of_report": "2024-05-01",
+        "accession_number": "0001209191-24-005506",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-af5fa76037fd595ab8e4",
+        "kind": "sec_filing",
+        "form_type": "4",
+        "form_label": "4",
+        "title": "4 filed",
+        "date": "2024-05-03",
+        "availability_time": "2024-05-03T20:54:11Z",
+        "availability_precision": "exact",
+        "period_of_report": "2024-05-01",
+        "accession_number": "0001209191-24-005503",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-e7e2541283f951fea047",
+        "kind": "sec_filing",
+        "form_type": "13F-HR",
+        "form_label": "13F-HR",
+        "title": "13F-HR filed",
+        "date": "2024-05-03",
+        "availability_time": "2024-05-03T00:19:09Z",
+        "availability_precision": "exact",
+        "period_of_report": "2024-03-31",
+        "accession_number": "0001652044-24-000057",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-98520af9f0555e06a934",
+        "kind": "sec_filing",
+        "form_type": "PX14A6G",
+        "form_label": "PX14A6G",
+        "title": "PX14A6G filed",
+        "date": "2024-05-06",
+        "availability_time": "2024-05-06T14:47:33Z",
+        "availability_precision": "exact",
+        "period_of_report": null,
+        "accession_number": "0001214659-24-008379",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-aac9141aa4e45d6cbd90",
+        "kind": "sec_filing",
+        "form_type": "PX14A6G",
+        "form_label": "PX14A6G",
+        "title": "PX14A6G filed",
+        "date": "2024-05-07",
+        "availability_time": "2024-05-07T10:00:22Z",
+        "availability_precision": "exact",
+        "period_of_report": null,
+        "accession_number": "0001214659-24-008462",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-e24a139b64cc5322a49f",
+        "kind": "sec_filing",
+        "form_type": "PX14A6G",
+        "form_label": "PX14A6G",
+        "title": "PX14A6G filed",
+        "date": "2024-05-08",
+        "availability_time": "2024-05-08T14:49:59Z",
+        "availability_precision": "exact",
+        "period_of_report": null,
+        "accession_number": "0001214659-24-008582",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-a038394e5c8a5561a237",
+        "kind": "sec_filing",
+        "form_type": "4",
+        "form_label": "4",
+        "title": "4 filed",
+        "date": "2024-05-13",
+        "availability_time": "2024-05-13T23:14:24Z",
+        "availability_precision": "exact",
+        "period_of_report": "2024-05-13",
+        "accession_number": "0001209191-24-005630",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-c4b374299767557ba213",
+        "kind": "sec_filing",
+        "form_type": "144",
+        "form_label": "144",
+        "title": "144 filed",
+        "date": "2024-05-13",
+        "availability_time": "2024-05-13T20:17:15Z",
+        "availability_precision": "exact",
+        "period_of_report": null,
+        "accession_number": "0001973141-24-000253",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-2fa72ad4e22a5a209e38",
+        "kind": "sec_filing",
+        "form_type": "4",
+        "form_label": "4",
+        "title": "4 filed",
+        "date": "2024-05-14",
+        "availability_time": "2024-05-14T17:00:19Z",
+        "availability_precision": "exact",
+        "period_of_report": "2024-05-02",
+        "accession_number": "0001209191-24-005640",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-0083faef104c5ac196fb",
+        "kind": "sec_filing",
+        "form_type": "4",
+        "form_label": "4",
+        "title": "4 filed",
+        "date": "2024-05-15",
+        "availability_time": "2024-05-15T23:24:06Z",
+        "availability_precision": "exact",
+        "period_of_report": "2024-05-15",
+        "accession_number": "0001209191-24-005652",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-4af14e367f325584bfa5",
+        "kind": "sec_filing",
+        "form_type": "144",
+        "form_label": "144",
+        "title": "144 filed",
+        "date": "2024-05-15",
+        "availability_time": "2024-05-15T20:25:22Z",
+        "availability_precision": "exact",
+        "period_of_report": null,
+        "accession_number": "0001950047-24-003714",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      },
+      {
+        "event_id": "FIL-FIL-8a8dfd1d54b75473b79f",
+        "kind": "sec_filing",
+        "form_type": "144",
+        "form_label": "144",
+        "title": "144 filed",
+        "date": "2024-05-15",
+        "availability_time": "2024-05-15T20:25:41Z",
+        "availability_precision": "exact",
+        "period_of_report": null,
+        "accession_number": "0001950047-24-003715",
+        "is_amendment": false,
+        "amends_accession": null,
+        "source_id": "sec-edgar",
+        "source_url": null,
+        "epistemic_status": "observed",
+        "relation": "in_window",
+        "known_at_range_end": true
+      }
+    ],
+    "in_window_count": 19,
+    "subsequent_count": 0,
+    "coverage": {
+      "sec_filings": {
+        "filings_total_for_issuer": 2726,
+        "in_window": 19,
+        "after_window": 0,
+        "subsequent": 0,
+        "before_window": 1909,
+        "excluded_after_cutoff": 0,
+        "excluded_unknown_availability": 0
+      },
+      "corporate_actions": {
+        "in_window": 0,
+        "excluded_after_cutoff": 0,
+        "excluded_unknown_availability": 0
+      },
+      "news_archive": {
+        "status": "unavailable",
+        "reason": "no licensed news archive is present in this deployment"
+      },
+      "analyst_consensus": {
+        "status": "unavailable",
+        "reason": "no licensed consensus or estimate-revision history is present"
+      },
+      "macro_releases": {
+        "status": "unavailable",
+        "reason": "no point-in-time macroeconomic release calendar is linked to this security"
+      },
+      "price_series": {
+        "schema": "atlas.market_evidence.v1",
+        "policy_version": "atlas.market_series.selection.v1",
+        "security_id": "SEC-08d10fa2387454a895ab",
+        "mic": "XNAS",
+        "interval": "1d",
+        "start": "2024-05-01",
+        "end": "2024-05-15",
+        "information_cutoff": "2024-05-15",
+        "policy": "single_provider_held_constant",
+        "source_id": "synthetic-demo",
+        "requested_source_id": null,
+        "sessions": 11,
+        "first_session": "2024-05-01",
+        "last_session": "2024-05-15",
+        "excluded_providers": [],
+        "coverage": {
+          "sessions": 11,
+          "first_session": "2024-05-01",
+          "last_session": "2024-05-15",
+          "requested_sessions": 11,
+          "missing_sessions": 0,
+          "providers": [
+            "synthetic-demo"
+          ],
+          "excluded_providers": [],
+          "revisions": 0
+        },
+        "missing_sessions": 0,
+        "limitations": [
+          "one provider (synthetic-demo) is held constant across the window; competing providers are stored but never spliced into this series",
+          "the series is a raw provider statement: vendor historical availability is not proven, so a price dated before the cutoff may have been revised afterwards"
+        ],
+        "missing_status": null,
+        "export_allowed": true
+      }
+    }
+  },
+  "observations": [
+    {
+      "observation_id": "OBS-interval-return",
+      "statement": "The split_adjusted change from 2024-05-01 to 2024-05-15 is 0.024389.",
+      "value": 0.02438875678312298,
+      "unit": "ratio",
+      "evidence": [
+        "MOB-8387570aebd5db8b3a0efff4",
+        "MOB-dd063d06863f21a1ef1ee122"
+      ],
+      "derivation": "last selected close / first selected close - 1 on the declared basis"
+    },
+    {
+      "observation_id": "OBS-session-count",
+      "statement": "11 stored session(s) fall inside the interval; the venue calendar reports 0 missing session(s).",
+      "value": 11,
+      "unit": "sessions",
+      "evidence": [
+        "MOB-8387570aebd5db8b3a0efff4",
+        "MOB-4d816688dee86d2afff7df2f",
+        "MOB-64eadcd60d79c8c1cae30642",
+        "MOB-9f830e08936d1243192ceb65",
+        "MOB-01a9398e571efeb1d5e56d68",
+        "MOB-a23d77a610a4b479e8ba1be3",
+        "MOB-6c6638f8a7146051a6f94c4a",
+        "MOB-7599ec9f00546c47a80b51ec",
+        "MOB-76c531f02d7e44eada371e79",
+        "MOB-9c49e29710b4a8e9783ad1e0",
+        "MOB-dd063d06863f21a1ef1ee122"
+      ],
+      "derivation": "canonical series selection (one provider, one revision per session)"
+    }
+  ],
+  "hypotheses": [
+    {
+      "statement": "No material company-specific SEC disclosure or corporate action inside this interval is stored. Atlas cannot explain the move from its sources and abstains rather than inferring a cause. 19 routine filing(s) (for example Form 4 ownership reports or Form 144 notices) are present but are not evidence of a repricing.",
+      "epistemic_status": "hypothesized",
+      "causal_status": "not_identified",
+      "relevance": {
+        "tier": 5,
+        "basis": "no material in-window disclosure or corporate action is present in the store",
+        "supporting_evidence": [],
+        "contradicting_evidence": [],
+        "inputs": {
+          "routine_filings_not_ranked": 19
+        }
+      },
+      "limitations": [
+        "absence of stored evidence is not absence of news",
+        "routine administrative filings are not treated as explanations",
+        "the news archive, consensus history and macro-release calendar are not licensed here"
+      ],
+      "hypothesis_id": "HYP-89f9b2f89358ac29",
+      "rank": 1
+    }
+  ],
+  "revision_check": {
+    "subsequent_revisions": 0,
+    "amending_filings": 0,
+    "corrected_corporate_actions": 0,
+    "status": "no_revisions_found"
+  },
+  "rights": {
+    "export_allowed": true,
+    "sources": [
+      {
+        "source_id": "sec-edgar",
+        "name": "U.S. SEC EDGAR",
+        "licence": "U.S. federal government work - public domain",
+        "redistribution": "public_domain",
+        "kind": "sec_edgar",
+        "registered": true,
+        "export_allowed": true,
+        "reason": null
+      },
+      {
+        "source_id": "synthetic-demo",
+        "name": "Atlas synthetic demonstration series",
+        "licence": "Apache-2.0 (generated by Atlas for demonstration)",
+        "redistribution": "project_authored",
+        "kind": "synthetic",
+        "registered": true,
+        "export_allowed": true,
+        "reason": null
+      }
+    ],
+    "restricted_sources": [],
+    "unregistered_sources": [],
+    "missing_licence_sources": [],
+    "reasons": []
+  },
+  "warnings": [
+    {
+      "code": "provider_vintage_not_proven",
+      "message": "the series is the provider's current statement about these sessions; Atlas preserves its own revisions but cannot prove which vendor revision was available on a past date",
+      "context": {
+        "source_id": "synthetic-demo"
+      }
+    },
+    {
+      "code": "benchmark_not_requested",
+      "message": "no benchmark was requested, so no relative or market-model statistic is claimed"
+    },
+    {
+      "code": "news_archive_unavailable",
+      "message": "Atlas holds no licensed news archive or press-release feed. The timeline is SEC filings and corporate actions only; absence of a headline is not evidence that no news existed."
+    },
+    {
+      "code": "analyst_consensus_unavailable",
+      "message": "no analyst-consensus or estimate-revision history is licensed in this deployment, so Atlas cannot test an expectations-based explanation."
+    }
+  ],
+  "refusals": [],
+  "reproducibility": {
+    "hash_algorithm": "sha256",
+    "hash": "fc7a1e3e3309512421e76b2c9ab5570c3fc73115cd36d1c248d905a062f15b8c",
+    "components": {
+      "engine": {
+        "name": "atlas.price_explanation.engine",
+        "version": "1.0.0"
+      },
+      "schema": "atlas.price_explanation.v1",
+      "calculation": {
+        "version": "atlas.price_explanation.calculation.v2",
+        "market_model_version": "atlas.price_explanation.market_model.v2",
+        "return_convention": "interval_close_to_close",
+        "requested_basis": "split_adjusted",
+        "annualization_sessions": 252,
+        "min_benchmark_coverage": 0.5,
+        "estimation_sessions": 120,
+        "evidence_limit": 50
+      },
+      "request": {
+        "security_id": "SEC-08d10fa2387454a895ab",
+        "requested_start": "2024-05-01",
+        "requested_end": "2024-05-15",
+        "resolved_start": "2024-05-01",
+        "resolved_end": "2024-05-15",
+        "timeframe": "1d",
+        "timezone": "America/New_York",
+        "price_basis": "split_adjusted",
+        "mode": "retrospective_investigation",
+        "information_cutoff": null,
+        "benchmark_security_id": null,
+        "peer_security_ids": [],
+        "estimation_sessions": 120,
+        "evidence_limit": 50,
+        "return_convention": "auto"
+      },
+      "selected_series": {
+        "source_id": "synthetic-demo",
+        "policy": "single_provider_held_constant",
+        "points": [
+          {
+            "observation_id": "MOB-8387570aebd5db8b3a0efff4",
+            "session": "2024-05-01",
+            "revision_seq": 1,
+            "content_hash": "69fb00e8e0236e3a95b473350b851886d6ec2fe146693f3def8ebda0b78f4ea1",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-4d816688dee86d2afff7df2f",
+            "session": "2024-05-02",
+            "revision_seq": 1,
+            "content_hash": "1e6c31750483dcb3f10c46eb588334592d1514189b8b78fec55931e0db0189f3",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-64eadcd60d79c8c1cae30642",
+            "session": "2024-05-03",
+            "revision_seq": 1,
+            "content_hash": "f2c8105e81d2b1d7388e44709d31409af8eaf1bacbb84adb3443d532085d1830",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-9f830e08936d1243192ceb65",
+            "session": "2024-05-06",
+            "revision_seq": 1,
+            "content_hash": "d967fff829016610a26b5d077d7ca08ee209eb13136d3fad16ea6f44b8d084cc",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-01a9398e571efeb1d5e56d68",
+            "session": "2024-05-07",
+            "revision_seq": 1,
+            "content_hash": "04fdd4d2edead4fe0cdb73d13fab1123ac682e471802c9cce06ba0104ed98419",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-a23d77a610a4b479e8ba1be3",
+            "session": "2024-05-08",
+            "revision_seq": 1,
+            "content_hash": "c57510a3f4529974bf77a915644b345d81930baa9e181be92993135f958fff6e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-6c6638f8a7146051a6f94c4a",
+            "session": "2024-05-09",
+            "revision_seq": 1,
+            "content_hash": "57490de02309b67c2fa976ff2ce11d2005c41838348d228513ca71f3821fdbed",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-7599ec9f00546c47a80b51ec",
+            "session": "2024-05-10",
+            "revision_seq": 1,
+            "content_hash": "71d61571d0e800df3b034be034459bdcf9f9ca98cfedd799a36c46d7e5a520f9",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-76c531f02d7e44eada371e79",
+            "session": "2024-05-13",
+            "revision_seq": 1,
+            "content_hash": "e911bf18423544f241017b9f39437d13c7256f65ac86b1daa4039ac63b8f055c",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-9c49e29710b4a8e9783ad1e0",
+            "session": "2024-05-14",
+            "revision_seq": 1,
+            "content_hash": "8098930efbc6077412a9be3e1109761ebffcd7f99b44671a9c413d5d3a46d4e8",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-dd063d06863f21a1ef1ee122",
+            "session": "2024-05-15",
+            "revision_seq": 1,
+            "content_hash": "5390c4210358e73903471b57138714836a1117e04cc7671d10af930d5070e8ae",
+            "source_id": "synthetic-demo"
+          }
+        ]
+      },
+      "context_series": {
+        "source_id": "synthetic-demo",
+        "policy": "single_provider_held_constant",
+        "missing_status": null,
+        "points": [
+          {
+            "observation_id": "MOB-e2d9f4656d0edf8540cc064d",
+            "session": "2023-05-08",
+            "revision_seq": 1,
+            "content_hash": "9c2a60daf9b406816717e5c0cd0da15559305c71c289ade69d39c46224188c95",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-17e4edd04bf47f894c965b65",
+            "session": "2023-05-09",
+            "revision_seq": 1,
+            "content_hash": "a8ce9e9d8bf6e1610c73d3d3171f07cde3ad28cd6195168c1f48ac1439d19622",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-6364a794a5b9bd2efbb49cc5",
+            "session": "2023-05-10",
+            "revision_seq": 1,
+            "content_hash": "dbb350240848323154604404d1aac0828fe2f6ab61bb5a137f2e054786eec5e3",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-ff3a48bf577d4a71016bfca6",
+            "session": "2023-05-11",
+            "revision_seq": 1,
+            "content_hash": "ad642c9aa98086fecd35e29826f1d9f8d488dbb7343114105ff07506608e43d6",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-3a637bb1e3f529c4ecdf2a73",
+            "session": "2023-05-12",
+            "revision_seq": 1,
+            "content_hash": "10b20448a9e1f9eed0e5c33680c0375a7426227f18df3da49e66fb8338651e6e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-482ff3c99ff58d8ae4018744",
+            "session": "2023-05-15",
+            "revision_seq": 1,
+            "content_hash": "1fef4f40e2410a10b263ad4685ebe5f0b7bef5c142d06b290790d5c33ab91c3a",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-0017f78926fd8eb8a6b27c0f",
+            "session": "2023-05-16",
+            "revision_seq": 1,
+            "content_hash": "2e540afef85b31850490f338302d1532bf4fd751fa1e3b7290d992fbad660b70",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-07d6a12c79910f76abd09f9f",
+            "session": "2023-05-17",
+            "revision_seq": 1,
+            "content_hash": "5d8e561ae22c1fdef2ab123ccde3cef45295b0e9c419b8cf25a6ab983be86566",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-763612ba3fb42d43ac20fdb2",
+            "session": "2023-05-18",
+            "revision_seq": 1,
+            "content_hash": "a221c21fff1891a19645de05b5c880bc3e9ead6a515bc44ddfcd096ae10b0ec6",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-d5daf5d5407a1b12b24f96bf",
+            "session": "2023-05-19",
+            "revision_seq": 1,
+            "content_hash": "9f2b84306b085852be50ed4dd777817cb607b64288d5f278c0a7f5df5d6439c4",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-509174a767fbedb6cd53b208",
+            "session": "2023-05-22",
+            "revision_seq": 1,
+            "content_hash": "534c475649c43b1112ebfc7317aa8a2c095c09bae1ebe6a6a7337bc99104bd82",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-055fd5b47dd79357a0f3a3c0",
+            "session": "2023-05-23",
+            "revision_seq": 1,
+            "content_hash": "e6d71a9817cf919c25be4f7d31fa54d6cee2bdca3660224e6c19994e80ea2885",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-98890df74ed38f7b1b9ba4bc",
+            "session": "2023-05-24",
+            "revision_seq": 1,
+            "content_hash": "fc5938a2109abd25cb7ddc75401467e417f66eef8ddb50a248ace031804f14ef",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-678c03782f7c2f4cd7f6f65d",
+            "session": "2023-05-25",
+            "revision_seq": 1,
+            "content_hash": "d90059d2402587dbf9cd996339c512e637ae479c64fbf7de3f9c8d227a416569",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-f88d4b7df856bb53258c7cbe",
+            "session": "2023-05-26",
+            "revision_seq": 1,
+            "content_hash": "717db702bea5f74a2b90f4ca666b4b8d434541d700f8d7e847f0a41955bd53a9",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-cf83221e2653dcf8f54726f5",
+            "session": "2023-05-30",
+            "revision_seq": 1,
+            "content_hash": "0a3e653685c7718c67214b7a3f02342c29f95c4edb2e2f960029650edeba1c03",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-395cb7fe13dde99a5a0e3acf",
+            "session": "2023-05-31",
+            "revision_seq": 1,
+            "content_hash": "ebf4ef6ca5334a7818135979a6b6fc02c45b3474d71c85a20712d6e3fbe3b903",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-3a7966e5fdfc154d91ebbfc8",
+            "session": "2023-06-01",
+            "revision_seq": 1,
+            "content_hash": "f886988a1cd14ceba5ecda2ceeaad8c44f07bd892b57f18c06cdf85469294fa6",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-d0b08a2263c1021bf61e2b32",
+            "session": "2023-06-02",
+            "revision_seq": 1,
+            "content_hash": "9556df5a80e06d792aa9fb13e2002d65638b26582d3ed7dd7a44c9cdd4938959",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-0f88083329c2d62246537d77",
+            "session": "2023-06-05",
+            "revision_seq": 1,
+            "content_hash": "18b519b5cde0953a7e5338c942589bdaf6542781886fa61edda6c79a9abf6d09",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-724bc6568e6ea4a8139b7de5",
+            "session": "2023-06-06",
+            "revision_seq": 1,
+            "content_hash": "f69cff9fcc663a800bd04dbd4f51dfbba63ec29c6d7a8e380555b7548d9eaa1f",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-8e7e9d2f5557861a82455159",
+            "session": "2023-06-07",
+            "revision_seq": 1,
+            "content_hash": "7a28b87bfa74190d4ad426c8fb6f36a44986fe91c6db2b8e6d6ae32e994843e1",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-465c6267034ae35be3067fd6",
+            "session": "2023-06-08",
+            "revision_seq": 1,
+            "content_hash": "c03f8dd14c64419363669327087640210e9100a02fdcf0dd449a3275d26a3461",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-878630744d0e80e5d214aedd",
+            "session": "2023-06-09",
+            "revision_seq": 1,
+            "content_hash": "4183088992a66fee70874e15671e51254bbd9e6b78b7ecd42a36ee6fa72b8a6a",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-97912e329eba6f215eabbdba",
+            "session": "2023-06-12",
+            "revision_seq": 1,
+            "content_hash": "05b67b672ea7e5dc3f1e9d17c4bd95aca8e5c1f785d9aeacd695712f0e5f92fb",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-3253c57c8a6e25ce92e1a81e",
+            "session": "2023-06-13",
+            "revision_seq": 1,
+            "content_hash": "b8c2a6275684967c5585ea638d046ffe7cf7dabf8714dcf4d7618f4ca6b939b1",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-f05422a28fbfdfc58ae6dd40",
+            "session": "2023-06-14",
+            "revision_seq": 1,
+            "content_hash": "d1fe68505539e232e8d7966400ab68626c4326fc1cb41917ebed742c86392a3b",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-84c76911aed7b8d8347dc8b2",
+            "session": "2023-06-15",
+            "revision_seq": 1,
+            "content_hash": "019c0e374d0721f9178909500a10f3037bbef650cd1fc66b98ab1be6cc70dc16",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-8d8667ed372fb6918d579111",
+            "session": "2023-06-16",
+            "revision_seq": 1,
+            "content_hash": "94e916a9ce8e5248f1eb230b341c0568f1819c47aa8b6224ab800762d0dd6306",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-75e534b637829692de44e0a1",
+            "session": "2023-06-20",
+            "revision_seq": 1,
+            "content_hash": "4c75f87ab771cd7a5d39bf85e09a477e7b0f3eac0b3bb21653ae0b6cba83a1f1",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-8728ea0d333fad55f73fbc1c",
+            "session": "2023-06-21",
+            "revision_seq": 1,
+            "content_hash": "21d5bdb18e4bf389ace02172c140aafe82d6fd98cc3f52dde326ad61ba53fe33",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-64425041e41204a6a3908b81",
+            "session": "2023-06-22",
+            "revision_seq": 1,
+            "content_hash": "73f90740e986349ac8854b84938a1fbcbbf8091a9dd2cab51c7711480c7ee898",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-43942571be0139a30f3dcfd5",
+            "session": "2023-06-23",
+            "revision_seq": 1,
+            "content_hash": "e2076de7df782cc1e64f8bcecd6bc8f43a46ea03489633a5ad5eb1763ec7b492",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-67e35c8918a03e95c714e227",
+            "session": "2023-06-26",
+            "revision_seq": 1,
+            "content_hash": "4774279d7f7d456f48bf337691bfa3d655f1ab03c406d0b2656fbb699ac246ac",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-d38d7849a9a3a9f697a60278",
+            "session": "2023-06-27",
+            "revision_seq": 1,
+            "content_hash": "53fccacefea6c3e131698db67702f805ccb7266a3ad75912a8faa0a8dcb363e0",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-8dd8acfb178069ea7fed45f4",
+            "session": "2023-06-28",
+            "revision_seq": 1,
+            "content_hash": "8be15fed4ae98ffcf2dfbeb8f2e7a955687f77ddb60a750a91319a193a0d2c23",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-3c1fd30b38ec2492d351b11a",
+            "session": "2023-06-29",
+            "revision_seq": 1,
+            "content_hash": "53b667ae63b35f02c00596998c6939dadb66aecf907235423701b6122c10694e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-4dd38d5a5ef4653e8825b74e",
+            "session": "2023-06-30",
+            "revision_seq": 1,
+            "content_hash": "6c738d09cf36092e53cb936330c19af78e4084531645d5631b6b7a1149da5ecb",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-5516038dbefb8648657eedb1",
+            "session": "2023-07-03",
+            "revision_seq": 1,
+            "content_hash": "ba1ed4fc2277e1e9199d9f2f37faca576ce6e8c02162945c41e6e6e08c38612f",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-65b02f36581e90442ed906a5",
+            "session": "2023-07-05",
+            "revision_seq": 1,
+            "content_hash": "84d78ebd72b64e56d076259bc904ecb7f3fd49756419d1293c73e2313500d474",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-3043deee4058df9e7a02b91d",
+            "session": "2023-07-06",
+            "revision_seq": 1,
+            "content_hash": "153c44505974d56b47b290d55529a1a97224ea9bbc9f75253f38a58d0def1d45",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-31e1d8ddeded67663a926970",
+            "session": "2023-07-07",
+            "revision_seq": 1,
+            "content_hash": "43e71fbc1bc7098a1bdb1989c14bc3c8c28e927bdba57454dfc3567a08e4f794",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-563fa8aa6de91d2bd08a27de",
+            "session": "2023-07-10",
+            "revision_seq": 1,
+            "content_hash": "f8165e97677f00a5303c99067d8b0c5aa7f066efa4d582ccc4cbe33f2052c380",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-31ebb6af6cee4965a85fac63",
+            "session": "2023-07-11",
+            "revision_seq": 1,
+            "content_hash": "938b47797a8c0d8c5d990bd1d438f4fef30706b43f5d75124e901987cceba850",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-1aaed0d9936090952a2ee44d",
+            "session": "2023-07-12",
+            "revision_seq": 1,
+            "content_hash": "9028e12a81d11106d5b9b663b90645c7dba6ac2e4d577b224ca05d69b4d5291e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-ae9b2c1572c27b4be30ba672",
+            "session": "2023-07-13",
+            "revision_seq": 1,
+            "content_hash": "3a619a72e877874ef71e5912e3559b65a9bbf19744c404a7edd875ee1ad0cde2",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-fd75237a80255f82cea3125f",
+            "session": "2023-07-14",
+            "revision_seq": 1,
+            "content_hash": "9e4db51639482797904813e2c1f0b993a3baf100443ee4598633779f371f2ef7",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-606c1e798715d8f63d3a7306",
+            "session": "2023-07-17",
+            "revision_seq": 1,
+            "content_hash": "360c96672162d4be7e2af27b09c8156b05cd8dfde29ed5926dff56875417a607",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-ce960488664b5616727257ad",
+            "session": "2023-07-18",
+            "revision_seq": 1,
+            "content_hash": "b31b7ea9b572256bde5537f6e0d370569964d63d3d0bdeda0dc7235aab37e92e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-5eb0514e52dc5ec5923aa36a",
+            "session": "2023-07-19",
+            "revision_seq": 1,
+            "content_hash": "6e68a9005a53182e5347988915fdc3b7343631f56da9649229d838f6b7056c58",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-cc5d9ea84db1a09770b4f54e",
+            "session": "2023-07-20",
+            "revision_seq": 1,
+            "content_hash": "f24d2bb48efbfebe93b03ea730fb83369816af41647ce38c9d24fa6c7298d237",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-c9a49af85c55bc3f4d235dba",
+            "session": "2023-07-21",
+            "revision_seq": 1,
+            "content_hash": "e79886ff8f5783044642a7f03ee53ded9dd7013fa3196a9462c356226cd10963",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-3392d14e18714930420fdaca",
+            "session": "2023-07-24",
+            "revision_seq": 1,
+            "content_hash": "e315d052cc69e59b5bff380852433806cee70d9391536fab7fbc846c7f5217f7",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-1c653bdee5368f8ee3ccae30",
+            "session": "2023-07-25",
+            "revision_seq": 1,
+            "content_hash": "8cbf7f977096abb4bd982a6c7caeb0cb056a5c5a8dc622eeb045e895140b73be",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-dc3be44e25e6ab7f50893c29",
+            "session": "2023-07-26",
+            "revision_seq": 1,
+            "content_hash": "46de6cf853ac988cfa6d2c098e81210fdd94908ba7553706ff12f39dc302ee6e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-25692fc151f6309f4414450a",
+            "session": "2023-07-27",
+            "revision_seq": 1,
+            "content_hash": "9191e9dfb93823794f7a3700debeef21aac6c03eaf438994103485c4b6af8736",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-2c2f03b16c7e4af55fd16853",
+            "session": "2023-07-28",
+            "revision_seq": 1,
+            "content_hash": "15b1a9e4206282935a924adff4b7ecc10f3c60f678730389410b7c225769956f",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-41975a4e65f1a80072b1f835",
+            "session": "2023-07-31",
+            "revision_seq": 1,
+            "content_hash": "cc8066af2584a455df9c0aa05f9567ee5758e0c0add056679e148b3cccef81d7",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-2d029c2ad49b85a5e48211a3",
+            "session": "2023-08-01",
+            "revision_seq": 1,
+            "content_hash": "6919e40043fdfd39619a2493af74372fe36c116f11bdd12bf2aa64df0d05e00e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-9eee4ff18223fc011c5e7083",
+            "session": "2023-08-02",
+            "revision_seq": 1,
+            "content_hash": "a56d52a53a104811ecff29347af5e25361a3b5d004c0a4d7a0669efcf1e8730c",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-ae26e94c1faf9eea46fb75e1",
+            "session": "2023-08-03",
+            "revision_seq": 1,
+            "content_hash": "84150d871fc7f797c6a84f714321d721dd75923d74a7d71ec48eaffb6c2d26d8",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-0cbfabf8b80b6b4263dcfeed",
+            "session": "2023-08-04",
+            "revision_seq": 1,
+            "content_hash": "99f02b7dbd0aacd0b0cca5b753491159d8ab68e0d8392cb6710665c3ee56d3de",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-03e5e023226c72f184d90e17",
+            "session": "2023-08-07",
+            "revision_seq": 1,
+            "content_hash": "0ac64c521cfb1c7dff224c94ae22aebf13b9224f93ee8321bf69458896fa31b7",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-2b4e0ebca4e8556587868257",
+            "session": "2023-08-08",
+            "revision_seq": 1,
+            "content_hash": "01c4e19c312212d0f46a24f627bf4f9ea193624746a552606eddfda91605d41e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-b78482555110213e6adca072",
+            "session": "2023-08-09",
+            "revision_seq": 1,
+            "content_hash": "be75c47ac9a949b4fce5afbef6ac9b171828b96130fd09aa6535828b9d503713",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-bc54504d5249f746b2a37ed9",
+            "session": "2023-08-10",
+            "revision_seq": 1,
+            "content_hash": "dd6dc044f96ad26cb629ed23410a42e1de31edbeaead2f562af0d5e49e0b86b6",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-99b86190a8908b9c4e98b6b0",
+            "session": "2023-08-11",
+            "revision_seq": 1,
+            "content_hash": "6b184417367e0498fd5340f386046efb5ff6819dbbe85a3a2e8f81fbd00046de",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-32df98e6d7c7cd32475dfd17",
+            "session": "2023-08-14",
+            "revision_seq": 1,
+            "content_hash": "0ee889c93cde1d80b16568296bd3dd7665f550a6b230942ac9070ce11b113e64",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-a158f4a66a8d0f0c6aa1ea5f",
+            "session": "2023-08-15",
+            "revision_seq": 1,
+            "content_hash": "68ce8993ba64288771c520425fb40e3913807278bcc33b5e591af5f98e1f4154",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-7a65c3f28c89577f96ba8764",
+            "session": "2023-08-16",
+            "revision_seq": 1,
+            "content_hash": "4cb556282faeb26f7dbc460558ca46e27765e79cfacba4e6a79f4d21f9e0ee5a",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-ac69198c609eee9d2b752c4e",
+            "session": "2023-08-17",
+            "revision_seq": 1,
+            "content_hash": "42fc53bdceed223e2e1e0ab13b14c6e7387a5bde5aff16175301e0a146b999c3",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-c610513266e084671f555f30",
+            "session": "2023-08-18",
+            "revision_seq": 1,
+            "content_hash": "1f29bed58a8fbb86013b3c2b72a11f7a9bb4705b7b22f8aa7c46232db43be6ef",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-9823093c0cdb392e83291f40",
+            "session": "2023-08-21",
+            "revision_seq": 1,
+            "content_hash": "a74dc1880f37e22a0aff872b348acf5e79ce4c87bf5f27cf473ed822cc3d2402",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-dce3f6d33692fce9fcfc1396",
+            "session": "2023-08-22",
+            "revision_seq": 1,
+            "content_hash": "c579e89ab47e33cd2911a6c095941feca27b5a3b3fc71ed76eab11e8f20b3edf",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-62b7c2aa89942111746a4c3f",
+            "session": "2023-08-23",
+            "revision_seq": 1,
+            "content_hash": "7ebcbdb27fa93799715f37c01619627a0e96c032908501eb5f6598ce3d5425d9",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-c643c8ca496cb3018367b24d",
+            "session": "2023-08-24",
+            "revision_seq": 1,
+            "content_hash": "d5163b7b284c7a22a51ddf3f30e7f923fce4ba4f993ef8a8d0a5be3a301a8470",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-531bd285cecfd69dbf0b803c",
+            "session": "2023-08-25",
+            "revision_seq": 1,
+            "content_hash": "4ddcf09f321958268c206f67b83d081c7b301fd1a3559ed1a2712ddabdadbf2d",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-3c0e87ec539680226e4f4c72",
+            "session": "2023-08-28",
+            "revision_seq": 1,
+            "content_hash": "28a059fe80e6493fe7530e01ed04fbb811555e84471aa124f42ab81ed34ba9ff",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-a4c735f77a43ebfbfaa49bef",
+            "session": "2023-08-29",
+            "revision_seq": 1,
+            "content_hash": "3532f4809163e468aacf0769c5285de25f70ed270add25bcb6088defbe308469",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-b3c71e243b243f5a6036d9c5",
+            "session": "2023-08-30",
+            "revision_seq": 1,
+            "content_hash": "561b48d7c4100ccae7001812681663721289ead3baf5f41e786cdd4b31264c2c",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-cd24d0278839ff0fac2de78a",
+            "session": "2023-08-31",
+            "revision_seq": 1,
+            "content_hash": "227cf1a6519f7e0e1edeb97bea81874b3c1e7dacc4ca1b4e9ca980f970545703",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-bcba83f43a2bd5037984df9f",
+            "session": "2023-09-01",
+            "revision_seq": 1,
+            "content_hash": "d2e65cc4a26212b1445aec2b08028368dea580adc44c53ca082d126c7560b861",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-fd40adba84318b2375f6f89c",
+            "session": "2023-09-05",
+            "revision_seq": 1,
+            "content_hash": "5e66d5450f2083352b001872da1962d586e3a56bb32dc6f78be30ed569b256be",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-0cb5b02876c1c1a43ce4ec33",
+            "session": "2023-09-06",
+            "revision_seq": 1,
+            "content_hash": "72928790bfd177fe2b4ff771aebfb2b406d1643dfc4d58fc4c388207b4c83827",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-30ff6ee0a6a06995516061e7",
+            "session": "2023-09-07",
+            "revision_seq": 1,
+            "content_hash": "8277da193b8a6c1081f9caad694f6eaac8a11b1bbf5ab5a0d10bf9c2a3c68ea5",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-8043890e49f3830262fc1e2f",
+            "session": "2023-09-08",
+            "revision_seq": 1,
+            "content_hash": "5b12800b5a4ef133a1b158b64c9b655a0eee6fb38223dfc53fffefe1ee3ea864",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-b05983846f856df88e476afc",
+            "session": "2023-09-11",
+            "revision_seq": 1,
+            "content_hash": "9c6147739c1af2c1e62000c2701b7fbe951c19e32442859635cd7dea4bf0d086",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-d81f8434ca2bf0f0e9da7167",
+            "session": "2023-09-12",
+            "revision_seq": 1,
+            "content_hash": "06c2585f90456f34523bfdabc6204c0c23c2880826cdb4820a5ab13431a01238",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-1cf95d78bb59bf9546a642dc",
+            "session": "2023-09-13",
+            "revision_seq": 1,
+            "content_hash": "98c096395279c7f94b7d07327f667a91080aa841b556a6e3ca0bee9b008f12a3",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-aa7743bb96d61d640abc4784",
+            "session": "2023-09-14",
+            "revision_seq": 1,
+            "content_hash": "10dcc1a7e0544721b76abf4b82d6cd15eb018084d0ab3d6ccb39bb559ebb45fb",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-4906df6047d534c1b5e7f93c",
+            "session": "2023-09-15",
+            "revision_seq": 1,
+            "content_hash": "71a98e348c8a0e6f44bab8ea0fc56e71016a4f00a18b0c87a4267df07721c43c",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-87cb16b2f7f0fbb0901d20a5",
+            "session": "2023-09-18",
+            "revision_seq": 1,
+            "content_hash": "9b03ea14636f3270540870d70f74a988f4bfce503b949c7220953cc57532d003",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-b3ed087d083c1ac83b87e021",
+            "session": "2023-09-19",
+            "revision_seq": 1,
+            "content_hash": "ffe37e387d179a0c4ba6e8c0da7ebc2c32af33f0c15bd311da94a6628fb82a4c",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-e5313bda759dff38e27e6b4e",
+            "session": "2023-09-20",
+            "revision_seq": 1,
+            "content_hash": "7be5ea9abf7692e740250de5de572ec21940b15068745e0e82f231dcbcb8d2de",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-8186740dea223ea543acc529",
+            "session": "2023-09-21",
+            "revision_seq": 1,
+            "content_hash": "bc18bf28596cb7e99255fa2be5b660ceb7ae294b68ff51d860553837258c7053",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-408de324db8264d1e31b716f",
+            "session": "2023-09-22",
+            "revision_seq": 1,
+            "content_hash": "513f156005849729f97599b778883ae39e8d731c637bf5655452331bef9eb1a7",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-1d9a5de0bad8a102348b44be",
+            "session": "2023-09-25",
+            "revision_seq": 1,
+            "content_hash": "30207c5d7cc076e997740b0a20d04a369f69e19d2ca9a7270801ecc60548b39c",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-09bb889d292d19d844f16a7c",
+            "session": "2023-09-26",
+            "revision_seq": 1,
+            "content_hash": "2c290b2090f8598ae38dac866aedc1a583344686d651ddbaa8551246cdbf8287",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-f57a1fe6241d0eb739486b27",
+            "session": "2023-09-27",
+            "revision_seq": 1,
+            "content_hash": "45b845ea760a05b1942551363d70d4de016f4cf1e2a34ffa0c2db7d793d53e9c",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-e764656d30f27ee5dc7b1a95",
+            "session": "2023-09-28",
+            "revision_seq": 1,
+            "content_hash": "8cc10ac33a2729f7364064e007c0fa18cad663aeba74974a5021da5e313b72ac",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-ac721910ec815ad7fd5f62f4",
+            "session": "2023-09-29",
+            "revision_seq": 1,
+            "content_hash": "89efebb9ea60776f13e37bad23f03ea8aa8cab37c8b0e7e7f40bac5f05f22285",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-1a959dd9b3c7db3577b370d9",
+            "session": "2023-10-02",
+            "revision_seq": 1,
+            "content_hash": "94dbf9402f2d3e9d419f4949a8cd841a7e69de7f0b8c82013570538f66ddfca8",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-82bdd0527c6c6b07b69f6622",
+            "session": "2023-10-03",
+            "revision_seq": 1,
+            "content_hash": "08336711b3222bf97ce8b6d7a72b3aaff8a6b44aa528506676dfedea30db94c1",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-92dc849f1f98d773e42845a7",
+            "session": "2023-10-04",
+            "revision_seq": 1,
+            "content_hash": "eba0037bddd754f137b81de16df106fd78e299e159698cdef296829c8ac0f2c4",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-57bc24a915926c7db2abbf54",
+            "session": "2023-10-05",
+            "revision_seq": 1,
+            "content_hash": "bfb2f49930c996c77beefd1661e099dc6e7758ed3ffb0d0ed6227d3bb6c898ac",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-7ab1df6481e18d4ac764af73",
+            "session": "2023-10-06",
+            "revision_seq": 1,
+            "content_hash": "8b199c331db699e319f4d521ea38de7867eab33683bfe3692ffaa363820a9d64",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-c47a83abf1a4c0dafe56bf8f",
+            "session": "2023-10-09",
+            "revision_seq": 1,
+            "content_hash": "4e86f38e51aa84c596c302804d141cbe2e5e6b090f58d4208f3858c42e07621f",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-75264426e6043a66f9fc9dd6",
+            "session": "2023-10-10",
+            "revision_seq": 1,
+            "content_hash": "8d77ac1ecc0cf9ad6d576ab19b31988ee9b1ee3c13edc714c9a40a9d673db0ef",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-7d677b80304bfff977290b98",
+            "session": "2023-10-11",
+            "revision_seq": 1,
+            "content_hash": "fe78f2688d08fc1fac6a12911ae5a0178eb186dabb3d66ad897948443db60950",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-6dcda84c2c1ae18ea136a3d0",
+            "session": "2023-10-12",
+            "revision_seq": 1,
+            "content_hash": "1c644e8a766dad85002ea529486803b02e4299f28f65dd3e21c21e7b3c59d8ab",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-4de5a5ca0c907bb69183e998",
+            "session": "2023-10-13",
+            "revision_seq": 1,
+            "content_hash": "9d2a92e2fdc8bb41c138763c3ba5ad19c1bd34a7fcdac9f9ebf42ca6c4fa30ba",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-e5e85c0a28f2996da037e188",
+            "session": "2023-10-16",
+            "revision_seq": 1,
+            "content_hash": "c7668baf70fc7c7aeac0374239c81dbdf1fa1df94d504e4d7cb8dbe7c12627b0",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-2db3d9af3f5a7c634cb0f9eb",
+            "session": "2023-10-17",
+            "revision_seq": 1,
+            "content_hash": "450753d4ed45adf587246b5a513d3f7cd4c349e87fbe5946da5faec0988cbf58",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-ac9ab55839c8d7be4cc21f66",
+            "session": "2023-10-18",
+            "revision_seq": 1,
+            "content_hash": "1a9a90aa294d26f37fca19e9de686c4a3d05b75f395396215377924a70294637",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-371b9a0f229eb173f465d069",
+            "session": "2023-10-19",
+            "revision_seq": 1,
+            "content_hash": "8cb329549ab484a4a88e56a3aaf1a46353f0f1c3539a6e5e4dae13d7d624b252",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-84468fba4ecf21f60e6d28ec",
+            "session": "2023-10-20",
+            "revision_seq": 1,
+            "content_hash": "c718c07174056a2918fb4b356f49111b6d4d4a43135925fb18457c055b7a2bee",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-5c278e2175338f135ad3f29b",
+            "session": "2023-10-23",
+            "revision_seq": 1,
+            "content_hash": "3a039d3788a6c7cb09161c81499aee246f47c4fbdbde6d2ca7f3ccf7d92a3f34",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-fcd15de5642fb07ea8f7f31f",
+            "session": "2023-10-24",
+            "revision_seq": 1,
+            "content_hash": "054345592e313483cb50a053a663cb1de77e73ab82eb9b3d20de989aa98b24d5",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-d2522062c282f4eab873c98f",
+            "session": "2023-10-25",
+            "revision_seq": 1,
+            "content_hash": "619cf0927d5980f5b9c6d51c5c37ae015ec3155c8201840e5d3644f49d9b9b21",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-0bd1705386b93c3113c2f991",
+            "session": "2023-10-26",
+            "revision_seq": 1,
+            "content_hash": "8e10c8152f1141d8cd3fada3f0debff3f26a4f448a9f2eb23ff55bbd7f9aa2d0",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-7c3be85ad127e89f79229e9e",
+            "session": "2023-10-27",
+            "revision_seq": 1,
+            "content_hash": "8f8eb05bac5d129a9461acd617af686725d9cbd1577b697f448e070e2258b53d",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-6cf22190d05de7ef5407eb29",
+            "session": "2023-10-30",
+            "revision_seq": 1,
+            "content_hash": "d515f8ff0f2fc81001f469117b54f61491381339a2b1d328b206d2582cb8dc3d",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-f1e6fb128909caba4fd2b960",
+            "session": "2023-10-31",
+            "revision_seq": 1,
+            "content_hash": "bf826e5a31a0d2ee9ea41070f8efe81bd5aaf1df1327cae80e94848b3d5fefcb",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-4db2e5fd908a958a525e666c",
+            "session": "2023-11-01",
+            "revision_seq": 1,
+            "content_hash": "a9081059c26554e53c695f80733a887cd7f00819e0e76c2c331e42553aec4842",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-4e4a9f9e5ef000df39221ddf",
+            "session": "2023-11-02",
+            "revision_seq": 1,
+            "content_hash": "147af1be8c4f38615c702778515ac0be999f01f03bc5fb76ad5268ec37860748",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-48711af3e703f6f626c89e6a",
+            "session": "2023-11-03",
+            "revision_seq": 1,
+            "content_hash": "f4b010e8b2e62549cdb63fa70561749940f2de8ca93c62980a0a395edadf1447",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-e4056d4266c4119e7a897da3",
+            "session": "2023-11-06",
+            "revision_seq": 1,
+            "content_hash": "b140fdaa0bc9cd2e3ef4d0691cde5340f5051dcb0570217f4512f39ec0526875",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-50f5e0402a25c1cb79411ede",
+            "session": "2023-11-07",
+            "revision_seq": 1,
+            "content_hash": "c5f65e16bdaed7de81591a916e7b7d8fa34f9cd3555c3eeb086aa3eb33953b25",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-8daea4c9550cb3c10bc058c8",
+            "session": "2023-11-08",
+            "revision_seq": 1,
+            "content_hash": "e8bad75c295edb9e7db475a564698e529ab5a1e18c2fb6cf0b45ad07477cfb11",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-ed3f31d9f68f05d0c6974711",
+            "session": "2023-11-09",
+            "revision_seq": 1,
+            "content_hash": "06220758e086c41b90e62b3d801314f96946a3be6df957cb14cb8875ea17cda9",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-cf64e2e320d771a53891633c",
+            "session": "2023-11-10",
+            "revision_seq": 1,
+            "content_hash": "7c0a8dfacb7577566394cb32622f86cf6ec136e6293feae5b28387c7237adb94",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-ed23f75dd4a8d1cecaae46d8",
+            "session": "2023-11-13",
+            "revision_seq": 1,
+            "content_hash": "aa433e12edc0076f60742eb0b82bc5975dc5107a8ecece296913dbec1cfb3188",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-c98a49697db732f30d90aa8c",
+            "session": "2023-11-14",
+            "revision_seq": 1,
+            "content_hash": "4f2ec2ea0bf78bbf8033e5c4b8ccaff746f9be095b2757fb5e5d570ac41c2096",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-7cb88b92e2402aa4ca9735f1",
+            "session": "2023-11-15",
+            "revision_seq": 1,
+            "content_hash": "5814aaa113cb55794b292588dc8e160fb1cacf068f9ff520d3000f538b500fe5",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-123a4d5abfbeafe028674d09",
+            "session": "2023-11-16",
+            "revision_seq": 1,
+            "content_hash": "4bd0107e08ca5685e75241dc8b35b259d449e8e934cef175d2c91e3a12224a44",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-dd43fa0ccb1d2e2e89dc463f",
+            "session": "2023-11-17",
+            "revision_seq": 1,
+            "content_hash": "75808959d91d47e6d26bfd3ce86d38064252517f7810df2345176547f9b7f639",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-b03509ff7ca7a6979429c2ab",
+            "session": "2023-11-20",
+            "revision_seq": 1,
+            "content_hash": "20fc43451495d91061dec65f36b7b2671db546f6093baf607d6c9c65f33c9f29",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-538e7ec5892c85c5f9d202ac",
+            "session": "2023-11-21",
+            "revision_seq": 1,
+            "content_hash": "bb3d99249354341f1e7ada2678efce3cceb1c3527db3a42b6d8e5ce68ba7ced1",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-503f739e931a18af4dc97090",
+            "session": "2023-11-22",
+            "revision_seq": 1,
+            "content_hash": "a1e1450f142087151fc4ef7b38186e66ce80e3bf2c93d9b5b070c598bde20cad",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-19994282f34764fd5ad10a34",
+            "session": "2023-11-24",
+            "revision_seq": 1,
+            "content_hash": "77ee526742f087a2b49b231d49a04607a703a0ed8d0d8952488b6ee3cb994af3",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-4fde57af1823d473d240478d",
+            "session": "2023-11-27",
+            "revision_seq": 1,
+            "content_hash": "1fdd0f5ba66e47f43f81bd0b68cee12b3177600e57da0a2305de4716f356d90a",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-0e69cbc296285a0e724f8667",
+            "session": "2023-11-28",
+            "revision_seq": 1,
+            "content_hash": "a20ec5b3a7adec91d7bfdfebff13db2b645fa2425f61e20c3adc0d37626d897b",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-315355435e44440a60b8ad6d",
+            "session": "2023-11-29",
+            "revision_seq": 1,
+            "content_hash": "98e7539661b591a3904661a4dc593b9639c72e23bdf0124f10407ab41be0ae20",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-8d1603281b247365367b483c",
+            "session": "2023-11-30",
+            "revision_seq": 1,
+            "content_hash": "4c7bc29031c71b62a3464508d7a8a0ff6660bbcaf11ed828aee2db02afc26590",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-932c5392b717ba61d6fcc4be",
+            "session": "2023-12-01",
+            "revision_seq": 1,
+            "content_hash": "91f9457bfd6b2eb63d2189384b3a27e06a89061374a0174b7305c15f57dc26d5",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-2609f3cbb374587b4185a888",
+            "session": "2023-12-04",
+            "revision_seq": 1,
+            "content_hash": "959499a85f2f761b26c5bea9d14bb861288d3dd979b5dbe424226f43ec4ed8da",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-81599da50e9a36e69f5ae04a",
+            "session": "2023-12-05",
+            "revision_seq": 1,
+            "content_hash": "b98645945b6568c432d58b3d6a2d48a5ef4d832bdb85e0de062e5e73ea7d94ac",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-70c3596a54e1d3266dc6b13b",
+            "session": "2023-12-06",
+            "revision_seq": 1,
+            "content_hash": "f8c5ecd79fbdd542867afbe27fb044407483dcf07eecf71d9add9d46a987c636",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-228ae09bef53d5051f02de4d",
+            "session": "2023-12-07",
+            "revision_seq": 1,
+            "content_hash": "456b702df84323ae1e52c87b88890b12fa94fc98ebe5bf98c00daf60d4af0e02",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-5b4b60c29b8ad3681031bebc",
+            "session": "2023-12-08",
+            "revision_seq": 1,
+            "content_hash": "5d979665cf25dffd43e997afade5d77d0e58b365956ff130ad8e331cf97770d9",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-90630e372a936775a53f053c",
+            "session": "2023-12-11",
+            "revision_seq": 1,
+            "content_hash": "578daa5c6c669937eecdbb28e546dad5441fcd44221dda0837dffcf046e0a325",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-0ebd9802e14de7c2169932d7",
+            "session": "2023-12-12",
+            "revision_seq": 1,
+            "content_hash": "95bab67d4e92170025e71ce79f362883bce430e63ecc724f1f6619c68d9eb9ee",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-f3e1046aaf57823e355d66cc",
+            "session": "2023-12-13",
+            "revision_seq": 1,
+            "content_hash": "f20902384fa02b1899c97d2816de4fab0f29aceacd9ede625b76e5d9c0f9df57",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-cc78742f2ec515e9c9a1ed0e",
+            "session": "2023-12-14",
+            "revision_seq": 1,
+            "content_hash": "e57dca7e766504ad0fab3118e104ad87dbab73bcf5faec43dd21fa3cbd8a37aa",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-e54840c24e22092f1a6fb6eb",
+            "session": "2023-12-15",
+            "revision_seq": 1,
+            "content_hash": "f869040bbd307782fed8f535cf7b1f49f4de3359f6e3d871f487427baeec0594",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-f98279f394bffd3b96599809",
+            "session": "2023-12-18",
+            "revision_seq": 1,
+            "content_hash": "ae7708b29c05825810c6ddf1ddd6f125be6332e9ccbe671ac4085b8233c19a12",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-75f09ea38e0bd03959ec915b",
+            "session": "2023-12-19",
+            "revision_seq": 1,
+            "content_hash": "3d2b520bbe1c7672eb988c4a6f823a37740da75c1540b59fb4dc56cd25ef873f",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-5a78f360ca8be7bf6762ad63",
+            "session": "2023-12-20",
+            "revision_seq": 1,
+            "content_hash": "d947dbcefb66ea293827b36cd8da4d48e84cc6e35119f64540e9c0acfdebb1c2",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-abe2e537592b3263bb4b46cc",
+            "session": "2023-12-21",
+            "revision_seq": 1,
+            "content_hash": "b4363781d92ee9cfb9c5c41d687c3d14818f451d8dd887df6f254d560046ab0a",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-7d799b12470e5f7a835412f9",
+            "session": "2023-12-22",
+            "revision_seq": 1,
+            "content_hash": "d63923fca2e11b9374e557c090c0c1cc30290a49fdb41d50e68173b07b72f00f",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-64b804e110f9fb77f5defcb0",
+            "session": "2023-12-26",
+            "revision_seq": 1,
+            "content_hash": "0b9caabbed69c21063afb6c92e17d6f0f2afd5e5e50d1e952d853b23b3802d5d",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-60f4ba099f29f7fe8cf6fd71",
+            "session": "2023-12-27",
+            "revision_seq": 1,
+            "content_hash": "7e23a8bfae1312d06508eb73f9e95df4a994b50898d1fcbeb15e2fae8be970b7",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-20fbff5d94591e3d32c85821",
+            "session": "2023-12-28",
+            "revision_seq": 1,
+            "content_hash": "87e4348976e3f31a0fbb91bd73cc0614863a2a0d6a7cb71922dc430393bf792a",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-cb0242e725430cfafb4decd0",
+            "session": "2023-12-29",
+            "revision_seq": 1,
+            "content_hash": "c818e0f2ef7aadd2f6c766d36633ff95d3d44d1abd334d3be1eb6dba54ab6e5d",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-64bd5fcbe89fcc26ab5a820b",
+            "session": "2024-01-02",
+            "revision_seq": 1,
+            "content_hash": "c4ded500fad4d86715c7855e988bafb3640de07a45018fe05debb574a873e5f3",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-ee9bc07f935f4b4501631157",
+            "session": "2024-01-03",
+            "revision_seq": 1,
+            "content_hash": "a545f68a5185b01c27d80935c9f01c725f438e7bb91812f263909b1e48a3b1f6",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-ba4ff887fc68c67400528ea6",
+            "session": "2024-01-04",
+            "revision_seq": 1,
+            "content_hash": "a92a0d7044a5675d805e26eec945de8378da432e68a158319b4b45d36d8b34df",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-8e0858cbe0fced7a2005cf37",
+            "session": "2024-01-05",
+            "revision_seq": 1,
+            "content_hash": "8c2d3adecdbcb4f2c68bf78cc53ff7a6abe732f8486b3c6dc43568792954ac21",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-66a5e6db5b852d87ac25ac92",
+            "session": "2024-01-08",
+            "revision_seq": 1,
+            "content_hash": "656fdeb343e8539e62ecb16b0ba4755bba60d2399ffd1e9c4865dafcf7272a49",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-2008143b866e1863315e3604",
+            "session": "2024-01-09",
+            "revision_seq": 1,
+            "content_hash": "072b1f80bd5e13448d81759a7aa2a12e6e8530b27660bf8a1e7815c8cdb4cc59",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-2267bd558e660711f0dbeb6f",
+            "session": "2024-01-10",
+            "revision_seq": 1,
+            "content_hash": "b3f14d9419f9b98917ce95f246063aeca7e141317247af0151172edf077b7858",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-b59fc6b00fbe89034156fd0f",
+            "session": "2024-01-11",
+            "revision_seq": 1,
+            "content_hash": "b1cc8d0b32327d7fdb27a931d7aa0a70d452a354dddea98563f32344d62e2ad9",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-d95389b0486c7435ad6c3af2",
+            "session": "2024-01-12",
+            "revision_seq": 1,
+            "content_hash": "f39f6c78be3364747059609fbb93b11cf8d72334ee3218fb7ebecae1d5d4f9af",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-9e65771af0ed5e0dd95d2f81",
+            "session": "2024-01-16",
+            "revision_seq": 1,
+            "content_hash": "65f6c884b46c6cbafe8aa07c72a2c010cdeec1bdd56231ce874bcfb9c1c0699b",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-db32b9d1e9fa8791cb8149b1",
+            "session": "2024-01-17",
+            "revision_seq": 1,
+            "content_hash": "4d095c097af213f6ccfadacd2fc99f96ac235239acafa66d5f8428606f1ea752",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-ec5cc5b5875ae90db6051575",
+            "session": "2024-01-18",
+            "revision_seq": 1,
+            "content_hash": "73d2d88c15640f1f225ff09e2e54002a0cd66b224606533cdcc5a582d765d3f7",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-002175b58517926e9623ceb8",
+            "session": "2024-01-19",
+            "revision_seq": 1,
+            "content_hash": "2d490d6a8a39def43bdfcbe4e10f9e602d015837fc986e1dbabda2feba3eb6d0",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-6a3a25170e27eb41ff88f9fe",
+            "session": "2024-01-22",
+            "revision_seq": 1,
+            "content_hash": "ebbbd47f61fe40edf4e3b7eb8b1886e4643f47f49a99ebacb23702d948ba797d",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-1069f436655a22dde2d3f2dc",
+            "session": "2024-01-23",
+            "revision_seq": 1,
+            "content_hash": "56f29cc00cb9720fd2796d119a740dc15e65dc7caf310500c23fb157b4600f77",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-d2df2bcdbdfbbaa30eaa0256",
+            "session": "2024-01-24",
+            "revision_seq": 1,
+            "content_hash": "0bcce790800e8abb64cc95f2fe3bb865a84c8e8efc4b435b07a6a6b8469317c1",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-1167be69ce02c6b09de4963c",
+            "session": "2024-01-25",
+            "revision_seq": 1,
+            "content_hash": "a38a0b348ec0254d88936ed94d0e6ec82801108a0d19fcf5d7f653acd9d1ad68",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-bdb83e4330710d66943fa2aa",
+            "session": "2024-01-26",
+            "revision_seq": 1,
+            "content_hash": "fd58d16b12ae8ddeece843b79752c9ec97dc9b085a212ac68c6ea8b6988679bc",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-aacc34025880feb9c05e05d8",
+            "session": "2024-01-29",
+            "revision_seq": 1,
+            "content_hash": "ac7c7c906b10d59aaed4247cc0cffcdd0a9bf948064b599cb9ae24e9a0813668",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-eca1c4a79464aff284c7efb0",
+            "session": "2024-01-30",
+            "revision_seq": 1,
+            "content_hash": "3dc7779586b2ca4640954914ad6943a2545f625e74da52800efa9eb362bc7f2a",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-3431937730205d63b5905b0b",
+            "session": "2024-01-31",
+            "revision_seq": 1,
+            "content_hash": "31535d6ccb4f04c83565aab79dca98d944bd348b021715e8ca1be8c826b32122",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-67f76c61e49398ceca34bcf7",
+            "session": "2024-02-01",
+            "revision_seq": 1,
+            "content_hash": "f562a7710e53e031ec6e3925d96c7d3bc8cd63aaf72ebd1c3ef729a9b2efdb27",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-4371c15bd1188ce63251ab06",
+            "session": "2024-02-02",
+            "revision_seq": 1,
+            "content_hash": "9e8d7a8650bae5ed3c48aaa99f89cd033d0656160cc6daf79f3e654525285f87",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-b08c7ac800034550ec26e396",
+            "session": "2024-02-05",
+            "revision_seq": 1,
+            "content_hash": "4ad85f38adeffe9176a61c0ce003f7400b84d21c366045ffd7ec89b772337fcd",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-bb570c187f71e778e5e45443",
+            "session": "2024-02-06",
+            "revision_seq": 1,
+            "content_hash": "d88218f47d1662ca2fc1834cd1b1d283af785d254d04e2793015e40320ee2c4c",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-403fd9162b9d451a51cf67b9",
+            "session": "2024-02-07",
+            "revision_seq": 1,
+            "content_hash": "3519c6ede1d31c170d3c9bf09011b9b49ee23ad28d71c0142cc1f72b22959007",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-ef82ba27fb61f49eb099f178",
+            "session": "2024-02-08",
+            "revision_seq": 1,
+            "content_hash": "d8167b29f7ab9be26b2e6be9955ad86a4920f8f865ff16ead93b50bf2bb01feb",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-65a7ff512b1428f19ab83243",
+            "session": "2024-02-09",
+            "revision_seq": 1,
+            "content_hash": "d67c5bd3f4870c9f8d4cc8b400a499cfd0046f450f2ef723c21c0607673fd3e3",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-e831abddacc87a509810633d",
+            "session": "2024-02-12",
+            "revision_seq": 1,
+            "content_hash": "ea69aeb0ec1b760fd6bb95b17bb85900cac9378efac2abfa5a88d2807c8abc87",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-1c0589790d92c8f262d95906",
+            "session": "2024-02-13",
+            "revision_seq": 1,
+            "content_hash": "fdd3f66184353c2f87d567027a620e8e52e7140bd62a692bdfcf16303293c458",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-753c0c945f70729da3aa7a89",
+            "session": "2024-02-14",
+            "revision_seq": 1,
+            "content_hash": "8168af3cb135ea91831cded9c44edb666e8ab8693ca05690921e85056be2e0e2",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-5d07e705ce3eb832daf320ea",
+            "session": "2024-02-15",
+            "revision_seq": 1,
+            "content_hash": "426d0b16cd5c096a3925bb837b2c1c0f1b92ea00ae1688dfe90d14640928456e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-e529ba70b48a68c58fbedd08",
+            "session": "2024-02-16",
+            "revision_seq": 1,
+            "content_hash": "1025933c8bb6f1854dfe4d399419ae4a6773ad5c9ad378e2050a1f5e5b9a724c",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-b12cf86db3fd2efda14d07b5",
+            "session": "2024-02-20",
+            "revision_seq": 1,
+            "content_hash": "c445cd1bab7d1d27aca7e9469dc05af6fa328e7d8f0e69a4a075b4fd9b7cb7e9",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-2b9240504bb529fc4f168669",
+            "session": "2024-02-21",
+            "revision_seq": 1,
+            "content_hash": "b5bb6103e2f5aea3a395ff786c519514ce2498b5aeba9d985764b83010588422",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-c5e0106b1720b74e1a8848c4",
+            "session": "2024-02-22",
+            "revision_seq": 1,
+            "content_hash": "7c7ea9bec5953104967bcdfdab785978e0c2d10ce36fefe3414ec595bf1b5938",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-21f8d26690f68034ebc0860b",
+            "session": "2024-02-23",
+            "revision_seq": 1,
+            "content_hash": "bffccd9fdaeee9d0fc18aadfc68b831088056353c73e2295e4cfd8705d48eddc",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-4598cb3b2e3523f59207ea18",
+            "session": "2024-02-26",
+            "revision_seq": 1,
+            "content_hash": "7f2bb523f03c6060e81ee65446cca308b08f2a16318cf8faf1412a169376813e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-7820a7dc3f4a97bc23151bd0",
+            "session": "2024-02-27",
+            "revision_seq": 1,
+            "content_hash": "2abacb98b68dd753239660b93057510ca2c2926c05fa21d7fe02acc347600e57",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-b7a67593ea11e5deb7a0215c",
+            "session": "2024-02-28",
+            "revision_seq": 1,
+            "content_hash": "b4786640fe6f4ba8b236c93760fbc3bd7d591e722e2b093734f6179b9baab794",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-3fa01a2167660b2e69f13ff9",
+            "session": "2024-02-29",
+            "revision_seq": 1,
+            "content_hash": "a4f96b7a2a3e3c8a08557b88111cef0e3711c48a92a195715ace0e95dd033c4c",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-2316a08c2a40d433f9940ec4",
+            "session": "2024-03-01",
+            "revision_seq": 1,
+            "content_hash": "9b238d878a2c4ee87e20b98ae4169f66da663fc84abd7c1f96ea98cfccce1c25",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-6370b5c3756a7db12765829b",
+            "session": "2024-03-04",
+            "revision_seq": 1,
+            "content_hash": "b84f75de828ad59ccd99f06064031c87ad415690119fb90ea18e82a42fb884a4",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-772e13588d3c386fff8769b3",
+            "session": "2024-03-05",
+            "revision_seq": 1,
+            "content_hash": "aa9027eb909e5cdf2d61adf7269ccfe68828341c6a011b64e8c91160ae5a2145",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-cf083a05598b9416aac2e0ee",
+            "session": "2024-03-06",
+            "revision_seq": 1,
+            "content_hash": "7664af5ce27bbc7ecf3d5899478d46d037b91789995396a39c028dcd6d67cc15",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-1fa296afc58b2760c5239c60",
+            "session": "2024-03-07",
+            "revision_seq": 1,
+            "content_hash": "08050820f8ebb738c15354dfb5fc239f5c57801fd063a167ea5b286ef53012c5",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-d075cf384c0c120b678c678d",
+            "session": "2024-03-08",
+            "revision_seq": 1,
+            "content_hash": "efbf7f35b01571ca1353bac4998931f43de0f50d6c077c263aff5258a91edd66",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-fce4161c4c81d5b9b861696e",
+            "session": "2024-03-11",
+            "revision_seq": 1,
+            "content_hash": "bc0acdb9104099730ff4ba95aca654ec84cb6cc593b28a1b62304a517c739079",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-e2e32eeae4af459fa87bed6d",
+            "session": "2024-03-12",
+            "revision_seq": 1,
+            "content_hash": "b7c8d7cadb35903e2176da3380693d904df1bc7e74e9513b7a429807454ec734",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-a8501cfc41f1ab61baa6d7c6",
+            "session": "2024-03-13",
+            "revision_seq": 1,
+            "content_hash": "c19bc52ad5b3e48d911aff3284ab33dccb16a45b06bb0a022c405fa086ce45ec",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-e8d6fba6fe10dbf1eec565a4",
+            "session": "2024-03-14",
+            "revision_seq": 1,
+            "content_hash": "cb1edf9bd1147abda6540ae6e694b527afb8b5241af4a324ddf8b41987bb47ce",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-f27caacea375062206db5477",
+            "session": "2024-03-15",
+            "revision_seq": 1,
+            "content_hash": "a6c05088e4da83dcc21f7867212545ff76f8a12e4bc26e1ba4908c7f0a268fb4",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-8eb51ca9b7a0fa2fdfc8d966",
+            "session": "2024-03-18",
+            "revision_seq": 1,
+            "content_hash": "8f4cb31da53e6f150b0675571c682b0fff882627846b426849dee3c3abdf8931",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-b50d47d31769e31126cf449f",
+            "session": "2024-03-19",
+            "revision_seq": 1,
+            "content_hash": "41425a4ab4cbc5140f86e00d7a40d9c3675f838b5970eecd17ac4c0e6ccddb04",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-3e8e23071863e3af7654d915",
+            "session": "2024-03-20",
+            "revision_seq": 1,
+            "content_hash": "d6ed9751982cc2487b4354155246fc13ebe2095878ae2c6c35d16c35d52daea1",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-a0b4c3599c7664b4b2db0286",
+            "session": "2024-03-21",
+            "revision_seq": 1,
+            "content_hash": "a6f8d50266879defa14595f63dc3ac0399570231a216dece27de511650d403cf",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-9d079a1f3713220bd6a12933",
+            "session": "2024-03-22",
+            "revision_seq": 1,
+            "content_hash": "35901795bbcc930465a59a2ab7535f9e7305252ec46e4111f6573dbd463ed25e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-40101c87395e8a32dbb4092b",
+            "session": "2024-03-25",
+            "revision_seq": 1,
+            "content_hash": "795c5a54ac8822c3f89a8779476b6ce67a093b7928ae21201e971f9cd36a76a9",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-3c5ea73bb0c45e1ff2c6768c",
+            "session": "2024-03-26",
+            "revision_seq": 1,
+            "content_hash": "d9c01e0f0479356a433015126e8fbd2f3f04947006c7e561143d13ca63090025",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-8348a95d8ad711cd254ee448",
+            "session": "2024-03-27",
+            "revision_seq": 1,
+            "content_hash": "1d221558c8b36911b571e98b5396b030f12bde3ccab806d0736e4338342de633",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-930535ec989e86c0d257d048",
+            "session": "2024-03-28",
+            "revision_seq": 1,
+            "content_hash": "f2d05bae2ab2eff981a450a3acda40b20796647a74387c1db1bc4f7a269b1196",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-f3d6a726ff98c2afb5f53021",
+            "session": "2024-04-01",
+            "revision_seq": 1,
+            "content_hash": "f7b088f94099375d20adf6d01ce254c36d666d26d13ce6a761017c7e0c8fbc98",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-1c0ce4247fbceba58b8bf9ef",
+            "session": "2024-04-02",
+            "revision_seq": 1,
+            "content_hash": "c7dca6d81e59b442668a2756543842f73bb395b9c5351acaee1a57653981543d",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-dccd4fa846735664fac297f6",
+            "session": "2024-04-03",
+            "revision_seq": 1,
+            "content_hash": "5ab60e02beceedc5acb42f948e7cdde1f71b3fd1d5bac61424ab322fadf1166e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-9b5e13af725de53c90e6b4aa",
+            "session": "2024-04-04",
+            "revision_seq": 1,
+            "content_hash": "29cce9219f1045e081753223e3867e7ead59a542545a73dec3915b9b2fbbd5cf",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-06bd8faf1c57e45e2f7f8d69",
+            "session": "2024-04-05",
+            "revision_seq": 1,
+            "content_hash": "41ffc888a9de3fa2cbb0c90e19209cacb1c3fe600b398d7b87143b7a2cf97231",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-05392c16ff77d57df1ff5e6c",
+            "session": "2024-04-08",
+            "revision_seq": 1,
+            "content_hash": "3d0b9448ce0367bb30f3d0c0fc12d528e6c77b74de49ef505393915b593f83e2",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-e7a6acb8aab0e6fc09b95ee6",
+            "session": "2024-04-09",
+            "revision_seq": 1,
+            "content_hash": "31ef9edd0786c09cd0c071302438e4cdb52a3f17aff0198e033606e566527f62",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-0e8130f569505c8086ffc3cf",
+            "session": "2024-04-10",
+            "revision_seq": 1,
+            "content_hash": "94adf94863738c6c9f8a8981e2d8626d9d44b3d2d5fc6d00fbbbbd90b0e22f4e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-c37e1a2833c4d1b46549d126",
+            "session": "2024-04-11",
+            "revision_seq": 1,
+            "content_hash": "d2cb9b1807a74098270f8cdbe21d360df1d20ca22947b1b698d262da7d3b4710",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-0f9d6c7c961a95ab92a7d7e9",
+            "session": "2024-04-12",
+            "revision_seq": 1,
+            "content_hash": "60b5b42fff5225dc0bb28182c27e672a51c76f3cf22e6c3f9d07f1d7c96dc6ca",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-dc9dd181fff0a042ba314171",
+            "session": "2024-04-15",
+            "revision_seq": 1,
+            "content_hash": "f8690e546df9379383d76e754f316dec0eb78f465bf8d7f880b9ff17244ab1af",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-1546761f1ac09fd41991e503",
+            "session": "2024-04-16",
+            "revision_seq": 1,
+            "content_hash": "4a9d9f8fe80b8ac380ada21548b23c53305de056c56fbce66bb0e723c9a919cc",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-539375af71aee1edf4494761",
+            "session": "2024-04-17",
+            "revision_seq": 1,
+            "content_hash": "2f9660dbde843cbb47e8c2a84493a4f2784411b1f63d9feb03fd4c4cf06d432b",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-212f926f12675f4a5e98da2f",
+            "session": "2024-04-18",
+            "revision_seq": 1,
+            "content_hash": "1035cb37e71a3495dced884a20e1c4513543792a78c8ca5bc2b0b763c400df3a",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-606873f84bfeb0cdf4864f7b",
+            "session": "2024-04-19",
+            "revision_seq": 1,
+            "content_hash": "bfcabbda51daf131705926f3c57efd86eacfe84ffbf68bb17841a39de1078d0a",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-c84176b2019723950be74b8b",
+            "session": "2024-04-22",
+            "revision_seq": 1,
+            "content_hash": "39a4dd0faa57d42cbc7874d22734421d4a0262c10d89e6c7661628c77195b606",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-17c13c0a64f87e23d4f09168",
+            "session": "2024-04-23",
+            "revision_seq": 1,
+            "content_hash": "47c3f0afa38af68afa7b8f7828db3e36f572a3ef453da01fed5b27a1ff5c4d83",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-f5ab7f6bf63b6a08aea880e0",
+            "session": "2024-04-24",
+            "revision_seq": 1,
+            "content_hash": "075d3c239dc5f234775d416e8d8459205286c4e2bbfc7581d0f97cebd180a651",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-81003f5adef03f70d04385ce",
+            "session": "2024-04-25",
+            "revision_seq": 1,
+            "content_hash": "43201255c5588d7a6a3df50da6431a6791eb198f196c1efbbb18b28918e14790",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-d49d636652a7e5d76de2b45f",
+            "session": "2024-04-26",
+            "revision_seq": 1,
+            "content_hash": "2795787ba55dad98f75c93768cb534350c2479c218ba6da439374a1e73b6d617",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-dcb77b915dad6d352b19ffbc",
+            "session": "2024-04-29",
+            "revision_seq": 1,
+            "content_hash": "a09b623762b7d8b4fdc01b5cd9865a1cc9c6a6147b79dd0b6c9b99929b316801",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-44071c7c8f7febd09ca248c5",
+            "session": "2024-04-30",
+            "revision_seq": 1,
+            "content_hash": "d9b5a98c34b6b6d0f8b4fdf866505e0d79c75b0d4c00a3ff6718d61d56584b6a",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-8387570aebd5db8b3a0efff4",
+            "session": "2024-05-01",
+            "revision_seq": 1,
+            "content_hash": "69fb00e8e0236e3a95b473350b851886d6ec2fe146693f3def8ebda0b78f4ea1",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-4d816688dee86d2afff7df2f",
+            "session": "2024-05-02",
+            "revision_seq": 1,
+            "content_hash": "1e6c31750483dcb3f10c46eb588334592d1514189b8b78fec55931e0db0189f3",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-64eadcd60d79c8c1cae30642",
+            "session": "2024-05-03",
+            "revision_seq": 1,
+            "content_hash": "f2c8105e81d2b1d7388e44709d31409af8eaf1bacbb84adb3443d532085d1830",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-9f830e08936d1243192ceb65",
+            "session": "2024-05-06",
+            "revision_seq": 1,
+            "content_hash": "d967fff829016610a26b5d077d7ca08ee209eb13136d3fad16ea6f44b8d084cc",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-01a9398e571efeb1d5e56d68",
+            "session": "2024-05-07",
+            "revision_seq": 1,
+            "content_hash": "04fdd4d2edead4fe0cdb73d13fab1123ac682e471802c9cce06ba0104ed98419",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-a23d77a610a4b479e8ba1be3",
+            "session": "2024-05-08",
+            "revision_seq": 1,
+            "content_hash": "c57510a3f4529974bf77a915644b345d81930baa9e181be92993135f958fff6e",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-6c6638f8a7146051a6f94c4a",
+            "session": "2024-05-09",
+            "revision_seq": 1,
+            "content_hash": "57490de02309b67c2fa976ff2ce11d2005c41838348d228513ca71f3821fdbed",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-7599ec9f00546c47a80b51ec",
+            "session": "2024-05-10",
+            "revision_seq": 1,
+            "content_hash": "71d61571d0e800df3b034be034459bdcf9f9ca98cfedd799a36c46d7e5a520f9",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-76c531f02d7e44eada371e79",
+            "session": "2024-05-13",
+            "revision_seq": 1,
+            "content_hash": "e911bf18423544f241017b9f39437d13c7256f65ac86b1daa4039ac63b8f055c",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-9c49e29710b4a8e9783ad1e0",
+            "session": "2024-05-14",
+            "revision_seq": 1,
+            "content_hash": "8098930efbc6077412a9be3e1109761ebffcd7f99b44671a9c413d5d3a46d4e8",
+            "source_id": "synthetic-demo"
+          },
+          {
+            "observation_id": "MOB-dd063d06863f21a1ef1ee122",
+            "session": "2024-05-15",
+            "revision_seq": 1,
+            "content_hash": "5390c4210358e73903471b57138714836a1117e04cc7671d10af930d5070e8ae",
+            "source_id": "synthetic-demo"
+          }
+        ]
+      },
+      "benchmark": null,
+      "market_model": null,
+      "peers": [],
+      "corporate_actions": [
+        {
+          "action_id": "ACT-722bca44928c553a8b52",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2019-03-14",
+          "effective_date": null,
+          "availability_time": "2019-03-14T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-b367270c3c8952929f15",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2019-06-13",
+          "effective_date": null,
+          "availability_time": "2019-06-13T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-844ffadd699c5b1da512",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2019-09-12",
+          "effective_date": null,
+          "availability_time": "2019-09-12T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-99453c0a865b58648bf9",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2019-12-12",
+          "effective_date": null,
+          "availability_time": "2019-12-12T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-d70103d8f909517896af",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2020-03-14",
+          "effective_date": null,
+          "availability_time": "2020-03-14T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-2f619b87f38b5e6d90fe",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2020-06-13",
+          "effective_date": null,
+          "availability_time": "2020-06-13T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-cc5a0396ed4e5431aff3",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2020-09-12",
+          "effective_date": null,
+          "availability_time": "2020-09-12T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-bac50c5463c3575c8608",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2020-12-12",
+          "effective_date": null,
+          "availability_time": "2020-12-12T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-93a91581b6be52da9b2e",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2021-03-14",
+          "effective_date": null,
+          "availability_time": "2021-03-14T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-937f843eb00459db8245",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2021-06-13",
+          "effective_date": null,
+          "availability_time": "2021-06-13T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-bd3efabcaf23512398be",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2021-09-12",
+          "effective_date": null,
+          "availability_time": "2021-09-12T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-6c6d7be96edb5fe98073",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2021-12-12",
+          "effective_date": null,
+          "availability_time": "2021-12-12T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-f9b6a8f3eaba59258268",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2022-03-14",
+          "effective_date": null,
+          "availability_time": "2022-03-14T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-8cfe5961c12451608fa3",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2022-06-13",
+          "effective_date": null,
+          "availability_time": "2022-06-13T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-1ddf6332fe365e83a5e3",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2022-09-12",
+          "effective_date": null,
+          "availability_time": "2022-09-12T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-976e0bceed545607a6dc",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2022-12-12",
+          "effective_date": null,
+          "availability_time": "2022-12-12T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-26629a91f18b5e44bbc2",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2023-03-14",
+          "effective_date": null,
+          "availability_time": "2023-03-14T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-a0ccc1c46b705cd8877d",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2023-06-13",
+          "effective_date": null,
+          "availability_time": "2023-06-13T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-3c73c2b0a4695198b198",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2023-09-12",
+          "effective_date": null,
+          "availability_time": "2023-09-12T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-c40c7c86d2b75712aaa3",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2023-12-12",
+          "effective_date": null,
+          "availability_time": "2023-12-12T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-ff3260ca16215c9bb15e",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2024-03-14",
+          "effective_date": null,
+          "availability_time": "2024-03-14T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-34cddaf7b05d557daacd",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2024-06-13",
+          "effective_date": null,
+          "availability_time": "2024-06-13T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-861e7ea049035b3592df",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2024-09-12",
+          "effective_date": null,
+          "availability_time": "2024-09-12T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        },
+        {
+          "action_id": "ACT-1b034125fc8e5409a15e",
+          "source_id": "synthetic-demo",
+          "action_type": "cash_dividend",
+          "status": "confirmed",
+          "ex_date": "2024-12-12",
+          "effective_date": null,
+          "availability_time": "2024-12-12T12:00:00Z",
+          "availability_precision": "exact",
+          "observed_at": "2026-11-17T01:43:23Z",
+          "supersedes": null
+        }
+      ],
+      "events": [
+        {
+          "event_id": "FIL-FIL-3c02a62587245e42b157",
+          "kind": "sec_filing",
+          "date": "2024-05-01",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-3e453b994c9d5c408822",
+          "kind": "sec_filing",
+          "date": "2024-05-01",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-6ca18c50e2b35575861e",
+          "kind": "sec_filing",
+          "date": "2024-05-01",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-bfc420b6f917543ab58a",
+          "kind": "sec_filing",
+          "date": "2024-05-01",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-fff7782b1d495491823a",
+          "kind": "sec_filing",
+          "date": "2024-05-02",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-554410e8fe175a6e8530",
+          "kind": "sec_filing",
+          "date": "2024-05-03",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-57217a95f15759cbbd70",
+          "kind": "sec_filing",
+          "date": "2024-05-03",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-a27ea161b17e53ca95e2",
+          "kind": "sec_filing",
+          "date": "2024-05-03",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-af5fa76037fd595ab8e4",
+          "kind": "sec_filing",
+          "date": "2024-05-03",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-e7e2541283f951fea047",
+          "kind": "sec_filing",
+          "date": "2024-05-03",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-98520af9f0555e06a934",
+          "kind": "sec_filing",
+          "date": "2024-05-06",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-aac9141aa4e45d6cbd90",
+          "kind": "sec_filing",
+          "date": "2024-05-07",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-e24a139b64cc5322a49f",
+          "kind": "sec_filing",
+          "date": "2024-05-08",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-a038394e5c8a5561a237",
+          "kind": "sec_filing",
+          "date": "2024-05-13",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-c4b374299767557ba213",
+          "kind": "sec_filing",
+          "date": "2024-05-13",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-2fa72ad4e22a5a209e38",
+          "kind": "sec_filing",
+          "date": "2024-05-14",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-0083faef104c5ac196fb",
+          "kind": "sec_filing",
+          "date": "2024-05-15",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-4af14e367f325584bfa5",
+          "kind": "sec_filing",
+          "date": "2024-05-15",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        },
+        {
+          "event_id": "FIL-FIL-8a8dfd1d54b75473b79f",
+          "kind": "sec_filing",
+          "date": "2024-05-15",
+          "relation": "in_window",
+          "source_id": "sec-edgar",
+          "availability_precision": "exact"
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "sec-edgar",
+          "name": "U.S. SEC EDGAR",
+          "licence": "U.S. federal government work - public domain",
+          "redistribution": "public_domain",
+          "kind": "sec_edgar",
+          "registered": true,
+          "export_allowed": true,
+          "reason": null
+        },
+        {
+          "source_id": "synthetic-demo",
+          "name": "Atlas synthetic demonstration series",
+          "licence": "Apache-2.0 (generated by Atlas for demonstration)",
+          "redistribution": "project_authored",
+          "kind": "synthetic",
+          "registered": true,
+          "export_allowed": true,
+          "reason": null
+        }
+      ]
+    },
+    "note": "identical stored observations, revisions and evidence reproduce this hash; any provider correction or new filing changes it"
+  },
+  "limitations": [
+    "daily observations only; Atlas stores no intraday bars",
+    "a statistical residual is not a proven issuer-specific cause",
+    "no news, consensus or macro-release source is licensed here, so the event timeline is incomplete by construction",
+    "the provider's past vintage is not archived; a session's stored revision may have been published after that session",
+    "in historical mode the price series is filtered by session date, not by the provider's publication vintage; the response labels that vintage unverified rather than implying it was available at the cutoff"
+  ]
+}
