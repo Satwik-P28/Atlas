@@ -12,6 +12,8 @@ import type {
   MetricsResponse,
   Mode,
   PeersResponse,
+  PriceExplanation,
+  PriceExplanationRequest,
   PriceView,
   RevisionsResponse,
   ScreenerMetric,
@@ -227,6 +229,11 @@ export const api = {
         indicators: options.indicators,
         as_of: options.asOf ?? null,
       }),
+    }),
+  explainPriceRange: (securityId: string, body: PriceExplanationRequest) =>
+    request<PriceExplanation>(`/api/securities/${enc(securityId)}/price-explanations`, {
+      method: 'POST',
+      body: JSON.stringify(body),
     }),
   history: (identifier: string, options: { asOf?: string | null; mode: AsOfMode; limit?: number; concepts?: string[] }) =>
     request<FinancialHistory>(
