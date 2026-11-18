@@ -1,0 +1,79 @@
+{
+  "schema": "atlas.test_inventory.v2",
+  "measured_at": "2026-11-17",
+  "repository_state": {
+    "branch": "review/price-intelligence-v3.2-temporal",
+    "base_branch": "review/price-intelligence-v3.2-integrity",
+    "base_commit": "5b8605e"
+  },
+  "measurement_policy": {
+    "observed": "counted by running pytest --collect-only at this revision, or by a test run in this revision",
+    "reconstructed": "derived by arithmetic from observed totals; it is NOT an independent count at the earlier revision",
+    "rule": "a reconstructed number is never labelled observed, and this script fails if one is"
+  },
+  "python": {
+    "observed": {
+      "total_collected": 762,
+      "total_command": ".venv/bin/python -m pytest -o addopts='' --collect-only -q",
+      "files": [
+        {
+          "file": "tests/test_price_explanations.py",
+          "count": 36,
+          "method": "observed",
+          "note": "feature suite plus the new saved-object reopen API test"
+        },
+        {
+          "file": "tests/test_price_evidence_integrity.py",
+          "count": 27,
+          "method": "observed",
+          "note": "adversarial temporal, eligibility, venue-time and amendment tests added in this pass"
+        }
+      ]
+    },
+    "reconstructed": {
+      "baseline_tests": {
+        "count": 699,
+        "method": "reconstructed_by_subtraction",
+        "formula": "762 collected - 36 feature - 27 integrity",
+        "note": "Residual derived by subtraction; no independent count at commit c6ba985 exists in this environment."
+      }
+    },
+    "last_result": {
+      "passed": 762,
+      "skipped": 0,
+      "failed": 0,
+      "collected": 762,
+      "method": "observed",
+      "command": ".venv/bin/python -m pytest -o addopts='' -q",
+      "duration_seconds": 140.26
+    }
+  },
+  "frontend": {
+    "unit_command": "cd web && npx vitest run",
+    "unit_files": 5,
+    "unit_tests": 50,
+    "typecheck_command": "cd web && npx tsc -b --noEmit",
+    "build_command": "cd web && npm run build",
+    "browser_command": "cd web && node e2e/price-explanation.mjs",
+    "browser_file": "web/e2e/price-explanation.mjs",
+    "browser_checks": 27,
+    "browser_result": "27 passed, 0 failed, 0 console/page errors on 2026-11-17 against a freshly rebuilt demo database; 12 screenshots",
+    "rerun_in_this_pass": true,
+    "rerun_note": "Chromium 156 headless through Playwright, driven by web/e2e/price-explanation.mjs. Desktop and 390x844 mobile layouts; saved-work list requires a fresh database because the save contract refuses duplicates."
+  },
+  "specification": {
+    "file": "ATLAS_MASTER_SPEC.md",
+    "version": "3.2.0",
+    "bytes": 357970,
+    "sha256": "6ab1a00569a29830deda050c44eaa93dc0f65081be53966ed2a6d00b164447e2",
+    "verifier": "scripts/verify_master_spec.py",
+    "verified": true
+  },
+  "claims_not_made": [
+    "No ICB-65 through ICB-75 benchmark is marked passed.",
+    "No historical-accuracy, predictive or performance claim is made.",
+    "No news, consensus or macro-release source is licensed or simulated.",
+    "No live SEC retrieval was performed in this pass; original-document rendering was exercised against a clearly labelled offline UI fixture.",
+    "No archived filing HTML exists in the demo database, and the demo price series is synthetic."
+  ]
+}

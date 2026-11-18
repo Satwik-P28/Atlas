@@ -85,6 +85,7 @@ from .routes.market import (
     MarketRequest,
     build_market_router,
 )
+from .routes.price_explanations import build_price_explanations_router
 from .store import SettingsStore, WatchlistStore, WorkspaceStore
 
 DEFAULT_DB = os.environ.get("ATLAS_DB", "var/atlas.db")
@@ -851,6 +852,7 @@ def create_app(db_path: str | Path | None = None, *, web_dist: str | Path | None
 
     # ------------------------------------------------------------------ market
     app.include_router(build_market_router(get_db))
+    app.include_router(build_price_explanations_router(get_db))
 
     # -------------------------------------------------------------- indicators
     @app.get("/api/indicators", tags=["indicators"])

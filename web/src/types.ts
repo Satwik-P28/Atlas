@@ -495,3 +495,412 @@ export interface ValidationResponse {
 }
 
 export type IndicatorConfig = { key: string; params?: Record<string, number> }
+
+/* ---------------------------------------------------------------- price movement */
+export type PriceExplanationBasis = 'price' | 'split_adjusted' | 'total_return'
+export type PriceExplanationMode = 'historical_reconstruction' | 'retrospective_investigation'
+
+export interface PriceExplanationRequest {
+  start_session: string
+  end_session: string
+  price_basis: PriceExplanationBasis
+  mode: PriceExplanationMode
+  information_cutoff?: string | null
+  benchmark_security_id?: string | null
+  estimation_sessions?: number
+  return_convention?: 'auto' | 'interval_close_to_close' | 'single_session_close_to_close'
+}
+
+export interface PriceExplanationWarning {
+  code: string
+  message: string
+  context?: Record<string, unknown>
+}
+
+export interface PriceExplanationPassage {
+  unit_id: string
+  section_path: string
+  heading: string | null
+  unit_kind: string
+  char_start: number
+  char_end: number
+  sha256: string
+  excerpt: string | null
+  excerpt_truncated: boolean | null
+  excerpt_withheld: string | null
+  citation: string
+}
+
+export interface PriceExplanationDocument {
+  status: string
+  accession: string
+  filed_date: string
+  form_type: string
+  is_amendment: boolean
+  amends_accession: string | null
+  filing_version: string
+  primary_document: string | null
+  source_locator: { status: string; url: string | null; reason?: string }
+  document_id: string | null
+  sha256: string | null
+  byte_size: number | null
+  media_type: string | null
+  parser_version: string | null
+  availability_time: string | null
+  availability_precision: string | null
+  rights: { redistribution: string; redistributable: boolean } | null
+  items: Array<{ item: string; label: string; section_path: string | null }>
+  passages: PriceExplanationPassage[]
+  passage_status: string
+  reason: string | null
+}
+
+export interface PriceExplanationDisclosedItem {
+  item: string
+  label: string
+  observed_heading: string | null
+  section_path: string | null
+  unit_id: string | null
+}
+
+export interface PriceExplanationEvent {
+  event_id: string
+  kind: string
+  title: string
+  date: string
+  filed_date?: string
+  publication_date?: string
+  availability_time: string | null
+  availability_precision?: string | null
+  availability_basis?: string | null
+  acceptance_datetime?: string | null
+  publication?: {
+    local_time: string | null
+    local_date?: string | null
+    utc_date?: string | null
+    session_date?: string | null
+    timezone: string
+    venue_timezone?: string
+    phase: string
+    phase_basis: string
+    is_trading_session?: boolean | null
+    tradable_session: string | null
+    tradable_session_basis?: string
+  }
+  explanatory_eligible?: boolean
+  explanatory_eligibility?: {
+    eligible: boolean
+    basis: string
+    final_session: string
+    final_session_close: string | null
+    first_eligible_session: string | null
+    reason: string | null
+  }
+  publication_local_date_differs?: boolean
+  source_url?: string | null
+  document?: PriceExplanationDocument | null
+  disclosed_items?: PriceExplanationDisclosedItem[]
+  passages?: PriceExplanationPassage[]
+  novelty?: {
+    basis: string
+    first_disclosure_items: string[]
+    repeated_items: string[]
+    prior_documents: Array<{ accession: string; availability_time: string }>
+    coverage_note: string
+  } | null
+  supersedes_event_id?: string | null
+  duplicate_document_of?: string | null
+  form_type?: string
+  form_label?: string
+  period_of_report?: string | null
+  accession_number?: string | null
+  is_amendment?: boolean
+  amends_accession?: string | null
+  action_type?: string
+  ratio_from?: string | null
+  ratio_to?: string | null
+  cash_amount?: string | null
+  status?: string
+  source_id?: string | null
+  relation: 'in_window' | 'after_window' | 'subsequent' | 'subsequent_to_price_window'
+  known_at_range_end?: boolean
+  epistemic_status: string
+}
+
+export interface PriceExplanationTemporal {
+  schema?: string | null
+  legacy_document?: boolean
+  observation_period: {
+    start_session: string | null
+    end_session: string | null
+    sessions?: number
+    timeframe?: string
+    timezone?: string
+    price_basis?: string | null
+  }
+  public_knowledge_cutoff: { instant: string | null; date?: string; basis: string }
+  analysis_time: string | null
+  object_created_at: string | null
+  mode?: string | null
+  retrospective: boolean
+  as_of_basis: string
+  source_vintages?: {
+    prices?: { status?: string; verified_at_cutoff?: boolean; reason?: string }
+    filings?: Array<{
+      event_id: string
+      accession: string
+      document_sha256: string | null
+      availability_time: string | null
+      availability_precision?: string | null
+      ingested_at?: string | null
+      document_status?: string | null
+    }>
+    note?: string
+  }
+  limitations?: string[]
+}
+
+export interface SavedPriceInvestigationSummary {
+  object_id: string
+  kind: string
+  name: string
+  version: string
+  status: string
+  content_hash?: string
+  created_at: string
+  as_of?: string
+  start_session?: string | null
+  end_session?: string | null
+  reproducibility_hash?: string | null
+}
+
+export interface ReopenedPriceInvestigation {
+  schema: string
+  object_id: string
+  kind: string
+  name: string
+  version: string
+  status: string
+  content_hash: string
+  created_at: string
+  as_of: string | null
+  temporal: PriceExplanationTemporal
+  document: {
+    schema_version: string
+    spec: {
+      ticker: string | null
+      interval: { start_session: string; end_session: string }
+      statistics: { interval_return: number | null; sessions: number; basis_label: string }
+      hypotheses: Array<{ hypothesis_id: string; rank: number; statement: string }>
+      temporal: PriceExplanationTemporal
+      reproducibility: { hash: string }
+    }
+  }
+  note: string
+}
+
+export interface PriceExplanationHypothesis {
+  hypothesis_id: string
+  rank: number
+  statement: string
+  epistemic_status: string
+  causal_status: string
+  relevance: {
+    tier: number
+    basis: string
+    supporting_evidence: string[]
+    contradicting_evidence: string[]
+    citations: Array<{
+      kind: string
+      accession: string | null
+      document_id: string | null
+      document_sha256: string | null
+      section_path: string | null
+      unit_id: string | null
+      char_start: number | null
+      char_end: number | null
+      span_sha256: string | null
+      excerpt: string | null
+      excerpt_withheld: string | null
+      source_url: string | null
+    }>
+    alternatives: Array<{ kind: string; statement: string; evidence: string[] }>
+    counterevidence: Array<Record<string, unknown>>
+    inputs: Record<string, unknown>
+  }
+  limitations: string[]
+}
+
+export interface PriceExplanation {
+  schema: string
+  engine: { name: string; version: string }
+  request: Record<string, unknown>
+  selection: {
+    security_id: string
+    issuer_id: string
+    legal_name: string | null
+    ticker: string | null
+    mic: string
+    timeframe: string
+    timezone: string
+    requested_start: string
+    requested_end: string
+    start_session: string
+    end_session: string
+    sessions: number
+    series: Record<string, unknown>
+    start_observation: Record<string, unknown>
+    end_observation: Record<string, unknown>
+    return_convention: string
+    price_vintage: {
+      status: string
+      verified_at_cutoff: boolean
+      vintage_kind: string
+      provider_publication_vintage: string | null
+      reason: string
+    }
+  }
+  price_statistics: {
+    requested_basis: PriceExplanationBasis
+    basis_label: string
+    currency: string
+    start_session: string
+    end_session: string
+    sessions: number
+    calculation_sessions: number
+    return_convention: string
+    calendar_days: number
+    start_price: number | null
+    end_price: number | null
+    absolute_change: number | null
+    interval_return: number | null
+    daily_volatility: number | null
+    annualized_volatility: number | null
+    max_drawdown: number | null
+    overnight_compounded: number | null
+    intraday_compounded: number | null
+    gap_sessions: number
+    gap_note: string
+    volume: {
+      sessions_with_volume: number
+      total: number | null
+      average: number | null
+      trailing_median: number | null
+      average_to_trailing_median: number | null
+      context_sessions: number
+      note: string
+    }
+    basis_reconciliation: {
+      raw: number | null
+      split_adjusted: number | null
+      total_return: number | null
+      splits_in_window: number
+      dividends_in_window: number
+      note: string
+    }
+    start_observation_id: string
+    end_observation_id: string
+  }
+  benchmark: {
+    status: string
+    security_id: string | null
+    ticker?: string | null
+    return?: number | null
+    security_return_aligned?: number | null
+    excess_return_arithmetic?: number | null
+    excess_note?: string
+    aligned_sessions?: number
+    security_sessions?: number
+    coverage_ratio?: number
+    required_coverage?: number
+    comparable?: boolean
+    reason: string | null
+  }
+  peers: Array<{
+    security_id: string
+    ticker?: string | null
+    status: string
+    reason: string | null
+    comparable: boolean
+    currency?: string
+    sessions?: number
+    return?: number | null
+    source_id?: string | null
+  }>
+  market_model: {
+    status: string
+    reason?: string | null
+    beta?: number
+    r_squared?: number | null
+    alpha_daily?: number
+    benchmark_return_aligned?: number
+    security_return_aligned?: number
+    expected_return_compounded?: number
+    abnormal_return_difference?: number
+    abnormal_return_ratio?: number | null
+    attribution_convention?: string
+    first_order_approximation?: { beta_times_benchmark: number; note: string }
+    window?: {
+      aligned_sessions: number
+      first_session: string
+      last_session: string
+      coverage_ratio: number
+    }
+    estimation?: {
+      sessions: number
+      first_session: string | null
+      last_session: string | null
+      window_rule: string
+      aligned_available: number
+    }
+    applicability?: string[]
+  }
+  events: {
+    items: PriceExplanationEvent[]
+    in_window_count: number
+    subsequent_count: number
+    coverage: Record<string, unknown>
+  }
+  analysis?: {
+    narrative: string
+    ai_used: boolean
+    epistemic_classes: Record<string, string>
+    note: string
+  }
+  observations: Array<{
+    observation_id: string
+    statement: string
+    value: number | string | null
+    unit: string
+    evidence: string[]
+    derivation: string
+  }>
+  hypotheses: PriceExplanationHypothesis[]
+  revision_check: {
+    subsequent_revisions: number
+    amending_filings: number
+    corrected_corporate_actions: number
+    status: string
+  }
+  rights: {
+    export_allowed: boolean
+    sources: Array<{
+      source_id: string
+      name: string | null
+      licence: string | null
+      redistribution: string
+      kind: string | null
+      registered?: boolean
+      export_allowed?: boolean
+      reason?: string | null
+    }>
+    restricted_sources: string[]
+    unregistered_sources?: string[]
+    missing_licence_sources?: string[]
+    reasons?: string[]
+  }
+  warnings: PriceExplanationWarning[]
+  refusals: Array<Record<string, unknown>>
+  reproducibility: { hash_algorithm: string; hash: string; components: Record<string, unknown>; note: string }
+  limitations: string[]
+}

@@ -1,8 +1,8 @@
 # ATLAS QUANT
 ## Master Product, Architecture, Research, and Execution Specification
 
-**Version:** 3.1.0  
-**Date:** 2026-11-11  
+**Version:** 3.2.0  
+**Date:** 2026-11-16  
 **Status:** Canonical desired-state specification; implementation claims require independent verification  
 **Document path:** `ATLAS_MASTER_SPEC.md` (canonical repository copy; prior distribution snapshots are not authoritative)  
 **Product class:** Open-source universal financial research, modeling, market intelligence, decision and application operating system  
@@ -16,9 +16,13 @@
 
 **Version 3.1 scope rule:** Appendices A-D strengthen existing Sections 1-61 without changing their numbering, established object identity, evidence authority, financial compiler, permissions, or eight-system taxonomy. Competitive capabilities are requirements for independent implementation/evaluation, not copied proprietary source or bundled licensed market data. Appendix D adds proposed ICB-49 through ICB-64. This amendment is a specification update, not deployment, legal clearance, test execution, publication, or an assertion of model profitability.
 
+**v3.2 scope rule:** Appendix E adds chart-native Price Movement Intelligence, external quant factor methods, research-integrity and institutional pricing/risk reference contracts without modifying Sections 1-61, existing benchmark results or the original eight-system platform. New benchmarks ICB-65..75 are proposals, not executed results.
+
 **What this document is not:** A claim that the current code already implements everything below, a guarantee that Atlas will outperform a proprietary terminal, permission to redistribute commercial data, or an instruction to integrate every listed open-source project. This document deliberately distinguishes requirements, hypotheses, implementation reports, and proven performance.
 
 **Document precedence:** (1) laws, licenses, safety, source terms, and security obligations; (2) approved versioned contracts and ADRs for deployed components; (3) this master specification for product direction; (4) phase plans; (5) informal feature ideas. If a deployed contract conflicts with this vision, propose and verify a migration rather than silently breaking it. Amend this document through a reviewed change with an explicit rationale.
+
+**v3.2 change note (2026-11-16):** Added Appendix E from reviewed research repositories, defining drag-range explanations, historical-source grounding, scientific factor research, GPU reference experiments, ORE/Barra risk methods, data licenses and verification gates. No new code is implied by this document amendment.
 
 **v3.1 change note (2026-11-11):** Completed a 61-section, specification-level cross-domain gap sweep and an inspected-source quant implementation review. Added quantitative platform capability parity, a no-paid-software research path, typed agent/MCP/tool and visual-editor contracts, multi-asset execution and microstructure fidelity, research-discovery integrity, an evidence/rights-aware provider interface, cross-domain research completeness gates, ICB-49..64 proposals and an explicit per-section disposition ledger in Appendices A-D. Preserved the original reference simulator, its tested scope and all earlier model, data, permission and historical-workflow invariants. No code or product capability is newly verified by this document amendment.
 
@@ -97,6 +101,7 @@
 - [Appendix B. Quant research runtime, strategy science and AI contracts](#appendix-b-quant-research-runtime-strategy-science-and-ai-contracts)
 - [Appendix C. Cross-domain gold-standard gap closure](#appendix-c-cross-domain-gold-standard-gap-closure)
 - [Appendix D. Full 61-section audit and ICB-49 through ICB-64](#appendix-d-full-61-section-audit-and-icb-49-through-icb-64)
+- [Appendix E. Price Movement Intelligence, factor research, and independent institutional analytics](#appendix-e-price-movement-intelligence-factor-research-and-independent-institutional-analytics)
 
 ---
 
@@ -3055,3 +3060,131 @@ These **16 proposed** acceptance benchmarks extend ICB-01..48. No benchmark stat
 **Required release packet:** tagged code commit, exact spec/ADR revisions, dataset/rights manifests, all experiment trials, reproducibility commands and checksums, numerical tolerances, reference outputs, adversarial failures, resource and cost profile, human review, clear remaining gap matrix and user-task recording. Evidence must be available to an independent reviewer with appropriate source entitlements.
 
 **Final audit verdict:** v3's 61 sections define unusually broad goals, but **coverage is not delivery**. Version 3.1's correction is to make competitive quant workflows, model-risk discipline, free-data feasibility, underserved institutional cases and falsifiable completion gates explicit within the existing common foundation. The next “gold standard” claim must be earned on a narrowly defined, externally reproduced user workflow rather than declared for the entire platform.
+
+---
+
+## Appendix E. Price Movement Intelligence, factor research, and independent institutional analytics
+
+**Version 3.2, November 16, 2026. Normative desired-state specification only.** Preserve Sections 1-61, Appendices A-D, eight-system product taxonomy, TEK/UROS/FEC/RIE source authority, existing identities, rights, saved versions, migration contracts and previously verified acceptance. No implementation or benchmark status is implied by this amendment. All repositories are research candidates, not automatic dependencies or licenses to redistribute data.
+
+### E.1 Strategic scope and primary workflows
+
+Extend the existing Explore, Studio, Lab and Monitor surfaces with three linked capabilities: Price Movement Intelligence (PMI), academically grounded cross-sectional Factor Research, and reference-validated Institutional Risk Analytics. The full workflow is: choose security -> select historical price interval -> inspect what happened -> retrieve and challenge company, sector, macro and market evidence -> quantify observed and abnormal returns -> generate hypotheses with epistemic qualification -> connect evidence to financial forecasts and portfolio risk -> save a reproducible sourced investigation -> monitor later revisions.
+
+These features cannot create a ninth evidence store, independent model truth, separate permissions system or new permanent top-level product. The first priority remains correcting unresolved filing/numerical semantics and completing the end-to-end research memo workflow. A list of new models, third-party code or UI screenshots is not itself platform progress.
+
+### E.2 Price Movement Intelligence: Explain This Move
+
+User-facing behavior: enable a clearly discoverable Explain Range mode on the existing React Lightweight Charts component. Drag over one or more candles to select inclusive actual market sessions, with a visible persistent range overlay and precise start/end labels. Default selection is time-based; selecting a price-value band is an explicitly separate future control. Support mouse, pen, touch, keyboard and a calendar/range-picker fallback. Escape cancels, and normal panning, zooming, crosshair and drawing must remain intact outside selection mode. Multi-range comparisons are optional and must not impair a simple single-range interaction.
+
+Immediately compute a deterministic summary: instrument/venue identity, selection session IDs, timezone, chosen adjusted/raw/total-return series, first and last actual observations, open/close/high/low where applicable, return convention, volume and realized volatility, stock versus aligned sector/benchmark/peers, unusual sessions, corporate actions and a data coverage indicator. Provide a linked Explain panel with source-grounded events, candidate explanations, alternative hypotheses, contradictions, explicit remaining unexplained return and expandable reference details. Every source card opens its original evidence locator where rights allow, and chart event markers link to the same stable event identities. Explain, Model, Compare, Test, Audit, Save and Export actions reuse existing UROS objects.
+
+Selection semantics: resolve pointer coordinates to chart logical positions then to the bar's canonical session ID, not free-form interpolated date values. Preserve pin of security, source/vendor, price adjustment basis, chart interval, exact session selection, source revision and digest, as-of cutoff and rendering library version. Distinguish (a) prior-session close to final selected close, useful for one-candle move, and (b) first selected close to final selected close. Never display a one-candle zero return as though it were the selected day's price movement. Handle weekends, halts, calendar differences, intraday/after-hours release timing, ticker reassignment, thin volume, stock splits, dividends, delistings, missing bars, asset currency and corporate actions.
+
+Typed API proposal: POST /api/securities/{security_id}/price-explanations, preserving existing market endpoints. Request fields: start_session, end_session, timeframe, price_basis, return_convention, mode, information_cutoff, benchmark_id (optional), evidence_depth, max_sources and optional saved comparison. Mode is strictly historical_as_of or retrospective. Historical mode requires a cutoff. The response is a versioned atlas.price_explanation.v1 record with immutable selection pin, independently computed metrics, event/source links, alternative claims, epistemic status, coverage/rights summary, model diagnostics, warnings/refusals, execution manifest and replay hash. Provide bounded query/pagination/cancellation semantics. A narrative renderer cannot modify financial calculations or source identities.
+
+### E.3 Historical evidence, event retrieval and epistemic integrity
+
+Construct an entity-resolved, rights-aware event timeline from available SEC filings and acceptance times, filing prose and XBRL revisions, issuer press releases, earnings/guidance, corporate actions, sector/peer events, macro releases with original vintages, interest-rate/FX changes, regulatory events, and optional legally entitled analyst/news and alternative data. News indexes such as GDELT are discovery leads, not proof of causal influence. Sparse sources require conspicuous coverage and source-quality warnings; Atlas must not promise a complete explanation of every price move.
+
+Each event record must include event_id; issuer/security/listing and related company/sector IDs; event type; event-valid interval; source publication time; independently evidenced public-availability time and precision; ingestion time; original source/document/span and hash; revision lineage; quote/content redistribution rights; claim and epistemic status; reliability assessment; effect/association hypotheses; and uncertainty. Deduplicate syndicated or repeated items without destroying distinct contemporaneous evidence. Include counterevidence and multiple plausible mechanisms when events overlap. Date-only availability must respect existing conservative TEK policies; after-hours news cannot be silently attributed to the preceding regular trading session.
+
+Historical_as_of mode excludes all future-public evidence, and warns that a modern pretrained LLM may contain knowledge of later events even when retrieval inputs are time-filtered. Do not certify historically backfilled LLM-generated forecasts as genuine ex-ante observations. Retrospective mode may use later explanations but labels hindsight and revisions explicitly. No silently mixed temporal views.
+
+Epistemic statuses follow the existing EVENT_AND_CLAIM_ONTOLOGY.md: observed, inferred, hypothesized, estimated_causal_effect, counterfactual and unresolved, plus association/identified/not_identified. Coincident headlines and regression residuals never automatically prove causality. Causal effects require a documented identification design, alternative explanations, confounding assessment, uncertainty and falsification. Without sufficient evidence return an honest unresolved conclusion.
+
+### E.4 Quantitative price explanation and event-study methodology
+
+Create deterministic analytical functions for correct return and adjustment conventions, gap/volume/volatility anomalies, sector and peer-relative performance, and appropriately aligned market/regime baselines. With sufficient independent sample data, fit an expected-return model on a pre-event estimation period, then report abnormal return and cumulative abnormal return with residual diagnostics, assumptions and statistical uncertainty. A long-window decomposition must account for compounding; do not simply add percentage returns and claim exact contribution. Clearly distinguish market beta/statistical attribution from verified economic causation. The language model may summarize declared model outputs but must not authoritatively compute them.
+
+Rank candidate events by independently auditable entity match, public-time proximity, measured stock/sector surprise when available, source reliability, novelty and corroboration. Do not manufacture a numerical causal-probability score from relevance ranking. If news/analyst consensus/order-book data are unavailable, mark unavailable instead of creating an unearned explanation.
+
+### E.5 Cross-sectional Factor Research Engine
+
+Every factor has a canonical FactorDefinition: research reference and citation, equation, code/IR version, universe and membership policy, entity and share-class mapping, point-in-time financial data requirements, availability lag, fiscal and calendar definitions, corporate-action basis, input and output shapes/units, missingness rules, factor window, neutralization/winsorization, trainable parameters, reference vectors, rights and admissible use. Distinguish factor observation, model prediction, target label, portfolio signal and order.
+
+End-to-end canonical path: legally acquired historical universe and security memberships -> temporal evidence joins and revised financial statements -> factor computation -> published-formula reference comparison -> cross-sectional ranks and information coefficient -> portfolio formation and next-eligible trade simulation -> realistic costs and delisting outcomes -> purged chronological evaluation -> independent baseline comparison -> complete research certificate and failed trial history. Avoid today's surviving index members in historical panels and do not fill missing CRSP/Compustat-equivalent inputs with unsourced proxies.
+
+OpenSourceAP/CrossSection provides published academic factor implementations, availability conventions and portfolio replication references but relies substantially on licensed WRDS/CRSP/Compustat/OptionMetrics data; its GPL-2.0 source is reference-only until license obligations are reviewed. letianzj/QuantResearch supplies numerical notebooks and strategy examples, not a production runtime. Begin with a handful of factors whose exact values and historical rights are provable. Do not equate factor breadth with predictive performance.
+
+### E.6 AFML, model selection and research credibility
+
+Treat BlackArbsCEO/Adv_Fin_ML_Exercises as educational material. Test newer quantowl, Lacuna, NoAlpha and fincore as isolated numerical/evaluation reference candidates. Methods to evaluate include information-driven bars, CUSUM/triple-barrier labeling, meta-labeling, fractional differentiation, event concurrency and uniqueness, sequential bootstrap, purged/embargoed K-fold and combinatorial purged CV, probability of backtest overfitting, probabilistic/deflated Sharpe, hierarchical risk parity, structural breaks, turnover and risk-adjusted performance attribution. For each, document assumptions, prove or test temporal overlap invariants, maintain independent scalar/naive implementations, and include adversarial failures. Never claim a notebook, GitHub README or self-generated backtest constitutes a validated profitable strategy.
+
+Create an immutable ResearchTrialLedger of every tested candidate, manual intervention, objective, lookback, dataset rights/vintage, feature, label end, train/validation/test split, seed, repeated search, run costs and final results including failures. Final holdouts are not repeatedly tuned upon without updating the selection-budget disclosure. Historical LLM prediction calls have an actual completion-time availability and cannot be backfilled as historically safe. Quant-only, deterministic hybrid and optional LLM hybrid arms must share comparable data/cost assumptions so added-value claims are falsifiable. AI cannot place orders.
+
+### E.7 High-performance analytics without losing semantics
+
+Use the current NumPy/SQLite base and evaluate DuckDB, Polars, PyArrow and optional Narwhals adapters for batch analysis. Consider optional PyTorch/CUDA for factor dependency graphs, grouped cross-section ranking, rolling statistics and factor trials. Heerozh/spectre is a useful GPU/CPU parity and test reference, but GPL-3.0 and Python 3.14+ requirements conflict with the present Atlas Python 3.11+ permissive core; no direct default dependency without formal license/platform review. Its author-published speedups exclude some transfers and do not establish Atlas gains.
+
+Benchmark reproducible 1/10/100/1000-factor workloads and panels with realistic sparse, revised, halted, delisted, dividend and split data. Measure full pipeline including file read, decoding, data conversion, host/device transfers, compute, output, cache, peak RAM/VRAM, reproducibility and reference-error tolerances; cold and warm results and CPU-only fallbacks are mandatory. Exploratory float32 factor arithmetic is never substituted for exact Decimal financial cash amounts in FEC. A GPU feature may remain experimental if it is fast but numerically different or less reproducible.
+
+### E.8 Equity factor risk, fixed income and institutional analytics
+
+Define distinct reference-verifiable domains: (1) equity factor model with exposures, industry/style return estimates, factor covariance, specific risk, PSD covariance validation, tracking error, stress and Euler risk contributions; (2) bond/curve/currency risk with settlement calendar, day count, curve construction, cash flows, duration, DV01, key-rate DV01, convexity, credit and rate/spread stress; (3) derivatives/risk with exact contract terms, models, Greeks, scenarios, exercise/settlement and where valid XVA; and (4) execution microstructure with queue, order feed/exchange latency, Level 2/3 market assumptions and broker-side accounting. No generic risk score hides incompatible domains.
+
+Reference sources include OpenSourceRisk/Engine (ORE), QuantLib, OpenGamma/Strata, Riskfolio-Lib, CVXPY, Barra-style implementations and independently published numerical vectors. ORE is a major C++/QuantLib institutional engine; use an isolated, pinned process/container for a scoped reference suite before contemplating embedding it. A small Barra-style risk notebook is not equivalent to validated commercial coverage. HftBacktest and ABIDES are future research tools contingent on sufficiently detailed, properly licensed order-book evidence. Do not call historical adjusted indices executable portfolios or synthetic scenarios actual fills.
+
+### E.9 Provider contracts and London Strategic Edge
+
+Market data providers expose a versioned capability matrix for instruments, exchanges, timeframes, quotes/bars/ticks, corporate actions, historical revisions, adjusted/raw definitions, documented original methodology, freshness, licensing, persistence, quotas and permissions. Clients may ingest through adapters but never override TEK provenance authority or source-selection policy. The existing API's historical as_of, raw/split/total_return, rights and market observation contracts must be preserved.
+
+Evaluate londonstrategicedge/lse-data as an optional local personal-use adapter; verify its checksummed CSV/Parquet export, structured rate-limit/error behavior, session alignment, identifier matching, temporal revisions and cross-provider numerical differences. The MIT code license does not authorize redistribution of LSE data, a public downstream feed or official-exchange-price claims. Advertised market size and high-frequency depth are provider claims until independently examined. londonstrategicedge/lse-terminal offers provider-plugin and locally permissioned workstation reference patterns; brue provides a compact strategy-language conformance corpus, not authority over Atlas's simulator. Never merge agent-authored arbitrary Python or unapproved broker actions into the trusted application process.
+
+### E.10 Candidate integration registry and adoption policy
+
+Named source candidates to retain in the Section 58 registry with exact repo URL, observed commit/tag, verified license and distribution conditions, dependencies, independent numerical baseline, test evidence, stage and retirement criterion:
+
+| Domain | Candidate references | First disposition |
+| --- | --- | --- |
+| SEC, narrative, source integrity | dgunning/edgartools, Arelle, docling-project/docling, RoboFinSystems/xbrlkit, alphanome-ai/sec-parser, Szigor-Research/verifiable-equity-data, mblaauw/alpha-lake, tanishhky/chronofund-fundamental-engine | Compare against SEC/Arelle semantics; xbrlkit early stage; sec-parser announces unmaintained |
+| Market integration | londonstrategicedge/lse-data, londonstrategicedge/lse-terminal, londonstrategicedge/brue, OpenBB and approved SEC/FRED vendor interfaces | Reference/optional adapter, source entitlements and quality first |
+| Factor and financial experiments | OpenSourceAP/CrossSection, letianzj/QuantResearch, JerBouma/FinanceToolkit, Heerozh/spectre, zwmjj/kuant-core | Academic/reference and benchmark; no automatic source-copy approval |
+| AFML, model integrity, risk statistics | BlackArbsCEO/Adv_Fin_ML_Exercises, landtml/quantowl, eyenoticeall/Lacuna, flysheep-ai/NoAlpha, cloudQuant/fincore, py-why/dowhy | Differential numerical and adversarial reference, versions pinned; low-star beta not trusted by default |
+| Trading and institutional risk | OpenSourceRisk/Engine, QuantLib, OpenGamma/Strata, QuantConnect/Lean, nautechsystems/nautilus_trader, nkaz001/hftbacktest, abides-sim/abides, Riskfolio-Lib, CVXPY, Barra-style factor-model projects | Scoped isolated reference/adapter only after exact instrument and source proof |
+| Data/ML/retrieval | duckdb/duckdb, pola-rs/polars, narwhals-dev/narwhals, microsoft/qlib, mlflow/mlflow, optuna/optuna, asg017/sqlite-vec, qdrant/fastembed, FAISS, LanceDB, Qdrant, LlamaIndex, GraphRAG, DSPy, DeepEval, zstd, Bytewax | FTS5 baseline versus structured/hybrid; evaluate measured correctness, all-in cost and bytes |
+| UI, developer and security | TradingView Lightweight Charts already present, Apache ECharts, FINOS Perspective, TanStack Table, uv, Ruff, Trivy, Open Policy Agent, OpenLineage | Extend existing UX and platform first; adopt only for a justified measurable gap |
+
+Do not assume the list is exhaustive or that an unverified shorthand is the canonical package URL. The live integration registry must resolve project identity and license before any code import. Adoption stages are reference_only -> benchmark_candidate -> experimental_adapter -> verified_adapter -> default_backend, with deprecated and rollback outcomes. GitHub stars and author benchmark figures are not independent performance evidence.
+
+### E.11 Sequenced implementation and acceptance
+
+E0: reconcile current branches, working tests and spec/registry; source-rights and history audit; preserve prior contracts; address material SEC period/column/semantic ambiguity before shipping an automatic price explanation.
+
+E1: chart interval selection with exact session pins, raw/split/total return, deterministic market and benchmark statistics, corporate-action markers and known SEC events. Produce an accessible offline first vertical slice.
+
+E2: legal data source contracts, historical versus hindsight modes, source-span-linked event/counterevidence timeline, deduplication, grounded/abstaining explanations, immutable investigation objects and rights-compliant export.
+
+E3: a small published-signal factor registry, legally valid historical universe, multi-asset execution/replay, independent factor vectors and a complete trial/AFML research integrity harness.
+
+E4: benchmark Polars/DuckDB/NumPy and conditional GPU, search/hybrid/CDG and optional vendor adapters. Publish end-to-end CPU/GPU and quality/cost curves, not isolated kernel best cases.
+
+E5: validate equity factor-risk and ORE/QuantLib/Strata fixed-income vectors with independently determined tolerances. Add microstructure and richer causal studies only after exact data contracts and user tasks justify them.
+
+Existing G0-G7, ICB-01..64, data-rights, research report and model-promotion criteria remain mandatory. An implementation cannot be upgraded to production_eligible by benchmark writeups or agent-generated claims.
+
+### E.12 Proposed ICB-65..75, not yet scored or executed
+
+| ID | Named capability | Required falsifiable evidence |
+| --- | --- | --- |
+| ICB-65 | Select a candle interval | Exact sessions across zoom, resize, mobile, keyboard and timezones; default chart controls not broken |
+| ICB-66 | Historical knowledge protection | No post-cutoff records, conservative after-hours behavior, modern LLM hindsight called out |
+| ICB-67 | Event grounding and uncertainty | Stable source-span proof, conflicts and insufficient coverage; unrelated headlines and invented causes rejected |
+| ICB-68 | Return and adjustment parity | Independent price/total-return, split/dividend, benchmark and missing-session tests |
+| ICB-69 | Price attribution validity | Pre-event estimation, numerical vector parity, uncertainty and no regression-equals-causality confusion |
+| ICB-70 | Published factor reproducibility | Correct academic definitions, historical universe, availability lags, delisting, published or independent benchmark vectors |
+| ICB-71 | Financial ML integrity | Purged label overlap, train/test leakage, multiple trials, PBO/DSR and retrospective LLM prediction blocked |
+| ICB-72 | CPU/GPU factor parity | Correctness, dirty panels, all-in latency, memory, transfer, numerical tolerances and measured fallback |
+| ICB-73 | Equity factor-risk attribution | Independent covariance/PSD, factor/specific risk, calibration and tracking-error cases |
+| ICB-74 | Institutional pricing and sensitivity | QuantLib/ORE/Strata cross-check on declared curves, day count, negative rates, credit and sensitivity vectors |
+| ICB-75 | Complete price-to-thesis research | Range selection, source review, challenging hypothesis, editable valuation, saved memo/export and deterministic replay |
+
+These IDs are prospective additions. Existing 64-item machine registries retain their previously recorded status/count until reviewed, regenerated and tested. Never claim 75 passing benchmarks simply because 11 rows appear in this document.
+
+### E.13 Required adversarial and operational gates
+
+Tests must cover one-bar gaps; weekends and holidays; after-hours earnings; amendments; multiple share classes; ticker reuse; splits/dividends; halt/delisting; missing benchmarks; duplicate/conflicting/malicious news; unknown publication times; provider correction after snapshot; sparse panel; historical LLM hindsight; label leakage; multiple-testing overfit; GPU float32 numerical drift; CPU-only environment; expired/denied market-data license; missing analyst estimates; unsupported order-book data; offline deterministic replay; prompt-injection in documents; cross-workspace permission abuse; cancellation/retry and stress loads.
+
+Enforce bounded time/source queries, source allowlists, per-provider rate/cost budgets, cancellation and error envelopes, strict credential handling, sanitization and prompt-injection resistance. No generated report may export unauthorized raw vendor content. No live orders from this feature. Accessible UI, named scope, independent audit evidence, current dataset rights, numerical correctness, security review and representative human task completion are preconditions for a production status.
+
+**Final test:** An independent analyst selects a real historical market move; can reconstruct price, contemporaneous admissible events, source lineage, statistical comparison, uncertainty, competing mechanisms and linked model/thesis; saves an exportable rights-compliant investigation; and reproduces its exact results from pinned inputs. If the sources cannot explain the move, Atlas says so instead of fabricating a story.

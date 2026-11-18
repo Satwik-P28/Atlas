@@ -37,6 +37,56 @@ inadmissible model. See [docs/PHASE9_IMPLEMENTATION.md](docs/PHASE9_IMPLEMENTATI
 [docs/PHASE9_FINANCIAL_RECONCILIATION.md](docs/PHASE9_FINANCIAL_RECONCILIATION.md) and
 [docs/PHASE9_READINESS.md](docs/PHASE9_READINESS.md).
 
+**Research branch: Certified Revision Impact (CRI).** `review/decision-intelligence-cri` adds
+`src/atlas/decision/`, a verified convex-programming layer that answers an audit question the
+rest of Atlas does not: *given a decision taken under the evidence available at the time, what can
+be proved about it now that the evidence has changed — or turned out to be uncertain?*
+
+Three things are provided. An **exact certificate** recovers Lagrange multipliers from the
+recorded weights and verifies the KKT system of the corrected program. A **duality bound** reuses
+the decision's own multiplier vector — the dual feasible set does not depend on the objective's
+linear costs — so a valid regret bound costs one Cholesky solve. A **worst-case certificate**
+extends that to a *set* of admissible corrections, using the support function of the set plus a
+curvature term, and remains convex in the multiplier even though the uncertainty maximisation is
+not.
+
+On 598 seeded revision events, verified against OSQP and Clarabel, no bound was exceeded beyond the
+measurement resolution; certified decisions carried a validated bound of at most `4.3e-17` (of which `1.8e-17` is
+the algebraic residual, the rest the floating-point resolution), and the 35 events where an
+independent solver measures more regret than that bound are all inside the solver's own resolution
+(bound soundness `0.941` strict, `1.000` within that resolution — both quoted, neither called exact).
+An independently repaired *feasible* reference point — which cannot beat a valid dual bound —
+contradicts none of the 598 bounds beyond that resolution. That is an analytic statement plus
+empirical non-contradiction; no verified floating-point enclosure of the bound is claimed;
+five dual ascent steps
+bring the median bound from `24.1×` to `1.24×` and twenty bring it to `1.000×`. Over an interval
+uncertainty set the worst-case bound was sound in 40/40 trials at `52×` less cost than enumerating
+the vertices. One real SEC revenue reclassification — a conforming recast, not a restatement — is
+compiled end to end, with accession numbers, acceptance instants, quoted disclosure language and
+payload hashes.
+
+**What is not claimed.** The data are synthetic apart from one filing. There is no user interface.
+The certificate is *slower* than OSQP (1.8–6.7×), so no time advantage is claimed. No new theorem
+and no decision-quality improvement is claimed; the contribution is a formulation, a composition
+of classical pieces, and an empirical characterisation that includes the failure modes.
+
+Start with [the technical report](docs/research/ATLAS_CRI_TECHNICAL_REPORT.md), then the
+[corrections log](docs/research/CORRECTIONS_AND_DISCLOSURE_V4.md), the
+[novelty assessment](docs/research/NOVELTY_UPDATE_V2.md) and the earlier
+[prior-art audit](docs/research/PRIOR_ART_AND_NOVELTY_AUDIT.md), the
+[preregistration](docs/research/PREREGISTRATION.md), the
+[gate status ledger](docs/research/GATE_STATUS_LEDGER.md), the
+[reproduction guide](docs/research/REPRODUCTION.md) and the
+[architecture note](docs/DECISION_RESEARCH_LAB.md). Reproduce with:
+
+```bash
+.venv/bin/python -m pip install -e ".[dev,terminal,optimization]"
+.venv/bin/python -m pip install "osqp>=1,<2" "clarabel>=0.11,<1"
+.venv/bin/python -m pytest -q
+.venv/bin/python scripts/research/cri_experiment.py --output artifacts/research
+.venv/bin/python scripts/research/sec_evidence_case.py --output artifacts/research/evidence
+```
+
 **The canonical Atlas Master Specification v3.0.0 is present and byte-verified.**
 `ATLAS_MASTER_SPEC.md` at the repository root is 289,963 bytes with SHA-256
 `c1228db93e66a04fb211bea85f6c978289a6040b1f655f934da76498c8c4752d`, confirmed by

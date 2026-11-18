@@ -26,7 +26,10 @@ from ..dependencies import DependencyIndex
 from ..storage.db import Database
 
 SCHEMA_VERSION = "atlas.research_object.v1"
-KINDS = ("dataset", "financial_metric", "model", "experiment", "strategy", "application", "memo")
+KINDS = (
+    "dataset", "financial_metric", "model", "experiment", "strategy", "application",
+    "memo", "price_investigation",
+)
 STATUSES = ("draft", "validated", "deprecated")
 REQUIRED_FIELDS = (
     "schema_version",
@@ -52,6 +55,15 @@ SPEC_FIELDS = {
     # A memo is a saved research artefact, not a computation: it carries the claim register,
     # the integrity findings and the reproduction manifest it was exported from.
     "memo": ("issuer_id", "cutoff", "sections", "claims", "integrity", "manifest"),
+    # A saved price-movement investigation is evidence plus calculation, not a model:
+    # the interval, the market observations, the event evidence, the rights decision
+    # and the reproduction manifest travel with it.
+    "price_investigation": (
+        "security_id", "interval", "mode", "price_basis", "historical_cutoff",
+        "request", "statistics", "benchmark", "market_model", "events",
+        "observations", "hypotheses", "rights", "reproducibility", "calculations",
+        "manifest", "temporal", "source_vintages",
+    ),
 }
 FORBIDDEN_KEYS = {"code", "sql", "python", "javascript", "executable", "script", "lambda"}
 SEMVER = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
@@ -141,7 +153,13 @@ class ResearchObjectStore:
     def __init__(self, db: Database):
         self.db = db
 
-    def create(self, document: dict[str, Any], *, owner_id: str = "local") -> dict[str, Any]:
+    def create(
+        self,
+        document: dict[str, Any],
+        *,
+        owner_id: str = "local",
+        created_at: str | None = None,
+    ) -> dict[str, Any]:
         validate_document(document)
         evidence_ids = list(dict.fromkeys(document["evidence_ids"]))
         object_ids = list(dict.fromkeys(document.get("object_ids", [])))
@@ -188,7 +206,7 @@ class ResearchObjectStore:
                 "this research object version already exists; create a new version instead",
                 object_id=existing["object_id"],
             )
-        now = iso(utcnow())
+        now = created_at or iso(utcnow())
         object_id = f"URO-{document['kind'][:3].upper()}-{uuid.uuid4().hex[:12]}"
         digest = content_hash(document)
         with self.db.transaction():

@@ -27,7 +27,7 @@
     {
       "benchmark_id": "ICB-01",
       "name": "Equity Research",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "SEC data to three-statement model, reverse DCF, comparables and scenario view.",
       "input_dataset": "SEC XBRL company facts and filings for a covered issuer (fixtures/sec).",
@@ -56,7 +56,7 @@
     {
       "benchmark_id": "ICB-02",
       "name": "Fixed Income/Risk",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Build a curve, value bonds and vanilla rate instruments, compute sensitivities and stress.",
       "input_dataset": "Published test vectors and a compatible QuantLib/ORE reference case.",
@@ -80,7 +80,7 @@
     {
       "benchmark_id": "ICB-03",
       "name": "Quant ML",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Build factors, train statistical and neural baselines, run a point-in-time backtest.",
       "input_dataset": "Point-in-time features and prices from the canonical market series.",
@@ -107,7 +107,7 @@
     {
       "benchmark_id": "ICB-04",
       "name": "Economic Intelligence",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Public energy or infrastructure signal to a linked issuer and modelled financial outcomes.",
       "input_dataset": "EIA/NOAA series plus issuer filings.",
@@ -133,7 +133,7 @@
     {
       "benchmark_id": "ICB-05",
       "name": "Application Creation",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Describe and build a model-based application through code, canvas and application paths.",
       "input_dataset": "A declarative application package plus its model graph.",
@@ -160,7 +160,7 @@
     {
       "benchmark_id": "ICB-06",
       "name": "Time Machine",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Reconstruct company knowledge before and after an amendment and a macro revision.",
       "input_dataset": "Archived restatement fixtures and revisioned macro vintages.",
@@ -188,7 +188,7 @@
     {
       "benchmark_id": "ICB-07",
       "name": "Data Rights",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Build and export an application mixing public and restricted sources.",
       "input_dataset": "Public SEC fixtures plus a restricted vendor series.",
@@ -215,7 +215,7 @@
     {
       "benchmark_id": "ICB-08",
       "name": "GPU/CPU",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Factor creation, neural training, Monte Carlo and screeners on realistic datasets.",
       "input_dataset": "Benchmark datasets sized for CPU and GPU.",
@@ -239,7 +239,7 @@
     {
       "benchmark_id": "ICB-09",
       "name": "OSINT Research",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Investigate contracts, events and corporate relationships from open sources.",
       "input_dataset": "Legally usable public documents and registries.",
@@ -263,7 +263,7 @@
     {
       "benchmark_id": "ICB-10",
       "name": "Full Reproduction",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Re-run an archived research application with its preserved inputs.",
       "input_dataset": "A committed application package and its pinned inputs.",
@@ -290,7 +290,7 @@
     {
       "benchmark_id": "ICB-11",
       "name": "Event Semantics",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Parse two same-headline contracts with different settlement rules.",
       "input_dataset": "Contract rule texts.",
@@ -314,7 +314,7 @@
     {
       "benchmark_id": "ICB-12",
       "name": "Calibration and Forecast Replay",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Issue forecasts before outcomes and grade them after settlement.",
       "input_dataset": "Forecast and outcome records with as-issued timestamps.",
@@ -338,7 +338,7 @@
     {
       "benchmark_id": "ICB-13",
       "name": "Market Feasibility",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Compare simulated payoff with market quotes.",
       "input_dataset": "Venue quotes with fees and depth.",
@@ -362,7 +362,7 @@
     {
       "benchmark_id": "ICB-14",
       "name": "Causal Research",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Model an economic shock to a company financial outcome with an explicit estimand.",
       "input_dataset": "Economic panel plus issuer outcomes.",
@@ -386,7 +386,7 @@
     {
       "benchmark_id": "ICB-15",
       "name": "Decision Robustness",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Solve a scenario-dependent research or investment choice.",
       "input_dataset": "Scenario set with explicit losses.",
@@ -410,7 +410,7 @@
     {
       "benchmark_id": "ICB-16",
       "name": "Domain-Pack Portability",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Install a non-equity pack and create a research application with it.",
       "input_dataset": "A committed domain pack.",
@@ -437,7 +437,7 @@
     {
       "benchmark_id": "ICB-17",
       "name": "Evidence Conflict and Monitoring",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Inject contradictory reports and revised settlement records.",
       "input_dataset": "Revisioned evidence fixtures.",
@@ -465,7 +465,7 @@
     {
       "benchmark_id": "ICB-18",
       "name": "Value-of-Information Audit",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Decide whether to buy data or run another experiment.",
       "input_dataset": "Candidate data offers and experiment costs.",
@@ -489,7 +489,7 @@
     {
       "benchmark_id": "ICB-19",
       "name": "Real Estate Underwriting",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Take an evidence-backed rental property to cash flows, debt, sale and investor return.",
       "input_dataset": "Lease and rent-roll evidence.",
@@ -513,7 +513,7 @@
     {
       "benchmark_id": "ICB-20",
       "name": "Property Risk and Spatial Evidence",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 22,
       "objective": "Underwrite an asset under hazard, financing and insurance scenarios.",
       "input_dataset": "Spatial hazard data with release timestamps.",
@@ -537,7 +537,7 @@
     {
       "benchmark_id": "ICB-21",
       "name": "Universal Model Catalog",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 48,
       "objective": "Discover, import and execute built-in and custom models with distinct kinds.",
       "input_dataset": "Model registry entries and reference cases.",
@@ -563,7 +563,7 @@
     {
       "benchmark_id": "ICB-22",
       "name": "Graph Composition",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 48,
       "objective": "Build the same nested model through visual, equation and SDK paths.",
       "input_dataset": "Nested model fixture.",
@@ -589,7 +589,7 @@
     {
       "benchmark_id": "ICB-23",
       "name": "Model Tournament",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 48,
       "objective": "Compare baselines, ensembles and failures on as-of data.",
       "input_dataset": "As-of datasets and trial budget.",
@@ -613,7 +613,7 @@
     {
       "benchmark_id": "ICB-24",
       "name": "Global Terminal",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 48,
       "objective": "Search, chart, screen and compare multiple instruments and event data.",
       "input_dataset": "Canonical market series with two providers and revisions.",
@@ -641,7 +641,7 @@
     {
       "benchmark_id": "ICB-25",
       "name": "Quant Stack Reproduction",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 48,
       "objective": "Recreate accepted nightly, ETF, options and paper templates.",
       "input_dataset": "The user's existing templates.",
@@ -665,7 +665,7 @@
     {
       "benchmark_id": "ICB-26",
       "name": "Banking Model",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 48,
       "objective": "M&A and LBO case with spreadsheet export.",
       "input_dataset": "Deal assumptions and filings.",
@@ -689,7 +689,7 @@
     {
       "benchmark_id": "ICB-27",
       "name": "Private Markets",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 48,
       "objective": "Multi-round capitalization and GP/LP fund case.",
       "input_dataset": "Cap table and fund terms.",
@@ -713,7 +713,7 @@
     {
       "benchmark_id": "ICB-28",
       "name": "Household Planning",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 48,
       "objective": "Accounts or imports, debt and retirement scenarios.",
       "input_dataset": "User accounts and imported statements.",
@@ -737,7 +737,7 @@
     {
       "benchmark_id": "ICB-29",
       "name": "Portfolio Operations",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 48,
       "objective": "Multi-asset holdings, targets, P&L, corporate actions and factor risk.",
       "input_dataset": "Broker records and prices.",
@@ -761,7 +761,7 @@
     {
       "benchmark_id": "ICB-30",
       "name": "UX Role Continuity",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 48,
       "objective": "Novice and professional complete comparable workflows.",
       "input_dataset": "Usability protocol with two cohorts.",
@@ -785,7 +785,7 @@
     {
       "benchmark_id": "ICB-31",
       "name": "Plugin and Rights",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 48,
       "objective": "Third-party model or application uses licensed and private datasets.",
       "input_dataset": "A third-party package with restricted inputs.",
@@ -812,7 +812,7 @@
     {
       "benchmark_id": "ICB-32",
       "name": "Operational Reliability",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 48,
       "objective": "Fail, retry, cancel, stale-feed and recover on realistic workloads.",
       "input_dataset": "Fault-injection harness.",
@@ -839,7 +839,7 @@
     {
       "benchmark_id": "ICB-33",
       "name": "Evidence Version Fidelity",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Original versus amended filings and macro vintages are selected correctly.",
       "input_dataset": "Restatement fixtures with acceptance timestamps.",
@@ -866,7 +866,7 @@
     {
       "benchmark_id": "ICB-34",
       "name": "Financial RAG Grounding",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Correct source-span support, numerical answers, abstention and conflict handling on independent QA cases.",
       "input_dataset": "Independent financial QA set with gold spans.",
@@ -891,7 +891,7 @@
     {
       "benchmark_id": "ICB-35",
       "name": "Compression Reconstruction",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Byte-exact original recovery with hashes, the version graph and recovery after corruption.",
       "input_dataset": "Versioned document corpus with hashes.",
@@ -915,7 +915,7 @@
     {
       "benchmark_id": "ICB-36",
       "name": "Compressed Search Frontier",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Total bytes, p95 latency and correct-version recall against strong lexical/hybrid baselines.",
       "input_dataset": "The same corpus with fixed availability times.",
@@ -940,7 +940,7 @@
     {
       "benchmark_id": "ICB-37",
       "name": "Evidence-Salient Changes",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Detect rare numbers, negations, footnotes, deleted/revised facts and falsifying evidence.",
       "input_dataset": "Annotated revision pairs.",
@@ -965,7 +965,7 @@
     {
       "benchmark_id": "ICB-38",
       "name": "Adaptive Research Plan",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Typed plans for retail, quant, banking and research tasks.",
       "input_dataset": "Task suite across four roles.",
@@ -989,7 +989,7 @@
     {
       "benchmark_id": "ICB-39",
       "name": "Research Integrity",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Independently pass/fail evidence, computational, statistical and decision checks.",
       "input_dataset": "Cases with known defects.",
@@ -1016,7 +1016,7 @@
     {
       "benchmark_id": "ICB-40",
       "name": "Resource Optimization",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Show measured quality-matched reduction in cost, time or peak resources versus fixed policies.",
       "input_dataset": "Changing workloads with fixed correctness targets.",
@@ -1042,7 +1042,7 @@
     {
       "benchmark_id": "ICB-41",
       "name": "Data Coverage Transparency",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Correct freshness, quality, rights, historical universe and conflict indicators.",
       "input_dataset": "Datasets with known gaps and conflicts.",
@@ -1068,7 +1068,7 @@
     {
       "benchmark_id": "ICB-42",
       "name": "Pipeline Failure Recovery",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Detect stale table reads, missing bars, schema drift, bad calendars, retry/cancel and deterministic replay.",
       "input_dataset": "Fault injection across the pipeline.",
@@ -1092,7 +1092,7 @@
     {
       "benchmark_id": "ICB-43",
       "name": "Cross-View Model Parity",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Visual, formula, tabular and SDK representations match or declare exact differences.",
       "input_dataset": "A model with multiple representations.",
@@ -1118,7 +1118,7 @@
     {
       "benchmark_id": "ICB-44",
       "name": "Professional Artifact Migration",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Import a working spreadsheet or notebook and reconcile outputs without hiding unsupported formulas.",
       "input_dataset": "User-supplied workbook and notebook.",
@@ -1142,7 +1142,7 @@
     {
       "benchmark_id": "ICB-45",
       "name": "Novice-to-Professional UX",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Role-spanning completion of the same task with equivalent mathematics and meaningful accessibility.",
       "input_dataset": "Two cohorts, one task.",
@@ -1166,7 +1166,7 @@
     {
       "benchmark_id": "ICB-46",
       "name": "Private Data Isolation",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Household, deal and team records cannot leak into published apps, agents or reports.",
       "input_dataset": "Private fixtures plus a published artefact.",
@@ -1191,7 +1191,7 @@
     {
       "benchmark_id": "ICB-47",
       "name": "Scientific Generalization",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Retrieval and compression advantages replicate across independent finance and non-finance corpora.",
       "input_dataset": "Independent corpora plus adversarial cases.",
@@ -1215,7 +1215,7 @@
     {
       "benchmark_id": "ICB-48",
       "name": "End-to-End Research Substitution",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Complete one real equity-research task from original filings to a verified memo and monitoring.",
       "input_dataset": "Real SEC filings for one issuer plus a licensed price feed.",
@@ -1243,7 +1243,7 @@
     {
       "benchmark_id": "ICB-49",
       "name": "Multi-Asset Ledger",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Chronological multi-instrument book with independently reconciled cash, positions, FX, fees, dividends and P&L.",
       "input_dataset": "Project-authored multi-currency trade/event fixtures.",
@@ -1269,7 +1269,7 @@
     {
       "benchmark_id": "ICB-50",
       "name": "Historical Universe Integrity",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Dated equities, benchmarks and ETFs including delisted/renamed/inactive constituents.",
       "input_dataset": "Historical membership fixtures with delistings and corporate actions.",
@@ -1295,7 +1295,7 @@
     {
       "benchmark_id": "ICB-51",
       "name": "Strategy Search Integrity",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Complete factor/hyperparameter search history, embargoed selection and untouched test.",
       "input_dataset": "Synthetic and public permitted factor/time-series fixtures.",
@@ -1321,7 +1321,7 @@
     {
       "benchmark_id": "ICB-52",
       "name": "Regime and Resampling Robustness",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Date-safe regime fits and block-bootstrap or Monte Carlo sensitivity.",
       "input_dataset": "Project-authored regime-change panel with held-out path.",
@@ -1347,7 +1347,7 @@
     {
       "benchmark_id": "ICB-53",
       "name": "Cost and Capacity Realism",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Friction and executable-capacity sensitivity against independently priced trades.",
       "input_dataset": "Synthetic bid/ask/depth and authorized real quote snapshots.",
@@ -1372,7 +1372,7 @@
     {
       "benchmark_id": "ICB-54",
       "name": "Free Local Quant Workflow",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "End-to-end free local strategy evaluation and cited reproducible report.",
       "input_dataset": "Explicitly redistributable sample dataset and local CPU runtime.",
@@ -1398,7 +1398,7 @@
     {
       "benchmark_id": "ICB-55",
       "name": "Cross-View Strategy Parity",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Visual/code/formula/SDK/agent paths execute the identical typed graph.",
       "input_dataset": "Project-authored strategy graph fixture.",
@@ -1423,7 +1423,7 @@
     {
       "benchmark_id": "ICB-56",
       "name": "Data Rights and Provider Revocation",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Coverage, historic vintage proof and rights propagate through exports and revocation.",
       "input_dataset": "Mixed public, restricted and revoked dataset fixtures.",
@@ -1449,7 +1449,7 @@
     {
       "benchmark_id": "ICB-57",
       "name": "Dated Derivative Contract Replay",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Futures/option identity, roll/settlement, margin and quote-side execution replay.",
       "input_dataset": "Project-authored contracts and optional authorized dated quote snapshots.",
@@ -1474,7 +1474,7 @@
     {
       "benchmark_id": "ICB-58",
       "name": "Execution Engine Adapter Parity",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Independent portfolio event/ledger parity across native and external backtest engines.",
       "input_dataset": "Canonical trade/corporate-action fixture suite.",
@@ -1499,7 +1499,7 @@
     {
       "benchmark_id": "ICB-59",
       "name": "Replicable Factor Library",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Open-literature strategy replication with null controls, model code and sourced attribution.",
       "input_dataset": "Legally accessible academic papers and public test fixtures.",
@@ -1524,7 +1524,7 @@
     {
       "benchmark_id": "ICB-60",
       "name": "Agent Tool Isolation",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Bounded MCP/SDK agent operations with approval, prompt-injection resistance and quotas.",
       "input_dataset": "Malicious tool-result and restricted-content fixtures.",
@@ -1550,7 +1550,7 @@
     {
       "benchmark_id": "ICB-61",
       "name": "Global Financial Semantics",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Global issuer, currency, IFRS/GAAP and benchmark revision parity.",
       "input_dataset": "Synthetic global accounting and date-effective index fixtures.",
@@ -1576,7 +1576,7 @@
     {
       "benchmark_id": "ICB-62",
       "name": "Structured Credit and ALM",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Cash-flow priority, conventions and liability stress research with reference vectors.",
       "input_dataset": "Synthetic waterfall, bond and liability cash-flow cases.",
@@ -1601,7 +1601,7 @@
     {
       "benchmark_id": "ICB-63",
       "name": "Research-to-Report Replication",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "Evidence- and rights-preserving model-to-memo reproducibility and editable artifacts.",
       "input_dataset": "SEC narrative/fact fixtures and generated model outputs.",
@@ -1627,7 +1627,7 @@
     {
       "benchmark_id": "ICB-64",
       "name": "Independent Workflow Substitution",
-      "spec_version": "3.1.0",
+      "spec_version": "3.2.0",
       "spec_section": 60,
       "objective": "External reviewer completes research tasks with transparent capability and total cost.",
       "input_dataset": "Public or user-entitled cases covering quant, equity, risk and other finance.",
