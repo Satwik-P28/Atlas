@@ -64,7 +64,18 @@ def parse_instant(value: str | None) -> datetime | None:
 
 @dataclass(frozen=True, slots=True)
 class EvidenceRevision:
-    """One correction or amendment to an input the decision model consumes."""
+    """One correction or amendment to an input the decision model consumes.
+
+    ``incorporated_in`` names the data vintage that already contains this correction. It is the
+    difference between "this was public before the decision" and "this is actually inside the
+    numbers the decision was computed from". Applying a correction twice because it happens to
+    predate the audit clock is a double count, not an audit, so the compiler requires the
+    lineage to be stated rather than inferred from timestamps alone.
+
+    ``status`` distinguishes an active correction from one that was withdrawn or superseded
+    before the audit: including a retracted correction in the revised program would be as wrong
+    as omitting a valid one.
+    """
 
     revision_id: str
     evidence_id: str
@@ -76,6 +87,8 @@ class EvidenceRevision:
     amendment: bool = True
     source_id: str = ""
     note: str = ""
+    status: str = "active"
+    incorporated_in: str | None = None
 
     def availability(self) -> datetime:
         parsed = parse_instant(self.available_at)
@@ -95,6 +108,8 @@ class EvidenceRevision:
             "amendment": self.amendment,
             "source_id": self.source_id,
             "note": self.note,
+            "status": self.status,
+            "incorporated_in": self.incorporated_in,
         }
 
 
@@ -148,6 +163,11 @@ class RevisionCompilation:
     notes: tuple[str, ...] = ()
     audit_as_of: str | None = None
     post_decision_revision_ids: tuple[str, ...] = ()
+    starting_vintage: str | None = None
+    lineage: tuple[dict[str, Any], ...] = ()
+    incorporated: tuple[str, ...] = ()
+    superseded: tuple[str, ...] = ()
+    withdrawn: tuple[str, ...] = ()
 
     @property
     def changed(self) -> bool:
@@ -171,6 +191,11 @@ class RevisionCompilation:
             "notes": list(self.notes),
             "audit_as_of": self.audit_as_of,
             "post_decision_revision_ids": list(self.post_decision_revision_ids),
+            "starting_vintage": self.starting_vintage,
+            "lineage": [dict(item) for item in self.lineage],
+            "incorporated": list(self.incorporated),
+            "superseded": list(self.superseded),
+            "withdrawn": list(self.withdrawn),
             "perturbed_problem_digest": self.problem.digest(),
         }
 
@@ -183,6 +208,8 @@ def compile_revisions(
     as_of: str | None = None,
     audit_as_of: str | None = None,
     allow_future: bool = False,
+    starting_vintage: str | None = None,
+    include_pre_decision: bool = False,
 ) -> RevisionCompilation:
     """Apply revisions public at the audit clock and exclude the rest.
 
@@ -194,6 +221,19 @@ def compile_revisions(
     ``allow_future=True`` exists **only** for the leakage-contaminated diagnostic arm. It is
     never a deployable configuration, and the compilation records ``hindsight=True`` so a
     downstream certificate cannot present the result as an ex-ante audit.
+
+    Eligibility is not the same as novelty. A correction published before the decision clock is
+    already inside the vintage the decision was computed from, so applying it again double
+    counts it. ``include_pre_decision=False`` (the default) therefore excludes such a revision
+    with reason ``already_incorporated_in_decision_vintage``, and ``starting_vintage`` records
+    which vintage the base program represents. Passing ``include_pre_decision=True`` is the
+    explicit opt-in for a "the model missed evidence that was already public" experiment, which
+    is a different question from an evidence revision.
+
+    Corrections that were withdrawn or superseded before the audit clock are excluded, with the
+    reason recorded, because a retracted correction is not part of the corrected program. Every
+    revision receives exactly one lineage category, so the compiler's decisions can be audited
+    without reading its control flow.
     """
 
     clock = as_of if as_of is not None else problem.as_of
@@ -224,6 +264,29 @@ def compile_revisions(
     excluded: list[dict[str, Any]] = []
     notes: list[str] = []
     post_decision: list[str] = []
+    lineage: list[dict[str, Any]] = []
+    incorporated: list[str] = []
+    superseded: list[str] = []
+    withdrawn: list[str] = []
+    supplied_ids = {item.revision_id for item in revisions}
+    # A revision is superseded when some *other supplied* revision declares that it replaces it.
+    superseded_ids = {item.supersedes for item in revisions
+                      if item.supersedes and item.supersedes != item.revision_id}
+
+    def record(revision: EvidenceRevision, category: str, included: bool, reason: str | None,
+               detail: str) -> None:
+        lineage.append({
+            "revision_id": revision.revision_id,
+            "evidence_id": revision.evidence_id,
+            "input_key": revision.input_key,
+            "available_at": revision.available_at,
+            "status": revision.status,
+            "incorporated_in": revision.incorporated_in,
+            "category": category,
+            "included_in_revision": included,
+            "reason": reason,
+            "detail": detail,
+        })
 
     for revision in revisions:
         if revision.kind not in SUPPORTED_KINDS:
@@ -234,6 +297,32 @@ def compile_revisions(
                 "detail": "only linear objective perturbations are compiled; a risk-matrix "
                           "revision is a different mathematical object",
             })
+            record(revision, "unsupported_kind", False, "unsupported_perturbation_kind",
+                   "a risk-matrix revision is a different mathematical object")
+            continue
+        if revision.status == "withdrawn":
+            excluded.append({
+                "revision_id": revision.revision_id,
+                "reason": "withdrawn_before_audit",
+                "available_at": revision.available_at,
+                "detail": "the correction was retracted; a retracted correction is not part "
+                          "of the corrected program",
+            })
+            withdrawn.append(revision.revision_id)
+            record(revision, "withdrawn", False, "withdrawn_before_audit",
+                   "retracted before the audit clock")
+            continue
+        if revision.revision_id in superseded_ids:
+            excluded.append({
+                "revision_id": revision.revision_id,
+                "reason": "superseded_before_audit",
+                "superseded_by": next(item.revision_id for item in revisions
+                                      if item.supersedes == revision.revision_id),
+                "detail": "a later revision in the supplied set replaces this one",
+            })
+            superseded.append(revision.revision_id)
+            record(revision, "superseded", False, "superseded_before_audit",
+                   "replaced by a later revision in the supplied set")
             continue
         available = revision.availability()
         if available > audit_instant and not allow_future:
@@ -247,6 +336,23 @@ def compile_revisions(
                 "detail": "the revision was not public at the audit clock; applying it would "
                           "be a hindsight computation",
             })
+            record(revision, "published_after_audit", False, "not_available_at_audit",
+                   "not public at the audit clock")
+            continue
+        if available <= decision_instant and not include_pre_decision:
+            excluded.append({
+                "revision_id": revision.revision_id,
+                "reason": "already_incorporated_in_decision_vintage",
+                "available_at": revision.available_at,
+                "decision_as_of": clock,
+                "starting_vintage": starting_vintage,
+                "detail": "the correction was public before the decision clock, so the base "
+                          "program already reflects it; applying it again would double count",
+            })
+            incorporated.append(revision.revision_id)
+            record(revision, "incorporated_before_decision", False,
+                   "already_incorporated_in_decision_vintage",
+                   "public before the decision clock; already inside the base vintage")
             continue
         sensitivity = sensitivity_by_key.get(revision.input_key)
         if sensitivity is None:
@@ -256,6 +362,8 @@ def compile_revisions(
                 "input_key": revision.input_key,
                 "detail": "no declared mapping from this input to the objective coefficients",
             })
+            record(revision, "unmapped", False, "no_declared_sensitivity",
+                   "no declared mapping to objective coefficients")
             continue
         effect = np.asarray(sensitivity.cost_effect, dtype=float)
         if effect.shape != (n,):
@@ -265,6 +373,14 @@ def compile_revisions(
         applied.append(revision)
         if available > decision_instant:
             post_decision.append(revision.revision_id)
+        record(revision, "published_after_decision" if available > decision_instant
+               else "pre_decision_explicitly_included", True, None,
+               "applied to the corrected program")
+    if superseded_ids - supplied_ids:
+        notes.append(
+            f"{len(superseded_ids - supplied_ids)} 'supersedes' reference(s) point outside the "
+            "supplied revision set; the replacement was not compiled"
+        )
 
     if allow_future:
         future_reasons = {"not_available_at_decision", "not_available_at_audit"}
@@ -311,6 +427,11 @@ def compile_revisions(
         notes=tuple(notes),
         audit_as_of=audit_clock,
         post_decision_revision_ids=tuple(post_decision),
+        starting_vintage=starting_vintage,
+        lineage=tuple(lineage),
+        incorporated=tuple(incorporated),
+        superseded=tuple(superseded),
+        withdrawn=tuple(withdrawn),
     )
 
 

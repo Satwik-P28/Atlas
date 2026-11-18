@@ -37,6 +37,9 @@ from atlas.decision.revision import (
 )
 
 DECISION_CLOCK = "2024-11-01T21:00:00Z"
+#: The audit is run four days after the decision. Revisions public in between are the ones an
+#: audit exists to evaluate.
+AUDIT_CLOCK = "2024-11-05T12:00:00Z"
 
 
 def problem(seed: int = 3, *, n: int = 5, upper: float = 0.5):
@@ -63,7 +66,7 @@ def sensitivity_for(index: int, n: int = 5) -> InputSensitivity:
     return InputSensitivity(f"ret_{index}", tuple(effect))
 
 
-def revision(index: int, delta: float, available_at: str = "2024-10-30T22:00:00Z") -> EvidenceRevision:
+def revision(index: int, delta: float, available_at: str = "2024-11-02T22:00:00Z") -> EvidenceRevision:
     return EvidenceRevision(
         revision_id=f"r{index}-{delta}",
         evidence_id=f"ev{index}",
@@ -72,6 +75,12 @@ def revision(index: int, delta: float, available_at: str = "2024-10-30T22:00:00Z
         available_at=available_at,
         source_id="10-Q/A",
     )
+
+
+def compile_audited(base, revisions, sensitivities, **kwargs):
+    """Compile with an explicit audit clock: the ordinary revision-audit configuration."""
+    kwargs.setdefault("audit_as_of", AUDIT_CLOCK)
+    return compile_revisions(base, revisions, sensitivities, **kwargs)
 
 
 # ------------------------------------------------------------------------- instants
@@ -104,22 +113,94 @@ def test_revision_after_the_decision_clock_is_excluded_with_a_reason():
     assert compilation.problem.digest() == base.digest()
 
 
-def test_revision_before_the_decision_clock_is_applied():
+def test_revision_between_the_clocks_is_applied():
     base = problem()
-    compilation = compile_revisions(base, [revision(0, 0.05)], [sensitivity_for(0)])
+    compilation = compile_audited(base, [revision(0, 0.05)], [sensitivity_for(0)])
     assert compilation.status == "applied"
     assert len(compilation.applied) == 1
     assert compilation.delta_cost[0] == pytest.approx(-0.05)
     assert compilation.problem.linear_costs[0] == pytest.approx(base.linear_costs[0] - 0.05)
     assert compilation.problem.digest() != base.digest()
+    assert compilation.lineage[0]["category"] == "published_after_decision"
 
 
-def test_revision_exactly_at_the_clock_is_admissible():
+def test_revision_before_the_decision_clock_is_not_applied_again():
+    """A correction already public when the decision was taken is inside the base vintage.
+
+    Eligibility by timestamp is not the same as novelty: applying it again would double count
+    the correction, which is the defect the PR review found.
+    """
+
     base = problem()
-    compilation = compile_revisions(
-        base, [revision(0, 0.01, available_at=DECISION_CLOCK)], [sensitivity_for(0)]
+    stale = revision(0, 0.05, available_at="2024-10-30T22:00:00Z")
+    compilation = compile_audited(base, [stale], [sensitivity_for(0)])
+    assert compilation.status == "no_material_change"
+    assert compilation.applied == ()
+    assert compilation.incorporated == (stale.revision_id,)
+    assert compilation.excluded[0]["reason"] == "already_incorporated_in_decision_vintage"
+    assert compilation.lineage[0]["category"] == "incorporated_before_decision"
+    assert compilation.problem.digest() == base.digest()
+    assert compilation.as_dict()["lineage"]
+
+
+def test_pre_decision_revision_can_be_included_only_by_explicit_opt_in():
+    """"The model missed evidence that was already public" is a different question, and named."""
+
+    base = problem()
+    compilation = compile_audited(
+        base, [revision(0, 0.05, available_at="2024-10-30T22:00:00Z")], [sensitivity_for(0)],
+        include_pre_decision=True,
     )
     assert compilation.status == "applied"
+    assert compilation.lineage[0]["category"] == "pre_decision_explicitly_included"
+
+
+def test_revision_exactly_at_the_clock_is_treated_as_incorporated():
+    base = problem()
+    compilation = compile_audited(
+        base, [revision(0, 0.01, available_at=DECISION_CLOCK)], [sensitivity_for(0)]
+    )
+    assert compilation.status == "no_material_change"
+    assert compilation.excluded[0]["reason"] == "already_incorporated_in_decision_vintage"
+
+
+def test_withdrawn_and_superseded_revisions_are_excluded_with_reasons():
+    base = problem()
+    withdrawn = EvidenceRevision("w1", "ev-w", "ret_0", 0.05, "2024-11-02T22:00:00Z",
+                                status="withdrawn")
+    first = EvidenceRevision("s1", "ev-s1", "ret_1", 0.03, "2024-11-02T22:00:00Z")
+    second = EvidenceRevision("s2", "ev-s2", "ret_1", 0.04, "2024-11-03T22:00:00Z",
+                              supersedes="s1")
+    sensitivities = [sensitivity_for(0), sensitivity_for(1)]
+    compilation = compile_audited(base, [withdrawn], sensitivities)
+    assert compilation.withdrawn == ("w1",)
+    assert compilation.excluded[0]["reason"] == "withdrawn_before_audit"
+    assert compilation.status == "no_material_change"
+
+    compilation = compile_audited(base, [first, second], sensitivities)
+    assert compilation.superseded == ("s1",)
+    assert [item.revision_id for item in compilation.applied] == ["s2"]
+    assert compilation.delta_cost[1] == pytest.approx(-0.04)
+    reasons = {item["revision_id"]: item["reason"] for item in compilation.excluded}
+    assert reasons["s1"] == "superseded_before_audit"
+
+
+def test_lineage_categories_cover_every_supplied_revision():
+    base = problem()
+    revisions = [
+        revision(0, 0.02, available_at="2024-10-30T22:00:00Z"),
+        revision(1, 0.02, available_at="2024-11-02T22:00:00Z"),
+        revision(2, 0.02, available_at="2024-12-02T22:00:00Z"),
+        EvidenceRevision("unmapped", "ev-x", "unknown_input", 0.1, "2024-11-02T22:00:00Z"),
+    ]
+    compilation = compile_audited(base, revisions, [sensitivity_for(0), sensitivity_for(1),
+                                                    sensitivity_for(2)])
+    assert len(compilation.lineage) == len(revisions)
+    categories = {item["revision_id"]: item["category"] for item in compilation.lineage}
+    assert set(categories.values()) == {
+        "incorporated_before_decision", "published_after_decision", "published_after_audit",
+        "unmapped",
+    }
 
 
 def test_unsupported_perturbation_kind_is_refused_not_ignored():
@@ -128,19 +209,19 @@ def test_unsupported_perturbation_kind_is_refused_not_ignored():
         revision_id="rv", evidence_id="ev", input_key="covariance", delta=0.2,
         available_at="2024-10-30T00:00:00Z", kind="risk_matrix",
     )
-    compilation = compile_revisions(base, [covariance_revision], [sensitivity_for(0)])
+    compilation = compile_audited(base, [covariance_revision], [sensitivity_for(0)])
     assert compilation.status == "no_material_change"
     assert compilation.excluded[0]["reason"] == "unsupported_perturbation_kind"
 
 
 def test_missing_sensitivity_is_excluded():
-    compilation = compile_revisions(problem(), [revision(0, 0.05)], [])
+    compilation = compile_audited(problem(), [revision(0, 0.05)], [])
     assert compilation.excluded[0]["reason"] == "no_declared_sensitivity"
 
 
 def test_problem_without_a_clock_cannot_be_audited():
     base = problem().replace(as_of=None)
-    compilation = compile_revisions(base, [revision(0, 0.05)], [sensitivity_for(0)])
+    compilation = compile_audited(base, [revision(0, 0.05)], [sensitivity_for(0)])
     assert compilation.status == "no_decision_clock"
     assert "cannot be established" in compilation.notes[0]
 
@@ -148,7 +229,7 @@ def test_problem_without_a_clock_cannot_be_audited():
 def test_hindsight_mode_is_labelled_and_contaminates_the_program():
     base = problem()
     future = revision(0, 0.05, available_at="2024-11-05T22:00:00Z")
-    compilation = compile_revisions(base, [future], [sensitivity_for(0)], allow_future=True)
+    compilation = compile_audited(base, [future], [sensitivity_for(0)], allow_future=True)
     assert compilation.hindsight is True
     assert compilation.status == "applied"
     assert any("HINDSIGHT" in note for note in compilation.notes)
@@ -159,7 +240,7 @@ def test_audit_clock_applies_revisions_that_became_public_after_the_decision():
 
     base = problem()
     future = revision(0, 0.01, available_at="2024-11-05T22:00:00Z")
-    compilation = compile_revisions(base, [future], [sensitivity_for(0)],
+    compilation = compile_audited(base, [future], [sensitivity_for(0)],
                                     audit_as_of="2024-11-06T00:00:00Z")
     assert compilation.status == "applied"
     assert compilation.post_decision_revision_ids == (future.revision_id,)
@@ -172,7 +253,7 @@ def test_audit_clock_applies_revisions_that_became_public_after_the_decision():
 def test_revision_after_the_audit_clock_is_still_excluded():
     base = problem()
     later = revision(0, 0.01, available_at="2024-11-10T00:00:00Z")
-    compilation = compile_revisions(base, [later], [sensitivity_for(0)],
+    compilation = compile_audited(base, [later], [sensitivity_for(0)],
                                     audit_as_of="2024-11-06T00:00:00Z")
     assert compilation.status == "no_material_change"
     assert compilation.excluded[0]["reason"] == "not_available_at_audit"
@@ -180,11 +261,11 @@ def test_revision_after_the_audit_clock_is_still_excluded():
 
 def test_audit_clock_cannot_precede_the_decision_clock():
     with pytest.raises(ValidationError):
-        compile_revisions(problem(), [], [], audit_as_of="2024-01-01T00:00:00Z")
+        compile_audited(problem(), [], [], audit_as_of="2024-01-01T00:00:00Z")
 
 
 def test_without_a_revision_the_program_is_unchanged():
-    compilation = compile_revisions(problem(), [], [])
+    compilation = compile_audited(problem(), [], [])
     assert compilation.status == "no_material_change"
     assert compilation.magnitude == 0.0
 
@@ -193,7 +274,7 @@ def test_without_a_revision_the_program_is_unchanged():
 def test_exact_certificate_coincides_with_zero_realized_regret():
     base = problem()
     solution = solve(base)
-    compilation = compile_revisions(base, [revision(0, 1e-9)], [sensitivity_for(0)])
+    compilation = compile_audited(base, [revision(0, 1e-9)], [sensitivity_for(0)])
     certificate = certify_revision_impact(base, solution.weights, compilation,
                                           decision_dual=solution.dual)
     reference = solve(compilation.problem)
@@ -214,7 +295,7 @@ def test_bound_never_understates_realized_regret_across_random_revisions():
         for trial in range(40):
             index = int(rng.integers(0, base.dimension))
             magnitude = float(rng.uniform(1e-4, 0.05))
-            compilation = compile_revisions(base, [revision(index, magnitude)],
+            compilation = compile_audited(base, [revision(index, magnitude)],
                                             [sensitivity_for(index, base.dimension)])
             certificate = certify_revision_impact(base, solution.weights, compilation,
                                                  decision_dual=solution.dual)
@@ -236,7 +317,7 @@ def test_bound_never_understates_realized_regret_across_random_revisions():
 def test_certificate_reports_tightness_against_the_reference():
     base = problem(21)
     solution = solve(base)
-    compilation = compile_revisions(base, [revision(2, 0.03)], [sensitivity_for(2)])
+    compilation = compile_audited(base, [revision(2, 0.03)], [sensitivity_for(2)])
     reference = solve(compilation.problem)
     certificate = certify_revision_impact(base, solution.weights, compilation,
                                           decision_dual=solution.dual,
@@ -253,7 +334,7 @@ def test_reference_requires_no_revision_to_change_the_allocation():
 
     base = problem(5, upper=0.4)
     solution = solve(base)
-    compilation = compile_revisions(base, [revision(0, 1e-12)], [sensitivity_for(0)])
+    compilation = compile_audited(base, [revision(0, 1e-12)], [sensitivity_for(0)])
     reference = solve(compilation.problem)
     assert np.max(np.abs(np.asarray(reference.weights) - np.asarray(solution.weights))) < 1e-6
 
@@ -264,7 +345,7 @@ def test_infeasible_revision_verdict_is_explicit():
     # A revision that changes the budget would be a different program; here the feasible set
     # changes only through a tightened box, so the recorded weights can become infeasible.
     tightened = base.replace(lower=(0.3, 0.0, 0.0, 0.0, 0.0))
-    compilation = compile_revisions(tightened, [], [])
+    compilation = compile_audited(tightened, [], [])
     certificate = certify_revision_impact(tightened, solution.weights, compilation,
                                           decision_dual=solution.dual)
     assert certificate.verdict == "infeasible_under_revision"
@@ -274,12 +355,12 @@ def test_infeasible_revision_verdict_is_explicit():
 def test_guarantee_scope_names_its_conditions():
     base = problem(8)
     solution = solve(base)
-    compilation = compile_revisions(base, [revision(1, 0.02)], [sensitivity_for(1)])
+    compilation = compile_audited(base, [revision(1, 0.02)], [sensitivity_for(1)])
     certificate = certify_revision_impact(base, solution.weights, compilation,
                                           decision_dual=solution.dual)
     assert "declared linear input sensitivity" in certificate.guarantee_scope
     assert any("conditional" in limitation for limitation in certificate.limitations)
-    assert certificate.temporal_relationship == "revision_available_before_decision"
+    assert certificate.temporal_relationship == "revision_available_after_decision"
 
 
 def test_misspecified_sensitivity_can_break_the_bound_and_is_reported_as_a_limitation():
@@ -289,7 +370,7 @@ def test_misspecified_sensitivity_can_break_the_bound_and_is_reported_as_a_limit
     solution = solve(base)
     declared = 0.005
     actual = 0.05
-    compilation = compile_revisions(base, [revision(0, declared)], [sensitivity_for(0)])
+    compilation = compile_audited(base, [revision(0, declared)], [sensitivity_for(0)])
     certificate = certify_revision_impact(base, solution.weights, compilation,
                                           decision_dual=solution.dual)
     # The program that actually occurred used a ten-times larger revision.
@@ -441,12 +522,12 @@ def test_the_same_certificate_works_on_the_operational_problem():
     solution = solve_capacity_allocation(problem_instance)
     revision = EvidenceRevision(
         revision_id="demand-rev", evidence_id="ev-demand", input_key="margin_L2", delta=-0.5,
-        available_at="2024-10-31T12:00:00Z", source_id="demand-forecast-revision",
+        available_at="2024-11-02T12:00:00Z", source_id="demand-forecast-revision",
     )
     sensitivity = InputSensitivity("margin_L2", (0.0, 1.0, 0.0))
-    compilation = compile_revisions(problem_instance, [revision], [sensitivity])
+    compilation = compile_audited(problem_instance, [revision], [sensitivity])
     certificate = certify_revision_impact(problem_instance, solution.weights, compilation,
                                           decision_dual=solution.dual,
                                           reference_solution=solve_capacity_allocation(compilation.problem))
-    assert certificate.temporal_relationship == "revision_available_before_decision"
+    assert certificate.temporal_relationship == "revision_available_after_decision"
     assert certificate.bounded["regret_upper_bound"] is not None

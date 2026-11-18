@@ -11,17 +11,31 @@ Two certificates are produced, with different costs and different strengths.
 
 **Exact optimality certificate.**
 If the recorded weights satisfy the KKT system of the corrected program, they are optimal for
-it (convex program, linear constraints), so the regret is exactly zero. The multipliers are
-recovered from the weights by a least-squares solve on the active set: ``O(n^2)`` linear
-algebra, no optimisation. This is the classical support-set invariancy test in the form that
-matters for an audit, and it is *sufficient*: a negative answer proves nothing on its own.
+it (convex program, linear constraints) and the regret is zero. The multipliers are recovered
+from the weights by a least-squares solve on the active set -- linear algebra, no optimisation
+-- and, when least squares returns a sign-infeasible representative of an underdetermined
+system, by a non-negative feasibility LP. Both are measured separately: the LP is a HiGHS
+interior-point/branch-and-bound call, so the certificate reports which path ran, how often it
+ran, and what each cost. Calling the whole test "O(n^2) with no optimisation" was inaccurate.
+This is the classical support-set invariancy test in the form that matters for an audit, and it
+is *sufficient*: a negative answer proves nothing on its own.
+
+A KKT residual below a tolerance is a numerical statement, not a proof. The certificate
+therefore also reports ``residual_regret_bound``: ``0.5 r'Q^-1 r`` for the recovered
+stationarity residual, which upper bounds ``regret`` whenever ``w`` is feasible and the
+multipliers are complementary at ``w``, and ``||r||^2/(2 lambda_min)`` as a fallback that uses
+only ``Q >= lambda_min I``. On a correct corner solution that number is around ``1e-17``, which
+is what the report now says instead of "exactly zero".
 
 **Bounded-regret certificate.**
-For any dual feasible multiplier vector, weak duality gives
-``regret = P(w) - P(w*) <= P(w) - D``. The feasible dual set does not depend on the linear
+For any dual feasible multiplier vector ``lam``, weak duality gives ``g(lam) <= f*``, hence
+``regret = f(w) - f* <= f(w) - g(lam)``. The feasible dual set does not depend on the linear
 costs, so the multiplier vector recorded with the original decision is *still dual feasible*
 for the corrected program. Evaluating it costs one Cholesky solve. That is a valid regret
-bound with zero optimisation, and it can be tightened by a few dual ascent steps.
+bound with zero optimisation, and it can be tightened by a few dual ascent steps. The recorded
+multiplier vector is validated before use -- sign feasibility, dimensions, finiteness and
+constraint-structure identity -- and an invalid one is refused with a recorded reason rather
+than projected into validity, because a projected vector is a different vector.
 
 The guarantee is conditional and the report says so: it holds for the convex program as
 declared, with the declared linear input sensitivity. It is not a claim about market
@@ -39,6 +53,7 @@ sound.
 from __future__ import annotations
 
 import math
+import time
 from dataclasses import dataclass, field
 from typing import Any, Sequence
 
@@ -53,6 +68,8 @@ from .qp import (
     derive_multipliers,
     dual_objective,
     maximize_dual,
+    residual_regret_bound,
+    validate_dual_point,
     verify_kkt,
 )
 from .revision import RevisionCompilation, directional_perturbation
@@ -87,6 +104,7 @@ class RevisionCertificate:
     limitations: tuple[str, ...] = ()
     hindsight: bool = False
     reference: dict[str, Any] | None = None
+    recorded_dual_status: str = "not_supplied"
 
     @property
     def zero_regret(self) -> bool:
@@ -115,6 +133,7 @@ class RevisionCertificate:
             "limitations": list(self.limitations),
             "hindsight": self.hindsight,
             "reference": dict(self.reference) if self.reference else None,
+            "recorded_dual_status": self.recorded_dual_status,
         }
 
 
@@ -127,12 +146,18 @@ def _temporal_relationship(compilation: RevisionCompilation) -> str:
         # The ordinary audit case: evidence that was not public when the decision was taken is
         # now public and is being used to evaluate that decision.
         return "revision_available_after_decision"
+    if compilation.incorporated and not compilation.applied:
+        # The subtle case: everything supplied is already inside the recorded vintage, so there
+        # is nothing to audit. Distinguishing this from "no revision" is the point of lineage.
+        return "revision_already_incorporated"
     if compilation.applied and compilation.excluded:
         return "mixed_availability"
     if compilation.applied:
-        return "revision_available_before_decision"
+        return "pre_decision_revision_explicitly_included"
+    if compilation.withdrawn and not compilation.excluded:
+        return "revision_withdrawn"
     if compilation.excluded:
-        return "revision_not_yet_public"
+        return "revision_not_eligible"
     return "no_revision"
 
 
@@ -159,8 +184,11 @@ def certify_revision_impact(
         raise ValidationError("decision weights must match the problem dimension",
                               expected=decision_problem.dimension, received=int(w.size))
     revised = compilation.problem
+    timings: dict[str, float] = {}
+    clock = time.perf_counter()
     feasibility = check_feasibility(revised, w, tolerance=max(kkt_tolerance, 1e-9))
     objective_at_decision = float(revised.objective(w))
+    timings["feasibility_ms"] = (time.perf_counter() - clock) * 1000.0
     limitations: list[str] = [
         "the guarantee is conditional on the declared linear input sensitivity",
         "the guarantee concerns the specified convex program, not realized market outcomes",
@@ -168,17 +196,42 @@ def certify_revision_impact(
     if compilation.hindsight:
         limitations.append("HINDSIGHT DIAGNOSTIC: future-public revisions were applied")
 
+    clock = time.perf_counter()
     multipliers, multiplier_diagnostics = derive_multipliers(revised, w)
+    timings["multiplier_recovery_ms"] = (time.perf_counter() - clock) * 1000.0
+    timings["multiplier_recovery_method"] = 0.0
+    clock = time.perf_counter()
     exact_report: KKTReport = verify_kkt(revised, w, multipliers, tolerance=kkt_tolerance)
+    timings["kkt_check_ms"] = (time.perf_counter() - clock) * 1000.0
+    residual_block: dict[str, Any] | None = None
+    if multipliers is not None:
+        clock = time.perf_counter()
+        try:
+            residual_block = residual_regret_bound(revised, w, multipliers)
+        except ValidationError as exc:  # pragma: no cover - defensive
+            residual_block = {"valid": False, "reason": str(exc)}
+        timings["residual_bound_ms"] = (time.perf_counter() - clock) * 1000.0
+    recovery_method = str(multiplier_diagnostics.get("recovery_method", "none"))
     exact_block = {
         "optimal_for_revised_program": bool(exact_report.satisfied),
+        "optimality_kind": "numerical_within_tolerance" if exact_report.satisfied else "not_verified",
         "kkt": exact_report.as_dict(),
         "multiplier_diagnostics": {
             key: value for key, value in multiplier_diagnostics.items()
             if key in {"rank", "design_columns", "residual", "sign_violation", "active_lower",
-                       "active_upper", "fixed", "active_inequalities"}
+                       "active_upper", "fixed", "active_inequalities", "recovery_method"}
         },
-        "cost": "O(n^2) least squares on the active set; no optimisation",
+        "recovery_method": recovery_method,
+        "used_lp_fallback": recovery_method == "nonnegative_lp",
+        "residual_regret_bound": residual_block,
+        "numerical_regret_bound": (residual_block or {}).get("bound"),
+        "cost": (
+            "least squares on the active set (linear algebra); a non-negative feasibility LP "
+            "(HiGHS) only when least squares returns a sign-infeasible representative"
+        ) if recovery_method == "least_squares" else (
+            "non-negative feasibility LP (HiGHS) because least squares was sign-infeasible or "
+            "left a residual"
+        ),
     }
 
     bounded_block: dict[str, Any] = {
@@ -186,47 +239,101 @@ def certify_revision_impact(
         "dual_start": None,
         "dual_value": None,
         "regret_upper_bound": None,
+        "bound_kind": "none",
+        "bound_valid": False,
         "dual_iterations": int(dual_iterations),
         "useful_bound": float(useful_bound),
         "cost": "one Cholesky solve per dual evaluation",
+        "primal_feasible_unused": None,
     }
     dual_point: DualPoint | None = None
+    recorded_dual_status = "not_supplied"
     if decision_dual is not None:
-        # The dual feasible set is independent of the linear costs, so the recorded
-        # multipliers remain feasible for the corrected program.
-        candidate = DualPoint(
-            nu=decision_dual.nu,
-            alpha=decision_dual.alpha,
-            beta=decision_dual.beta,
-            gamma=decision_dual.gamma,
-        )
+        # The dual feasible set is independent of the linear costs, so the recorded multipliers
+        # remain feasible for the corrected program -- but that is a claim about the *signs* and
+        # the *constraint geometry*, and both are checked here. A recorded vector with a
+        # negative multiplier is not a lower bound and must not be reported as one.
         try:
-            value, _unused, _grad = dual_objective(revised, candidate)
-        except ValidationError:
-            value = float("-inf")
-        if math.isfinite(value):
-            dual_point = DualPoint(nu=candidate.nu, alpha=candidate.alpha, beta=candidate.beta,
-                                   gamma=candidate.gamma, value=value)
-            bounded_block["dual_start"] = "recorded_decision_multipliers"
-            bounded_block["dual_value"] = float(value)
-    if dual_point is None:
+            validate_dual_point(revised, decision_dual)
+        except ValidationError as exc:
+            recorded_dual_status = "rejected"
+            bounded_block["recorded_dual_rejected_reason"] = str(exc)
+            bounded_block["recorded_dual_rejected"] = True
+        else:
+            clock = time.perf_counter()
+            try:
+                value, _unused, _grad = dual_objective(revised, decision_dual)
+            except ValidationError as exc:
+                recorded_dual_status = "rejected"
+                bounded_block["recorded_dual_rejected_reason"] = str(exc)
+                bounded_block["recorded_dual_rejected"] = True
+            else:
+                timings["warm_dual_evaluation_ms"] = (time.perf_counter() - clock) * 1000.0
+                if math.isfinite(value):
+                    dual_point = DualPoint(
+                        nu=decision_dual.nu, alpha=decision_dual.alpha,
+                        beta=decision_dual.beta, gamma=decision_dual.gamma, value=float(value),
+                        structure_digest=revised.structure_digest(),
+                    )
+                    recorded_dual_status = "accepted"
+                    bounded_block["dual_start"] = "recorded_decision_multipliers"
+                    bounded_block["dual_value"] = float(value)
+    if dual_point is None and recorded_dual_status != "rejected":
         bounded_block["dual_start"] = "cold_start"
-    if dual_iterations > 0 or dual_point is None:
+
+    # The iteration budget is exactly what the caller asked for. An earlier version applied
+    # max(int(dual_iterations), 20), so an arm described as "five steps" silently performed at
+    # least twenty and the reported tightness was not the tightness of a five-step bound.
+    requested_iterations = max(0, int(dual_iterations))
+    ascent_block: dict[str, Any] = {
+        "requested_iterations": requested_iterations,
+        "performed": False,
+        "actual_iterations": 0,
+        "objective_evaluations": 0,
+        "gradient_evaluations": 0,
+        "runtime_ms": 0.0,
+        "budget_respected": True,
+    }
+    if requested_iterations > 0:
+        clock = time.perf_counter()
         try:
             dual_point, diagnostics = maximize_dual(
-                revised, init=dual_point, max_iter=max(int(dual_iterations), 20)
+                revised, init=dual_point, max_iter=requested_iterations
             )
+            ascent_block.update({
+                "performed": True,
+                "actual_iterations": int(diagnostics.get("iterations", 0)),
+                "objective_evaluations": int(diagnostics.get("objective_evaluations", 0)),
+                "gradient_evaluations": int(diagnostics.get("gradient_evaluations", 0)),
+                "start_value": diagnostics.get("start_value"),
+                "final_value": diagnostics.get("final_value"),
+                "budget_respected": bool(diagnostics.get("budget_respected", True)),
+                "start_kind": diagnostics.get("start_kind"),
+                "status": diagnostics.get("status"),
+            })
             bounded_block["dual_diagnostics"] = diagnostics
             bounded_block["dual_new_iterations"] = int(diagnostics.get("iterations", 0))
         except ValidationError as exc:
+            ascent_block["error"] = str(exc)
             bounded_block["dual_error"] = str(exc)
-    if dual_point is not None and dual_point.value is not None and math.isfinite(float(dual_point.value)):
+        ascent_block["runtime_ms"] = (time.perf_counter() - clock) * 1000.0
+    bounded_block["dual_budget"] = ascent_block
+
+    scale = max(1.0, abs(objective_at_decision))
+    if not feasibility.feasible:
+        # Weak duality needs a feasible recorded point: if the revision makes the recorded
+        # decision infeasible, f(w) is still a number but it is not the value of a decision the
+        # auditor may take, so no regret bound is claimed. Reporting one was a defect.
+        bounded_block["regret_upper_bound"] = None
+        bounded_block["bound_rejected_reason"] = (
+            "the recorded decision is infeasible for the revised program; a regret bound is "
+            "undefined and is deliberately not reported"
+        )
+    elif dual_point is not None and dual_point.value is not None and math.isfinite(float(dual_point.value)):
         bound = objective_at_decision - float(dual_point.value)
-        scale = max(1.0, abs(objective_at_decision))
         if bound < -1e-9 * scale:
-            # Weak duality forbids this. It happens when the recorded point is not feasible for
-            # the corrected program or when the dual evaluation is numerically invalid, so the
-            # bound is refused instead of being clamped to a comfortable-looking zero.
+            # Weak duality forbids this. It happens when the dual evaluation is numerically
+            # invalid, so the bound is refused instead of being clamped to a comfortable zero.
             bounded_block["bound_rejected_reason"] = (
                 f"dual value {float(dual_point.value):.12g} exceeded the objective "
                 f"{objective_at_decision:.12g} at the recorded weights; no bound is claimed"
@@ -234,12 +341,19 @@ def certify_revision_impact(
         else:
             bounded_block["dual_value"] = float(dual_point.value)
             bounded_block["regret_upper_bound"] = float(max(bound, 0.0))
+            bounded_block["bound_valid"] = True
+            bounded_block["bound_kind"] = (
+                "duality_gap_from_recorded_multipliers" if requested_iterations == 0
+                else f"duality_gap_after_{ascent_block['actual_iterations']}_iterations"
+            )
 
     if not feasibility.feasible:
         verdict = "infeasible_under_revision"
     elif exact_report.satisfied:
         verdict = "zero_regret_certified"
         bounded_block["regret_upper_bound"] = 0.0
+        bounded_block["bound_valid"] = True
+        bounded_block["bound_kind"] = "kkt_numerical_certificate"
     elif bounded_block["regret_upper_bound"] is not None:
         # A finite bound is a certificate whether or not it is small. Whether it is small
         # enough to act on is a separate, declared-tolerance question, so it is reported as
@@ -250,6 +364,10 @@ def certify_revision_impact(
     bound = bounded_block["regret_upper_bound"]
     bounded_block["meets_tolerance"] = bool(bound is not None and bound <= useful_bound)
     bounded_block["tolerance_kind"] = "absolute_objective_units"
+    timings["total_ms"] = sum(
+        value for key, value in timings.items()
+        if key.endswith("_ms")) + ascent_block.get("runtime_ms", 0.0)
+    exact_block["timings_ms"] = dict(timings)
 
     reference_block = None
     if reference_solution is not None:
@@ -288,6 +406,7 @@ def certify_revision_impact(
         limitations=tuple(limitations),
         hindsight=compilation.hindsight,
         reference=reference_block,
+        recorded_dual_status=recorded_dual_status,
     )
 
 

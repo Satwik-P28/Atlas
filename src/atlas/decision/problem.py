@@ -181,6 +181,23 @@ class ConvexDecisionProblem:
         payload = json.dumps(self.canonical_payload(), sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
+    def structure_digest(self) -> str:
+        """Digest of the *constraint geometry*, excluding the linear costs.
+
+        A Lagrange multiplier vector belongs to a problem's dual feasible set, and that set is
+        determined by ``Q``, the bounds, the budget and the inequality rows -- not by ``c``.
+        Recording this digest with a multiplier vector is what lets an audit check that a
+        re-used dual point is compatible with the corrected program: a cost revision changes
+        ``digest()`` but not ``structure_digest()``, while a changed cap or an added row
+        changes both, and a recorded multiplier must then be rejected rather than re-used.
+        """
+
+        payload = self.canonical_payload()
+        payload.pop("linear_costs", None)
+        payload.pop("problem_id", None)
+        text = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
     def replace(self, **changes: Any) -> "ConvexDecisionProblem":
         data = {
             "problem_id": self.problem_id,

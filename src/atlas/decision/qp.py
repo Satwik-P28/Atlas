@@ -67,13 +67,22 @@ def gradient_scale(problem: ConvexDecisionProblem, weights: Sequence[float]) -> 
 
 @dataclass(frozen=True, slots=True)
 class DualPoint:
-    """A candidate Lagrange multiplier vector. Sign constraints are enforced on use."""
+    """A candidate Lagrange multiplier vector.
+
+    The sign constraints ``alpha, beta, gamma >= 0`` are a *precondition* of weak duality, not
+    a convenience. A negative multiplier makes the claimed lower bound false, so evaluation
+    refuses such a point instead of projecting it (``projected()`` exists for callers that
+    explicitly want the projection, and the result is then a different point, not the recorded
+    one). ``structure_digest`` records which constraint geometry the multipliers were computed
+    for, so a point cannot be silently re-used against a program with different bounds.
+    """
 
     nu: float
     alpha: tuple[float, ...]
     beta: tuple[float, ...]
     gamma: tuple[float, ...] = ()
     value: float | None = None
+    structure_digest: str | None = None
 
     def projected(self) -> "DualPoint":
         return DualPoint(
@@ -82,6 +91,7 @@ class DualPoint:
             beta=tuple(max(0.0, float(v)) for v in self.beta),
             gamma=tuple(max(0.0, float(v)) for v in self.gamma),
             value=self.value,
+            structure_digest=self.structure_digest,
         )
 
     def vector(self, dimension: int, inequalities: int) -> np.ndarray:
@@ -102,7 +112,64 @@ class DualPoint:
             "beta": list(self.beta),
             "gamma": list(self.gamma),
             "value": self.value,
+            "structure_digest": self.structure_digest,
         }
+
+
+def validate_dual_point(
+    problem: ConvexDecisionProblem,
+    point: DualPoint,
+) -> dict[str, float]:
+    """Check that ``point`` is a legitimate dual point for ``problem``.
+
+    Raises :class:`ValidationError` naming the exact violation. Dimensions, finiteness, sign
+    feasibility and constraint-structure identity are all required; a bound computed from a
+    point that fails any of them is not a bound.
+    """
+
+    n = problem.dimension
+    m = len(problem.inequalities)
+    if len(point.alpha) != n or len(point.beta) != n:
+        raise ValidationError(
+            "dual multipliers must match the problem dimension",
+            expected=n, alpha=len(point.alpha), beta=len(point.beta),
+        )
+    if len(point.gamma) != m:
+        raise ValidationError(
+            "dual inequality multipliers must match the inequality count",
+            expected=m, received=len(point.gamma),
+        )
+    values = np.concatenate((
+        np.array([float(point.nu)], dtype=float),
+        np.asarray(point.alpha, dtype=float),
+        np.asarray(point.beta, dtype=float),
+        np.asarray(point.gamma, dtype=float),
+    ))
+    if not np.all(np.isfinite(values)):
+        raise ValidationError("dual multipliers must be finite")
+    negative = {
+        "alpha": _min_or_zero(point.alpha),
+        "beta": _min_or_zero(point.beta),
+        "gamma": _min_or_zero(point.gamma),
+    }
+    for name, value in negative.items():
+        if value < 0.0:
+            raise ValidationError(
+                f"dual {name} multipliers must be non-negative; a negative multiplier makes "
+                "the weak-duality lower bound false",
+                component=name, most_negative=float(value),
+            )
+    if point.structure_digest is not None and point.structure_digest != problem.structure_digest():
+        raise ValidationError(
+            "the dual point was computed for a different constraint structure",
+            point_digest=point.structure_digest, problem_digest=problem.structure_digest(),
+        )
+    return {"max_abs_multiplier": float(np.max(np.abs(values))) if values.size else 0.0,
+            "min_multiplier": float(np.min(values)) if values.size else 0.0}
+
+
+def _min_or_zero(values: tuple[float, ...]) -> float:
+    return float(min(values)) if values else 0.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -220,6 +287,8 @@ def _dual_terms(
 def dual_objective(
     problem: ConvexDecisionProblem,
     point: DualPoint,
+    *,
+    strict: bool = True,
 ) -> tuple[float, np.ndarray, np.ndarray]:
     """Evaluate the dual function and the primal point it certifies.
 
@@ -227,20 +296,140 @@ def dual_objective(
     ``[nu, alpha(n), beta(n), gamma(m)]``. ``w`` is the unconstrained minimiser of the
     Lagrangian for this multiplier vector; it need not be primal feasible, which is exactly
     why the dual value is a *lower* bound rather than a solution.
+
+    ``strict=True`` (the default) validates the point first: dimensions, finiteness, sign
+    feasibility and constraint-structure identity. An invalid point is refused rather than
+    evaluated, because its value is not a bound and reporting it as one was a real defect.
     """
 
+    if strict:
+        validate_dual_point(problem, point)
+    elif len(point.alpha) != problem.dimension or len(point.beta) != problem.dimension \
+            or len(point.gamma) != len(problem.inequalities):
+        raise ValidationError("dual bound multipliers must match the problem dimensions")
     factor = _factor(problem)
     alpha = np.asarray(point.alpha, dtype=float)
     beta = np.asarray(point.beta, dtype=float)
     gamma = np.asarray(point.gamma, dtype=float)
-    if alpha.shape != (problem.dimension,) or beta.shape != (problem.dimension,):
-        raise ValidationError("dual bound multipliers must match the problem dimension")
-    if gamma.shape != (len(problem.inequalities),):
-        raise ValidationError("dual inequality multipliers must match inequality count")
     value, w, grad_nu, grad_bounds, grad_ineq = _dual_terms(
         problem, factor, float(point.nu), alpha, beta, gamma
     )
+    if not math.isfinite(value):
+        raise ValidationError(
+            "the dual value is not finite; the risk matrix is not positive definite at this "
+            "multiplier vector", problem_id=problem.problem_id,
+        )
     return value, w, np.concatenate(([grad_nu], grad_bounds, grad_ineq))
+
+
+def residual_regret_bound(
+    problem: ConvexDecisionProblem,
+    weights: Sequence[float],
+    point: DualPoint,
+    *,
+    tolerance: float = DEFAULT_TOLERANCE,
+) -> dict[str, Any]:
+    """Turn a KKT residual into an explicit, conservative regret bound.
+
+    A KKT check compares residuals against a tolerance, and a tolerance is not a proof. This
+    routine converts the residual into a *quantity*. Write ``L`` for the Lagrangian at the given
+    multipliers, ``x*`` for its unconstrained minimiser, ``r = Q(w - x*) = Qw + c + nu*1 - alpha
+    + beta + A'gamma``, and ``slack = alpha'(w-l) + beta'(u-w) - gamma'(d-Aw) >= 0`` at a feasible
+    ``w``. Then, exactly,
+
+        f(w) - g(lam) = L(w) - L(x*) + [f(w) - L(w)] = 0.5 r' Q^-1 r + slack.
+
+    Since ``g(lam) <= f*`` for any dual feasible ``lam``,
+
+        regret(w) = f(w) - f* <= 0.5 r' Q^-1 r + slack,
+
+    which is sound for **any** feasible ``w`` and any dual-feasible point, complementary or not.
+    ``slack`` is what the earlier version of this routine dropped: it reported only the
+    quadratic form, which is smaller than the true gap whenever the multipliers are not exactly
+    complementary at ``w`` (14 orders of magnitude smaller on the first instance tested), so
+    the reported number was not a bound. Adding ``slack`` makes the identity exact.
+
+    The multipliers are *not* required to be the optimal ones. ``||r||^2/(2 lambda_min) + slack``
+    is returned as a conservative variant that only needs ``Q >= lambda_min I``; it avoids the
+    Cholesky solve but needs a spectral bound.
+    """
+
+    w = np.asarray(weights, dtype=float)
+    if w.shape != (problem.dimension,):
+        raise ValidationError("weights must match problem dimension",
+                              expected=problem.dimension, received=int(w.size))
+    validate_dual_point(problem, point)
+    q = problem.matrix()
+    lower, upper = problem.bounds()
+    a_matrix, d_vector = problem.inequality_arrays()
+    alpha = np.asarray(point.alpha, dtype=float)
+    beta = np.asarray(point.beta, dtype=float)
+    gamma = np.asarray(point.gamma, dtype=float)
+    residual = q @ w + problem.cost_vector() + point.nu - alpha + beta
+    if a_matrix.shape[0]:
+        residual = residual + a_matrix.T @ gamma
+    feasibility = check_feasibility(problem, w, tolerance=tolerance)
+    complementarity = 0.0
+    if alpha.size:
+        complementarity = max(complementarity, float(np.max(np.abs(alpha * (w - lower)))))
+    if beta.size:
+        complementarity = max(complementarity, float(np.max(np.abs(beta * (upper - w)))))
+    if gamma.size:
+        complementarity = max(complementarity,
+                              float(np.max(np.abs(gamma * (d_vector - a_matrix @ w)))))
+    gap_scale = max(1.0, abs(float(problem.objective(w))))
+    # 0.5 r'Q^-1 r, computed through a Cholesky solve rather than an explicit inverse.
+    factor = _factor(problem)
+    solved = np.linalg.solve(factor.T, np.linalg.solve(factor, residual))
+    quadratic = float(0.5 * residual @ solved)
+    # The complementarity slack, which is what makes the identity exact: f(w) - g(lam)
+    # = 0.5 r'Q^-1 r + slack at a feasible w. Dropping it understates the regret bound.
+    slack = 0.0
+    if alpha.size:
+        slack += float(alpha @ (w - lower))
+    if beta.size:
+        slack += float(beta @ (upper - w))
+    if gamma.size:
+        slack -= float(gamma @ (d_vector - a_matrix @ w))
+    eigenvalues = np.linalg.eigvalsh(q)
+    lambda_min = float(eigenvalues[0]) if eigenvalues.size else 0.0
+    conservative = ((float(residual @ residual) / (2.0 * lambda_min)) if lambda_min > 0
+                    else float("inf")) + slack
+    dual_value, _w, _grad = dual_objective(problem, point, strict=False)
+    duality_gap = float(problem.objective(w) - dual_value)
+    bound = quadratic + slack
+    # Sound whenever w is feasible and the multipliers are dual feasible; complementarity is
+    # measured and reported, but it affects only how much slack the bound carries.
+    valid = bool(feasibility.feasible and math.isfinite(bound) and bound >= -1e-12 * gap_scale)
+    return {
+        "bound": max(bound, 0.0) if valid else None,
+        "bound_kind": "quadratic_form_plus_complementarity_slack",
+        "quadratic_form": quadratic,
+        "complementarity_slack": slack,
+        "lambda_min": lambda_min,
+        "conservative_bound": conservative,
+        "duality_gap": duality_gap,
+        "stationarity_residual_inf": float(np.max(np.abs(residual))) if residual.size else 0.0,
+        "complementarity_residual": complementarity,
+        "primal_feasible": bool(feasibility.feasible),
+        "max_primal_violation": float(feasibility.max_violation),
+        "valid": valid,
+        "identity_check": {
+            "quadratic_plus_slack": bound,
+            "duality_gap": duality_gap,
+            "absolute_difference": abs(bound - duality_gap),
+        },
+        "assumptions": {
+            "primal_feasibility": bool(feasibility.feasible),
+            "dual_feasibility": True,
+            "complementarity_at_weights": bool(
+                complementarity <= max(tolerance, 1e-12) * gap_scale),
+        },
+        "tightness_note": (
+            "0.5 r'Q^-1 r equals the duality gap only when the multipliers are complementary at "
+            "w; the slack term makes the identity exact and the bound sound in general"
+        ),
+    }
 
 
 def maximize_dual(
@@ -257,14 +446,18 @@ def maximize_dual(
     exposed because the revision certificates want to measure the value of a *cheap* bound.
     """
 
+    started = time.perf_counter()
     factor = _factor(problem)
     n = problem.dimension
     m = len(problem.inequalities)
     if init is None:
         start = np.zeros(1 + 2 * n + m)
+        start_value = float("nan")
     else:
         start = init.projected().vector(n, m)
+        start_value = float(init.value) if init.value is not None else float("nan")
     bounds = [(None, None)] + [(0.0, None)] * (2 * n + m)
+    requested = max(0, int(max_iter))
 
     def neg(x: np.ndarray) -> tuple[float, np.ndarray]:
         nu = float(x[0])
@@ -283,7 +476,7 @@ def maximize_dual(
         jac=True,
         method="L-BFGS-B",
         bounds=bounds,
-        options={"maxiter": int(max_iter), "ftol": tolerance, "gtol": 1e-12, "maxcor": 30},
+        options={"maxiter": requested, "ftol": tolerance, "gtol": 1e-12, "maxcor": 30},
     )
     x = np.asarray(result.x, dtype=float)
     if not np.all(np.isfinite(x)):
@@ -294,12 +487,14 @@ def maximize_dual(
         alpha=tuple(float(v) for v in x[1:1 + n]),
         beta=tuple(float(v) for v in x[1 + n:1 + 2 * n]),
         gamma=tuple(float(v) for v in x[1 + 2 * n:]) if m else (),
+        structure_digest=problem.structure_digest(),
     )
     # Any dual feasible point is a valid bound, so keep the best *finite* candidate rather
     # than trusting the optimiser's final iterate.
     candidates = [point, init.projected() if init is not None else None,
                   DualPoint(0.0, tuple(0.0 for _ in range(n)), tuple(0.0 for _ in range(n)),
-                            tuple(0.0 for _ in range(m)))]
+                            tuple(0.0 for _ in range(m)),
+                            structure_digest=problem.structure_digest())]
     best: DualPoint | None = None
     for candidate in candidates:
         if candidate is None:
@@ -312,15 +507,26 @@ def maximize_dual(
             continue
         if best is None or candidate_value > float(best.value or -math.inf):
             best = DualPoint(nu=candidate.nu, alpha=candidate.alpha, beta=candidate.beta,
-                             gamma=candidate.gamma, value=candidate_value)
-    point = best or DualPoint(nu=point.nu, alpha=point.alpha, beta=point.beta, gamma=point.gamma)
+                             gamma=candidate.gamma, value=candidate_value,
+                             structure_digest=problem.structure_digest())
+    point = best or point
     value = point.value
+    runtime_ms = (time.perf_counter() - started) * 1000.0
+    iterations = int(getattr(result, "nit", 0))
     diagnostics = {
-        "iterations": int(getattr(result, "nit", 0)),
+        "requested_iterations": requested,
+        "iterations": iterations,
+        "budget_respected": bool(iterations <= requested),
+        "objective_evaluations": int(getattr(result, "nfev", 0) or 0),
+        "gradient_evaluations": int(getattr(result, "njev", 0) or 0),
+        "runtime_ms": runtime_ms,
+        "start_value": None if not math.isfinite(start_value) else start_value,
+        "final_value": float(value) if value is not None else None,
         "status": int(getattr(result, "status", -1)),
         "message": str(getattr(result, "message", "")),
-        "max_iter": int(max_iter),
+        "max_iter": requested,
         "gradient_inf_norm": float(np.max(np.abs(result.jac))) if result.jac is not None else None,
+        "start_kind": "cold" if init is None else "recorded_multipliers",
     }
     return point, diagnostics
 
@@ -777,17 +983,22 @@ def solve(
     feasibility = check_feasibility(problem, weights, tolerance=effective_tolerance)
 
     try:
+        dual_started = time.perf_counter()
         scaled_point, dual_diagnostics = maximize_dual(scaled, max_iter=dual_iterations)
         point = DualPoint(
             nu=scaled_point.nu * scale,
             alpha=tuple(v * scale for v in scaled_point.alpha),
             beta=tuple(v * scale for v in scaled_point.beta),
             gamma=tuple(v * scale for v in scaled_point.gamma),
+            structure_digest=problem.structure_digest(),
         )
         value, _unused, _grad = dual_objective(problem, point)
+        dual_diagnostics["construction_runtime_ms"] = (
+            time.perf_counter() - dual_started) * 1000.0
         if math.isfinite(value):
             point = DualPoint(nu=point.nu, alpha=point.alpha, beta=point.beta,
-                              gamma=point.gamma, value=value)
+                              gamma=point.gamma, value=value,
+                              structure_digest=problem.structure_digest())
             dual_bound = float(value)
         else:
             dual_bound = None
@@ -903,9 +1114,11 @@ __all__ = [
     "derive_multipliers",
     "gradient_scale",
     "restore_budget",
+    "residual_regret_bound",
     "dual_objective",
     "initial_feasible_point",
     "maximize_dual",
     "solve",
+    "validate_dual_point",
     "verify_kkt",
 ]
