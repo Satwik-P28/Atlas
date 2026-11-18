@@ -51,8 +51,11 @@ curvature term, and remains convex in the multiplier even though the uncertainty
 not.
 
 On 598 seeded revision events, verified against OSQP and Clarabel, no bound understated realized
-regret; certified decisions carried a validated residual bound of at most `1.8e-17`; five dual
-ascent steps
+regret; certified decisions carried a validated bound of at most `4.3e-17` (of which `1.8e-17` is
+the algebraic residual, the rest the floating-point resolution), and the 35 events where an
+independent solver measures more regret than that bound are all inside the solver's own resolution
+(bound soundness `0.941` strict, `1.000` within that resolution — both quoted, neither called exact);
+five dual ascent steps
 bring the median bound from `24.1×` to `1.24×` and twenty bring it to `1.000×`. Over an interval
 uncertainty set the worst-case bound was sound in 40/40 trials at `52×` less cost than enumerating
 the vertices. One real SEC revenue reclassification — a conforming recast, not a restatement — is
@@ -65,7 +68,7 @@ and no decision-quality improvement is claimed; the contribution is a formulatio
 of classical pieces, and an empirical characterisation that includes the failure modes.
 
 Start with [the technical report](docs/research/ATLAS_CRI_TECHNICAL_REPORT.md), then the
-[corrections log](docs/research/CORRECTIONS_AND_DISCLOSURE_V2.md), the
+[corrections log](docs/research/CORRECTIONS_AND_DISCLOSURE_V3.md), the
 [novelty assessment](docs/research/NOVELTY_UPDATE_V2.md) and the earlier
 [prior-art audit](docs/research/PRIOR_ART_AND_NOVELTY_AUDIT.md), the
 [preregistration](docs/research/PREREGISTRATION.md), the

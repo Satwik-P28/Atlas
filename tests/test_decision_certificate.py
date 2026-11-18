@@ -109,7 +109,7 @@ def test_revision_after_the_decision_clock_is_excluded_with_a_reason():
     )
     assert compilation.status == "no_material_change"
     assert compilation.applied == ()
-    assert compilation.excluded[0]["reason"] == "not_available_at_decision"
+    assert compilation.excluded[0]["reason"] == "not_public_at_decision"
     assert compilation.problem.digest() == base.digest()
 
 
@@ -256,7 +256,7 @@ def test_revision_after_the_audit_clock_is_still_excluded():
     compilation = compile_audited(base, [later], [sensitivity_for(0)],
                                     audit_as_of="2024-11-06T00:00:00Z")
     assert compilation.status == "no_material_change"
-    assert compilation.excluded[0]["reason"] == "not_available_at_audit"
+    assert compilation.excluded[0]["reason"] == "not_public_at_audit"
 
 
 def test_audit_clock_cannot_precede_the_decision_clock():

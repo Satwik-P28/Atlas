@@ -43,10 +43,17 @@ re-solving any corrected program and without enumerating vertices.
 
 Results on 598 seeded revision events, with an independent solver (OSQP) as the reference:
 
-* no bound understated realized regret in any of the seven dual-iteration arms;
+* no bound was exceeded beyond the solver's own resolution in any of the seven dual-iteration
+  arms; counted strictly, 35 of 598 measurements sit above their bound, each by less than the
+  spread between the two reference solvers (rate `0.941` strict, `1.000` resolution-aware) — the
+  two counts are reported side by side so a `1.000` is never read as an exact guarantee;
+* measured reference regret exceeds the emitted bound in **35 of 247** certified events, every
+excess smaller than the solver's own resolution (`≤ 0.26×`), with zero excesses beyond it — see
+§6.5 for why, and for the constraint violation that produces it;
 * every decision receiving the residual certificate carries a validated bound of at most
-  `1.8e-17` (median `3.8e-19`, `n = 247`) against realized regret of at most `3.7e-15` — a
-  numerical statement, not the exact zero the previous revision claimed;
+  `4.3e-17` (median `6.4e-18`, `n = 247`), of which `1.8e-17` (median `3.8e-19`) is the algebraic
+  value and the rest is the floating-point resolution of the arithmetic — a numerical statement,
+  not the exact zero the previous revision claimed;
 * the free bound is loose by a factor of ~24; **five actual dual ascent steps reduce that to
   1.24, and twenty steps to 1.000** — the previously reported "1.00 at five steps" was an
   artefact of a silent 20-iteration floor;
@@ -100,6 +107,19 @@ returns.
 | Ellipsoid membership inverted the Cholesky factor of `shape`, while the support function and the maximiser used `shape` | P0 | A single `UncertaintySet.contains` / `distance_outside` predicate now serves membership, support, argmax and the curvature envelope, matching `U = {c + S z : ‖z‖ ≤ r}`. With `S = diag(0.25, 1)`, `r = 1` and offset `(0.4, 0)`, the offset is `1.6` in normalised coordinates — outside — and is now classified as outside rather than at `0.8`. §5.6. |
 | CRI-U evaluated its bound at recorded decisions that were **infeasible** for the program | P0 | Feasibility is checked before any guarantee is claimed: `objective_bound` (a fact about the numbers) is reported separately from `actionable = valid ∧ decision_feasible`, and an infeasible decision yields `valid = false` with the reason recorded. §5.6. |
 | The SEC case described a conforming recast as a "restatement" | P1 | Both 10-Ks leave Item 9C (the correction-of-an-error question) unchecked, and the FY2024 filing states that royalty income was reclassified into `Total revenues` and that *"prior-period amounts have been recast to conform to the current presentation"*. The script now derives `conforming_recast` from both primary documents and records the checkbox state, the quoted disclosures and their SHA-256 digests. §7.2. |
+
+### 1.3 Corrections required by the third independent review (`6430b5b`)
+
+The review reproduced two temporal-lineage defects and a reporting problem, and named one stale
+table. The lineage defects are the kind that only appear at chain length three or with two clocks,
+which is why the previous pass's single-link tests did not see them.
+
+| Issue found in the third review | Severity | Resolution |
+|---|---|---|
+| A three-deep chain applied **both** the root and the latest revision | P0 | Chain resolution now selects the single live terminal and supersedes every ancestor; branching, and two operative absolute deltas for one input, are refused. `delta_semantics` separates replacement from increment. §4.3, §9.1. |
+| Effective time could predate public availability and leak future revisions | P0 | Eligibility and supersession both require *public and effective* by the cut-off, with distinct reasons `not_public_at_audit` and `not_effective_at_audit`. §4.3. |
+| A `1.77e-17` bound sat below a `3.73e-15` measured regret with no stated precision floor | P1 | Emitted bounds now add a forward floating-point error estimate plus the measured identity discrepancy; the algebraic value is reported separately; the study reconciles every certified event against the solver's own resolution. §5.3, §6.5. |
+| Gate G still reported 860 tests; Gate D said "exact" | P2 | Regenerated from the same run as the rest of this revision. §8, `GATE_STATUS_LEDGER.md`. |
 
 ## 2. Introduction
 
@@ -173,26 +193,44 @@ not-yet-public revision.
 Supersession and withdrawal are resolved **against the cut-off, not against the archive**. A
 successor that is published after `audit_as_of`, or withdrawn before it, cannot retroactively erase
 the revision it was meant to replace: at the audit instant the earlier revision was the operative
-record. The resolution is recursive, so a chain of replacements is followed only as far as the
-cut-off allows, and it cannot cycle. Each revision carries an immutable `effective_at` (defaulting
-to `available_at`) and, if retracted, `withdrawn_at`; a successor must carry a strictly larger
-`version`, cannot take effect before its predecessor, and neither inversion is silently reordered.
-An earlier version of this compiler computed the superseded set as a plain comprehension over every
-supplied `supersedes` and ignored time in the withdrawal test, so a later filing suppressed an
-earlier one even when it did not yet exist at the audit clock — a look-ahead leak of exactly the
-kind this branch forbids in the evidence layer.
+record. **Two clocks, and both are required.** `available_at` is when the document became public;
+`effective_at` (defaulting to `available_at`) is when the correction took economic effect. A
+revision may enter an audit only when it is **public and effective** by the cut-off: a backdated
+correction published later was not knowable earlier, and a correction that is public but not yet
+effective has not changed the data. Using the effective instant alone — which an earlier version did,
+with a single `effective_at or available_at` test — lets a document nobody could yet read be
+applied, and the same flaw in the supersession test let an unpublished successor suppress its
+predecessor.
 
-Eligibility is not novelty. A correction published *before* the decision clock is already inside
-the vintage the decision was computed from, so applying it again double counts it. The compiler
-therefore classifies every supplied revision into exactly one lineage category:
+**A replacement chain resolves to one operative version.** A revision that declares `supersedes`
+carries the *corrected value*, not an increment on top of it, so exactly one revision per chain may
+be applied: the single live terminal at the audit clock. Every ancestor of that terminal is
+superseded, including the nodes in the middle. An earlier version asked whether a successor was
+*itself terminal*, which made `A → B → C` skip B as a replacement for A and leave both A and C
+applied — a doubled replacement delta reported as an audit. Two further cases are refused rather
+than resolved: a branch (two live successors of one revision) and two operative absolute revisions
+for the same input, which can arise when a middle revision is withdrawn while its own replacement
+survives.
+
+`delta_semantics` makes the distinction explicit: `incremental` deltas add and may compose for one
+input; `absolute` deltas replace. It is inferred — absolute when the revision supersedes or is
+superseded, incremental otherwise — and declaring `incremental` on a successor is an error, because
+that combination can only be a double count. A successor must carry a strictly larger `version`,
+cannot take effect before its predecessor, and neither inversion is silently reordered; cycles are
+refused with the chain in the error.
+
+Eligibility is not novelty. A correction that is public **and** effective before the decision clock
+is already inside the vintage the decision was computed from, so applying it again double counts it.
+The compiler therefore classifies every supplied revision into exactly one lineage category:
 
 | Category | Meaning | Effect on `Δc` |
 |---|---|---|
 | `incorporated_before_decision` | public at or before the decision clock | excluded (`already_incorporated_in_decision_vintage`) |
 | `pre_decision_explicitly_included` | public before the decision, included on request | applied |
 | `published_after_decision` | published in `(t, τ]` | applied |
-| `published_after_audit` | not public at the audit clock | excluded |
-| `superseded` | replaced by a later revision that is itself live at the audit clock | excluded |
+| `published_after_audit` | not public at the audit clock | excluded (`not_public_at_audit`) |
+| `published_before_effective` | public but not yet effective at the audit clock | excluded (`not_effective_at_audit`) |
+| `superseded` | replaced by the operative version of its chain, live at the audit clock | excluded |
 | `withdrawn` | retracted on or before the audit clock | excluded |
 | `unsupported_kind` / `unmapped` | not compilable | excluded |
 
@@ -301,6 +339,18 @@ regret(w) ≤ f(w) − g(λ) = 0.5 · r' Q⁻¹ r + slack ≤ ||r||² / (2 λ_mi
 `f(w) − L(w) = α'(w−l) + β'(u−w) + γ'(d−Aw) = slack` at a feasible `w`. Adding,
 `f(w) − g(λ) = ½r'Q⁻¹r + slack`; Proposition 1 finishes the argument. The second inequality uses
 `Q ⪰ λ_min I`. ∎
+
+**Precision floor.** The identity holds in real arithmetic. In float64 the computed bound carries a
+forward error proportional to the magnitudes it sums — and, through the triangular solve, to the
+conditioning of `Q` — so a value of `1e-18` is not *verifiable* to `1e-18`. The routine therefore
+reports three numbers instead of one: the algebraic bound, a forward error estimate (Higham's
+`γ_k`, with a headroom factor for the separate dual evaluation), and the measured identity
+discrepancy, with the emitted bound equal to the algebraic value plus both. It is an estimate under
+the standard floating-point model, not interval arithmetic, so it is labelled a *verification
+tolerance* and no digit below it is claimed. Certifying only when the discrepancy fell inside a
+tight multiple of the estimate was tried and rejected: it confiscated three valid bounds whose
+discrepancy overshot a heuristic bound by 15%, and replaced them with loose dual bounds three orders
+of magnitude worse. Absorbing the discrepancy is both sound and more informative.
 
 This is an identity, not a loosening, and it holds whether or not the multipliers are
 complementary. Two versions of the routine got it wrong in different ways: the first dropped
@@ -492,12 +542,29 @@ measurement is the argument against using it as one.
 
 ### 6.5 The numerical certificate and the LP fallback
 
-* Over the **247** events carrying the residual certificate, `½r'Q⁻¹r + slack` has median
-  **`3.8e-19`** and maximum **`1.8e-17`**; the largest realized regret in that same set is
-  `3.7e-15`. The bound is a computed number and is never exactly zero, which is why the verdict
-  records what was measured (`zero_regret_within_residual`) instead of asserting a zero. An
-  earlier version of this bullet reported a maximum of `1.0e-2`, because it pooled certified
-  events with `regret_bounded` ones; that was the wrong set.
+* Over the **247** events carrying the residual certificate, the *algebraic* bound `½r'Q⁻¹r +
+  slack` has median **`3.8e-19`** and maximum **`1.8e-17`**; the *emitted* bound, which adds the
+  floating-point margin and the measured identity discrepancy, has median **`6.4e-18`** and maximum
+  **`4.3e-17`**. Both are reported because they answer different questions: the first is the
+  mathematics, the second is what the arithmetic can defend.
+* **Reconciliation against an independent solver.** In the same set the measured reference regret
+  has median `7.6e-19` and maximum `3.7e-15`, so **35 of 247** measured regrets exceed the emitted
+  bound. Every one of those excesses is smaller than the solver's own resolution (the spread
+  between the two reference optima, at most `1.4e-14`); the worst is `0.26×` of it. Against the
+  *conservative* measurement — regret computed against the better of the two optima, `1.7e-17` at
+  most — the bound is never exceeded. The cause is identified, not assumed: in **185 of 247**
+  events the lower-objective solver returned a point that violates a constraint (by up to
+  `3.4e-11`), so its objective is below the true optimum and the measured regret is inflated by
+  exactly that much. Recomputing the identity in extended precision leaves a residual of at most
+  `2.1e-18`, so the discrepancy is neither a certificate defect nor summation cancellation. A test
+  asserts the per-event comparison and the resolution, so the rate is reported as "no bound was
+  exceeded beyond the solver's resolution", never as an exact numerical guarantee.
+* **Two rates, deliberately.** Over all 598 events carrying a bound, `35` measured regrets exceed
+  their bound outright (`0.941` strict) and `0` exceed it beyond the solver's resolution (`1.000`
+  resolution-aware). The strict count is the one that shows the arithmetic has a floor; the
+  resolution-aware count is the one that is a guarantee. Neither is quoted alone.
+* The bound is never exactly zero, which is why the verdict records what was measured
+  (`zero_regret_within_residual`) instead of asserting a zero.
 * Multiplier recovery: least squares in 416 events, non-negative LP in **182 (30.4%)**. The LP
   is a HiGHS call, not `O(n²)` linear algebra, and the frequency is now measured rather than
   asserted. Both stages are timed separately in the certificate (`multiplier_recovery_ms`,
@@ -665,7 +732,8 @@ sensitivity of `0.1` per unit of growth. Decision clock `2024-06-30T20:00:00Z`, 
 | characterisation | `conforming_recast` (formal restatement: `false`) |
 | temporal relationship | `revision_available_after_decision` |
 | verdict | `zero_regret_within_residual` |
-| bound | `7.6e-31` |
+| bound (algebraic) | `7.6e-31` |
+| bound (emitted, with floating-point margin) | `2.4e-16` |
 | realized regret (OSQP reference) | `0.0` |
 
 Two controls exercise the lineage logic on the same real revision:
@@ -674,7 +742,7 @@ Two controls exercise the lineage logic on the same real revision:
   `already_incorporated_in_decision_vintage` — the double-counting defect would otherwise have
   applied a 1.8% correction that the recorded evidence already contained;
 * audited at `2025-01-15`, before the recast existed, it is excluded with reason
-  `not_available_at_audit` — the look-ahead defect;
+  `not_public_at_audit` — the look-ahead defect;
 * audited at `2025-03-01` while a *successor* revision is dated after the cut-off, the earlier
   record stands rather than being suppressed — the lineage defect the second review found, which
   the synthetic suite in `tests/test_decision_properties.py` exercises on both sides of the clock.
@@ -726,11 +794,13 @@ No claim of peer review, of a new theorem, or of a verified performance improvem
 
 ### 9.1 Tests
 
-`tests/test_decision_certification.py` (36 cases) covers the two P0 corrections and the worst-case
-certificate; `tests/test_decision_program.py` and `tests/test_decision_certificate.py` (62 cases)
-cover the solver, the revision compiler and the radii. The full decision layer is 98 tests. The
-repository suite is run before the commit that accompanies this report and its exact count is
-recorded in `docs/research/GATE_STATUS_LEDGER.md`.
+`tests/test_decision_certification.py` covers the early P0 corrections and the worst-case
+certificate; `tests/test_decision_program.py` and `tests/test_decision_certificate.py` cover the
+solver, the revision compiler and the radii; `tests/test_decision_counterexample.py` pins the
+review's hand-computable instance and `tests/test_decision_properties.py` states the properties the
+implementation must satisfy at any scale. `tests/test_decision_lineage.py` covers replacement chains
+and the two clocks. The decision layer is **171 tests**; the repository suite is run before the commit
+that accompanies this report and its exact count is recorded in `docs/research/GATE_STATUS_LEDGER.md` (933 at this revision).
 
 The adversarial cases required by the research plan, and where they live:
 
@@ -741,10 +811,13 @@ The adversarial cases required by the research plan, and where they live:
 | Infeasible recorded decision | `test_infeasible_recorded_decision_suppresses_the_bound` |
 | Duplicate / already-applied revision | `test_revision_before_the_decision_clock_is_not_applied_again` |
 | Withdrawn and superseded revisions | `test_withdrawn_and_superseded_revisions_are_excluded_with_reasons` |
+| Replacement chains of length 3 and 4, branches, cycles, withdrawn middles | `tests/test_decision_lineage.py` |
+| Backdated, unpublished or not-yet-effective revisions; cutoff boundaries; after-hours | `tests/test_decision_lineage.py` |
+| A reported bound above the regret another solver measures | `test_emitted_bound_carries_its_margin_and_dominates_the_conservative_measurement` |
 | Ill-conditioned and singular risk matrices | `test_singular_risk_matrix_removes_the_bound_but_not_the_kkt_test`, degeneracy experiment |
 | Active-set transitions and interior optima | cap sweep, radius tests |
 | Corrections outside the declared set | `test_out_of_set_corrections_are_measured_not_hidden` |
-| Historical look-ahead | hindsight arm, SEC `not_available_at_audit` control |
+| Historical look-ahead | hindsight arm, SEC `not_public_at_audit` control |
 | Cross-domain failure | capacity-allocation tests and experiment |
 
 ### 9.2 Independent solvers

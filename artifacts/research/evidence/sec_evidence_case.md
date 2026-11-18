@@ -45,7 +45,7 @@ It is not an error correction, not a restatement under ASC 250, not a Form 10-K/
 ## Controls
 
 - re-offered after the decision clock: status `no_material_change`, excluded because ['already_incorporated_in_decision_vintage']
-- audited before the restatement was accepted: status `no_material_change`, excluded because ['not_available_at_audit']
+- audited before the recast was accepted: status `no_material_change`, excluded because ['not_public_at_audit']
 
 ## What this does not show
 

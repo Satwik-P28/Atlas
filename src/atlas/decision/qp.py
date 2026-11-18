@@ -410,15 +410,115 @@ def residual_regret_bound(
     dual_value, _w, _grad = dual_objective(problem, point, strict=False)
     duality_gap = float(problem.objective(w) - dual_value)
     bound = quadratic + slack
-    # The identity must hold to round-off at every call; if it does not, the bound is not a bound.
+
+    # ------------------------------------------------------- floating-point resolution of the bound
+    # The identity is exact in real arithmetic. In float64 every term carries a forward error
+    # proportional to the magnitudes it sums -- the quadratic form also carries the conditioning of
+    # ``Q`` through the triangular solve -- so a computed value of 1e-18 is not verifiable to 1e-18:
+    # it is verifiable only to the size of the arithmetic that produced it. This margin is the
+    # standard forward-error estimate (Higham, *Accuracy and Stability*, ch. 3) for the three
+    # quantities the identity combines, with a headroom factor covering the separate dual-value
+    # evaluation. It is an estimate under the usual model (|fl(x+y) - (x+y)| <= u|x+y|, unit
+    # round-off u), not interval arithmetic, so it is reported and used as a *verification
+    # tolerance* rather than as a second theorem: no digit below it is claimed anywhere.
+    unit = float(np.finfo(float).eps) / 2.0
+
+    def _gamma(count: int) -> float:
+        scaled = count * unit
+        return scaled / (1.0 - scaled) if scaled < 1.0 else float("inf")
+
+    residual_scale = float(np.linalg.norm(residual, ord=np.inf)) if residual.size else 0.0
+    solve_scale = float(np.linalg.norm(solved, ord=np.inf)) if solved.size else 0.0
+    try:
+        condition = float(np.linalg.cond(q)) if q.size else 1.0
+    except np.linalg.LinAlgError:  # pragma: no cover - the factor already succeeded
+        condition = 1.0
+    quadratic_scale = abs(quadratic) + residual.size * residual_scale * solve_scale
+    slack_scale_terms = 0.0
+    if alpha.size:
+        slack_scale_terms += float(np.abs(alpha) @ np.abs(w - lower))
+    if beta.size:
+        slack_scale_terms += float(np.abs(beta) @ np.abs(upper - w))
+    if gamma.size:
+        slack_scale_terms += float(np.abs(gamma) @ np.abs(d_vector - a_matrix @ w))
+    gap_scale_terms = (abs(float(problem.objective(w))) + abs(float(dual_value))
+                       + abs(bound))
+    rounding_margin = 8.0 * (
+        _gamma(2 * residual.size + 2) * quadratic_scale * max(1.0, condition)
+        + _gamma(residual.size + 2) * slack_scale_terms
+        + _gamma(residual.size + 2) * gap_scale_terms
+    )
+    if not math.isfinite(rounding_margin):  # pragma: no cover - defensive
+        rounding_margin = float("inf")
+
+    # The identity is checked *against the resolution of the arithmetic that produced it*; a fixed
+    # 1e-8 relative slack is meaningless next to a bound of order 1e-18, which is what the review
+    # found. Two things follow, and they are different in kind:
+    #
+    # * the gate is a sanity check for a *grossly* inconsistent certificate (the earlier sign error
+    #   produced a discrepancy of 0.42 against a margin of 3e-14, which fails it by ten orders of
+    #   magnitude). It is deliberately not tight enough to confiscate a valid bound over a 15%
+    #   overshoot of a heuristic margin;
+    # * the measured discrepancy is then **added** to the emitted bound, so the emitted number is at
+    #   least the computed gap plus that discrepancy plus the margin. Refusing to certify in this
+    #   situation reports a bound three orders of magnitude looser for no gain in truth.
     identity_residual = abs(bound - duality_gap)
-    identity_ok = bool(identity_residual <= 1e-8 * max(1.0, abs(duality_gap)) + 1e-12)
+    identity_ok = bool(identity_residual <= 64.0 * rounding_margin)
+
+    # A second evaluation in extended precision, from the same float64 inputs. If the identity
+    # residual collapses here, the float64 residual is summation round-off rather than a defect in
+    # the identity; if it does not, the error is in the linear solve and the margin above (which
+    # carries the conditioning) is the quantity that describes it.
+    thirty_two = np.longdouble
+    quad_ld = thirty_two(0.0)
+    slack_ld = thirty_two(0.0)
+    if residual.size:
+        solve_ld = solved.astype(thirty_two)
+        quad_ld = thirty_two(0.5) * (residual.astype(thirty_two) @ solve_ld)
+    if alpha.size:
+        slack_ld += (alpha.astype(thirty_two)
+                     @ (w.astype(thirty_two) - lower.astype(thirty_two)))
+    if beta.size:
+        slack_ld += (beta.astype(thirty_two)
+                     @ (upper.astype(thirty_two) - w.astype(thirty_two)))
+    if gamma.size:
+        slack_ld += (gamma.astype(thirty_two)
+                     @ (d_vector.astype(thirty_two)
+                        - a_matrix.astype(thirty_two) @ w.astype(thirty_two)))
+    weight_ld = w.astype(thirty_two)
+    matrix_ld = q.astype(thirty_two)
+    residual_ld = residual.astype(thirty_two)
+    objective_ld = (thirty_two(0.5) * (weight_ld @ (matrix_ld @ weight_ld))
+                    + problem.cost_vector().astype(thirty_two) @ weight_ld)
+    # The Lagrangian minimiser is ``x* = w - Q^-1 r``, not ``Q^-1 r``; using the wrong one here
+    # produced an extended-precision "identity residual" of 1.29 on a bound of 0.655, which is how
+    # this probe earned its place: it checks the reference formula, not just the certificate.
+    dual_ld = (-thirty_two(0.5) * (weight_ld @ (matrix_ld @ weight_ld))
+               + (residual_ld @ weight_ld) - quad_ld
+               - thirty_two(point.nu) * thirty_two(problem.budget))
+    if alpha.size:
+        dual_ld += alpha.astype(thirty_two) @ lower.astype(thirty_two)
+    if beta.size:
+        dual_ld -= beta.astype(thirty_two) @ upper.astype(thirty_two)
+    if gamma.size:
+        dual_ld -= gamma.astype(thirty_two) @ d_vector.astype(thirty_two)
+    identity_residual_ld = float(abs((quad_ld + slack_ld) - (objective_ld - dual_ld)))
+
     # Sound whenever w is feasible and the multipliers are dual feasible; complementarity is
     # measured and reported, but it affects only how much slack the bound carries.
     valid = bool(feasibility.feasible and math.isfinite(bound) and bound >= -1e-12 * gap_scale
                  and identity_ok)
     return {
+        # ``bound`` is the algebraic quantity. ``bound_including_margin`` is the same number plus the
+        # floating-point resolution above, and *this* is what a certificate may emit: it is the
+        # smallest value the arithmetic can defend. Reporting the algebraic value alone would
+        # present ~19 significant digits of a quantity that float64 resolves to ~15.
         "bound": max(bound, 0.0) if valid else None,
+        "bound_including_margin": (
+            max(bound, 0.0) + rounding_margin + identity_residual) if valid else None,
+        "rounding_margin": rounding_margin,
+        "verification_tolerance": rounding_margin,
+        "identity_residual_longdouble": identity_residual_ld,
         "bound_kind": "quadratic_form_plus_complementarity_slack",
         "quadratic_form": quadratic,
         "complementarity_slack": slack,
@@ -434,6 +534,10 @@ def residual_regret_bound(
             "quadratic_plus_slack": bound,
             "duality_gap": duality_gap,
             "absolute_difference": identity_residual,
+            "absolute_difference_extended_precision": identity_residual_ld,
+            "tolerance": 64.0 * rounding_margin,
+            "tolerance_kind": "forward_error_estimate_with_headroom",
+            "absorbed_into_bound": identity_residual,
             "identity_ok": identity_ok,
         },
         "gap_identity_residual": identity_residual,

@@ -99,6 +99,12 @@ class EvidenceRevision:
     #: Monotone version number. A successor must carry a strictly larger version than the revision
     #: it supersedes; a violation is refused rather than silently reordered.
     version: int | None = None
+    #: What ``delta`` means. ``"incremental"``: add this much to the input (several may compose).
+    #: ``"absolute"``: this *is* the corrected value, so it replaces any earlier one. ``None``
+    #: infers: absolute when the revision declares ``supersedes``, incremental otherwise. The two
+    #: are different claims and summing an absolute delta on top of the value it replaces is the
+    #: double count this field exists to make impossible to express by accident.
+    delta_semantics: str | None = None
 
     def availability(self) -> datetime:
         parsed = parse_instant(self.available_at)
@@ -123,6 +129,8 @@ class EvidenceRevision:
             "effective_at": self.effective_at,
             "withdrawn_at": self.withdrawn_at,
             "version": self.version,
+            "delta_semantics": self.delta_semantics or
+            ("absolute" if self.supersedes else "incremental"),
         }
 
 
@@ -294,10 +302,34 @@ def compile_revisions(
     supplied_ids = {item.revision_id for item in revisions}
     by_id = {item.revision_id: item for item in revisions}
 
-    def effective(revision: EvidenceRevision) -> datetime:
-        """The instant the correction takes effect (immutable; defaults to publication)."""
+    def public_at(revision: EvidenceRevision, instant: datetime) -> bool:
+        """Was the *document* public by ``instant``? Publication is when it could be known."""
 
-        return parse_instant(revision.effective_at or revision.available_at)
+        return revision.availability() <= instant
+
+    def effective_at(revision: EvidenceRevision) -> datetime:
+        """The instant the correction takes economic effect (defaults to publication)."""
+
+        parsed = parse_instant(revision.effective_at or revision.available_at)
+        assert parsed is not None
+        return parsed
+
+    def effective_by(revision: EvidenceRevision, instant: datetime) -> bool:
+        return effective_at(revision) <= instant
+
+    def eligible_at(revision: EvidenceRevision, instant: datetime) -> bool:
+        """Public **and** effective by ``instant``. Both conditions, never either one.
+
+        A revision cannot enter an audit before it became publicly available, even when its
+        economic effective date is earlier: a backdated correction whose document appears later was
+        not knowable earlier, so applying it is a look-ahead leak. Conversely a revision that is
+        public but not yet effective has not changed the data at the clock, so it is not applied
+        either. An earlier version used ``effective_at or available_at`` as the sole test, which
+        made a backdated but unpublished correction eligible, and the same flaw leaked into
+        supersession: a successor nobody could have read yet could suppress its predecessor.
+        """
+
+        return public_at(revision, instant) and effective_by(revision, instant)
 
     def withdrawn_at_audit(revision: EvidenceRevision) -> bool:
         """Was this revision withdrawn *by the audit clock*?"""
@@ -339,41 +371,86 @@ def compile_revisions(
                     predecessor=predecessor_id, predecessor_version=predecessor.version,
                     successor=candidate.revision_id, successor_version=candidate.version,
                 )
-            if effective(candidate) < effective(predecessor):
+            if effective_at(candidate) < effective_at(predecessor):
                 raise ValidationError(
                     "a superseding revision cannot take effect before the revision it replaces",
                     predecessor=predecessor_id, successor=candidate.revision_id,
                 )
+            semantics = candidate.delta_semantics or "absolute"
+            if semantics != "absolute":
+                raise ValidationError(
+                    "a revision that supersedes another must declare absolute (replacement) delta "
+                    "semantics: an incremental delta would be added on top of the value it "
+                    "replaces, counting the correction twice",
+                    predecessor=predecessor_id, successor=candidate.revision_id,
+                    delta_semantics=semantics,
+                )
 
-    def has_live_successor(revision_id: str, seen: frozenset[str] = frozenset()) -> bool:
-        """Is there a replacement that is itself live *at the audit clock*?
+    def is_live(revision: EvidenceRevision) -> bool:
+        """Operative at the audit clock: not withdrawn, public, and effective."""
 
-        A successor published after the cut-off, or withdrawn before it, cannot retroactively
-        erase the revision it was meant to replace: at the audit instant the earlier revision was
-        the operative record. This is the defect the review found, and it is the whole reason the
-        resolution is recursive rather than a set comprehension.
+        return not withdrawn_at_audit(revision) and eligible_at(revision, audit_instant)
+
+    terminal_cache: dict[str, tuple[str, ...]] = {}
+
+    def terminals(revision_id: str) -> tuple[str, ...]:
+        """The operative version(s) at the end of a replacement chain, at the audit clock.
+
+        A revision is followed only through *live* successors, so a successor that is not public,
+        not yet effective, or withdrawn by the cut-off replaces nothing. Every ancestor of a live
+        terminal is superseded — including the nodes in the middle of a chain. An earlier version
+        asked whether a successor was *itself terminal*, which made ``A -> B -> C`` skip B for A
+        and leave both A and C applied: a doubled replacement delta reported as an audit.
+
+        The result is a tuple because an archive can contradict itself; the caller refuses an
+        ambiguous branch instead of resolving it with an arbitrary tie-break.
         """
 
-        if revision_id in seen:
-            return False
-        seen = seen | {revision_id}
-        for candidate in successors.get(revision_id, []):
-            if withdrawn_at_audit(candidate):
-                continue
-            if effective(candidate) > audit_instant:
-                continue
-            if has_live_successor(candidate.revision_id, seen):
-                continue
-            return True
-        return False
+        if revision_id in terminal_cache:
+            return terminal_cache[revision_id]
+        live_children = [item for item in successors.get(revision_id, []) if is_live(item)]
+        if not live_children:
+            terminal_cache[revision_id] = (revision_id,)
+            return terminal_cache[revision_id]
+        found: list[str] = []
+        for child in live_children:
+            for term in terminals(child.revision_id):
+                if term not in found:
+                    found.append(term)
+        terminal_cache[revision_id] = tuple(sorted(found))
+        return terminal_cache[revision_id]
 
-    superseded_ids = {predecessor for predecessor in successors
-                      if predecessor in supplied_ids and has_live_successor(predecessor)}
+    superseded_by: dict[str, str] = {}
+    for revision in revisions:
+        resolved = terminals(revision.revision_id)
+        if len(resolved) > 1:
+            raise ValidationError(
+                "ambiguous revision lineage: more than one live successor replaces this revision "
+                "and none supersedes the others, so the operative version is undetermined",
+                revision_id=revision.revision_id, operative_candidates=list(resolved),
+            )
+        if resolved and resolved != (revision.revision_id,):
+            superseded_by[revision.revision_id] = resolved[0]
+    superseded_ids = set(superseded_by)
     pending_successor_ids = {
         predecessor for predecessor in successors
         if predecessor in supplied_ids and predecessor not in superseded_ids
-        and successors.get(predecessor)
     }
+
+    def semantics_of(revision: EvidenceRevision) -> str:
+        """What this revision's ``delta`` claims, resolving the default.
+
+        A revision that is *replaced* carries an absolute value even when it does not itself
+        declare ``supersedes``: being the thing a successor replaces is what makes its delta the
+        corrected value rather than an increment. Inferring only from the revision's own field made
+        the root of a chain look incremental and hid a two-absolute-revision conflict.
+        """
+
+        if revision.delta_semantics:
+            return revision.delta_semantics
+        if revision.supersedes or revision.revision_id in successors:
+            return "absolute"
+        return "incremental"
 
     def record(revision: EvidenceRevision, category: str, included: bool, reason: str | None,
                detail: str) -> None:
@@ -382,6 +459,10 @@ def compile_revisions(
             "evidence_id": revision.evidence_id,
             "input_key": revision.input_key,
             "available_at": revision.available_at,
+            "effective_at": revision.effective_at or revision.available_at,
+            "withdrawn_at": revision.withdrawn_at,
+            "version": revision.version,
+            "delta_semantics": semantics_of(revision),
             "status": revision.status,
             "incorporated_in": revision.incorporated_in,
             "category": category,
@@ -417,42 +498,56 @@ def compile_revisions(
                    "retracted on or before the audit clock")
             continue
         if revision.revision_id in superseded_ids:
-            replacement = next(
-                candidate.revision_id for candidate in successors[revision.revision_id]
-                if not withdrawn_at_audit(candidate) and effective(candidate) <= audit_instant
-                and not has_live_successor(candidate.revision_id))
+            replacement = superseded_by[revision.revision_id]
             excluded.append({
                 "revision_id": revision.revision_id,
                 "reason": "superseded_before_audit",
                 "superseded_by": replacement,
                 "audit_as_of": audit_clock,
-                "detail": "a later revision, itself effective at the audit clock, replaces this "
-                          "one",
+                "operative_version": replacement,
+                "detail": "a later revision, itself public and effective at the audit clock, "
+                          "replaces this one; only the operative version's delta is applied",
             })
             superseded.append(revision.revision_id)
             record(revision, "superseded", False, "superseded_before_audit",
-                   f"replaced by {replacement}, which was effective by the audit clock")
+                   f"replaced by {replacement}, which was public and effective by the audit clock")
             continue
-        available = effective(revision)
-        if available > audit_instant and not allow_future:
+        if not public_at(revision, audit_instant) and not allow_future:
             excluded.append({
                 "revision_id": revision.revision_id,
-                "reason": ("not_available_at_decision" if audit_instant == decision_instant
-                           else "not_available_at_audit"),
+                "reason": ("not_public_at_decision" if audit_instant == decision_instant
+                           else "not_public_at_audit"),
                 "available_at": revision.available_at,
+                "effective_at": revision.effective_at,
                 "decision_as_of": clock,
                 "audit_as_of": audit_clock,
-                "detail": "the revision was not public at the audit clock; applying it would "
-                          "be a hindsight computation",
+                "detail": "the document was not public at the audit clock; an economic effective "
+                          "date cannot make a document knowable, so applying it would be a "
+                          "hindsight computation",
             })
-            record(revision, "published_after_audit", False, "not_available_at_audit",
+            record(revision, "published_after_audit", False, "not_public_at_audit",
                    "not public at the audit clock")
             continue
-        if available <= decision_instant and not include_pre_decision:
+        if not effective_by(revision, audit_instant) and not allow_future:
+            excluded.append({
+                "revision_id": revision.revision_id,
+                "reason": ("not_effective_at_decision" if audit_instant == decision_instant
+                           else "not_effective_at_audit"),
+                "available_at": revision.available_at,
+                "effective_at": revision.effective_at or revision.available_at,
+                "audit_as_of": audit_clock,
+                "detail": "the correction was public but had not taken economic effect at the "
+                          "audit clock; the data it would change had not changed yet",
+            })
+            record(revision, "published_before_effective", False, "not_effective_at_audit",
+                   "public but not yet effective at the audit clock")
+            continue
+        if eligible_at(revision, decision_instant) and not include_pre_decision:
             excluded.append({
                 "revision_id": revision.revision_id,
                 "reason": "already_incorporated_in_decision_vintage",
                 "available_at": revision.available_at,
+                "effective_at": revision.effective_at or revision.available_at,
                 "decision_as_of": clock,
                 "starting_vintage": starting_vintage,
                 "detail": "the correction was public before the decision clock, so the base "
@@ -480,9 +575,10 @@ def compile_revisions(
                                   input_key=revision.input_key, expected=n, received=int(effect.size))
         delta_cost = delta_cost + float(revision.delta) * effect
         applied.append(revision)
-        if available > decision_instant:
+        if not eligible_at(revision, decision_instant):
             post_decision.append(revision.revision_id)
-        record(revision, "published_after_decision" if available > decision_instant
+        record(revision, "published_after_decision"
+               if not eligible_at(revision, decision_instant)
                else "pre_decision_explicitly_included", True, None,
                "applied to the corrected program")
     dangling = {item.supersedes for item in revisions
@@ -500,8 +596,24 @@ def compile_revisions(
             "not effective at the audit clock; the earlier revision stands"
         )
 
+    # One operative absolute revision per input. Two of them would each claim to *be* the corrected
+    # value, so summing them double counts — the failure mode a broken chain produces. Incremental
+    # corrections are additive by construction and may share an input freely.
+    absolute_by_input: dict[str, list[str]] = {}
+    for revision in applied:
+        if semantics_of(revision) == "absolute":
+            absolute_by_input.setdefault(revision.input_key, []).append(revision.revision_id)
+    conflicts = {key: ids for key, ids in absolute_by_input.items() if len(ids) > 1}
+    if conflicts:
+        raise ValidationError(
+            "more than one operative absolute revision for the same input; their deltas are "
+            "alternatives, not increments, so applying both would double count",
+            input_keys=sorted(conflicts), revisions=conflicts,
+        )
+
     if allow_future:
-        future_reasons = {"not_available_at_decision", "not_available_at_audit"}
+        future_reasons = {"not_public_at_decision", "not_public_at_audit",
+                          "not_effective_at_decision", "not_effective_at_audit"}
         leaked = [item for item in excluded if item["reason"] in future_reasons]
         notes.append(
             "HINDSIGHT DIAGNOSTIC: revisions not public at the clock were applied. "

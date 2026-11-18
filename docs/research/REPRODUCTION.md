@@ -23,11 +23,14 @@ Reported run: Python 3.12.3, NumPy 2.5.5, SciPy 1.18.1, OSQP 1.1.3, Clarabel 0.1
 .venv/bin/python -m pytest -q
 ```
 
-The decision layer is 98 tests across `tests/test_decision_program.py`,
-`tests/test_decision_certificate.py` and `tests/test_decision_certification.py`. The third module
-is the adversarial set: negative multipliers, mismatched geometries, infeasible recorded decisions,
-iteration budgets, superseded and withdrawn revisions, and worst-case soundness against vertex
-enumeration.
+The decision layer is 171 tests across six modules: `tests/test_decision_program.py`,
+`tests/test_decision_certificate.py`, `tests/test_decision_certification.py`,
+`tests/test_decision_counterexample.py` (the review's hand-computable instance),
+`tests/test_decision_properties.py` (properties asserted across scales and geometries) and
+`tests/test_decision_lineage.py` (replacement chains and the two clocks). The adversarial set
+includes negative multipliers, mismatched geometries, infeasible recorded decisions, iteration
+budgets, superseded and withdrawn revisions, backdated and not-yet-effective corrections, branching
+and cyclic lineage, and worst-case soundness against vertex enumeration.
 
 ## 3. Synthetic experiments
 

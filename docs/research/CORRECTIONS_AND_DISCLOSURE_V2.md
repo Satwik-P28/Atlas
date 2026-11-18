@@ -180,7 +180,7 @@ residual). Over the certified set the bound has median `3.8e-19` and maximum `1.
 realized regret in that set is `3.7e-15`. The certified rate is unchanged at `0.413`, as it must be
 — the tolerance test did not change, only what is reported about it.
 
-**Superseded result preserved.** `artifacts/research/cri_results.json` previously carried
+**Superseded result preserved (first of two).** `artifacts/research/cri_results.json` previously carried
 `"bound": 0.0` for every certified event, and the report's §7.2 printed `bound 0.0` for the SEC
 case. Those entries are wrong in the same way and are retained here as the record of what was
 claimed at `04198d2`: the current artifact reports the computed residual (median `3.8e-19`,

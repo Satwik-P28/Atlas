@@ -347,7 +347,16 @@ def certify_revision_impact(
             )
         else:
             bounded_block["dual_value"] = float(dual_point.value)
-            bounded_block["regret_upper_bound"] = float(max(bound, 0.0))
+            # The same principle as the residual certificate: the difference of two float64
+            # objectives carries a forward error, and a bound is only defensible down to it. It is
+            # negligible against a gap of order 1e-3 and decisive against one of order 1e-18, which
+            # is exactly when it matters.
+            dual_margin = 8.0 * (float(np.finfo(float).eps) / 2.0) * (revised.dimension + 2) * (
+                abs(objective_at_decision) + abs(float(dual_point.value)))
+            bounded_block["regret_upper_bound"] = float(max(bound, 0.0)) + dual_margin
+            bounded_block["regret_upper_bound_exact_arithmetic"] = float(max(bound, 0.0))
+            bounded_block["rounding_margin"] = dual_margin
+            bounded_block["verification_tolerance"] = dual_margin
             bounded_block["bound_valid"] = True
             bounded_block["bound_kind"] = (
                 "duality_gap_from_recorded_multipliers" if requested_iterations == 0
@@ -355,8 +364,13 @@ def certify_revision_impact(
             )
 
     residual_bound = None
+    residual_margin = None
     if residual_block is not None and residual_block.get("valid"):
-        residual_bound = residual_block.get("bound")
+        # Emit the margin-inclusive value: the algebraic bound plus the floating-point resolution
+        # of the arithmetic that produced it. Emitting the algebraic value alone would present a
+        # 1e-18 number as verified to 1e-18 when float64 resolves roughly 1e-15 of it.
+        residual_bound = residual_block.get("bound_including_margin")
+        residual_margin = residual_block.get("rounding_margin")
     if not feasibility.feasible:
         verdict = "infeasible_under_revision"
     elif exact_report.satisfied and residual_bound is not None:
@@ -376,12 +390,38 @@ def certify_revision_impact(
             "tolerance": exact_report.tolerance,
             "gap_identity_residual": residual_block.get("gap_identity_residual")
             if residual_block else None,
+            "identity_residual_extended_precision":
+                residual_block.get("identity_residual_longdouble") if residual_block else None,
         }
+        # Two numbers, never one: the algebraic bound and the floating-point resolution that
+        # separates it from what the arithmetic can defend. The emitted bound is the sum.
+        bounded_block["regret_upper_bound_exact_arithmetic"] = (
+            residual_block.get("bound") if residual_block else None)
+        bounded_block["rounding_margin"] = residual_margin
+        bounded_block["verification_tolerance"] = residual_margin
+        bounded_block["bound_precision_note"] = (
+            "the reported bound is the algebraic residual plus a forward floating-point error "
+            "estimate; digits below that margin are not claimed")
     elif bounded_block["regret_upper_bound"] is not None:
         # A finite bound is a certificate whether or not it is small. Whether it is small
         # enough to act on is a separate, declared-tolerance question, so it is reported as
         # its own flag rather than folded into the verdict.
         verdict = "regret_bounded"
+        if residual_block is not None and not residual_block.get("valid"):
+            # Say why the residual certificate was refused. Without this, an event whose KKT test
+            # passed but whose identity did not verify looks like an unexplained fallback, and the
+            # earlier version of this code resolved that silence by reporting 0.0.
+            bounded_block["residual_rejected"] = {
+                "reason": "the residual certificate failed its own identity check at the "
+                          "floating-point resolution of the arithmetic",
+                "gap_identity_residual": residual_block.get("gap_identity_residual"),
+                "identity_tolerance": (residual_block.get("identity_check") or {}).get("tolerance"),
+                "algebraic_bound": residual_block.get("bound"),
+                "quadratic_form": residual_block.get("quadratic_form"),
+                "complementarity_slack": residual_block.get("complementarity_slack"),
+                "primal_feasible": residual_block.get("primal_feasible"),
+                "max_primal_violation": residual_block.get("max_primal_violation"),
+            }
     else:
         verdict = "uncertified"
     bound = bounded_block["regret_upper_bound"]

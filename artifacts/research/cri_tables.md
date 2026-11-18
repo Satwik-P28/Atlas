@@ -71,6 +71,7 @@ the technical report is copied from this file.
 | certified_within_residual | 0.413 | [0.373, 0.453] |
 | bounded_within_tolerance | 0.425 | [0.383, 0.468] |
 | warm_bound_sound | 1.000 | [1.000, 1.000] |
+| warm_bound_sound_strict | 0.941 | [0.923, 0.958] |
 | convex_bound_sound | 1.000 | [1.000, 1.000] |
 | taylor_sound | 0.774 | [0.741, 0.809] |
 | bound_sound_at_0 | 1.000 | [1.000, 1.000] |
@@ -97,7 +98,19 @@ Events with realized regret above `1e-10`: 0.587 of accepted events.
 
 ## Numerical residual certificate
 
-Over the 247 events certified within the residual, `0.5 r'Q^-1 r + slack` has median 3.833e-19 and maximum 1.770e-17; the largest realized regret in that set is 3.732e-15.
+Over the 247 events certified within the residual, the emitted bound has median 6.413e-18 and maximum 4.288e-17 (algebraic value before the floating-point margin: median 3.833e-19, maximum 1.770e-17).
+
+### Reconciliation against independently measured regret
+
+- measured reference regret in the same set: median 7.589e-19, maximum 3.732e-15
+- events whose measured regret exceeds the emitted bound: 35 of 247, largest excess 3.729e-15
+- solver verification resolution (spread between the two reference optima): 1.421e-14; worst excess as a fraction of it: 0.26
+- excesses beyond that resolution: **0** (an excess here would be a soundness anomaly, not a measurement question)
+- events where the emitted bound is below the *conservative* regret (computed against the better solver optimum) beyond resolution: **0**
+- certified events where the lower-objective solver's point violates a constraint: 185 of 247, worst violation 3.43e-11 — this is what makes a solver report an objective below the true optimum
+- identity residual recomputed in extended precision, maximum: 2.068e-18
+- over **all 598** events carrying a bound, measured regret exceeds it outright in 35 and beyond the solver resolution in 0 — the resolution-aware rates in the table above are the second kind, and they are the only sense in which a soundness rate of 1.000 holds
+- a bound below the measured regret is a reconciliation question only when the excess exceeds the solver's own resolution; every one of these events is inside it
 LP fallback used in 0.304 of events; recovery methods: {"nonnegative_lp": 182, "least_squares": 416}.
 
 ## Reference agreement
@@ -109,11 +122,11 @@ Share of events whose regret is below ten times that spread: 0.413.
 
 | n | certificate ms | dual construction ms | re-solve cold ms | re-solve warm ms | OSQP ms | ratio vs cold SLSQP | ratio vs warm SLSQP | ratio vs OSQP |
 |---|---|---|---|---|---|---|---|---|
-| 8 | 1.627 | 5.261 | 5.054 | 4.983 | 0.920 | 3.11× | 3.06× | 0.57× |
-| 16 | 2.664 | 7.163 | 7.331 | 6.400 | 0.938 | 2.75× | 2.40× | 0.35× |
-| 32 | 5.084 | 13.679 | 13.481 | 11.527 | 1.144 | 2.65× | 2.27× | 0.22× |
-| 64 | 12.893 | 82.467 | 73.366 | 102.960 | 2.269 | 5.69× | 7.99× | 0.18× |
-| 128 | 61.395 | 918.697 | 949.396 | 833.054 | 8.668 | 15.46× | 13.57× | 0.14× |
+| 8 | 1.705 | 5.421 | 5.142 | 5.003 | 0.971 | 3.02× | 2.93× | 0.57× |
+| 16 | 2.864 | 7.319 | 7.422 | 6.456 | 1.022 | 2.59× | 2.25× | 0.36× |
+| 32 | 5.390 | 14.288 | 14.082 | 11.807 | 1.563 | 2.61× | 2.19× | 0.29× |
+| 64 | 14.567 | 58.948 | 82.839 | 85.428 | 2.465 | 5.69× | 5.86× | 0.17× |
+| 128 | 59.763 | 980.715 | 1024.858 | 769.340 | 7.721 | 17.15× | 12.87× | 0.13× |
 
 ## Position-cap sweep
 
@@ -141,7 +154,7 @@ dimension 4, 40 trials, 16 vertices enumerated per trial.
 
 - sound rate: 1.000
 - median bound / true worst case: 1.530 (p90 2.988)
-- median bound cost: 1.527 ms; median enumeration cost: 79.717 ms; ratio 51.54×
+- median bound cost: 1.497 ms; median enumeration cost: 78.351 ms; ratio 50.71×
 - corrections drawn outside the declared set violated the bound in 0.875 of trials, as expected
 
 ## Degeneracy, hindsight and the second domain

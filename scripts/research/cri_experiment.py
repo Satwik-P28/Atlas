@@ -48,7 +48,8 @@ from atlas.decision.inventory import (
     solve_capacity_allocation,
 )
 from atlas.decision.metrics import moving_block_bootstrap_ci, summarize
-from atlas.decision.problem import ConvexDecisionProblem, mean_variance_problem
+from atlas.decision.problem import (ConvexDecisionProblem, check_feasibility,
+                                    mean_variance_problem)
 from atlas.decision.qp import solve
 from atlas.decision.reference import solve_osqp
 from atlas.decision.revision import EvidenceRevision, InputSensitivity, compile_revisions
@@ -129,11 +130,37 @@ def rate(flags: Sequence[bool]) -> float | None:
     return float(np.mean(flags)) if len(flags) else None
 
 
-def reference_regret(problem: ConvexDecisionProblem, weights: Sequence[float]) -> dict[str, Any]:
-    """Realized regret measured by two independent solvers.
+def _resolution(record: dict[str, Any]) -> float:
+    # The resolution a measurement carries: the two reference optima disagree by this much, and the
+    # emitted bound is only defensible down to its own floating-point margin.
+    return float(max(record.get("verification_resolution") or 0.0,
+                     record.get("rounding_margin") or 0.0))
 
-    ``spread`` is the difference between their optimal values. A regret below that spread cannot
-    be distinguished from solver disagreement, so it is flagged rather than used as evidence.
+
+def _bound_sound(record: dict[str, Any], key: str, *, resolution_aware: bool) -> bool:
+    # Strict: the bound dominates the measured regret outright. Resolution-aware: it dominates it to
+    # within the measurement's own resolution, which is the only claim a float64 solver permits.
+    bound = record.get(key)
+    if bound is None:
+        return False
+    tolerance = _resolution(record) if resolution_aware else 0.0
+    return bool(record["realized_regret"] <= bound + tolerance)
+
+
+def reference_regret(problem: ConvexDecisionProblem, weights: Sequence[float]) -> dict[str, Any]:
+    """Realized regret measured by two independent solvers, with its own resolution.
+
+    The measured regret is ``f(w) - min(f_internal, f_osqp)``. That is an *upper* estimate of the
+    true regret only if both solver points are feasible: a solver that returns a point violating
+    the constraints by a few ulps can report an objective slightly below the true optimum, and the
+    measured regret then exceeds the true regret by exactly that much. So the block records which
+    solver produced the lower objective and by how much that point violates the constraints, and
+    reports a ``verification_resolution``: no comparison between a bound and this measurement is
+    meaningful below it.
+
+    ``regret`` (the larger of the two measurements) is kept as the reported figure because it is
+    the conservative choice for a *reader*; ``regret_conservative`` is the smaller one, which is
+    the conservative choice when asking whether a bound was exceeded.
     """
 
     objective_at_decision = float(problem.objective(np.asarray(weights, dtype=float)))
@@ -142,17 +169,99 @@ def reference_regret(problem: ConvexDecisionProblem, weights: Sequence[float]) -
     regret_internal = float(objective_at_decision - internal.objective)
     regret_external = float(objective_at_decision - external.objective)
     spread = abs(internal.objective - external.objective)
+    objectives = {"internal": float(internal.objective), "osqp": float(external.objective)}
+    low_solver = min(objectives, key=objectives.get)
+    low_weights = internal.weights if low_solver == "internal" else external.weights
+    low_feasibility = check_feasibility(problem, low_weights, tolerance=1e-9)
+    resolution = max(spread, 64.0 * float(np.finfo(float).eps)
+                     * max(1.0, abs(objective_at_decision)))
     return {
         "regret_internal": regret_internal,
         "regret_external": regret_external,
         "regret": max(regret_internal, regret_external),
+        "regret_conservative": min(regret_internal, regret_external),
         "external_weights": tuple(float(v) for v in external.weights),
         "solver_spread": spread,
+        "verification_resolution": float(resolution),
+        "low_solver": low_solver,
+        "low_solver_max_violation": float(low_feasibility.max_violation),
+        "low_solver_feasible": bool(low_feasibility.feasible),
         "below_solver_resolution": bool(
             max(regret_internal, regret_external) < 10.0 * max(spread, 1e-15)),
         "internal_status": internal.status,
         "external_status": external.status,
         "external_objective": float(external.objective),
+    }
+
+
+def _precision_block(records: Sequence[dict[str, Any]]) -> dict[str, Any]:
+    """Reconcile each certified bound with the regret an independent solver measures.
+
+    The question this answers is narrow and specific: *does any measured regret exceed the bound
+    emitted for that event, and if so, is the excess explained by the resolution of the measurement
+    rather than by a defect in the certificate?* An unexplained shortfall (excess beyond the
+    solver spread and the emitted rounding margin) would be a soundness failure; a shortfall
+    inside the resolution is not evidence either way, and is counted separately rather than
+    averaged away.
+    """
+
+    certified = [r for r in records if r.get("verdict") == "zero_regret_within_residual"]
+    emitted = [r["bound_warm"] for r in certified if r.get("bound_warm") is not None]
+    algebraic = [r["numerical_regret_bound"] for r in certified
+                 if r.get("numerical_regret_bound") is not None]
+    measured = [r["realized_regret"] for r in certified]
+    pairs = [(max(0.0, r["realized_regret"] - r["bound_warm"]), r["verification_resolution"])
+             for r in certified if r.get("bound_warm") is not None]
+    shortfalls = [item[0] for item in pairs]
+    unexplained = [(shortfall, resolution) for shortfall, resolution in pairs
+                   if shortfall > resolution]
+    identity_ld = [r["identity_residual_extended_precision"] for r in certified
+                   if r.get("identity_residual_extended_precision") is not None]
+    with_bound = [r for r in records if r.get("bound_warm") is not None]
+    strict_violations = [r for r in with_bound if r["realized_regret"] > r["bound_warm"]]
+    aware_violations = [r for r in with_bound
+                        if r["realized_regret"] > r["bound_warm"] + _resolution(r)]
+    return {
+        "certified_events": len(certified),
+        "algebraic_bound_max": max(algebraic) if algebraic else None,
+        "algebraic_bound_median": percentile(algebraic, 0.5),
+        "emitted_bound_max": max(emitted) if emitted else None,
+        "emitted_bound_median": percentile(emitted, 0.5),
+        "measured_regret_max": max(measured) if measured else None,
+        "measured_regret_median": percentile(measured, 0.5),
+        "solver_resolution_max": max((item[1] for item in pairs), default=None),
+        "events_measured_exceeds_emitted": int(sum(1 for value in shortfalls if value > 0)),
+        "max_shortfall": max(shortfalls) if shortfalls else 0.0,
+        "events_shortfall_within_resolution": int(
+            sum(1 for shortfall, resolution in pairs if shortfall <= resolution)),
+        "events_shortfall_beyond_resolution": len(unexplained),
+        "worst_shortfall_over_resolution": (
+            max(item[0] / item[1] for item in pairs if item[1] > 0) if any(
+                item[1] > 0 for item in pairs) else 0.0),
+        # The measurement that a bound must actually dominate: regret computed against the *better*
+        # of the two solver optima. The headline figure uses the worse one, which is the right
+        # choice for a reader and the wrong one for testing soundness.
+        "conservative_regret_max": max(
+            (r["regret_conservative"] for r in certified), default=None),
+        # Over every event that carries a bound, not only the certified ones: the two ways of
+        # counting a violation, so that a 1.000 rate can never be read as an exact guarantee.
+        "bound_events_all": len(with_bound),
+        "strict_bound_violations_all": len(strict_violations),
+        "resolution_aware_bound_violations_all": len(aware_violations),
+        "events_bound_below_conservative_measurement": int(sum(
+            1 for r in certified if r.get("bound_warm") is not None
+            and r["regret_conservative"] > r["bound_warm"] + r["verification_resolution"])),
+        "certified_events_with_low_solver_violation": int(sum(
+            1 for r in certified if (r.get("low_solver_max_violation") or 0.0) > 0.0)),
+        "max_low_solver_violation": max(
+            (r.get("low_solver_max_violation") or 0.0 for r in certified), default=0.0),
+        "identity_residual_extended_precision_max": max(identity_ld) if identity_ld else None,
+        "conclusion": (
+            "a bound below the measured regret is a reconciliation question only when the excess "
+            "exceeds the solver's own resolution; every one of these events is inside it"
+            if not unexplained else
+            "at least one measured regret exceeds its emitted bound by more than the solver "
+            "resolution, which is a soundness anomaly and must be investigated"),
     }
 
 
@@ -251,12 +360,21 @@ def experiment_certificates(seed: int) -> dict[str, Any]:
             "regret_internal": reference["regret_internal"],
             "regret_external": reference["regret_external"],
             "solver_spread": reference["solver_spread"],
+            "verification_resolution": reference["verification_resolution"],
+            "regret_conservative": reference["regret_conservative"],
+            "low_solver": reference["low_solver"],
+            "low_solver_max_violation": reference["low_solver_max_violation"],
+            "low_solver_feasible": reference["low_solver_feasible"],
             "below_solver_resolution": reference["below_solver_resolution"],
             "weights_changed": bool(np.max(np.abs(np.asarray(decision.weights) -
                                                   np.asarray(reference["external_weights"]))) > 1e-6),
             "verdict": warm.verdict,
             "certified_within_residual": warm.zero_regret,
             "bound_warm": warm.bounded["regret_upper_bound"],
+            "identity_residual_extended_precision": (
+                (warm.bounded.get("residual_kkt_residuals") or {})
+                .get("identity_residual_extended_precision")),
+            "residual_rejected": warm.bounded.get("residual_rejected"),
             "bound_arms": budget_arms,
             "bound_convex": convex["bound"] if convex["valid"] else None,
             "estimate_taylor": taylor["estimate"],
@@ -278,9 +396,12 @@ def experiment_certificates(seed: int) -> dict[str, Any]:
     arms = {
         "certified_within_residual": [record["certified_within_residual"] for record in usable],
         "bounded_within_tolerance": [record["meets_tolerance"] for record in usable],
-        "warm_bound_sound": [record["bound_warm"] is not None and
-                             record["bound_warm"] + 1e-12 >= record["realized_regret"]
+        "warm_bound_sound": [_bound_sound(record, "bound_warm", resolution_aware=True)
                              for record in usable],
+        # The same count without the resolution allowance, so 1.000 cannot be read as an exact
+        # numerical guarantee: it is a guarantee to the precision of the solver that checks it.
+        "warm_bound_sound_strict": [_bound_sound(record, "bound_warm", resolution_aware=False)
+                                    for record in usable],
         "convex_bound_sound": [record["bound_convex"] is not None and
                                record["bound_convex"] + 1e-12 >= record["realized_regret"]
                                for record in usable],
@@ -306,9 +427,13 @@ def experiment_certificates(seed: int) -> dict[str, Any]:
     # The residual bound attached to the *certified* verdict, which is the set the report
     # describes. Records carry a numerical bound under both verdicts, and mixing them made the
     # headline maximum describe a `regret_bounded` event rather than a certified one.
-    residual_bounds = [r["numerical_regret_bound"] for r in usable
-                       if r["certified_within_residual"]
-                       and r["numerical_regret_bound"] is not None]
+    # Two bounds, never one: the algebraic residual and the value actually emitted, which adds the
+    # floating-point resolution of the arithmetic that produced it.
+    residual_bounds = [r["bound_warm"] for r in usable
+                       if r["certified_within_residual"] and r["bound_warm"] is not None]
+    algebraic_bounds = [r["numerical_regret_bound"] for r in usable
+                        if r["certified_within_residual"]
+                        and r["numerical_regret_bound"] is not None]
     return {
         "seed": seed,
         "dataset_digest": market.dataset_digest,
@@ -330,6 +455,8 @@ def experiment_certificates(seed: int) -> dict[str, Any]:
             "max": max(residual_bounds) if residual_bounds else None,
             "median": percentile(residual_bounds, 0.5),
             "count": len(residual_bounds),
+            "algebraic_max": max(algebraic_bounds) if algebraic_bounds else None,
+            "algebraic_median": percentile(algebraic_bounds, 0.5),
         },
         "lp_fallback_rate": rate([r["used_lp_fallback"] for r in usable]),
         "recovery_methods": _reason_counts(
@@ -751,9 +878,10 @@ def aggregate(seed_results: Sequence[dict[str, Any]], *, block: int, seed: int) 
     flags = {
         "certified_within_residual": [record["certified_within_residual"] for record in records],
         "bounded_within_tolerance": [record["meets_tolerance"] for record in records],
-        "warm_bound_sound": [record["bound_warm"] is not None and
-                             record["bound_warm"] + 1e-12 >= record["realized_regret"]
+        "warm_bound_sound": [_bound_sound(record, "bound_warm", resolution_aware=True)
                              for record in records],
+        "warm_bound_sound_strict": [_bound_sound(record, "bound_warm", resolution_aware=False)
+                                    for record in records],
         "convex_bound_sound": [record["bound_convex"] is not None and
                                record["bound_convex"] + 1e-12 >= record["realized_regret"]
                                for record in records],
@@ -761,9 +889,12 @@ def aggregate(seed_results: Sequence[dict[str, Any]], *, block: int, seed: int) 
                          for record in records],
     }
     for budget in CONFIG["dual_budgets"]:
+        # Arm bounds live in a nested mapping, so they are read there rather than through
+        # _bound_sound. Resolution-aware for the same reason as the warm bound above.
         flags[f"bound_sound_at_{budget}"] = [
             record["bound_arms"][str(budget)]["bound"] is not None and
-            record["bound_arms"][str(budget)]["bound"] + 1e-12 >= record["realized_regret"]
+            record["realized_regret"] <= (record["bound_arms"][str(budget)]["bound"]
+                                          + _resolution(record))
             for record in records
         ]
     intervals = {
@@ -846,10 +977,50 @@ def to_markdown(results: dict[str, Any]) -> str:
     lines.append("## Numerical residual certificate")
     lines.append("")
     residual = results["certificates"]["residual"]
-    lines.append(f"Over the {residual['count']} events certified within the residual, "
-                 f"`0.5 r'Q^-1 r + slack` has median {residual['median']:.3e} and maximum "
-                 f"{residual['max']:.3e}; the largest realized regret in that set is "
-                 f"{residual['realized_max']:.3e}.")
+    lines.append(f"Over the {residual['count']} events certified within the residual, the emitted bound "
+                 f"has median {residual['median']:.3e} and maximum {residual['max']:.3e}"
+                 + (f" (algebraic value before the floating-point margin: median "
+                    f"{residual['algebraic_median']:.3e}, maximum {residual['algebraic_max']:.3e})"
+                    if residual.get('algebraic_median') is not None else "") + ".")
+    precision = results["certificates"].get("precision") or {}
+    if precision.get("certified_events"):
+        lines.append("")
+        lines.append("### Reconciliation against independently measured regret")
+        lines.append("")
+        lines.append(
+            f"- measured reference regret in the same set: median "
+            f"{precision['measured_regret_median']:.3e}, maximum {precision['measured_regret_max']:.3e}")
+        lines.append(
+            f"- events whose measured regret exceeds the emitted bound: "
+            f"{precision['events_measured_exceeds_emitted']} of {precision['certified_events']}, "
+            f"largest excess {precision['max_shortfall']:.3e}")
+        lines.append(
+            f"- solver verification resolution (spread between the two reference optima): "
+            f"{precision['solver_resolution_max']:.3e}; worst excess as a fraction of it: "
+            f"{precision['worst_shortfall_over_resolution']:.2f}")
+        lines.append(
+            f"- excesses beyond that resolution: **{precision['events_shortfall_beyond_resolution']}** "
+            "(an excess here would be a soundness anomaly, not a measurement question)")
+        lines.append(
+            f"- events where the emitted bound is below the *conservative* regret (computed "
+            f"against the better solver optimum) beyond resolution: "
+            f"**{precision['events_bound_below_conservative_measurement']}**")
+        lines.append(
+            f"- certified events where the lower-objective solver's point violates a constraint: "
+            f"{precision['certified_events_with_low_solver_violation']} of "
+            f"{precision['certified_events']}, worst violation "
+            f"{precision['max_low_solver_violation']:.2e} — this is what makes a solver report an "
+            "objective below the true optimum")
+        lines.append(
+            f"- identity residual recomputed in extended precision, maximum: "
+            f"{precision['identity_residual_extended_precision_max']:.3e}")
+        lines.append(
+            f"- over **all {precision['bound_events_all']}** events carrying a bound, measured regret "
+            f"exceeds it outright in {precision['strict_bound_violations_all']} and beyond the "
+            f"solver resolution in {precision['resolution_aware_bound_violations_all']} — the "
+            "resolution-aware rates in the table above are the second kind, and they are the only "
+            "sense in which a soundness rate of 1.000 holds")
+        lines.append(f"- {precision['conclusion']}")
     lines.append(f"LP fallback used in {results['certificates']['lp_fallback_rate']:.3f} of events; "
                  f"recovery methods: {json.dumps(results['certificates']['recovery_methods'])}.")
     lines.append("")
@@ -960,9 +1131,12 @@ def main() -> None:
     aggregate_certificates = aggregate(per_seed, block=CONFIG["bootstrap"]["block"],
                                        seed=CONFIG["bootstrap"]["seed"])
     records = [record for result in per_seed for record in result["records"]]
-    residual_bounds = [r["numerical_regret_bound"] for r in records
-                       if r["verdict"] == "zero_regret_within_residual"
-                       and r["numerical_regret_bound"] is not None]
+    certified_records = [r for r in records if r.get("verdict") == "zero_regret_within_residual"]
+    residual_bounds = [r["bound_warm"] for r in certified_records
+                       if r.get("bound_warm") is not None]
+    algebraic_bounds = [r["numerical_regret_bound"] for r in certified_records
+                        if r.get("numerical_regret_bound") is not None]
+    precision = _precision_block(records)
     results: dict[str, Any] = {
         "generated_by": "scripts/research/cri_experiment.py",
         "config": CONFIG,
@@ -977,9 +1151,12 @@ def main() -> None:
             },
             "tightness_by_budget": aggregate_certificates["tightness_by_budget"],
             "fraction_with_regret": aggregate_certificates["fraction_with_regret"],
+            "precision": precision,
             "residual": {"median": percentile(residual_bounds, 0.5),
                          "max": max(residual_bounds) if residual_bounds else None,
                          "count": len(residual_bounds),
+                         "algebraic_median": percentile(algebraic_bounds, 0.5),
+                         "algebraic_max": (max(algebraic_bounds) if algebraic_bounds else None),
                          "realized_max": max(
                              (r["realized_regret"] for r in records
                               if r["verdict"] == "zero_regret_within_residual"), default=None)},

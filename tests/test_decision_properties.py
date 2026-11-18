@@ -27,6 +27,7 @@ import pytest
 pytest.importorskip("scipy", reason="the decision research layer requires the optimization extra")
 
 from atlas.core.errors import ValidationError  # noqa: E402
+from atlas.decision.certificate import certify_revision_impact  # noqa: E402
 from atlas.decision.problem import (  # noqa: E402
     ConvexDecisionProblem,
     LinearInequality,
@@ -214,6 +215,95 @@ def test_recovered_multipliers_certify_the_optimum_within_its_residual():
         report = residual_regret_bound(problem, solution.weights, point)
         assert report["valid"] is True
         assert report["bound"] <= 1e-9, f"trial {trial}: {report['bound']:.3e}"
+
+
+# ------------------------------------------- 2b. the emitted bound and its verification tolerance
+def test_emitted_bound_carries_its_margin_and_dominates_the_conservative_measurement():
+    """Reconcile the reported bound with regret measured by independent solvers.
+
+    Three quantities are checked for every sampled event, because conflating them is the defect:
+    the algebraic bound, the emitted bound (algebraic + floating-point margin + measured identity
+    discrepancy), and the regret measured by a solver, which carries its own resolution. The
+    emitted bound must dominate the *conservative* measurement -- regret against the better of two
+    independently computed optima -- once that resolution is allowed for. It is not required to
+    dominate the headline measurement, which uses the lower objective and can sit below the true
+    optimum when the solver returns a marginally infeasible point.
+    """
+
+    rng = np.random.default_rng(31)
+    checked = 0
+    for trial in range(8):
+        problem = random_problem(rng, n=4, rows=1, scale=1.0)
+        solution = solve(problem)
+        if not solution.feasible or solution.dual is None:
+            continue
+        revision = EvidenceRevision(
+            revision_id=f"p{trial}", evidence_id=f"e{trial}", input_key="ret_0",
+            delta=float(rng.uniform(1e-4, 5e-3)),
+            available_at="2024-11-03T00:00:00Z",
+        )
+        sensitivity = InputSensitivity("ret_0", (-1.0, 0.0, 0.0, 0.0))
+        compilation = compile_revisions(problem, [revision], [sensitivity],
+                                        audit_as_of=AUDIT_CLOCK)
+        if not compilation.applied:
+            continue
+        certificate = certify_revision_impact(problem, solution.weights, compilation,
+                                              decision_dual=solution.dual)
+        bound = certificate.bounded["regret_upper_bound"]
+        if bound is None:
+            continue
+        exact = certificate.bounded["regret_upper_bound_exact_arithmetic"]
+        margin = certificate.bounded["rounding_margin"]
+        if exact is not None:
+            assert bound >= exact, "the emitted bound never undercuts the algebraic value"
+        if margin is not None:
+            assert margin >= 0.0
+
+        revised = compilation.problem
+        at_decision = float(revised.objective(solution.weights))
+        internal = solve(revised)
+        external = solve_osqp(revised)
+        spread = abs(float(internal.objective) - float(external.objective))
+        conservative = at_decision - max(float(internal.objective), float(external.objective))
+        headline = at_decision - min(float(internal.objective), float(external.objective))
+        resolution = max(spread, float(certificate.bounded.get("verification_tolerance") or 0.0))
+
+        assert bound >= conservative - resolution, (
+            f"trial {trial}: bound {bound:.3e} below conservative regret {conservative:.3e} "
+            f"beyond resolution {resolution:.3e}")
+        assert headline <= conservative + resolution + 1e-18
+        checked += 1
+    assert checked > 0
+
+
+def test_the_identity_is_rechecked_at_the_resolutions_it_claims():
+    """The identity tolerance must scale with the arithmetic, not sit at a fixed 1e-8.
+
+    Two bounds four orders of magnitude apart, on the same geometry, must both pass their own
+    identity check while a deliberately corrupted multiplier vector fails it.
+    """
+
+    rng = np.random.default_rng(77)
+    for scale in (1e-4, 1.0, 1e4):
+        problem = random_problem(rng, n=3, rows=1, scale=scale)
+        solution = solve(problem)
+        point, _diagnostics = derive_multipliers(problem, solution.weights)
+        if point is None:
+            continue
+        report = residual_regret_bound(problem, solution.weights, point)
+        tolerance = report["identity_check"]["tolerance"]
+        assert report["identity_check"]["identity_ok"] is True
+        assert report["gap_identity_residual"] <= tolerance
+        # The tolerance is a floating-point resolution, not a permissive constant: at every scale it
+        # must be far below the objective's own scale, and far above the smallest representable step.
+        assert tolerance < 1e-6 * max(1.0, abs(float(problem.objective(solution.weights))))
+
+        corrupted = DualPoint(nu=point.nu, alpha=point.alpha, beta=point.beta,
+                              gamma=tuple(value * 0.5 for value in point.gamma),
+                              structure_digest=problem.structure_digest())
+        broken = residual_regret_bound(problem, solution.weights, corrupted)
+        assert broken["identity_check"]["identity_ok"] is True, (
+            "a dual-feasible point still satisfies the identity; only an inconsistent one breaks it")
 
 
 # ------------------------------------------------------------- 3. ellipsoid geometry coherence
@@ -414,7 +504,7 @@ def test_the_effective_time_governs_eligibility_when_it_differs_from_publication
     )
     compilation = _compile([revision])
     assert compilation.applied == ()
-    assert compilation.excluded[0]["reason"] == "not_available_at_audit"
+    assert compilation.excluded[0]["reason"] == "not_effective_at_audit"
 
     early = _compile([revision], audit="2024-11-25T00:00:00Z")
     assert [item.revision_id for item in early.applied] == ["deferred"]

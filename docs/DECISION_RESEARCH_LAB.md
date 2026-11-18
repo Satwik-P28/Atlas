@@ -75,7 +75,7 @@ A useful certificate has to distinguish states that a single boolean would confl
 |---|---|
 | `zero_regret_within_residual` | the recorded decision satisfies the KKT system of the corrected program within a declared tolerance; the verdict reports the validated residual bound (`0.5 r'Q⁻¹r + slack`) and the residuals behind it, never a literal zero |
 | `regret_bounded` | a valid upper bound exists; whether it is small is a separate flag (`meets_tolerance`) against a user-declared tolerance |
-| `uncertified` | no bound and no exact certificate — the honest answer when the risk matrix is singular or no dual point is available |
+| `uncertified` | no bound and no residual certificate — the honest answer when the risk matrix is singular or no dual point is available |
 | `infeasible_under_revision` | the recorded decision is infeasible for the corrected program; no regret bound is claimed, because the recorded point is not a decision the auditor may take |
 | `revision_already_incorporated` | everything supplied is already inside the recorded vintage; there is nothing to audit |
 | `revision_not_eligible` | the revision is not public at the audit clock, or unsupported, or unmapped |
@@ -85,7 +85,7 @@ A useful certificate has to distinguish states that a single boolean would confl
 The layer prefers to refuse rather than to substitute:
 
 * a risk matrix that is not positive definite → the dual bound is refused with a reason, and only
-  the exact KKT test is offered;
+  the residual KKT test is offered;
 * a revision whose kind is not a linear-objective perturbation → refused, reason recorded;
 * a decision with no `as_of` clock → no revision can be compiled, reason recorded;
 * a recorded multiplier vector with a negative entry, a non-finite entry, the wrong dimension or a

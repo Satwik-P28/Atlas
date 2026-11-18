@@ -13,14 +13,18 @@
       {
         "available_at": "2025-02-27T21:27:18.000Z",
         "category": "published_after_decision",
+        "delta_semantics": "incremental",
         "detail": "applied to the corrected program",
+        "effective_at": "2025-02-27T21:27:18.000Z",
         "evidence_id": "0000078003-25-000054",
         "included_in_revision": true,
         "incorporated_in": null,
         "input_key": "pfe_fy2023_revenue_growth",
         "reason": null,
         "revision_id": "pfe-fy2023-revenue-growth-recast-0000078003-25-000054",
-        "status": "active"
+        "status": "active",
+        "version": 2,
+        "withdrawn_at": null
       }
     ],
     "numerical_regret_bound": 7.556701381358338e-31,
@@ -28,7 +32,7 @@
     "reference_objective_internal": -0.026500000000000003,
     "reference_objective_osqp": -0.0265,
     "reference_status_osqp": "solved",
-    "regret_upper_bound": 7.556701381358338e-31,
+    "regret_upper_bound": 2.3536728122053483e-16,
     "temporal_relationship": "revision_available_after_decision",
     "verdict": "zero_regret_within_residual"
   },
@@ -76,9 +80,9 @@
     "not_yet_public": {
       "applied": [],
       "excluded_reasons": [
-        "not_available_at_audit"
+        "not_public_at_audit"
       ],
-      "purpose": "an audit run before the restatement was accepted",
+      "purpose": "an audit run before the recast was accepted",
       "status": "no_material_change"
     }
   },
@@ -193,6 +197,7 @@
       "amendment": true,
       "available_at": "2025-02-27T21:27:18.000Z",
       "delta": 0.010535233728695248,
+      "delta_semantics": "incremental",
       "effective_at": null,
       "evidence_id": "0000078003-25-000054",
       "incorporated_in": null,
