@@ -82,7 +82,7 @@ def dataset_section(dataset: dict[str, Any], previous: dict[str, Any] | None) ->
 
 
 def headline_section(results: dict[str, Any], previous: dict[str, Any] | None) -> list[str]:
-    lines = ["## Materiality and certification (confirmatory test split)", ""]
+    lines = ["## Materiality and certification (post-results reanalysis split)", ""]
     header = ["cohort", "events", "material (95% cluster CI)", "certified immaterial",
               "certified material", "unknown", "false immaterial", "false material"]
     rows = []
@@ -102,6 +102,12 @@ def headline_section(results: dict[str, Any], previous: dict[str, Any] | None) -
     lines.append("`certified material` is established by a feasible descent (a lower bound on "
                  "regret), never by an upper bound above the threshold. `unknown` is the honest "
                  "third category: neither claim is justified.")
+    lines.append("")
+    lines.append("These events are the preregistered 2015-01-01 .. 2024-06-30 test split, but they are "
+                 "a **post-results reanalysis**, not an untouched confirmation: the period had "
+                 "already been inspected when the corrections were made. The only untouched sample "
+                 "is the later period reported below, and it is too small in cohort A to confirm "
+                 "anything.")
     lines.append("")
 
     lines.append("**Untouched later period (2024-07-01 .. 2025-06-30), first computed here.**")
@@ -148,6 +154,82 @@ def headline_section(results: dict[str, Any], previous: dict[str, Any] | None) -
                      "are `certified and KKT-stable / certified but not stable / stable but not "
                      "certified`.")
         lines.append("")
+    return lines
+
+
+def workflow_section(results: dict[str, Any]) -> list[str]:
+    lines = ["## Audit workflows: CRI against KKT + feasible descent against OSQP", ""]
+    header = ["cohort", "workflow", "immaterial", "material", "abstentions", "decisions settled",
+              "errors", "audit stage (ms)", "with compile (ms)", "end to end (ms)",
+              "descent always, end to end (ms)"]
+    rows = []
+    for cohort in results["cohorts"]:
+        workflows = cohort["workflows"]
+        for key, block in workflows["methods"].items():
+            runtime = block["runtime_ms"]
+            always = runtime.get("descent_always_end_to_end") or {}
+            rows.append([
+                cohort["cohort"], block["method"], str(block["certified_immaterial"]),
+                str(block["certified_material"]), str(block["abstentions"]),
+                pct(block["decisions_certified"]), str(block["errors"]),
+                number(runtime["audit_stage"]["median"], 2),
+                number(runtime["with_compile"]["median"], 2),
+                number(runtime["end_to_end"]["median"], 2),
+                number(always.get("median"), 2)])
+    lines += table(header, rows)
+    lines.append("")
+    lines.append("`errors` counts false immateriality and false materiality claims together; the "
+                 "OSQP row is the ground truth, so its zero is by construction and its cost is what "
+                 "re-solving costs. `descent always` charges the descent on every event instead of "
+                 "only when the first stage did not settle it; `end to end` includes compiling the "
+                 "audit program and the original decision solve, which every workflow needs.")
+    lines.append("")
+    lines.append("**Do the two combined workflows ever disagree?**")
+    lines.append("")
+    header = ["cohort", "events", "verdict disagreements", "certified sets identical",
+              "immaterialities added by CRI", "materialities added by CRI",
+              "KKT-stable but bound > tau", "CRI immaterial without KKT stability"]
+    rows = []
+    for cohort in results["cohorts"]:
+        agree = cohort["workflows"]["agreement"]
+        rows.append([cohort["cohort"], str(agree["events"]),
+                     str(agree["verdict_disagreements"]),
+                     "yes" if agree["certified_sets_identical"] else "no",
+                     str(agree["incremental_cri_immaterialities"]),
+                     str(agree["incremental_cri_materialities"]),
+                     str(agree["kkt_stable_but_bound_above_tau"]),
+                     str(agree["cri_immaterial_without_kkt_stability"])])
+    lines += table(header, rows)
+    lines.append("")
+    lines.append("The materiality side is not a CRI result at all: every material verdict comes from "
+                 "the greedy feasible descent, which is a partial reoptimisation, not a free step. "
+                 "The only thing that could distinguish the two workflows is the immateriality test, "
+                 "and on this data it never does.")
+    lines.append("")
+    return lines
+
+
+def uncertainty_section(results: dict[str, Any]) -> list[str]:
+    lines = ["## CRI-U: three questions, answered separately", ""]
+    header = ["cohort", "arm", "base", "centre", "certificates", "contained events",
+              "containment", "certified given contained", "median bound"]
+    rows = []
+    for cohort in results["cohorts"]:
+        for key, block in cohort["uncertainty"].items():
+            contained = block.get("contained_events")
+            rows.append([
+                cohort["cohort"], key, block["base"], block["centre"],
+                pct(block.get("certified_immaterial_share")),
+                "not measurable" if contained is None else str(contained),
+                "n/a" if contained is None else pct(block.get("containment_share")),
+                "n/a" if contained is None else pct(block.get("certified_given_contained")),
+                number(block.get("median_bound"))])
+    lines += table(header, rows)
+    lines.append("")
+    lines.append("Only the third arm is a statement about the revision that actually occurred; the "
+                 "first two are prospective, and the second is conditional on its box containing the "
+                 "observed correction. A zero in one arm is not a zero in another.")
+    lines.append("")
     return lines
 
 
@@ -247,28 +329,33 @@ def cost_section(results: dict[str, Any]) -> list[str]:
              "warm_ms", "internal_ms", "external_ms", "radius_ms")])
     lines += table(header, rows)
     lines.append("")
-    lines.append("**Stored state per decision (bytes).**")
+    lines.append("**Stored state per decision (bytes), both arms functionally equivalent.**")
     lines.append("")
-    header = ["cohort", "sufficient audit record", "shared structure (once)",
-              "amortized shared", "record + amortized", "audit-vintage cost vector only",
-              "cost vector + amortized", "full serialised problem"]
+    header = ["cohort", "decision state + provenance", "CRI record (with revision)",
+              "re-solve record", "shared block (once)", "amortized shared",
+              "CRI arm total", "re-solve arm total", "CRI / re-solve", "full serialised problem"]
     rows = []
     for cohort in results["cohorts"]:
         storage = cohort["storage"]
         rows.append([
-            cohort["cohort"], number(storage["record_bytes"]["median_bytes"], 0),
+            cohort["cohort"], number(storage["decision_state_bytes"]["median_bytes"], 0),
+            number(storage["record_with_revision_bytes"]["median_bytes"], 0),
+            number(storage["resolve_bytes"]["median_bytes"], 0),
             number(storage["shared_bytes"]["value"], 0),
             number(storage["amortized_shared_bytes_per_decision"]["value"], 1),
-            number(storage["record_plus_amortized_shared"]["value"], 1),
-            number(storage["cost_only_bytes"]["median_bytes"], 0),
-            number(storage["cost_only_plus_amortized_shared"]["value"], 1),
+            number(storage["record_with_revision_plus_amortized_shared"]["value"], 1),
+            number(storage["resolve_plus_amortized_shared"]["value"], 1),
+            number(storage["cri_over_re_solve_ratio"]["value"], 2),
             number(storage["problem_bytes"]["median_bytes"], 0)])
     lines += table(header, rows)
     lines.append("")
-    lines.append("The record carries the recorded weights, the recorded multipliers and the "
-                 "decision-time linear costs; the quadratic matrix, bounds and constraint rows are "
-                 "shared and stored once. `cost vector only` is what a re-solve needs per decision "
-                 "once the same structure is shared.")
+    lines.append("Both arms carry the same per-decision state -- recorded weights, decision-time "
+                 "linear costs, clocks, vintages, horizon, digests -- and the same shared block "
+                 "(matrix, bounds, constraints, risk weight, standardisation, and cohort provenance "
+                 "including the manifest digest). The CRI arm adds the recorded multipliers and the "
+                 "revision delta; the re-solve arm adds the audit-time cost vector, which is the same "
+                 "input in an equivalent form. The comparison is therefore like for like, and the "
+                 "certificate record is still not the smaller one.")
     lines.append("")
     return lines
 
@@ -341,6 +428,8 @@ def main() -> None:
     lines += attribution_section(json.loads(comparison_path.read_text())
                                  if comparison_path.exists() else None)
     lines += certificate_section(results)
+    lines += workflow_section(results)
+    lines += uncertainty_section(results)
     lines += agreement_section(results)
     lines += prediction_section(results)
     lines += cost_section(results)

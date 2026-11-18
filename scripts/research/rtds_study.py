@@ -20,6 +20,7 @@ Run: ``.venv/bin/python scripts/research/rtds_study.py``
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import sys
@@ -238,17 +239,32 @@ def classify_regret(bound: float | None, lower_bound: float, tau: float = TAU) -
     return "unknown"
 
 
-def minimal_record(decision_problem: Any, decision: Any, costs_decision: Sequence[float],
-                   event: dict[str, Any], cohort: str) -> dict[str, Any]:
-    """The smallest representation that a *fresh process* can certify from.
+#: Cohort-level provenance. The URL template is identical for every decision in a cohort, so it is
+#: stored in the shared block rather than repeated in each record.
+EVIDENCE_URL = "https://alfred.stlouisfed.org/graph/alfredgraph.csv?id=<ID>&vintage_date=<DATE>"
 
-    It has to carry the recorded decision, the multipliers that were recorded with it (without them
-    no bound can be evaluated), and the decision-time linear costs (without them the revision has no
-    base). The quadratic matrix, the bounds and the constraint rows are shared by every decision in a
-    cohort and are stored once, not per decision.
+
+def evidence_digest(event: dict[str, Any]) -> str:
+    """Digest of the retained observation record behind one decision.
+
+    Both audit workflows need to say *which* observations they audited, not only what they computed
+    from them. The digest is the same for both arms, so it is shared overhead and cancels in the
+    comparison; it is carried in the record because a record without provenance is not an audit trail.
     """
 
-    dual = decision.dual
+    payload = json.dumps(event["inputs"], sort_keys=True, default=str).encode()
+    return hashlib.sha256(payload).hexdigest()
+
+
+def decision_state(decision_problem: Any, decision: Any, costs_decision: Sequence[float],
+                   event: dict[str, Any], cohort: str) -> dict[str, Any]:
+    """The state **both** audit workflows must retain: the recorded decision and its provenance.
+
+    A re-solve needs the recorded weights (otherwise there is nothing to test) and the decision-time
+    linear costs (otherwise the revision has no base); so does a certificate. Neither arm gets this
+    state for free, and the earlier version of the storage comparison charged it to only one arm.
+    """
+
     return {
         "cohort": cohort,
         "period": event["period"],
@@ -257,31 +273,89 @@ def minimal_record(decision_problem: Any, decision: Any, costs_decision: Sequenc
         "decision_as_of": decision_problem.as_of,
         "decision_clock": f"{event['decision_vintage']}T23:59:59Z",
         "audit_clock": f"{event['audit_vintage']}T23:59:59Z",
+        "horizon_days": event["horizon_days_actual"],
         "weights": [float(value) for value in decision.weights],
-        "multipliers": {
-            "nu": float(dual.nu),
-            "alpha": [float(value) for value in dual.alpha],
-            "beta": [float(value) for value in dual.beta],
-            "gamma": [float(value) for value in dual.gamma],
-        },
         "costs_decision": [float(value) for value in costs_decision],
         "structure_digest": decision_problem.structure_digest(),
         "problem_digest": decision_problem.digest(),
+        "provenance": {"observation_digest": evidence_digest(event)},
     }
 
 
-def shared_structure(cohort: str, labels: Sequence[str], correlation: np.ndarray, rho: float
-                     ) -> dict[str, Any]:
-    """Everything a certificate needs that is identical for every decision in a cohort."""
+def minimal_record(decision_problem: Any, decision: Any, costs_decision: Sequence[float],
+                   event: dict[str, Any], cohort: str, *,
+                   delta: Sequence[float] | None = None) -> dict[str, Any]:
+    """The smallest representation that a *fresh process* can certify from.
+
+    It carries the recorded decision with its provenance (:func:`decision_state`), the multipliers
+    recorded with it (without them no bound can be evaluated), and -- when ``delta`` is given -- the
+    revision as a change in linear costs, which is the audit-time input in the form a certificate
+    consumes. Without ``delta`` the record relies on the revision being newly available evidence, and
+    that is exactly what ``rtds_audit_record.py --verify`` reconstructs it from.
+    """
+
+    dual = decision.dual
+    record = decision_state(decision_problem, decision, costs_decision, event, cohort)
+    record["multipliers"] = {
+        "nu": float(dual.nu),
+        "alpha": [float(value) for value in dual.alpha],
+        "beta": [float(value) for value in dual.beta],
+        "gamma": [float(value) for value in dual.gamma],
+    }
+    if delta is not None:
+        record["revision_delta"] = [float(value) for value in delta]
+    return record
+
+
+def resolve_record(decision_problem: Any, decision: Any, costs_decision: Sequence[float],
+                   costs_audit: Sequence[float], event: dict[str, Any], cohort: str
+                   ) -> dict[str, Any]:
+    """The functionally equivalent state a re-solve needs: same decision state, audit-time costs.
+
+    This exists so the storage comparison is like for like. It is *not* the smallest thing that could
+    be written down in principle; it is the smallest thing a re-solve workflow must retain to answer
+    the same question (was the recorded decision affected?) from the same evidence.
+    """
+
+    record = decision_state(decision_problem, decision, costs_decision, event, cohort)
+    record["costs_audit"] = [float(value) for value in costs_audit]
+    return record
+
+
+def shared_structure(cohort: str, labels: Sequence[str], correlation: np.ndarray, rho: float,
+                     manifest_digest: str | None = None) -> dict[str, Any]:
+    """Everything an audit needs that is identical for every decision in a cohort.
+
+    Both workflows share this block: the matrix, bounds, constraint rows, risk weight, the train-split
+    standardisation and the cohort's provenance (vendor, URL template, series, manifest digest).
+    """
 
     from rtds_model import UPPER, allocations
 
     rows = [row.as_dict() for row in allocations(len(labels), cohort)]
-    return {
+    block = {
         "cohort": cohort, "assets": list(labels), "risk_weight": float(rho),
         "risk_matrix": (rho * np.asarray(correlation, dtype=float)).tolist(),
         "lower": 0.0, "upper": UPPER, "budget": 1.0, "inequalities": rows,
+        "provenance": {"source": "ALFRED", "url_template": EVIDENCE_URL,
+                       "series": list(labels), "manifest_digest": manifest_digest},
     }
+    return block
+
+
+def train_half_width(train: Sequence[dict[str, Any]], block: dict[str, Any]) -> list[float]:
+    """Mean ``|Δc|`` per input over **training events only**.
+
+    The single implementation used by both the main analysis and the sensitivity grid. The grid used
+    to compute this from train and test events together, which leaked test revisions into the width of
+    the uncertainty set; the width is now train-only everywhere, by construction.
+    """
+
+    if not train:
+        return [0.0] * len(np.asarray(block["mean"], dtype=float))
+    deltas = np.abs(np.asarray([standardise(event["growth_audit"], block) for event in train])
+                    - np.asarray([standardise(event["growth_decision"], block) for event in train]))
+    return deltas.mean(axis=0).tolist()
 
 
 def run_event(event: dict[str, Any], cohort: str, labels: Sequence[str], block: dict[str, Any],
@@ -365,24 +439,44 @@ def run_event(event: dict[str, Any], cohort: str, labels: Sequence[str], block: 
             f"the regret lower bound {lower_bound:.6g} exceeds the measured regret {regret:.6g} "
             f"for cohort {cohort} {event['period']}: the truth or the witness is wrong")
 
-    # ---- CRI-U on two explicitly declared bases. The set is a set of *additional corrections*:
-    # its centre is zero on both, because a correction is not an absolute level.
+    # ---- CRI-U answers three *different* uncertainty questions, and they are kept separately.
+    # Widths are the training split's mean |Δc| per input in every arm; no arm is an absolute level.
     half = np.asarray(block["half_width_cost"], dtype=float)
+    coverage = "train-split mean |delta cost| per input (2000-2012 only)"
+    # (1) Prospective, base = the audit-time program: how much *further* correction could arrive
+    # after the audit vintage and still leave the decision certifiably immaterial? A future correction
+    # cannot be observed with two vintages, so this arm's containment is not measurable here and no
+    # containment rate is claimed for it.
     clock_start = time.perf_counter()
-    uncertainty_audit = interval_set(center=[0.0] * len(labels), half_width=half,
-                                     coverage="train mean |delta costs| per input, 2000-2012",
+    uncertainty_audit = interval_set(center=[0.0] * len(labels), half_width=half, coverage=coverage,
                                      label="further correction beyond the audit vintage")
     worst_audit = certify_worst_case(audit_problem, recorded, uncertainty_audit,
                                      decision_dual=decision.dual,
                                      dual_iterations=dual_iterations)
     worst_case_ms = (time.perf_counter() - clock_start) * 1000.0
+    # (2) Prospective, base = the decision-time program, centre = no change: if the total correction
+    # were any vector in a symmetric box around zero. The observed correction is inside this box for
+    # only about half of the events, which is measured (``out_of_set``) and makes the guarantee
+    # conditional -- it is reported as such, not as a guarantee on the historical revision.
     uncertainty_decision = interval_set(center=[0.0] * len(labels), half_width=half,
-                                        coverage="train mean |delta costs| per input, 2000-2012",
-                                        label="correction relative to the decision vintage")
+                                        coverage=coverage,
+                                        label="prospective total correction, no change assumed")
     worst_decision = certify_worst_case(decision_problem, recorded, uncertainty_decision,
                                         decision_dual=decision.dual,
                                         dual_iterations=dual_iterations)
     out_of_set = float(uncertainty_decision.distance_outside(delta_cost))
+    # (3) Post-audit, base = the decision-time program, centre = the *observed* cost revision: the
+    # revision is known, but it is itself an estimate, wrong by a typical revision error. This is the
+    # only arm whose set is centred on the historical correction, so it is the only arm that can make
+    # a statement about the revision that actually occurred (within its declared error).
+    clock_start = time.perf_counter()
+    uncertainty_postaudit = interval_set(center=delta_cost, half_width=half, coverage=coverage,
+                                         label="observed revision +/- a typical revision error")
+    worst_postaudit = certify_worst_case(decision_problem, recorded, uncertainty_postaudit,
+                                         decision_dual=decision.dual,
+                                         dual_iterations=dual_iterations)
+    postaudit_ms = (time.perf_counter() - clock_start) * 1000.0
+    postaudit_distance = float(uncertainty_postaudit.distance_outside(delta_cost))
 
     clock_start = time.perf_counter()
     warm = solve(audit_problem, warm_start=recorded)
@@ -395,8 +489,14 @@ def run_event(event: dict[str, Any], cohort: str, labels: Sequence[str], block: 
     lower, upper = decision_problem.bounds()
     at_bound = np.isclose(recorded, lower, atol=1e-6) | np.isclose(recorded, upper, atol=1e-6)
 
+    # ---- stored state, charged identically to both workflows. The comparison is between two
+    # functionally equivalent records: the same decision state and provenance, plus either the
+    # multipliers a certificate needs or the audit-time costs a re-solve needs.
+    state = decision_state(decision_problem, decision, costs_decision, event, cohort)
     record = minimal_record(decision_problem, decision, costs_decision, event, cohort)
-    record_bytes = serialise_size(record)
+    record_with_revision = minimal_record(decision_problem, decision, costs_decision, event, cohort,
+                                          delta=delta_cost)
+    re_solve = resolve_record(decision_problem, decision, costs_decision, costs_audit, event, cohort)
     problem_bytes = serialise_size(audit_problem.as_dict())
     cost_only_bytes = serialise_size([float(value) for value in costs_audit])
 
@@ -435,7 +535,10 @@ def run_event(event: dict[str, Any], cohort: str, labels: Sequence[str], block: 
                                                          worst_audit.bound is not None) else None,
         "worst_case_decision": float(worst_decision.bound)
         if (worst_decision.valid and worst_decision.bound is not None) else None,
+        "worst_case_postaudit": float(worst_postaudit.bound)
+        if (worst_postaudit.valid and worst_postaudit.bound is not None) else None,
         "out_of_set": out_of_set,
+        "postaudit_distance": postaudit_distance,
         "binding": int(sum(np.isclose(recorded, lower, atol=1e-6) |
                            np.isclose(recorded, upper, atol=1e-6))),
         "radius": None if radius is None else float(radius.radius),
@@ -448,65 +551,265 @@ def run_event(event: dict[str, Any], cohort: str, labels: Sequence[str], block: 
                    "certificate_ms": certificate_ms, "internal_ms": internal_ms,
                    "external_ms": external_ms, "warm_ms": warm_ms,
                    "active_set_ms": active_set_ms, "worst_case_ms": worst_case_ms,
-                   "repair_ms": repair_ms, "radius_ms": radius_ms},
-        "storage": {"record_bytes": record_bytes, "problem_bytes": problem_bytes,
+                   "postaudit_ms": postaudit_ms, "repair_ms": repair_ms,
+                   "radius_ms": radius_ms},
+        "storage": {"record_bytes": serialise_size(record),
+                    "record_with_revision_bytes": serialise_size(record_with_revision),
+                    "resolve_bytes": serialise_size(re_solve),
+                    "decision_state_bytes": serialise_size(state),
+                    "provenance_bytes": serialise_size(state["provenance"]),
+                    "problem_bytes": problem_bytes,
                     "cost_only_bytes": cost_only_bytes},
     }
 
 
+def coverage_block(rows: Sequence[dict[str, Any]], name: str, immaterial: Sequence[bool],
+                   material: Sequence[bool], *, note: str = "") -> dict[str, Any]:
+    """Coverage, abstention and soundness of one method. Shared by every method table."""
+
+    n = len(rows)
+    certified_immaterial = sum(1 for flag in immaterial if flag)
+    certified_material = sum(1 for flag in material if flag)
+    false_immaterial = sum(1 for row, flag in zip(rows, immaterial) if flag and row["material"])
+    false_material = sum(1 for row, flag in zip(rows, material) if flag and not row["material"])
+    immaterial_events = sum(1 for row in rows if not row["material"])
+    return {"method": name, "events": n,
+            "certified_immaterial": certified_immaterial,
+            "certified_immaterial_share": certified_immaterial / n if n else None,
+            "certified_material": certified_material,
+            "certified_material_share": certified_material / n if n else None,
+            "abstentions": n - certified_immaterial - certified_material,
+            "abstention_share": (n - certified_immaterial - certified_material) / n if n else None,
+            "decisions_certified": (certified_immaterial + certified_material) / n if n else None,
+            "false_immaterial_certificates": false_immaterial,
+            "false_material_certificates": false_material,
+            "errors": false_immaterial + false_material,
+            "immaterial_events": immaterial_events,
+            "coverage_of_immaterial": (certified_immaterial / immaterial_events
+                                       if immaterial_events else None),
+            "note": note}
+
+
 def certificate_table(rows: Sequence[dict[str, Any]], tau: float) -> dict[str, Any]:
-    """Coverage of each method, split into immateriality certificates, materiality witnesses and
+    """Coverage of each certificate, split into immateriality certificates, materiality witnesses and
     abstentions. An upper bound above the tolerance is a *failure to prove*, never a proof."""
 
-    def summarise(name: str, immaterial: list[bool], material: list[bool]) -> dict[str, Any]:
-        n = len(rows)
-        certified_immaterial = sum(1 for flag in immaterial if flag)
-        certified_material = sum(1 for flag in material if flag)
-        false_immaterial = sum(1 for row, flag in zip(rows, immaterial)
-                               if flag and row["material"])
-        wrong_material = sum(1 for row, flag in zip(rows, material)
-                             if flag and not row["material"])
-        immaterial_events = sum(1 for row in rows if not row["material"])
-        return {"method": name, "events": n,
-                "certified_immaterial": certified_immaterial,
-                "certified_immaterial_share": certified_immaterial / n if n else None,
-                "certified_material": certified_material,
-                "certified_material_share": certified_material / n if n else None,
-                "abstentions": n - certified_immaterial - certified_material,
-                "abstention_share": (n - certified_immaterial - certified_material) / n if n else None,
-                "decisions_certified": (certified_immaterial + certified_material) / n if n else None,
-                "false_immaterial_certificates": false_immaterial,
-                "false_material_certificates": wrong_material,
-                "immaterial_events": immaterial_events,
-                "coverage_of_immaterial": (certified_immaterial / immaterial_events
-                                           if immaterial_events else None)}
-
-    bounded = [row["bound"] is not None and row["bound"] <= tau for row in rows]
+    witness = [row["lower_bound"] > tau + MATERIAL_MARGIN for row in rows]
     return {
-        "cri_immateriality_certificate": summarise(
-            "CRI regret bound <= tau (validated upper bound)", bounded, [False] * len(rows)),
-        "cri_with_witness": summarise(
-            "CRI certificate + feasible-repair materiality witness",
-            bounded, [row["certified_material"] for row in rows]),
-        "active_set": summarise(
-            "active-set / KKT stability (implies regret 0)",
+        "cri_immateriality_certificate": coverage_block(
+            rows, "CRI regret bound <= tau (validated upper bound)",
+            [row["bound"] is not None and row["bound"] <= tau for row in rows],
+            [False] * len(rows),
+            note="an upper bound above tau is a failure to certify, never a materiality claim"),
+        "cri_with_witness": coverage_block(
+            rows, "CRI certificate + greedy feasible-descent materiality witness",
+            [row["bound"] is not None and row["bound"] <= tau for row in rows], witness),
+        "active_set": coverage_block(
+            rows, "active-set / KKT stability (implies regret 0)",
             [row["stable"] for row in rows], [False] * len(rows)),
-        "strong_convexity": summarise(
-            "strong-convexity upper bound <= tau",
+        "strong_convexity": coverage_block(
+            rows, "strong-convexity upper bound <= tau",
             [row["strong_convexity"] is not None and row["strong_convexity"] <= tau
              for row in rows], [False] * len(rows)),
-        "cri_u_audit_base": summarise(
-            "CRI-U: further correction beyond the audit vintage",
-            [row["worst_case_audit"] is not None and row["worst_case_audit"] <= tau
-             for row in rows], [False] * len(rows)),
-        "cri_u_decision_base": summarise(
-            "CRI-U: correction relative to the decision vintage",
-            [row["worst_case_decision"] is not None and row["worst_case_decision"] <= tau
-             for row in rows], [False] * len(rows)),
-        "no_recompute": summarise(
-            "no recomputation (asserts regret 0 for every event)",
+        "no_recompute": coverage_block(
+            rows, "no recomputation (asserts regret 0 for every event)",
             [True] * len(rows), [False] * len(rows)),
     }
+
+
+#: The audit workflows compared head to head. ``kkt_plus_greedy`` is the simpler combined method:
+#: one least-squares dual recovery plus a KKT check, then a descent only when the decision moved.
+WORKFLOWS: dict[str, str] = {
+    "kkt_only": "KKT stability only (dual recovery + feasibility check, no descent)",
+    "kkt_plus_greedy": "KKT stability + greedy feasible descent",
+    "cri_only": "CRI certificate only",
+    "cri_plus_greedy": "CRI certificate + greedy feasible descent",
+    "osqp_resolve": "OSQP re-solve (ground truth for the regret, no certificate)",
+}
+
+
+def workflow_verdicts(row: dict[str, Any], tau: float = TAU) -> dict[str, str]:
+    """Three-way verdict each workflow would publish, from the quantities it actually computes.
+
+    The only difference between ``kkt_plus_greedy`` and ``cri_plus_greedy`` is the immateriality
+    test: KKT stability at the recorded weights, or a regret upper bound at or below the tolerance.
+    Both use the same descent for the opposite direction, so any difference in coverage is the
+    certificate's incremental contribution -- and nothing else.
+    """
+
+    stable = bool(row["stable"])
+    bound = row["bound"]
+    certified = bound is not None and bound <= tau
+    witness = row["lower_bound"] > tau + MATERIAL_MARGIN
+    return {
+        "kkt_only": "certified_immaterial" if stable else "unknown",
+        "kkt_plus_greedy": ("certified_immaterial" if stable
+                            else "certified_material" if witness else "unknown"),
+        "cri_only": "certified_immaterial" if certified else "unknown",
+        "cri_plus_greedy": ("certified_immaterial" if certified
+                            else "certified_material" if witness else "unknown"),
+        # A re-solve measures the regret, so it is the truth, not a certificate.
+        "osqp_resolve": "certified_material" if row["regret"] > tau else "certified_immaterial",
+    }
+
+
+def workflow_runtime(row: dict[str, Any], name: str, *, descend_always: bool = False
+                     ) -> dict[str, float]:
+    """End-to-end audit cost of one workflow on one event, in milliseconds.
+
+    The descent is only run when the first stage did not already settle the event, unless
+    ``descend_always`` is set. ``compile_ms`` and ``decision_ms`` are charged to every workflow: the
+    audit program has to be built from the revision in all of them, and the recorded decision is what
+    is being audited.
+    """
+
+    timing = row["timing"]
+    stable = bool(row["stable"])
+    certified = row["bound"] is not None and row["bound"] <= TAU
+    if name == "kkt_only":
+        stage = timing["active_set_ms"]
+    elif name == "kkt_plus_greedy":
+        stage = timing["active_set_ms"] + (timing["repair_ms"]
+                                          if (descend_always or not stable) else 0.0)
+    elif name == "cri_only":
+        stage = timing["certificate_ms"]
+    elif name == "cri_plus_greedy":
+        stage = timing["certificate_ms"] + (timing["repair_ms"]
+                                           if (descend_always or not certified) else 0.0)
+    elif name == "osqp_resolve":
+        stage = timing["external_ms"]
+    else:  # pragma: no cover - guarded by WORKFLOWS
+        raise KeyError(name)
+    return {"audit_ms": stage, "with_compile_ms": stage + timing["compile_ms"],
+            "end_to_end_ms": stage + timing["compile_ms"] + timing["decision_ms"]}
+
+
+def workflow_table(rows: Sequence[dict[str, Any]], tau: float = TAU) -> dict[str, Any]:
+    """Head-to-head comparison of the audit workflows, including the simpler combined baseline."""
+
+    def summarise(values: Sequence[float]) -> dict[str, float | None]:
+        if not values:
+            return {"median": None, "mean": None, "total_s": None}
+        return {"median": float(np.median(values)), "mean": float(np.mean(values)),
+                "total_s": float(np.sum(values)) / 1000.0}
+
+    verdicts = [workflow_verdicts(row, tau) for row in rows]
+    out: dict[str, Any] = {
+        "runtime_definition": ("per event; audit stage only, then including program compilation, "
+                               "then including the original decision solve"),
+        "methods": {}, "agreement": {},
+    }
+    for name, label in WORKFLOWS.items():
+        block = coverage_block(rows, label,
+                               [v[name] == "certified_immaterial" for v in verdicts],
+                               [v[name] == "certified_material" for v in verdicts])
+        block["kind"] = ("re_solve_ground_truth" if name == "osqp_resolve"
+                         else "audit_workflow")
+        runs = [workflow_runtime(row, name) for row in rows]
+        block["runtime_ms"] = {
+            "audit_stage": summarise([run["audit_ms"] for run in runs]),
+            "with_compile": summarise([run["with_compile_ms"] for run in runs]),
+            "end_to_end": summarise([run["end_to_end_ms"] for run in runs]),
+        }
+        if name in {"kkt_plus_greedy", "cri_plus_greedy"}:
+            always = [workflow_runtime(row, name, descend_always=True) for row in rows]
+            block["runtime_ms"]["descent_always_end_to_end"] = summarise(
+                [run["end_to_end_ms"] for run in always])
+        out["methods"][name] = block
+
+    kkt = [v["kkt_plus_greedy"] for v in verdicts]
+    cri = [v["cri_plus_greedy"] for v in verdicts]
+    out["agreement"] = {
+        "events": len(rows),
+        "verdict_disagreements": sum(1 for a, b in zip(kkt, cri) if a != b),
+        "certified_sets_identical": (
+            [v["kkt_plus_greedy"] == "certified_immaterial" for v in verdicts]
+            == [v["cri_plus_greedy"] == "certified_immaterial" for v in verdicts]),
+        "incremental_cri_immaterialities": sum(
+            1 for a, b in zip(kkt, cri)
+            if b == "certified_immaterial" and a != "certified_immaterial"),
+        "incremental_cri_materialities": sum(
+            1 for a, b in zip(kkt, cri)
+            if b == "certified_material" and a != "certified_material"),
+        "kkt_stable_but_bound_above_tau": sum(
+            1 for row in rows if row["stable"]
+            and (row["bound"] is None or row["bound"] > tau)),
+        "cri_immaterial_without_kkt_stability": sum(
+            1 for row, v in zip(rows, verdicts)
+            if v["cri_plus_greedy"] == "certified_immaterial" and not row["stable"]),
+        "descent_supplies_all_material_verdicts": sum(
+            1 for v in verdicts if v["kkt_plus_greedy"] == "certified_material"),
+    }
+    return out
+
+
+def uncertainty_table(rows: Sequence[dict[str, Any]], tau: float = TAU) -> dict[str, Any]:
+    """The three CRI-U questions, answered separately: coverage, containment, conditional guarantee.
+
+    Mixing them is what made the earlier zero read as a general failure. Containment is measurable
+    only for a set that is supposed to contain the *observed* correction; for a prospective set about
+    a future correction it is not measurable with two vintages, and the report says so instead of
+    quoting a rate.
+    """
+
+    arms: dict[str, Any] = {
+        "prospective_audit_base": {
+            "question": ("prospective: if a further correction of typical size arrived after the "
+                         "audit vintage, would the decision still be certifiably immaterial?"),
+            "base": "audit-time program", "centre": "zero (no further change)",
+            "bounds": [row["worst_case_audit"] for row in rows], "contained": None,
+            "containment_note": ("not measurable with two vintages: the set is about a correction "
+                                 "that has not arrived yet"),
+        },
+        "prospective_decision_base": {
+            "question": ("prospective: if the total correction were any vector in a symmetric box "
+                         "around no change, would the decision be certifiably immaterial?"),
+            "base": "decision-time program", "centre": "zero (no change assumed)",
+            "bounds": [row["worst_case_decision"] for row in rows],
+            "contained": [row["out_of_set"] <= 0 for row in rows],
+            "containment_note": ("measured against the observed cost revision; the guarantee is "
+                                 "conditional on containment"),
+        },
+        "postaudit_observed_centre": {
+            "question": ("post-audit: given the observed revision, and that it is itself wrong by a "
+                         "typical revision error, is the decision certifiably immaterial?"),
+            "base": "decision-time program", "centre": "observed cost revision",
+            "bounds": [row["worst_case_postaudit"] for row in rows],
+            "contained": [row["postaudit_distance"] <= 0 for row in rows],
+            "containment_note": ("contains the observed revision by construction; whether it "
+                                 "contains any *later* correction is not measured here"),
+        },
+    }
+    for name, arm in arms.items():
+        values = arm.pop("bounds")
+        certified = [value is not None and value <= tau for value in values]
+        contained = arm["contained"]
+        block = coverage_block(rows, name, certified, [False] * len(rows))
+        block["certified_immaterial"] = sum(certified)
+        block["certified_immaterial_share"] = float(np.mean(certified)) if rows else None
+        finite = [value for value in values if value is not None]
+        block["median_bound"] = float(np.median(finite)) if finite else None
+        if contained is not None:
+            n_contained = sum(1 for flag in contained if flag)
+            block["contained_events"] = n_contained
+            block["containment_share"] = n_contained / len(rows) if rows else None
+            block["certified_given_contained"] = (
+                sum(1 for flag, cert in zip(contained, certified) if flag and cert)
+                / n_contained if n_contained else None)
+            block["certified_and_contained_share"] = (
+                sum(1 for flag, cert in zip(contained, certified) if flag and cert)
+                / len(rows) if rows else None)
+        else:
+            block["contained_events"] = None
+            block["containment_share"] = None
+            block["certified_given_contained"] = None
+            block["certified_and_contained_share"] = None
+        block["question"] = arm["question"]
+        block["base"] = arm["base"]
+        block["centre"] = arm["centre"]
+        block["containment_note"] = arm["containment_note"]
+        arms[name] = block
+    return arms
 
 
 def heuristic_table(rows: Sequence[dict[str, Any]], tau: float) -> dict[str, Any]:
@@ -682,11 +985,8 @@ def analyse_cohort(cohort: dict[str, Any]) -> dict[str, Any]:
     print(f"[{key}] rho={rho} interior shares={shares}", flush=True)
 
     # CRI-U widths: the *magnitude* of a typical correction, in linear-cost units, from the train
-    # split only. The set is centred on zero -- a correction is not a level.
-    train_deltas = [np.abs(standardise(event["growth_audit"], block)
-                           - standardise(event["growth_decision"], block)) for event in train]
-    width = np.asarray(train_deltas, dtype=float)
-    block["half_width_cost"] = width.mean(axis=0).tolist() if width.size else [0.0] * len(labels)
+    # split only -- one implementation, shared with the sensitivity grid.
+    block["half_width_cost"] = train_half_width(train, block)
 
     rows = []
     for event in events:
@@ -710,29 +1010,49 @@ def analyse_cohort(cohort: dict[str, Any]) -> dict[str, Any]:
     }
 
     timing_names = ("decision_ms", "compile_ms", "certificate_ms", "internal_ms", "external_ms",
-                    "warm_ms", "active_set_ms", "worst_case_ms", "repair_ms", "radius_ms")
+                    "warm_ms", "active_set_ms", "worst_case_ms", "postaudit_ms", "repair_ms",
+                    "radius_ms")
     timing = {}
     for name in timing_names:
         values = [row["timing"][name] for row in test_rows]
         timing[name] = {"median": float(np.median(values)) if values else None,
                         "mean": float(np.mean(values)) if values else None}
     storage = {}
-    for name in ("record_bytes", "problem_bytes", "cost_only_bytes"):
+    storage_names = ("record_bytes", "record_with_revision_bytes", "resolve_bytes",
+                     "decision_state_bytes", "provenance_bytes", "problem_bytes",
+                     "cost_only_bytes")
+    for name in storage_names:
         values = [row["storage"][name] for row in test_rows]
         storage[name] = {"median_bytes": float(np.median(values)) if values else None}
-    shared = shared_structure(key, labels, block["correlation"], rho)
+    shared = shared_structure(key, labels, block["correlation"], rho,
+                              cohort.get("manifest_digest"))
     shared_bytes = serialise_size(shared)
     storage["shared_bytes"] = {"value": float(shared_bytes)}
     storage["decisions"] = {"value": float(len(rows))}
+    storage["functional_equivalence"] = {
+        "note": ("both arms carry the same decision state and provenance (recorded weights, "
+                 "decision-time costs, clocks, vintages, horizon, digests) and the same shared "
+                 "block; the CRI arm adds the multipliers and the revision delta, the re-solve arm "
+                 "adds the audit-time cost vector, which is the input of the same size"),
+        "cri_arm": "record_with_revision_bytes + amortized shared",
+        "re_solve_arm": "resolve_bytes + amortized shared",
+    }
     if rows:
-        storage["amortized_shared_bytes_per_decision"] = {
-            "value": float(shared_bytes) / len(rows)}
+        amortized = float(shared_bytes) / len(rows)
+        storage["amortized_shared_bytes_per_decision"] = {"value": amortized}
+        for name, column in (("record_with_revision", "record_with_revision_bytes"),
+                             ("resolve", "resolve_bytes"),
+                             ("decision_state", "decision_state_bytes"),
+                             ("cost_only", "cost_only_bytes")):
+            storage[f"{name}_plus_amortized_shared"] = {
+                "value": float(np.median([row["storage"][column] for row in rows])) + amortized}
         storage["record_plus_amortized_shared"] = {
             "value": float(np.median([row["storage"]["record_bytes"] for row in rows]))
-            + float(shared_bytes) / len(rows)}
-        storage["cost_only_plus_amortized_shared"] = {
-            "value": float(np.median([row["storage"]["cost_only_bytes"] for row in rows]))
-            + float(shared_bytes) / len(rows)}
+            + amortized}
+        # The ratio that matters: like-for-like, does the certificate record save anything?
+        cri = storage["record_with_revision_plus_amortized_shared"]["value"]
+        resolve = storage["resolve_plus_amortized_shared"]["value"]
+        storage["cri_over_re_solve_ratio"] = {"value": cri / resolve if resolve else None}
 
     return {
         "cohort": key,
@@ -755,9 +1075,13 @@ def analyse_cohort(cohort: dict[str, Any]) -> dict[str, Any]:
                        "inequality_matrix", "inequality_bounds", "objective_at_probe_points",
                        "gradient_at_decision"],
         },
+        "label": ("post-results reanalysis of the preregistered 2015-01-01 .. 2024-06-30 test "
+                  "split; the period had already been inspected when these corrections were made"),
         "test": cohort_summary(test_rows),
         "holdout": cohort_summary(holdout_rows),
         "certificates": certificate_table(test_rows, TAU),
+        "workflows": workflow_table(test_rows, TAU),
+        "uncertainty": uncertainty_table(test_rows, TAU),
         "heuristics": heuristic_table(test_rows, TAU),
         "agreement": agreement,
         "prediction": prediction_table(train_rows, test_rows, years),
@@ -765,10 +1089,12 @@ def analyse_cohort(cohort: dict[str, Any]) -> dict[str, Any]:
         "storage": storage,
         "cri_u": {
             "half_width_cost": block["half_width_cost"],
+            "half_width_source": "train split only (2000-2012); test events never enter the width",
             "median_out_of_set_distance": (float(np.median([row["out_of_set"] for row in test_rows]))
                                            if test_rows else None),
             "out_of_set_share": (float(np.mean([row["out_of_set"] > 0 for row in test_rows]))
                                  if test_rows else None),
+            "arms_reported_in": "uncertainty",
         },
         "pilot": {"events": len(pilot_rows),
                   "material_share": (float(np.mean([row["material"] for row in pilot_rows]))
@@ -787,9 +1113,9 @@ def sensitivity_grid(dataset: dict[str, Any]) -> dict[str, Any]:
         events = [event for event in cohort["events"] if event["split"] in {"train", "test"}]
         train = [event for event in events if event["split"] == "train"]
         block = calibration(train, labels)
-        deltas = [np.abs(standardise(event["growth_audit"], block)
-                         - standardise(event["growth_decision"], block)) for event in events]
-        block["half_width_cost"] = np.asarray(deltas).mean(axis=0).tolist()
+        # Train-only: the grid used to pool train and test revisions here, which leaked test data
+        # into the uncertainty-set width. The width is part of the method, not a reported metric.
+        block["half_width_cost"] = train_half_width(train, block)
         grid = {}
         for rho in (0.02, 0.05, 0.2, 1.0):
             rows = [run_event(event, key, labels, block, rho) for event in events]
@@ -813,8 +1139,11 @@ def sensitivity_grid(dataset: dict[str, Any]) -> dict[str, Any]:
 def main() -> None:
     dataset = load_dataset()
     payload: dict[str, Any] = {
-        "schema": "atlas.rtds.study.v2",
-        "supersedes": "artifacts/research/rtds/superseded/results_v1.json",
+        "schema": "atlas.rtds.study.v3",
+        "supersedes": ["artifacts/research/rtds/superseded/results_v1.json",
+                       "artifacts/research/rtds/superseded/results_v2.json"],
+        "sample_label": ("post-results reanalysis of the preregistered 2015-2024H1 test split; "
+                         "not an untouched confirmation"),
         "preregistration": "docs/research/rtds/PREREGISTRATION.md",
         "corrections": "docs/research/rtds/CORRECTIONS.md",
         "convention": dict(COST_CONVENTION),

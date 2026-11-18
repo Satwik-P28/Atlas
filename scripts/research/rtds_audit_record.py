@@ -84,10 +84,9 @@ def export() -> dict[str, Any]:
         train = [event for event in cohort["events"] if event["split"] == "train"]
         block = study.calibration(train, labels)
         rho, _shares = study.choose_rho(train, key, labels, block)
-        deltas = [np.abs(study.standardise(event["growth_audit"], block)
-                         - study.standardise(event["growth_decision"], block)) for event in train]
-        block["half_width_cost"] = np.asarray(deltas).mean(axis=0).tolist()
-        payload["shared"][key] = study.shared_structure(key, labels, block["correlation"], rho)
+        block["half_width_cost"] = study.train_half_width(train, block)
+        payload["shared"][key] = study.shared_structure(key, labels, block["correlation"], rho,
+                                                        cohort.get("manifest_digest"))
         # Train-split standardisation: shared by every decision in the cohort, so it is stored once.
         payload["standardisation"][key] = {"mean": block["mean"].tolist(),
                                            "scale": block["scale"].tolist(),

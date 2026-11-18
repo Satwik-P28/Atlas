@@ -220,6 +220,35 @@ smallest representation that a fresh process can certify from (weights, multipli
 costs, clocks, digests) plus a per-cohort shared block, and its size is compared with the marginal
 representation a re-solve needs rather than with a full serialised problem.
 
+### Post-hoc, second pass (version 3, after the corrected results had been reviewed)
+
+**A11. Head-to-head audit-workflow baseline (secondary, added post hoc).** §7 lists reoptimisation, the
+active-set test and CRI as competing methods but never combines them, so the study could report a
+two-sided workflow's coverage as a certificate result. Three workflows were added and scored on their own
+verdict rules: KKT stability + greedy feasible descent, CRI + the same descent, and an OSQP re-solve as
+ground truth, each with end-to-end runtime (compilation and the original decision solve included). The
+descent is described as *partial reoptimisation*. No endpoint changes; this is a comparison the existing
+method list implies.
+
+**A12. CRI-U question separation (substantive; exploratory).** The protocol's §7 worst-case arm was
+written as a set of corrections "sized by the training-split revision dispersion", which does not
+specify a centre. The implemented arms were centred on zero, which answers a prospective question, not a
+question about the observed revision. Three arms are now reported separately: prospective on the
+audit-time program; prospective on the decision-time program with a zero centre; and post-audit on the
+decision-time program with the centre at the **observed** cost revision. The third is an addition made
+after seeing the corrected results and is exploratory; widths stay train-only in all three. Containment
+is reported only where it is measurable.
+
+**A13. Storage equivalence and train-only widths (correctness, no endpoint).** The stored-state
+comparison now charges both arms the same decision state, provenance and shared block, so the ratio is
+like for like. Separately, `sensitivity_grid` computed the uncertainty half-width from train and test
+events together; it now uses the same train-only helper as the main analysis, and a regression test
+holds that.
+
+**A14. Terminology.** The 2015–2024H1 split is labelled a **post-results reanalysis** in the abstract,
+the tables and the JSON, not only in the body of the report. The unrun mapping-variant and horizon-grid
+studies are reported as limitations on generality, not as supporting evidence.
+
 ### Samples
 
 **A10. Prespecified sensitivity experiments: what was run, and what was not.** §7 prespecified four
@@ -245,4 +274,10 @@ split. Cohort A yields 4 events, which cannot settle anything; it is reported as
 used for any confirmatory claim.
 
 **S2. Reanalysis label.** The preregistered test split (2015-01-01 .. 2024-06-30) has been inspected. Its
-corrected results are reported as a reanalysis of the same period, not as a new confirmation.
+corrected results are reported as a reanalysis of the same period, not as a new confirmation, and the
+label appears in the abstract, every generated table and the result JSON (`sample_label`).
+
+**S3. What this protocol does not establish.** Two prespecified sensitivity families — mapping variants
+and the horizon grid — remain unexecuted (A10, A14). No result here is evidence about another functional
+form or another audit horizon, and the negative baseline result (A11) is established only at four and
+three assets, where a re-solve costs under a millisecond.

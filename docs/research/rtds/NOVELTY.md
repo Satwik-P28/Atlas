@@ -43,21 +43,26 @@ boundary. Concretely, three things do not appear together in the literature this
    *estimation*; the same discipline applied to *decision* audit (public availability and economic
    effective time as separate gates, resolved against an audit clock) is a reuse of an established idea
    in a place it is not usually applied.
-3. **A negative result about certification redundancy.** The finding that a duality-based certificate's
-   certified set coincides exactly with the classical active-set stability set — on real revisions, in
-   two independent revision processes — is a statement about what such certificates buy. It is a
-   caution for the "certified decision audit" idea rather than a promotion of it, and it is the kind of
-   result that is only visible when a certificate is run on data whose revisions were not designed to
-   make it look good.
+3. **A negative result about certification redundancy, and about its incremental value.** The finding
+   that a duality-based certificate's certified set coincides exactly with the classical active-set
+   stability set — on real revisions, in two independent revision processes — is a statement about what
+   such certificates buy. The version-3 comparison makes it sharper: a combined KKT-stability +
+   feasible-descent workflow reproduces every verdict, and an OSQP re-solve is faster than both while
+   settling every event. It is a caution for the "certified decision audit" idea rather than a promotion
+   of it, and it is the kind of result that is only visible when a certificate is benchmarked against the
+   obvious simpler workflow on data whose revisions were not designed to make it look good.
 
 ## Positioning
 
-The correction pass narrowed this further, and the narrowing is part of the assessment. Version 1's
+The correction passes narrowed this further, and the narrowing is part of the assessment. Version 1's
 most quotable claim (geometry predicts materiality with AUC 0.88/0.94) depended on a directional
 stability radius that re-runs the same optimality tests the outcome is defined by; without it the AUC is
 0.68/0.74. Version 1's storage claim was an artefact of comparing an insufficient record with a complete
-model. What remains novel is therefore the benchmark, the measurement discipline, and three negative
-results — not a predictive score.
+model, and disappears entirely (1.2× larger, not smaller) once both workflows are charged the same
+decision state. And the headline coverage of version 2 turned out to be a property of the two-sided
+workflow: the certificate adds nothing over KKT stability + descent, while a re-solve is faster than
+either. What remains novel is therefore the benchmark, the measurement discipline, and four negative
+results — not a predictive score and not an algorithm.
 
 The contribution is **an empirical benchmark and a measurement method**, not an algorithm:
 
@@ -65,10 +70,22 @@ The contribution is **an empirical benchmark and a measurement method**, not an 
 * a protocol that separates materiality from revision size and reports both;
 * an evaluation harness that scores certificates, active-set tests, first-order and strong-convexity
   bounds, worst-case certificates and no-recomputation against re-solving;
-* two negative results (magnitude is uninformative; the certificate is redundant with the active-set
-  test here) and one positive one (geometry predicts materiality with AUC 0.88/0.94 out of sample).
+* four negative results: revision magnitude is uninformative about materiality; the certificate is
+  redundant with the active-set test; the certificate adds no classification utility over KKT +
+  feasible descent and is slower than an OSQP re-solve; and it has no storage advantage; plus the
+  conditional description of when worst-case (CRI-U) certification fails at this tolerance.
 
 No claim of a new theorem, a new solver, or a decision-quality improvement is made. The mathematical
 content is classical duality and standard post-optimality analysis; the novelty, to the extent there is
 any, is in what is measured and in the honesty of the measurement — including that the measurement
-required a correction which removed two of the three headline claims.
+required two correction passes which removed the headline claims, and a baseline comparison which
+removed the last one.
+
+## What this study does *not* license
+
+Because the mapping `c = -z` is declared rather than estimated, and because the prespecified mapping and
+horizon sensitivity families were never executed, nothing here supports statements about revision
+materiality under another cost function or another audit horizon. The redundancy and dominance results
+are measured at four and three assets, where a re-solve costs under a millisecond; they say nothing about
+regimes where re-solving is expensive or unavailable, which is the only place a certificate could still
+earn its keep.

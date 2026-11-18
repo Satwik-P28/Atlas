@@ -20,7 +20,7 @@ Horizon rule: audit vintage = first vintage on or after add_months(decision, 12)
 | A | 98 | 0 | 98 | 392 |
 | B | 294 | 292 | 2 | 392 |
 
-## Materiality and certification (confirmatory test split)
+## Materiality and certification (post-results reanalysis split)
 
 | cohort | events | material (95% cluster CI) | certified immaterial | certified material | unknown | false immaterial | false material |
 |---|---|---|---|---|---|---|---|
@@ -28,6 +28,8 @@ Horizon rule: audit vintage = first vintage on or after add_months(decision, 12)
 | B | 114 | 50.0% [30.6%, 63.9%] | 51 (44.7%) | 57 (50.0%) | 6 (5.3%) | 0 | 0 |
 
 `certified material` is established by a feasible descent (a lower bound on regret), never by an upper bound above the threshold. `unknown` is the honest third category: neither claim is justified.
+
+These events are the preregistered 2015-01-01 .. 2024-06-30 test split, but they are a **post-results reanalysis**, not an untouched confirmation: the period had already been inspected when the corrections were made. The only untouched sample is the later period reported below, and it is too small in cohort A to confirm anything.
 
 **Untouched later period (2024-07-01 .. 2025-06-30), first computed here.**
 
@@ -59,18 +61,14 @@ The middle arm isolates the sign error: same audit vintages as the superseded st
 | cohort | method | immaterial certificates | material certificates | abstentions | decisions certified | false immaterial | immaterial events covered |
 |---|---|---|---|---|---|---|---|
 | A | CRI regret bound <= tau (validated upper bound) | 8 | 0 | 30 | 21.1% | 0 | 8/10 |
-| A | CRI certificate + feasible-repair materiality witness | 8 | 28 | 2 | 94.7% | 0 | 8/10 |
+| A | CRI certificate + greedy feasible-descent materiality witness | 8 | 28 | 2 | 94.7% | 0 | 8/10 |
 | A | active-set / KKT stability (implies regret 0) | 8 | 0 | 30 | 21.1% | 0 | 8/10 |
 | A | strong-convexity upper bound <= tau | 0 | 0 | 38 | 0.0% | 0 | 0/10 |
-| A | CRI-U: further correction beyond the audit vintage | 0 | 0 | 38 | 0.0% | 0 | 0/10 |
-| A | CRI-U: correction relative to the decision vintage | 0 | 0 | 38 | 0.0% | 0 | 0/10 |
 | A | no recomputation (asserts regret 0 for every event) | 38 | 0 | 0 | 100.0% | 28 | 38/10 |
 | B | CRI regret bound <= tau (validated upper bound) | 51 | 0 | 63 | 44.7% | 0 | 51/57 |
-| B | CRI certificate + feasible-repair materiality witness | 51 | 57 | 6 | 94.7% | 0 | 51/57 |
+| B | CRI certificate + greedy feasible-descent materiality witness | 51 | 57 | 6 | 94.7% | 0 | 51/57 |
 | B | active-set / KKT stability (implies regret 0) | 51 | 0 | 63 | 44.7% | 0 | 51/57 |
 | B | strong-convexity upper bound <= tau | 0 | 0 | 114 | 0.0% | 0 | 0/57 |
-| B | CRI-U: further correction beyond the audit vintage | 0 | 0 | 114 | 0.0% | 0 | 0/57 |
-| B | CRI-U: correction relative to the decision vintage | 0 | 0 | 114 | 0.0% | 0 | 0/57 |
 | B | no recomputation (asserts regret 0 for every event) | 114 | 0 | 0 | 100.0% | 57 | 114/57 |
 
 A method that only produces an upper bound can certify immateriality and nothing else; its `material certificates` column is zero by construction, so its old `accuracy` figure (which counted `bound > tau` as a materiality claim) has been withdrawn.
@@ -85,6 +83,45 @@ A method that only produces an upper bound can certify immateriality and nothing
 | B | revision magnitude (log l2 delta cost) | 0.540 |
 | B | first-order estimate (absolute) | 0.517 |
 | B | CRI regret upper bound (absolute) | 0.974 |
+
+## Audit workflows: CRI against KKT + feasible descent against OSQP
+
+| cohort | workflow | immaterial | material | abstentions | decisions settled | errors | audit stage (ms) | with compile (ms) | end to end (ms) | descent always, end to end (ms) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| A | KKT stability only (dual recovery + feasibility check, no descent) | 8 | 0 | 30 | 21.1% | 0 | 1.16 | 1.38 | 5.36 | n/a |
+| A | KKT stability + greedy feasible descent | 8 | 28 | 2 | 94.7% | 0 | 1.37 | 1.61 | 5.77 | 5.78 |
+| A | CRI certificate only | 8 | 0 | 30 | 21.1% | 0 | 1.83 | 2.05 | 6.02 | n/a |
+| A | CRI certificate + greedy feasible descent | 8 | 28 | 2 | 94.7% | 0 | 2.08 | 2.29 | 6.28 | 6.32 |
+| A | OSQP re-solve (ground truth for the regret, no certificate) | 10 | 28 | 0 | 100.0% | 0 | 0.97 | 1.22 | 5.29 | n/a |
+| B | KKT stability only (dual recovery + feasibility check, no descent) | 51 | 0 | 63 | 44.7% | 0 | 1.18 | 1.40 | 5.35 | n/a |
+| B | KKT stability + greedy feasible descent | 51 | 57 | 6 | 94.7% | 0 | 1.30 | 1.52 | 5.47 | 5.47 |
+| B | CRI certificate only | 51 | 0 | 63 | 44.7% | 0 | 1.80 | 2.01 | 5.95 | n/a |
+| B | CRI certificate + greedy feasible descent | 51 | 57 | 6 | 94.7% | 0 | 1.93 | 2.16 | 6.05 | 6.06 |
+| B | OSQP re-solve (ground truth for the regret, no certificate) | 57 | 57 | 0 | 100.0% | 0 | 0.93 | 1.16 | 5.18 | n/a |
+
+`errors` counts false immateriality and false materiality claims together; the OSQP row is the ground truth, so its zero is by construction and its cost is what re-solving costs. `descent always` charges the descent on every event instead of only when the first stage did not settle it; `end to end` includes compiling the audit program and the original decision solve, which every workflow needs.
+
+**Do the two combined workflows ever disagree?**
+
+| cohort | events | verdict disagreements | certified sets identical | immaterialities added by CRI | materialities added by CRI | KKT-stable but bound > tau | CRI immaterial without KKT stability |
+|---|---|---|---|---|---|---|---|
+| A | 38 | 0 | yes | 0 | 0 | 0 | 0 |
+| B | 114 | 0 | yes | 0 | 0 | 0 | 0 |
+
+The materiality side is not a CRI result at all: every material verdict comes from the greedy feasible descent, which is a partial reoptimisation, not a free step. The only thing that could distinguish the two workflows is the immateriality test, and on this data it never does.
+
+## CRI-U: three questions, answered separately
+
+| cohort | arm | base | centre | certificates | contained events | containment | certified given contained | median bound |
+|---|---|---|---|---|---|---|---|---|
+| A | prospective_audit_base | audit-time program | zero (no further change) | 0.0% | not measurable | n/a | n/a | 1.476 |
+| A | prospective_decision_base | decision-time program | zero (no change assumed) | 0.0% | 19 | 50.0% | 0.0% | 0.860 |
+| A | postaudit_observed_centre | decision-time program | observed cost revision | 0.0% | 38 | 100.0% | 0.0% | 1.910 |
+| B | prospective_audit_base | audit-time program | zero (no further change) | 0.0% | not measurable | n/a | n/a | 1.065 |
+| B | prospective_decision_base | decision-time program | zero (no change assumed) | 0.0% | 56 | 49.1% | 0.0% | 0.580 |
+| B | postaudit_observed_centre | decision-time program | observed cost revision | 0.0% | 114 | 100.0% | 0.0% | 1.579 |
+
+Only the third arm is a statement about the revision that actually occurred; the first two are prospective, and the second is conditional on its box containing the observed correction. A zero in one arm is not a zero in another.
 
 ## CRI certificates versus the classical active-set test
 
@@ -108,12 +145,12 @@ A method that only produces an upper bound can certify immateriality and nothing
 | A | metadata | changed_inputs, revision_index, benchmark | 0.537 | [41.4%, 64.4%] | no | 0.00 | 0.0 |
 | A | geometry_no_radius | delta_cost_l2, binding, condition | 0.675 | [48.9%, 84.8%] | no | 0.00 | 0.0 |
 | A | geometry_projection | delta_cost_l2, binding, condition, delta_cost_on_decision | 0.686 | [54.0%, 82.1%] | no | 0.00 | 0.0 |
-| A | geometry_full | delta_cost_l2, binding, condition, delta_cost_on_decision, log_radius | 0.911 | [77.9%, 100.0%] | yes | 46.40 | 28.0 |
+| A | geometry_full | delta_cost_l2, binding, condition, delta_cost_on_decision, log_radius | 0.911 | [77.9%, 100.0%] | yes | 41.27 | 28.0 |
 | B | magnitude | delta_cost_l2 | 0.540 | [41.4%, 69.7%] | no | 0.00 | 0.0 |
 | B | metadata | changed_inputs, revision_index, benchmark | 0.462 | [38.9%, 53.4%] | no | 0.00 | 0.0 |
-| B | geometry_no_radius | delta_cost_l2, binding, condition | 0.737 | [66.2%, 82.3%] | no | 0.01 | 0.0 |
+| B | geometry_no_radius | delta_cost_l2, binding, condition | 0.737 | [66.2%, 82.3%] | no | 0.00 | 0.0 |
 | B | geometry_projection | delta_cost_l2, binding, condition, delta_cost_on_decision | 0.750 | [67.1%, 83.4%] | no | 0.00 | 0.0 |
-| B | geometry_full | delta_cost_l2, binding, condition, delta_cost_on_decision, log_radius | 0.962 | [94.8%, 98.3%] | yes | 46.27 | 37.0 |
+| B | geometry_full | delta_cost_l2, binding, condition, delta_cost_on_decision, log_radius | 0.962 | [94.8%, 98.3%] | yes | 41.64 | 37.0 |
 
 The directional stability radius is a diagnostic, not free metadata: it runs a bracketing search of multiplier recoveries and KKT checks along the observed revision, and its cost is charged to the group that uses it.
 
@@ -121,17 +158,17 @@ The directional stability radius is a diagnostic, not free metadata: it runs a b
 
 | cohort | decision | certificate | compile | repair | active-set | warm re-solve | internal re-solve | OSQP re-solve | radius search |
 |---|---|---|---|---|---|---|---|---|---|
-| A | 4.63 | 2.06 | 0.26 | 0.21 | 1.30 | 4.25 | 4.20 | 1.14 | 43.21 |
-| B | 4.26 | 2.00 | 0.25 | 0.13 | 1.30 | 4.54 | 4.55 | 1.08 | 40.84 |
+| A | 4.07 | 1.83 | 0.23 | 0.18 | 1.16 | 3.89 | 3.68 | 0.97 | 37.29 |
+| B | 4.02 | 1.80 | 0.23 | 0.11 | 1.18 | 4.14 | 4.11 | 0.93 | 37.18 |
 
-**Stored state per decision (bytes).**
+**Stored state per decision (bytes), both arms functionally equivalent.**
 
-| cohort | sufficient audit record | shared structure (once) | amortized shared | record + amortized | audit-vintage cost vector only | cost vector + amortized | full serialised problem |
-|---|---|---|---|---|---|---|---|
-| A | 736 | 634 | 6.2 | 742.2 | 83 | 89.2 | 1080 |
-| B | 673 | 390 | 1.3 | 674.3 | 63 | 64.3 | 807 |
+| cohort | decision state + provenance | CRI record (with revision) | re-solve record | shared block (once) | amortized shared | CRI arm total | re-solve arm total | CRI / re-solve | full serialised problem |
+|---|---|---|---|---|---|---|---|---|---|
+| A | 704 | 970 | 804 | 916 | 9.0 | 978.0 | 813.0 | 1.20 | 1080 |
+| B | 661 | 883 | 741 | 666 | 2.2 | 885.2 | 743.2 | 1.19 | 807 |
 
-The record carries the recorded weights, the recorded multipliers and the decision-time linear costs; the quadratic matrix, bounds and constraint rows are shared and stored once. `cost vector only` is what a re-solve needs per decision once the same structure is shared.
+Both arms carry the same per-decision state -- recorded weights, decision-time linear costs, clocks, vintages, horizon, digests -- and the same shared block (matrix, bounds, constraints, risk weight, standardisation, and cohort provenance including the manifest digest). The CRI arm adds the recorded multipliers and the revision delta; the re-solve arm adds the audit-time cost vector, which is the same input in an equivalent form. The comparison is therefore like for like, and the certificate record is still not the smaller one.
 
 ## Sensitivity to the risk weight and the materiality threshold
 

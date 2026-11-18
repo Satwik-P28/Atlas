@@ -244,3 +244,137 @@ def test_stability_radius_reports_its_kkt_evaluation_count():
     assert radius.radius >= 0.0
     multipliers, _ = derive_multipliers(problem, weights)
     assert multipliers is not None and verify_kkt(problem, weights, multipliers).satisfied
+
+
+def test_kkt_plus_greedy_workflow_verdicts():
+    """The simpler combined baseline: KKT decides immateriality, descent decides materiality."""
+
+    stable = {"stable": True, "bound": 0.4, "lower_bound": 0.0, "regret": 0.0}
+    unstable_material = {"stable": False, "bound": 2.0, "lower_bound": 0.5, "regret": 0.7}
+    unstable_unknown = {"stable": False, "bound": 2.0, "lower_bound": 1e-6, "regret": 0.4}
+
+    assert study.workflow_verdicts(stable)["kkt_plus_greedy"] == "certified_immaterial"
+    # A certificate that fails to bound the regret does not change the KKT verdict.
+    assert study.workflow_verdicts(stable)["kkt_only"] == "certified_immaterial"
+    assert study.workflow_verdicts(unstable_material)["kkt_plus_greedy"] == "certified_material"
+    assert study.workflow_verdicts(unstable_unknown)["kkt_plus_greedy"] == "unknown"
+    # Materiality is never attributed to the certificate in either workflow.
+    assert study.workflow_verdicts(unstable_material)["cri_only"] == "unknown"
+
+    # Runtime: the descent is charged to the events that need it, not to all of them.
+    stable_row = {"stable": True, "bound": 1e-6,
+                  "timing": {"active_set_ms": 1.0, "certificate_ms": 2.0, "repair_ms": 100.0,
+                             "external_ms": 3.0, "compile_ms": 0.5, "decision_ms": 0.5}}
+    moved_row = {"stable": False, "bound": 1.0,
+                 "timing": {"active_set_ms": 1.0, "certificate_ms": 2.0, "repair_ms": 100.0,
+                            "external_ms": 3.0, "compile_ms": 0.5, "decision_ms": 0.5}}
+    assert study.workflow_runtime(stable_row, "kkt_plus_greedy")["audit_ms"] == pytest.approx(1.0)
+    assert study.workflow_runtime(moved_row, "kkt_plus_greedy")["audit_ms"] == pytest.approx(101.0)
+    assert study.workflow_runtime(moved_row, "kkt_plus_greedy",
+                                  descend_always=True)["audit_ms"] == pytest.approx(101.0)
+    assert study.workflow_runtime(moved_row, "kkt_plus_greedy",
+                                  descend_always=True)["end_to_end_ms"] == pytest.approx(102.0)
+
+
+def test_archived_workflows_show_no_incremental_cri_classification():
+    """On the archived rows, CRI + descent and KKT + descent publish the same verdicts."""
+
+    path = ROOT / "artifacts" / "research" / "rtds" / "results.json"
+    if not path.exists():  # pragma: no cover - the artifact is committed
+        pytest.skip("archived results are not present")
+    results = json.loads(path.read_text())
+    for cohort in results["cohorts"]:
+        rows = [row for row in cohort["rows"] if row["split"] == "test"]
+        agree = cohort["workflows"]["agreement"]
+        assert agree["events"] == len(rows)
+        assert agree["verdict_disagreements"] == 0
+        assert agree["incremental_cri_immaterialities"] == 0
+        assert agree["incremental_cri_materialities"] == 0
+        # Every materiality verdict in the combined workflow comes from the descent.
+        material = sum(1 for row in rows
+                       if study.workflow_verdicts(row)["kkt_plus_greedy"] == "certified_material")
+        assert material == agree["descent_supplies_all_material_verdicts"]
+        # Both combined workflows are sound on this data.
+        assert cohort["workflows"]["methods"]["kkt_plus_greedy"]["errors"] == 0
+        assert cohort["workflows"]["methods"]["cri_plus_greedy"]["errors"] == 0
+
+
+def test_sensitivity_grid_uses_train_only_uncertainty_widths(monkeypatch):
+    """The grid must not let a test revision into the width of the uncertainty set."""
+
+    labels = ["one", "two", "three"]
+
+    def event(split: str, decision: list[float], audit: list[float]) -> dict:
+        return {"split": split, "growth_decision": decision, "growth_audit": audit,
+                "period": "2005-01-01", "decision_vintage": "2005-02-01",
+                "audit_vintage": "2006-02-01", "category": "advance",
+                "changed_inputs": labels, "revision_index": 1, "delta_growth_l2": 0.0}
+
+    train = [event("train", [1.0, 2.0, 3.0], [1.1, 2.1, 3.1]),
+             event("train", [1.2, 1.9, 3.3], [1.25, 2.0, 3.2]),
+             event("train", [0.9, 2.2, 2.8], [1.0, 2.3, 2.9])]
+    test = [event("test", [0.5, 0.5, 0.5], [80.0, -80.0, 80.0])]
+    captured: list[list[float]] = []
+
+    def fake_run_event(_event, _cohort, _labels, block, _rho, **_kwargs):
+        captured.append(list(block["half_width_cost"]))
+        return None
+
+    monkeypatch.setattr(study, "run_event", fake_run_event)
+    study.sensitivity_grid({"cohorts": [{"cohort": "B", "labels": labels,
+                                         "events": train + test}]})
+
+    assert captured, "the grid did not evaluate any event"
+    widths = {tuple(round(value, 12) for value in width) for width in captured}
+    assert len(widths) == 1, "different events saw different widths"
+    expected = study.train_half_width(train, study.calibration(train, labels))
+    assert np.allclose(next(iter(widths)), expected, atol=1e-12)
+    pooled = study.train_half_width(train + test, study.calibration(train, labels))
+    assert not np.allclose(expected, pooled, atol=1e-6), "fixture does not discriminate"
+
+
+def test_both_audit_workflows_retain_the_same_decision_state():
+    """Storage for the re-solve arm must include the recorded decision and its provenance."""
+
+    problem, solution = _decision()
+    costs_decision = np.asarray(problem.cost_vector(), dtype=float)
+    costs_audit = costs_decision + np.array([0.1, -0.2, 0.05])
+    event = {"period": "2019-10-01", "decision_vintage": "2020-01-30",
+             "audit_vintage": "2021-01-28", "horizon_days_actual": 365,
+             "inputs": {"total": {"value_decision": 1.0, "value_audit": 1.1}}}
+    cri = study.minimal_record(problem, solution, costs_decision, event, COHORT,
+                               delta=costs_audit - costs_decision)
+    re_solve = study.resolve_record(problem, solution, costs_decision, costs_audit, event, COHORT)
+
+    for record in (cri, re_solve):
+        assert "weights" in record and "costs_decision" in record
+        assert record["provenance"]["observation_digest"]
+        assert record["decision_vintage"] == event["decision_vintage"]
+        assert record["audit_vintage"] == event["audit_vintage"]
+    assert "multipliers" in cri and "revision_delta" in cri
+    assert "costs_audit" in re_solve and "multipliers" not in re_solve
+    # Same order of magnitude: the earlier comparison charged the decision state to one arm only.
+    assert 0.5 < study.serialise_size(cri) / study.serialise_size(re_solve) < 2.0
+    assert study.serialise_size(cri) > study.serialise_size(re_solve)
+
+
+def test_postaudit_uncertainty_set_is_centred_on_the_observed_revision():
+    """The third CRI-U arm is the only one that is about the revision that actually occurred."""
+
+    problem, solution = _decision()
+    weights = np.asarray(solution.weights, dtype=float)
+    delta = np.array([-Z_AUDIT[i] + Z_DECISION[i] for i in range(len(LABELS))])
+    half = [0.02, 0.02, 0.02]
+
+    postaudit = interval_set(center=delta, half_width=half, coverage="test")
+    assert postaudit.distance_outside(delta) < 0.0, "the observed revision must be inside"
+    certificate = certify_worst_case(problem, weights, postaudit, decision_dual=solution.dual)
+    exact = vertex_enumeration_worst_case(problem, weights, delta, half)
+    assert certificate.valid
+    assert exact["worst_regret"] is not None
+    assert certificate.bound >= exact["worst_regret"] - 1e-9
+
+    # The prospective decision-base arm is a different question: it is centred on no change, so a
+    # large revision is outside it and its guarantee does not apply to that event.
+    prospective = interval_set(center=[0.0] * len(LABELS), half_width=half, coverage="test")
+    assert prospective.distance_outside(delta) > 0.0
