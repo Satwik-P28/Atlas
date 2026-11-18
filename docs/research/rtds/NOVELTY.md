@@ -52,6 +52,13 @@ boundary. Concretely, three things do not appear together in the literature this
 
 ## Positioning
 
+The correction pass narrowed this further, and the narrowing is part of the assessment. Version 1's
+most quotable claim (geometry predicts materiality with AUC 0.88/0.94) depended on a directional
+stability radius that re-runs the same optimality tests the outcome is defined by; without it the AUC is
+0.68/0.74. Version 1's storage claim was an artefact of comparing an insufficient record with a complete
+model. What remains novel is therefore the benchmark, the measurement discipline, and three negative
+results — not a predictive score.
+
 The contribution is **an empirical benchmark and a measurement method**, not an algorithm:
 
 * a reusable, provenance-documented dataset of decision/audit pairs built from 1,009 real-time vintages;
@@ -63,4 +70,5 @@ The contribution is **an empirical benchmark and a measurement method**, not an 
 
 No claim of a new theorem, a new solver, or a decision-quality improvement is made. The mathematical
 content is classical duality and standard post-optimality analysis; the novelty, to the extent there is
-any, is in what is measured and in the honesty of the measurement.
+any, is in what is measured and in the honesty of the measurement — including that the measurement
+required a correction which removed two of the three headline claims.

@@ -1,0 +1,9 @@
+{
+ "schema": "atlas.rtds.audit_record_verification.v1",
+ "records_checked": 376,
+ "failures": [],
+ "worst_bound_absolute_gap": 3.552713678800501e-15,
+ "max_feasibility_violation_reconstructed": 1.7763568394002505e-15,
+ "certificates_reproduced": 376,
+ "note": "the reconstructing process reads only audit_records.json, dataset.json (for the newly available audit-vintage observations) and the shared train-split standardisation; it never calls the study's event pipeline"
+}

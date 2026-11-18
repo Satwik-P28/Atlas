@@ -149,7 +149,14 @@ explicitly. No single "winner" claim: the comparison is by workflow requirement.
 
 ## 9. Amendments
 
-**A1. Risk weight (recorded before the confirmatory run).** §4 fixed `ρ = 0.05` without knowing its
+Amendments are recorded in the order they were made, and each is labelled with what was known at the
+time. The distinction matters: this study's 2015–2024H1 results were inspected before amendments A4–A9
+existed, so corrected results from that sample are a **reanalysis**, not a pristine confirmation. See
+[CORRECTIONS.md](CORRECTIONS.md) for the defects behind A4–A8.
+
+### Pre-confirmatory (written before any test-split regret was computed)
+
+**A1. Risk weight.** §4 fixed `ρ = 0.05` without knowing its
 scale against standardised growth. The value was not simply changed: a rule was prespecified — choose
 ρ from {0.25, 0.5, 1, 2} to maximise the share of **train-split** events with an interior optimum, ties
 broken towards 1 — and it selected `ρ = 1.0` (all four values tied at 1.0, so the tie-break decided).
@@ -166,3 +173,47 @@ mission: whether metadata carries information beyond the size of the correction.
 
 **A3. Interval method for AUC (secondary).** A cluster bootstrap over decision years was added to put
 an interval on the out-of-sample AUC. This is a presentation choice, not a change of endpoint.
+
+### Post-hoc (made after version 1's results had been observed, in response to review)
+
+**A4. Objective coefficient convention (substantive; supersedes the protocol's arithmetic).** §4 did not
+state a sign convention for the mapping from standardised growth to the objective's linear cost. One is
+now fixed: `c = -z`, and a revision is a change in `c` applied with a positive identity sensitivity, so
+`delta = c_A - c_D = z_D - z_A`. The previous implementation produced `z_A - 2 z_D`. The convention is
+asserted against an independently constructed audit program for every event. Endpoints are unchanged;
+the model they were computed on is corrected.
+
+**A5. CRI-U base and set (substantive).** §7's worst-case arm previously passed an absolute cost level
+as the centre of a perturbation set. It is now two declared arms — further corrections relative to the
+audit-time program, and the total correction relative to the decision-time program — each centred at
+zero, with widths estimated on the train split only. Results for both are reported.
+
+**A6. Three-way outcome classification (substantive).** §6 scored methods by accuracy, counting
+`upper bound > τ` as a materiality claim. Outcomes are now `certified immaterial` (upper bound ≤ τ),
+`certified material` (independently established lower bound > τ) and `unknown`. Accuracy is no longer
+reported for methods that only produce upper bounds; coverage, abstention and false-certificate counts
+replace it. This is a stricter reading of the existing H2 and H4 endpoints, not a new endpoint.
+
+**A7. Calendar horizon (substantive).** §3 said four calendar quarters (A) and twelve calendar months
+(B); the code used 400 and 366 days. The horizon is now `add_months(decision, 12)` for both. The audit
+vintage changes for every quarterly event, so this is a data change, not a reporting change.
+
+**A8. Feature groups and the stability radius (substantive, exploratory).** The geometry predictor is now
+reported as five prespecified groups, separating the directional stability radius from features that are
+free given the recorded decision and the revision, and charging the radius's KKT evaluations to the group
+that uses it. The v1 headline AUC depended on that radius; §4.4 of the report reports both.
+
+**A9. Stored-state accounting (corrects a claim, adds no endpoint).** The audit record is now the
+smallest representation that a fresh process can certify from (weights, multipliers, decision-time
+costs, clocks, digests) plus a per-cohort shared block, and its size is compared with the marginal
+representation a re-solve needs rather than with a full serialised problem.
+
+### Samples
+
+**S1. Untouched later period (exploratory, added post hoc).** 2024-07-01 .. 2025-06-30 was never
+computed before this correction pass. It is reported separately, with all parameters fixed on the train
+split. Cohort A yields 4 events, which cannot settle anything; it is reported as a description and is not
+used for any confirmatory claim.
+
+**S2. Reanalysis label.** The preregistered test split (2015-01-01 .. 2024-06-30) has been inspected. Its
+corrected results are reported as a reanalysis of the same period, not as a new confirmation.

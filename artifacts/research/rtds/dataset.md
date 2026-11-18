@@ -14,6 +14,7 @@ Built by `scripts/research/rtds_build.py`. Do not hand-edit.
 | train | 52 | 52 | 4 |
 | pilot | 8 | 8 | 4 |
 | test | 38 | 38 | 4 |
+| holdout | 4 | 4 | 4 |
 
 | category | test events |
 |---|---|
@@ -32,6 +33,7 @@ Built by `scripts/research/rtds_build.py`. Do not hand-edit.
 | train | 156 | 156 | 3 |
 | pilot | 24 | 24 | 3 |
 | test | 114 | 114 | 3 |
+| holdout | 12 | 12 | 3 |
 
 | category | test events |
 |---|---|

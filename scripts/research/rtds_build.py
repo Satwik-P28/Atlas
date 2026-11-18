@@ -2,22 +2,25 @@
 
 Every number in the study comes from a real-time vintage served by ALFRED. This module fetches one
 vintage of one series at a time, caches the response with its SHA-256, and derives *events*: an
-observation period, the vintage that first printed it, and the vintage four quarters (or twelve
-months) later. Nothing here estimates a model or makes a decision; it only records what was published
-and when, so that the decision study can be reproduced from the archive without refetching.
+observation period, the vintage that first printed it, and the vintage **twelve calendar months**
+later (four calendar quarters for the quarterly cohort; the two are the same length of calendar time
+and are computed with the same calendar-aware offset). Nothing here estimates a model or makes a
+decision; it only records what was published and when, so that the decision study can be reproduced
+from the archive without refetching.
 
 Run: ``.venv/bin/python scripts/research/rtds_build.py``
 """
 
 from __future__ import annotations
 
+import calendar
 import hashlib
 import json
 import os
 import subprocess
 import time
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import date
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -37,7 +40,10 @@ COHORTS: dict[str, dict[str, Any]] = {
         # an accessibility limitation, not a modelling choice.
         "series": ["GDPC1", "GPDIC1", "GCEC1", "EXPGSC1"],
         "labels": ["total", "investment", "government", "exports"],
-        "horizon_days": 400,
+        # Four calendar quarters == twelve calendar months. The earlier implementation used 400
+        # days, which is about thirteen months and moved the audit vintage later than the protocol
+        # says. Both cohorts now use one calendar-aware offset: add_months(decision, 12).
+        "horizon_months": 12,
         "step_months": 3,
         "source": "BEA via ALFRED/FRED (Federal Reserve Bank of St. Louis)",
     },
@@ -46,7 +52,7 @@ COHORTS: dict[str, dict[str, Any]] = {
         "frequency": "monthly",
         "series": ["PAYEMS", "MANEMP", "USCONS"],
         "labels": ["total", "manufacturing", "construction"],
-        "horizon_days": 366,
+        "horizon_months": 12,
         "step_months": 1,
         "source": "BLS via ALFRED/FRED (Federal Reserve Bank of St. Louis)",
     },
@@ -58,6 +64,26 @@ WINDOW = (date(1999, 1, 1), date(2026, 12, 31))
 TRAIN = (date(2000, 1, 1), date(2012, 12, 31))
 PILOT = (date(2013, 1, 1), date(2014, 12, 31))
 TEST = (date(2015, 1, 1), date(2024, 6, 30))
+#: Added during the methodological correction pass, after the 2015-2024H1 sample had been
+#: inspected. It is a *later* historical period whose results were computed for the first time with
+#: the corrected pipeline, with every parameter fixed on the train split. It is reported as a
+#: post-hoc validation sample, never as a preregistered confirmation.
+HOLDOUT = (date(2024, 7, 1), date(2025, 6, 30))
+
+
+def add_months(stamp: date, months: int) -> date:
+    """Calendar-aware offset: the same day-of-month ``months`` later, clipped to month end.
+
+    Adding days is not the same operation. 400 days after a 28 January release is mid-March, so the
+    audit vintage for the quarterly cohort was being taken from a later release than the protocol's
+    four calendar quarters. This function is the only place the audit horizon is computed.
+    """
+
+    total = stamp.year * 12 + (stamp.month - 1) + int(months)
+    year, month_index = divmod(total, 12)
+    month = month_index + 1
+    day = min(stamp.day, calendar.monthrange(year, month)[1])
+    return date(year, month, day)
 
 
 def _curl(url: str, timeout: int = 45, attempts: int = 4) -> bytes:
@@ -190,6 +216,8 @@ def split_of(clock: date) -> str:
         return "pilot"
     if TEST[0] <= clock <= TEST[1]:
         return "test"
+    if HOLDOUT[0] <= clock <= HOLDOUT[1]:
+        return "holdout"
     return "out_of_window"
 
 
@@ -269,7 +297,7 @@ def build_cohort(key: str, *, refresh: bool = False) -> tuple[dict[str, Any], li
 
     events: list[dict[str, Any]] = []
     rejected: list[dict[str, Any]] = []
-    horizon = timedelta(days=int(spec["horizon_days"]))
+    horizon_months = int(spec["horizon_months"])
     for period in by_month:
         previous = shift(period, -step)
         if previous is None:
@@ -282,7 +310,7 @@ def build_cohort(key: str, *, refresh: bool = False) -> tuple[dict[str, Any], li
         split = split_of(decision)
         if split == "out_of_window":
             continue
-        target = decision + horizon
+        target = add_months(decision, horizon_months)
         audit_candidates = [stamp for stamp in all_dates if stamp >= target]
         if not audit_candidates:
             rejected.append({"period": period, "reason": "no_audit_vintage"})
@@ -339,7 +367,9 @@ def build_cohort(key: str, *, refresh: bool = False) -> tuple[dict[str, Any], li
             "period": period,
             "decision_vintage": decision.isoformat(),
             "audit_vintage": audit.isoformat(),
-            "horizon_days": int(spec["horizon_days"]),
+            "horizon_months": horizon_months,
+            "audit_target": target.isoformat(),
+            "horizon_days_actual": (audit - decision).days,
             "split": split,
             "category": category,
             "revision_index": int(revision_index),
@@ -375,7 +405,10 @@ def build_cohort(key: str, *, refresh: bool = False) -> tuple[dict[str, Any], li
         "window": {"from": WINDOW[0].isoformat(), "to": WINDOW[1].isoformat()},
         "splits": {"train": [TRAIN[0].isoformat(), TRAIN[1].isoformat()],
                    "pilot": [PILOT[0].isoformat(), PILOT[1].isoformat()],
-                   "test": [TEST[0].isoformat(), TEST[1].isoformat()]},
+                   "test": [TEST[0].isoformat(), TEST[1].isoformat()],
+                   "holdout": [HOLDOUT[0].isoformat(), HOLDOUT[1].isoformat()]},
+        "horizon": {"months": horizon_months,
+                    "rule": "audit vintage = first vintage on or after add_months(decision, 12)"},
         "vintage_dates": {name: [stamp.isoformat() for stamp in stamps]
                           for name, stamps in dates_by_series.items()},
         "events": events,
@@ -401,7 +434,7 @@ def markdown(payload: dict[str, Any]) -> str:
         lines.append("")
         lines.append("| split | events | with a changed input | median changed inputs |")
         lines.append("|---|---|---|---|")
-        for split in ("train", "pilot", "test"):
+        for split in ("train", "pilot", "test", "holdout"):
             subset = [event for event in cohort["events"] if event["split"] == split]
             changed = [event for event in subset if event["any_revision"]]
             median = (sorted(len(item["changed_inputs"]) for item in subset)[len(subset) // 2]
@@ -434,7 +467,9 @@ def main() -> None:
                         "intraday availability is claimed"),
         "splits": {"train": [TRAIN[0].isoformat(), TRAIN[1].isoformat()],
                    "pilot": [PILOT[0].isoformat(), PILOT[1].isoformat()],
-                   "test": [TEST[0].isoformat(), TEST[1].isoformat()]},
+                   "test": [TEST[0].isoformat(), TEST[1].isoformat()],
+                   "holdout": [HOLDOUT[0].isoformat(), HOLDOUT[1].isoformat()]},
+        "horizon_rule": "audit vintage = first vintage on or after add_months(decision, 12)",
         "cohorts": [],
     }
     manifests: list[dict[str, Any]] = []

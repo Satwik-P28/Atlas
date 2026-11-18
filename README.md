@@ -71,12 +71,16 @@ and no decision-quality improvement is claimed; the contribution is a formulatio
 of classical pieces, and an empirical characterisation that includes the failure modes.
 
 **Real-world study.** The synthetic work is complemented by a vintage study on authentic published
-data: 2,347 ALFRED vintage responses (675 distinct release dates) over seven US series, giving 392
-decision/audit pairs from BEA and BLS revisions, analysed per cohort. On the 152 confirmatory pairs, 47–63% of revisions moved the optimal
-decision by more than the declared tolerance; the certificate proved immateriality for 29–42% of
-events and never certified a material revision as immaterial, but its certified set coincided exactly
-with the classical active-set stability test; revision size did not predict materiality (AUC
-0.49–0.61) while decision geometry did (0.88–0.94). Start with the
+data: 2,347 ALFRED vintage responses (675 distinct release dates) over seven US series, giving 408
+decision/audit pairs from BEA and BLS revisions, analysed per cohort. On the 152 confirmatory pairs,
+50–74% of revisions moved the optimal decision by more than the declared tolerance. A certificate from
+the original decision proved immateriality for 21–45% of events and never certified a material revision
+as immaterial, but its certified set coincided exactly with the classical active-set stability test; a
+feasible descent certified materiality for the rest, leaving 5% unknown. Revision size did not predict
+materiality (AUC 0.43–0.54); geometry without a stability-radius diagnostic was only moderately
+predictive (0.68–0.74), and the large figure in the first version of the study came from a diagnostic
+costing 46 ms per event. Start with the
+[correction log](docs/research/rtds/CORRECTIONS.md), then the
 [study report](docs/research/rtds/REPORT.md) and [its protocol](docs/research/rtds/PREREGISTRATION.md).
 
 Start with [the technical report](docs/research/ATLAS_CRI_TECHNICAL_REPORT.md), then the
