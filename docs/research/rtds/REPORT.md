@@ -8,8 +8,9 @@ written and committed before the confirmatory run (`PREREGISTRATION.md`).
 ## Abstract
 
 Macroeconomic observations are revised, and much is known about how large those revisions are. Much
-less is known about whether they change *decisions*. We assemble 1,009 real-time vintages of seven US
-series from ALFRED — 392 decision/audit pairs spanning 2000–2024 — and run one fixed convex
+less is known about whether they change *decisions*. We assemble 2,347 real-time vintage responses
+(675 distinct release dates) over seven US series from ALFRED — 392 decision/audit pairs spanning
+2000–2024 — and run one fixed convex
 resource-allocation program on them, measuring the decision regret of each revision by re-solving with
 two independent solvers. In the confirmatory test split, **63.2%** (95% clustered interval 33.3–91.7%)
 of quarterly BEA expenditure revisions and **47.4%** (44.4–55.6%) of monthly BLS payroll revisions

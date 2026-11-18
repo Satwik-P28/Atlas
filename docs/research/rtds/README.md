@@ -15,7 +15,8 @@ What is in this folder, and how to read it:
 Scripts: `scripts/research/rtds_build.py` (fetch and build), `rtds_study.py` (decisions, certificates,
 baselines, statistics), `rtds_tables.py` (render tables).
 
-Headline, in one paragraph: across 1,009 ALFRED vintages and 152 confirmatory decision/audit pairs,
+Headline, in one paragraph: across 2,347 ALFRED vintage responses and 152 confirmatory
+decision/audit pairs,
 47–63% of authentic revisions move the optimal decision by more than the declared tolerance; a
 certificate computed from the original decision proves immateriality for 29–42% of events, never
 certifies a material revision as immaterial, and selects exactly the events a classical active-set test
