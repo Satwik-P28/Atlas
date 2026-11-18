@@ -121,6 +121,20 @@ which is why the previous pass's single-link tests did not see them.
 | A `1.77e-17` bound sat below a `3.73e-15` measured regret with no stated precision floor | P1 | Emitted bounds now add a forward floating-point error estimate plus the measured identity discrepancy; the algebraic value is reported separately; the study reconciles every certified event against the solver's own resolution. §5.3, §6.5. |
 | Gate G still reported 860 tests; Gate D said "exact" | P2 | Regenerated from the same run as the rest of this revision. §8, `GATE_STATUS_LEDGER.md`. |
 
+### 1.4 Corrections required by the fourth independent review (`f48e53b`)
+
+The review found that revision identity was collapsed silently, that one absolute and any number of
+incremental corrections on the same input were summed regardless of what the two deltas mean, that
+"resolution-aware soundness = 1.000" was being read as a numerical guarantee, and that
+`starting_vintage` was recorded but never checked against the base model.
+
+| Issue found in the fourth review | Severity | Resolution |
+|---|---|---|
+| Duplicate `revision_id` values were collapsed into maps but applied once per record, so one immutable event could be counted twice | P0 | Duplicate ids are refused before any map is built or any delta applied, with a deterministic report separating an identical repeat from conflicting payloads; duplicate and conflicting `InputSensitivity.input_key` declarations are refused for the same reason. §4.3, §9.1. |
+| An absolute revision could be summed with increments for the same input, so `+2` then "corrected to `+5`" produced `+7` | P1 | `delta` is defined per semantics: increments compose by addition; an absolute delta is the total correction relative to the frozen baseline at `starting_vintage`, which is now required, and a mixture on one input is refused rather than summed. §4.3. |
+| `1.000` resolution-aware soundness was presented as a certified floating-point bound | P1 | Three claim classes are now separate in code and text: the analytic theorem under exact arithmetic, empirical agreement with a reference solver, and a verified floating-point enclosure, which is **not available**. The strict `0.941` rate is kept beside it. §5.3, §6.5. |
+| `starting_vintage` recorded but not checked; public-before-decision was treated as incorporated | P2 | Incorporation is documented, documented-absent, or unknown. Only a record excludes a pre-decision correction; otherwise the compiler states that it assumed incorporation, and a documented omission is applied as what it is — a base-model defect. §4.3. |
+
 ## 2. Introduction
 
 A point-in-time research system exists to answer "what was knowable, and when". Atlas already
@@ -212,20 +226,55 @@ than resolved: a branch (two live successors of one revision) and two operative 
 for the same input, which can arise when a middle revision is withdrawn while its own replacement
 survives.
 
-`delta_semantics` makes the distinction explicit: `incremental` deltas add and may compose for one
-input; `absolute` deltas replace. It is inferred — absolute when the revision supersedes or is
-superseded, incremental otherwise — and declaring `incremental` on a successor is an error, because
-that combination can only be a double count. A successor must carry a strictly larger `version`,
-cannot take effect before its predecessor, and neither inversion is silently reordered; cycles are
-refused with the chain in the error.
+`delta_semantics` defines what `delta` is, in one place and for every revision type:
 
-Eligibility is not novelty. A correction that is public **and** effective before the decision clock
-is already inside the vintage the decision was computed from, so applying it again double counts it.
-The compiler therefore classifies every supplied revision into exactly one lineage category:
+* **`incremental`** — an addition to the input's value, on top of the frozen baseline and every other
+  applied increment for that input. Composition is addition, hence commutative: the compiled
+  perturbation does not depend on the order revisions are supplied in.
+* **`absolute`** — the *total* correction for that input relative to the frozen baseline. It replaces
+  every other correction for that input rather than composing with it, which is why exactly one may
+  be operative per input, and why the baseline must be named: an operative absolute revision now
+  requires `starting_vintage`, and is refused without it. Without the vintage, "the corrected value"
+  has no reference and the number means nothing.
+
+A mixture on one input is refused, not summed. An increment that precedes a replacement is already
+inside it; one that follows refers to a base that no longer exists. `0.002` incremental plus an
+absolute `0.005` is `0.007` under the old code and has no defined value under any reading, so the
+compiler raises instead of producing a plausible number. The same applies to two absolutes for one
+input: they are alternatives, not additions. Increments may share an input freely; absolutes may not
+share it at all. The inference rule is unchanged — absolute when a revision declares `supersedes` or
+is itself superseded, incremental otherwise — and declaring `incremental` on a successor remains an
+error. A successor must carry a strictly larger `version`, cannot take effect before its predecessor,
+and neither inversion is silently reordered; cycles are refused with the chain in the error.
+
+**One id is one event.** `revision_id` is an immutable identity, so the compiler refuses a repeated
+id before it builds any map or applies any delta. Two records with one id are either the same event
+supplied twice — which would add its correction twice, the double count this module exists to
+prevent — or two different events claiming one identity, which has no meaning at all. The error
+reports both cases deterministically (duplicate ids sorted, conflicting field names sorted, no
+dependence on input order) and distinguishes an identical repeat from conflicting payloads, because
+the first is a caller bug and the second is a data-integrity failure. A duplicate or conflicting
+`InputSensitivity` for one input is refused for the same reason: two mappings for one input have no
+composition rule, and keeping the last one silently would change the arithmetic without changing the
+record.
+
+Eligibility is not novelty. A correction that is public **and** effective before the decision clock is
+*probably* already inside the vintage the decision was computed from — but "public before the
+decision" is not evidence that the decision's inputs contained it. A source vintage is frozen when it
+is cut, so a document published in the same week can be absent from it. Only an incorporation record
+settles the question, so the compiler distinguishes three cases rather than inferring one:
+
+| Incorporation status | Meaning | Effect |
+|---|---|---|
+| `documented_incorporated` (with `incorporated_in`) | a record places the correction in the base vintage | excluded as a documented double count; an `incorporated_in` that contradicts `starting_vintage` is refused |
+| `documented_excluded` | a record says the base model does **not** contain it, although it was public | applied, and reported as a base-model omission rather than a double count |
+| `unknown` (default) | no record | excluded, and labelled an **assumption**: the compilation reports `incorporation.assumption` and names every id it rests on |
+
+The compiler then classifies every supplied revision into exactly one lineage category:
 
 | Category | Meaning | Effect on `Δc` |
 |---|---|---|
-| `incorporated_before_decision` | public at or before the decision clock | excluded (`already_incorporated_in_decision_vintage`) |
+| `incorporated_before_decision` | public at or before the decision clock, documented or assumed inside the base vintage | excluded (`already_incorporated_in_decision_vintage`, `incorporation: documented` or `assumed`) |
 | `pre_decision_explicitly_included` | public before the decision, included on request | applied |
 | `published_after_decision` | published in `(t, τ]` | applied |
 | `published_after_audit` | not public at the audit clock | excluded (`not_public_at_audit`) |
@@ -351,6 +400,20 @@ tolerance* and no digit below it is claimed. Certifying only when the discrepanc
 tight multiple of the estimate was tried and rejected: it confiscated three valid bounds whose
 discrepancy overshot a heuristic bound by 15%, and replaced them with loose dual bounds three orders
 of magnitude worse. Absorbing the discrepancy is both sound and more informative.
+
+**Three statements, and only two of them are made.** The margin above is an estimate, so the
+certificate states which kind of claim it supports rather than letting a small number imply the
+strongest one:
+
+| Claim | Status | What it rests on |
+|---|---|---|
+| Analytic bound under exact arithmetic | **made** whenever a dual-feasible point produced the bound | weak duality, in real arithmetic, conditional on the declared program and the declared linear sensitivity |
+| Empirical agreement with a reference solver | **made** where a reference measurement exists | two float64 solvers agreeing to their own spread; evidence about the bound and the solver jointly, not a proof about either |
+| Verified floating-point enclosure | **not available** | would need directed rounding or interval arithmetic. `rounding_margin` is a forward-error *estimate* under the standard model, not an enclosure of the arithmetic |
+
+The certificate emits `claims.made`, `claims.not_made` and the assumptions behind each, so a reader
+cannot mistake the third for the second. No statement in this report claims a machine-verified
+numerical upper bound.
 
 This is an identity, not a loosening, and it holds whether or not the multipliers are
 complementary. Two versions of the routine got it wrong in different ways: the first dropped
@@ -561,8 +624,26 @@ measurement is the argument against using it as one.
   exceeded beyond the solver's resolution", never as an exact numerical guarantee.
 * **Two rates, deliberately.** Over all 598 events carrying a bound, `35` measured regrets exceed
   their bound outright (`0.941` strict) and `0` exceed it beyond the solver's resolution (`1.000`
-  resolution-aware). The strict count is the one that shows the arithmetic has a floor; the
-  resolution-aware count is the one that is a guarantee. Neither is quoted alone.
+  resolution-aware). The strict count shows the arithmetic has a floor; the resolution-aware count
+  is the one that survives a *tolerance* comparison. Neither is `1.000` as a numerical guarantee:
+  the resolution is the spread between two float64 solvers, and solver agreement is not a bound on
+  their shared error.
+* **An admissible reference, not a solver point.** A solver's objective is a measurement of the true
+  optimum only if its point is feasible; an infeasible point can sit below the optimum, which is
+  exactly how a measured regret comes to exceed a valid bound. Each event's lower point is therefore
+  repaired onto the feasible set by bisection toward the recorded decision — feasible by
+  construction, and the feasible set is convex, so the segment crosses the boundary once. In all
+  **598** events the repair produced a feasible point (588 were already feasible at `1e-13`, the
+  other 10 needed up to 60 bisection steps). Measured from that feasible point, regret exceeds the
+  algebraic bound outright in **105** events and beyond the measurement resolution in **0**; the
+  smallest bound-minus-measurement margin is `-3.2e-16`. That residual excess is the honest limit of
+  the exercise: in the certified regime the bound is of order `1e-19`, while *measuring* regret means
+  subtracting two objectives of order one, which float64 resolves to about `1e-16`. **The bound is
+  smaller than the arithmetic's ability to measure it**, so no empirical comparison can confirm it at
+  its own scale — the verdict rests on the analytic identity, and agreement says only that the
+  reference does not contradict the bound by more than the resolution. The 35 strict exceedances
+  among solver points are measurements from inadmissible points and carry no evidence about the
+  bound in either direction.
 * The bound is never exactly zero, which is why the verdict records what was measured
   (`zero_regret_within_residual`) instead of asserting a zero.
 * Multiplier recovery: least squares in 416 events, non-negative LP in **182 (30.4%)**. The LP
@@ -727,6 +808,14 @@ The model input is the implied FY2023 revenue **growth** against FY2022 (`−41.
 sensitivity of `0.1` per unit of growth. Decision clock `2024-06-30T20:00:00Z`, audit clock
 `2025-03-01T12:00:00Z`.
 
+The revision declares `delta_semantics = "absolute"`: the recast *replaces* the growth rate computed
+from the FY2023 filing, and the baseline it is relative to is named (`fy2023-10K-vintage`), which the
+compiler now requires. The artifact checks the mapping rather than asserting it — the delta equals
+corrected minus baseline to `1e-15`, no other correction touches this input, and the compiled cost
+perturbation equals the delta times the declared sensitivity. Under incremental semantics the
+compiled contribution would be identical, because there is nothing to compose with; the declaration
+records which question the number answers.
+
 | quantity | value |
 |---|---|
 | characterisation | `conforming_recast` (formal restatement: `false`) |
@@ -799,8 +888,10 @@ certificate; `tests/test_decision_program.py` and `tests/test_decision_certifica
 solver, the revision compiler and the radii; `tests/test_decision_counterexample.py` pins the
 review's hand-computable instance and `tests/test_decision_properties.py` states the properties the
 implementation must satisfy at any scale. `tests/test_decision_lineage.py` covers replacement chains
-and the two clocks. The decision layer is **171 tests**; the repository suite is run before the commit
-that accompanies this report and its exact count is recorded in `docs/research/GATE_STATUS_LEDGER.md` (933 at this revision).
+the two clocks; `tests/test_decision_identity.py` covers duplicate identities, delta semantics and
+incorporation status. The decision layer is **193 tests**; the repository suite is run before the
+commit that accompanies this report and its exact count is recorded in
+`docs/research/GATE_STATUS_LEDGER.md` (955 at this revision).
 
 The adversarial cases required by the research plan, and where they live:
 
@@ -814,6 +905,11 @@ The adversarial cases required by the research plan, and where they live:
 | Replacement chains of length 3 and 4, branches, cycles, withdrawn middles | `tests/test_decision_lineage.py` |
 | Backdated, unpublished or not-yet-effective revisions; cutoff boundaries; after-hours | `tests/test_decision_lineage.py` |
 | A reported bound above the regret another solver measures | `test_emitted_bound_carries_its_margin_and_dominates_the_conservative_measurement` |
+| One `revision_id` supplied twice, or two payloads claiming one id | `tests/test_decision_identity.py` |
+| Duplicate or conflicting sensitivity for one input | `tests/test_decision_identity.py` |
+| Absolute and incremental corrections for one input | `tests/test_decision_identity.py` |
+| An absolute delta with no baseline vintage | `tests/test_decision_identity.py` |
+| Documented incorporation, documented omission, and an assumption with no record | `tests/test_decision_identity.py` |
 | Ill-conditioned and singular risk matrices | `test_singular_risk_matrix_removes_the_bound_but_not_the_kkt_test`, degeneracy experiment |
 | Active-set transitions and interior optima | cap sweep, radius tests |
 | Corrections outside the declared set | `test_out_of_set_corrections_are_measured_not_hidden` |
@@ -832,6 +928,22 @@ exhaustive active-set enumeration for small instances. The reference implementat
   it. The single real revision (§7) is a pipeline demonstration, not an empirical study.
 * **Declared sensitivity.** The mapping from an input revision to a cost change is asserted. §6.9
   measures the consequence of getting it wrong but does not solve it.
+* **No verified floating-point enclosure.** The emitted bound is the algebraic value plus a
+  forward-error *estimate*. Nothing here proves the arithmetic's error is enclosed; a directed-rounding
+  or interval-arithmetic implementation is the work that would make the third claim available, and it
+  was deliberately not attempted in this pass.
+* **In the certified regime the bound is below the measurement resolution.** Bounds of order `1e-19`
+  cannot be confirmed by subtracting float64 objectives of order one, so the empirical agreement is
+  evidence of non-contradiction, not of correctness. The verdict is an analytic statement under exact
+  arithmetic; the numbers are its float64 rendering, not a proof of it.
+* **Incorporation is unrecorded by default.** A correction that is public before the decision is
+  excluded as a double count only when a record says it is inside the base vintage. Otherwise the
+  compiler assumes it is, says so in the compilation and names the ids. The stronger historical claim
+  — "the decision's inputs did not contain this public document" — is available only where an
+  incorporation record exists.
+* **Duplicate identities are refused, not deduplicated.** A caller that builds its revision list by
+  merging two sources will now get an error instead of a doubled correction. That is the intended
+  behaviour and a migration cost for callers who were relying on the silent collapse.
 * **No decision-quality claim.** Nothing here shows that certification improves decisions. It
   shows that decisions can be audited.
 * **The certificate is slower than OSQP.** §6.8. The remaining advantage is auditability, not time.

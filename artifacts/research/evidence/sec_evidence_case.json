@@ -13,7 +13,7 @@
       {
         "available_at": "2025-02-27T21:27:18.000Z",
         "category": "published_after_decision",
-        "delta_semantics": "incremental",
+        "delta_semantics": "absolute",
         "detail": "applied to the corrected program",
         "effective_at": "2025-02-27T21:27:18.000Z",
         "evidence_id": "0000078003-25-000054",
@@ -197,10 +197,11 @@
       "amendment": true,
       "available_at": "2025-02-27T21:27:18.000Z",
       "delta": 0.010535233728695248,
-      "delta_semantics": "incremental",
+      "delta_semantics": "absolute",
       "effective_at": null,
       "evidence_id": "0000078003-25-000054",
       "incorporated_in": null,
+      "incorporation": "unknown",
       "input_key": "pfe_fy2023_revenue_growth",
       "kind": "linear_objective",
       "note": "FY2023 revenue as recast in the FY2024 annual report's comparative column after royalty income was reclassified into Total revenues, replacing the figure first filed in the FY2023 annual report; the model input is the implied growth rate against FY2022. A conforming recast, not an error correction",
@@ -256,7 +257,17 @@
       "report_date": "2023-12-31",
       "value": 58496000000.0
     },
-    "relative_change": 0.01806961159737418
+    "relative_change": 0.01806961159737418,
+    "semantics": {
+      "baseline_value": -0.416964018738164,
+      "baseline_vintage": "fy2023-10K-vintage",
+      "compiled_delta_cost_equals_delta_times_effect": true,
+      "corrected_value": -0.4064287850094688,
+      "delta_equals_corrected_minus_baseline": true,
+      "delta_semantics": "absolute",
+      "note": "an absolute delta is the total correction relative to the frozen baseline vintage; with no competing correction on this input it is also the increment over the originally filed figure",
+      "other_corrections_on_this_input": 0
+    }
   },
   "schema": "atlas.research.sec_evidence_case.v1",
   "source": {

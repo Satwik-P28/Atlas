@@ -36,6 +36,27 @@ SENSITIVITY_SCHEMA = "atlas.decision.input_sensitivity.v1"
 #: Kinds of perturbation a revision may declare. Anything else is refused explicitly.
 SUPPORTED_KINDS = ("linear_objective",)
 
+#: What ``delta`` means, stated once for the whole module.
+#:
+#: ``incremental``  ``delta`` is an addition to the input's value, on top of the frozen baseline
+#:                 and every other applied increment for the same input. Composition is addition,
+#:                 so the result does not depend on the order the revisions are supplied in.
+#: ``absolute``     ``delta`` is the *total* correction for this input relative to the frozen
+#:                 baseline: it replaces every other correction for that input instead of
+#:                 composing with it. The baseline is the base program's input values at
+#:                 ``starting_vintage``, which is why an operative absolute revision requires that
+#:                 vintage to be recorded. Exactly one absolute revision may be operative per input.
+DELTA_SEMANTICS = ("absolute", "incremental")
+
+#: What is known about whether the base model already contains a correction.
+#:
+#: ``documented_incorporated``  an incorporation record names the vintage that contains it.
+#: ``documented_excluded``      an incorporation record says the base model does *not* contain it,
+#:                             even though it was public before the decision.
+#: ``unknown``                  no record; being public before the decision is not evidence of
+#:                             incorporation, so the compiler says it assumed.
+INCORPORATION_KINDS = ("documented_incorporated", "documented_excluded", "unknown")
+
 
 def parse_instant(value: str | None) -> datetime | None:
     """Parse an ISO-8601 instant, treating a missing zone as UTC.
@@ -99,12 +120,31 @@ class EvidenceRevision:
     #: Monotone version number. A successor must carry a strictly larger version than the revision
     #: it supersedes; a violation is refused rather than silently reordered.
     version: int | None = None
-    #: What ``delta`` means. ``"incremental"``: add this much to the input (several may compose).
-    #: ``"absolute"``: this *is* the corrected value, so it replaces any earlier one. ``None``
-    #: infers: absolute when the revision declares ``supersedes``, incremental otherwise. The two
-    #: are different claims and summing an absolute delta on top of the value it replaces is the
-    #: double count this field exists to make impossible to express by accident.
+    #: What ``delta`` means; see :data:`DELTA_SEMANTICS`. ``"incremental"``: added to the input's
+    #: value, composing with other increments for the same input. ``"absolute"``: the total
+    #: correction for this input relative to the frozen baseline at ``starting_vintage``, replacing
+    #: rather than composing. ``None`` infers: absolute when the revision declares ``supersedes`` or
+    #: is itself superseded, incremental otherwise. The two are different claims, and summing an
+    #: absolute delta on top of an increment is the double count this field exists to refuse.
     delta_semantics: str | None = None
+    #: What is known about whether the base model already contains this correction; see
+    #: :data:`INCORPORATION_KINDS`. ``None`` means the same as ``"unknown"``: being public before
+    #: the decision is not evidence that the decision's inputs contained it, so the compiler states
+    #: the assumption instead of inferring the fact.
+    incorporation: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.delta_semantics not in (None, *DELTA_SEMANTICS):
+            raise ValidationError(
+                "unknown delta semantics; a delta is either an absolute correction or an increment",
+                revision_id=self.revision_id, delta_semantics=self.delta_semantics,
+                allowed=list(DELTA_SEMANTICS),
+            )
+        if self.incorporation not in (None, *INCORPORATION_KINDS):
+            raise ValidationError(
+                "unknown incorporation status", revision_id=self.revision_id,
+                incorporation=self.incorporation, allowed=list(INCORPORATION_KINDS),
+            )
 
     def availability(self) -> datetime:
         parsed = parse_instant(self.available_at)
@@ -131,6 +171,7 @@ class EvidenceRevision:
             "version": self.version,
             "delta_semantics": self.delta_semantics or
             ("absolute" if self.supersedes else "incremental"),
+            "incorporation": self.incorporation or "unknown",
         }
 
 
@@ -189,6 +230,13 @@ class RevisionCompilation:
     incorporated: tuple[str, ...] = ()
     superseded: tuple[str, ...] = ()
     withdrawn: tuple[str, ...] = ()
+    #: Whether each revision was *documented* as already inside the base vintage, documented as
+    #: absent from it, or merely assumed to be inside it because it predates the decision clock.
+    incorporation_counts: tuple[tuple[str, int], ...] = ()
+    incorporation_documented: tuple[str, ...] = ()
+    incorporation_assumed: tuple[str, ...] = ()
+    incorporation_omitted: tuple[str, ...] = ()
+    correction_semantics: tuple[tuple[str, str], ...] = ()
 
     @property
     def changed(self) -> bool:
@@ -217,6 +265,18 @@ class RevisionCompilation:
             "incorporated": list(self.incorporated),
             "superseded": list(self.superseded),
             "withdrawn": list(self.withdrawn),
+            "incorporation": {
+                "counts": dict(self.incorporation_counts),
+                "documented": list(self.incorporation_documented),
+                "assumed": list(self.incorporation_assumed),
+                "documented_omissions_applied": list(self.incorporation_omitted),
+                "assumption": (
+                    "the base vintage is assumed to contain every correction that was public and "
+                    "effective before the decision clock; that is an assumption, not an "
+                    "established fact, and no stricter historical guarantee is made for it"
+                    if self.incorporation_assumed else None),
+            },
+            "correction_semantics": dict(self.correction_semantics),
             "perturbed_problem_digest": self.problem.digest(),
         }
 
@@ -288,7 +348,63 @@ def compile_revisions(
     if audit_instant < decision_instant:
         raise ValidationError("the audit clock cannot precede the decision clock",
                               decision_as_of=clock, audit_as_of=audit_clock)
-    sensitivity_by_key = {item.input_key: item for item in sensitivities}
+    # ------------------------------------------------------------------ revision identity
+    # A revision id is an immutable identity: one id is one event. Two records with one id are
+    # either the same event supplied twice -- which would add its delta twice, the exact double
+    # count this module exists to prevent -- or two different events claiming one identity, which
+    # has no defined meaning at all. Both are refused here, before any map is built or any
+    # correction applied, and the report is deterministic: ids sorted, fields sorted, no dependence
+    # on the order the caller supplied them in.
+    first_seen: dict[str, EvidenceRevision] = {}
+    repeated: dict[str, list[EvidenceRevision]] = {}
+    for item in revisions:
+        if item.revision_id in first_seen:
+            repeated.setdefault(item.revision_id, [first_seen[item.revision_id]]).append(item)
+        else:
+            first_seen[item.revision_id] = item
+    if repeated:
+        identity_fields = tuple(type(next(iter(first_seen.values()))).__dataclass_fields__)
+        detail: dict[str, Any] = {}
+        for revision_id in sorted(repeated):
+            group = repeated[revision_id]
+            differing = sorted(
+                name for name in identity_fields
+                if len({repr(getattr(item, name)) for item in group}) > 1
+            )
+            detail[revision_id] = {
+                "occurrences": len(group),
+                "evidence_ids": sorted({item.evidence_id for item in group}),
+                "conflicting_fields": differing,
+                "identical_payload": not differing,
+            }
+        conflicting = any(not entry["identical_payload"] for entry in detail.values())
+        raise ValidationError(
+            ("duplicate revision_id with conflicting payloads: one immutable id cannot describe two "
+             "different events" if conflicting else
+             "duplicate revision_id: the same immutable event was supplied more than once, and "
+             "applying it again would count its correction twice"),
+            duplicate_revision_ids=sorted(detail), duplicates=detail, conflicting=conflicting,
+        )
+    # A sensitivity is a declared mapping from one input to the objective coefficients. Two
+    # mappings for one input have no composition rule in this system, so silently keeping the last
+    # one (which an earlier version did) would change the arithmetic without changing the record.
+    by_input: dict[str, list[InputSensitivity]] = {}
+    for item in sensitivities:
+        by_input.setdefault(item.input_key, []).append(item)
+    duplicate_inputs = {key: items for key, items in by_input.items() if len(items) > 1}
+    if duplicate_inputs:
+        identical = all(
+            len({tuple(float(v) for v in item.cost_effect) for item in items}) == 1
+            for items in duplicate_inputs.values())
+        raise ValidationError(
+            ("duplicate sensitivity declaration for an input; the same mapping was supplied more "
+             "than once, which has no defined composition" if identical else
+             "conflicting sensitivity declarations for one input: no composition rule is defined, "
+             "so the mapping from that input to the objective is ambiguous"),
+            input_keys=sorted(duplicate_inputs),
+            declarations={key: len(items) for key, items in sorted(duplicate_inputs.items())},
+        )
+    sensitivity_by_key = {item.input_key: by_input[item.input_key][0] for item in sensitivities}
     n = problem.dimension
     delta_cost = np.zeros(n)
     applied: list[EvidenceRevision] = []
@@ -299,6 +415,9 @@ def compile_revisions(
     incorporated: list[str] = []
     superseded: list[str] = []
     withdrawn: list[str] = []
+    incorporation_documented: list[str] = []
+    incorporation_assumed: list[str] = []
+    incorporation_omitted: list[str] = []
     supplied_ids = {item.revision_id for item in revisions}
     by_id = {item.revision_id: item for item in revisions}
 
@@ -543,21 +662,72 @@ def compile_revisions(
                    "public but not yet effective at the audit clock")
             continue
         if eligible_at(revision, decision_instant) and not include_pre_decision:
-            excluded.append({
-                "revision_id": revision.revision_id,
-                "reason": "already_incorporated_in_decision_vintage",
-                "available_at": revision.available_at,
-                "effective_at": revision.effective_at or revision.available_at,
-                "decision_as_of": clock,
-                "starting_vintage": starting_vintage,
-                "detail": "the correction was public before the decision clock, so the base "
-                          "program already reflects it; applying it again would double count",
-            })
-            incorporated.append(revision.revision_id)
-            record(revision, "incorporated_before_decision", False,
-                   "already_incorporated_in_decision_vintage",
-                   "public before the decision clock; already inside the base vintage")
-            continue
+            # Publication before the decision clock is *not* evidence that the decision's inputs
+            # contained the correction: a frozen source vintage can omit a document that was
+            # already public. Only an incorporation record settles it, so the three cases are
+            # distinguished and the assumption is stated when there is no record.
+            status = revision.incorporation or "unknown"
+            if status == "documented_incorporated":
+                if (revision.incorporated_in is not None and starting_vintage is not None
+                        and revision.incorporated_in != starting_vintage):
+                    raise ValidationError(
+                        "a revision is documented as incorporated in a vintage that is not the "
+                        "base program's starting vintage",
+                        revision_id=revision.revision_id,
+                        incorporated_in=revision.incorporated_in,
+                        starting_vintage=starting_vintage,
+                    )
+                omitted_before = True
+            else:
+                omitted_before = False
+            if omitted_before:
+                excluded.append({
+                    "revision_id": revision.revision_id,
+                    "reason": "already_incorporated_in_decision_vintage",
+                    "available_at": revision.available_at,
+                    "effective_at": revision.effective_at or revision.available_at,
+                    "decision_as_of": clock,
+                    "starting_vintage": starting_vintage,
+                    "incorporation": "documented",
+                    "incorporated_in": revision.incorporated_in,
+                    "detail": "an incorporation record places this correction in the base vintage "
+                              "the decision was computed from; applying it again would double count",
+                })
+                incorporated.append(revision.revision_id)
+                incorporation_documented.append(revision.revision_id)
+                record(revision, "incorporated_before_decision", False,
+                       "already_incorporated_in_decision_vintage",
+                       "documented as inside the base vintage")
+                continue
+            if status == "documented_excluded":
+                # Documented as *not* in the base model although public before the decision: that is
+                # a defect in the base model, and measuring it is the audit. Nothing is doubled.
+                incorporation_omitted.append(revision.revision_id)
+                notes.append(
+                    f"revision {revision.revision_id} was public before the decision clock and is "
+                    "documented as excluded from the base vintage; it is applied, which measures a "
+                    "base-model omission rather than a double count"
+                )
+            else:
+                excluded.append({
+                    "revision_id": revision.revision_id,
+                    "reason": "already_incorporated_in_decision_vintage",
+                    "available_at": revision.available_at,
+                    "effective_at": revision.effective_at or revision.available_at,
+                    "decision_as_of": clock,
+                    "starting_vintage": starting_vintage,
+                    "incorporation": "assumed",
+                    "detail": "the correction was public and effective before the decision clock "
+                              "and is assumed to be inside the base vintage; no incorporation "
+                              "record was supplied, so this is an assumption rather than an "
+                              "established fact",
+                })
+                incorporated.append(revision.revision_id)
+                incorporation_assumed.append(revision.revision_id)
+                record(revision, "incorporated_before_decision", False,
+                       "already_incorporated_in_decision_vintage",
+                       "assumed inside the base vintage (no incorporation record)")
+                continue
         sensitivity = sensitivity_by_key.get(revision.input_key)
         if sensitivity is None:
             excluded.append({
@@ -596,19 +766,43 @@ def compile_revisions(
             "not effective at the audit clock; the earlier revision stands"
         )
 
-    # One operative absolute revision per input. Two of them would each claim to *be* the corrected
-    # value, so summing them double counts — the failure mode a broken chain produces. Incremental
-    # corrections are additive by construction and may share an input freely.
-    absolute_by_input: dict[str, list[str]] = {}
+    # --------------------------------------------------- correction semantics, enforced per input
+    # ``absolute`` and ``incremental`` answer different questions. An absolute delta is the total
+    # correction for an input relative to the frozen baseline at ``starting_vintage``; an increment
+    # is defined relative to whatever value it acts on. Mixing them for one input has no defined
+    # result -- an increment that predates the replacement is already inside it, and one that
+    # follows it refers to a base that no longer exists -- so a mixture is refused instead of
+    # summed. Two absolutes for one input are alternatives, not additions, and are refused too.
+    modes_by_input: dict[str, dict[str, list[str]]] = {}
     for revision in applied:
-        if semantics_of(revision) == "absolute":
-            absolute_by_input.setdefault(revision.input_key, []).append(revision.revision_id)
+        modes_by_input.setdefault(revision.input_key, {}).setdefault(
+            semantics_of(revision), []).append(revision.revision_id)
+    mixed = {key: modes for key, modes in modes_by_input.items()
+             if len(modes) > 1}
+    if mixed:
+        raise ValidationError(
+            "an input carries both an absolute correction and an increment; their deltas are "
+            "relative to different bases, so their sum has no defined meaning",
+            input_keys=sorted(mixed),
+            revisions={key: {mode: ids for mode, ids in sorted(modes.items())}
+                       for key, modes in sorted(mixed.items())},
+        )
+    absolute_by_input = {key: modes["absolute"] for key, modes in modes_by_input.items()
+                         if "absolute" in modes}
     conflicts = {key: ids for key, ids in absolute_by_input.items() if len(ids) > 1}
     if conflicts:
         raise ValidationError(
             "more than one operative absolute revision for the same input; their deltas are "
             "alternatives, not increments, so applying both would double count",
             input_keys=sorted(conflicts), revisions=conflicts,
+        )
+    if absolute_by_input and starting_vintage is None:
+        raise ValidationError(
+            "an absolute (replacement) delta is the total correction relative to a frozen baseline, "
+            "so the baseline vintage must be recorded; without it the corrected value has no "
+            "reference",
+            input_keys=sorted(absolute_by_input),
+            revisions={key: ids for key, ids in sorted(absolute_by_input.items())},
         )
 
     if allow_future:
@@ -662,6 +856,17 @@ def compile_revisions(
         incorporated=tuple(incorporated),
         superseded=tuple(superseded),
         withdrawn=tuple(withdrawn),
+        incorporation_counts=tuple(sorted(
+            (kind, sum(1 for item in revisions
+                       if (item.incorporation or "unknown") == kind))
+            for kind in INCORPORATION_KINDS
+        )),
+        incorporation_documented=tuple(incorporation_documented),
+        incorporation_assumed=tuple(incorporation_assumed),
+        incorporation_omitted=tuple(incorporation_omitted),
+        correction_semantics=tuple(sorted(
+            (key, "absolute" if "absolute" in modes else "incremental")
+            for key, modes in modes_by_input.items())),
     )
 
 

@@ -93,8 +93,14 @@ The layer prefers to refuse rather than to substitute:
   *not* reported;
 * a dual value above the primal (mathematically impossible) → the bound is refused and the
   inconsistency recorded, never clamped to a comfortable zero;
-* a revision published before the decision clock → excluded as already incorporated, unless the
-  caller explicitly asks for the different question ("the model missed public evidence");
+* a revision published before the decision clock → excluded as a double count only when an
+  incorporation record says the base vintage contains it; otherwise the assumption is recorded and
+  named, and a documented omission is applied as what it is; a caller asking the different question
+  ("the model missed public evidence") can include it explicitly;
+* one `revision_id` supplied twice, or two payloads claiming one id → refused before any arithmetic,
+  with the differing fields named, so no correction can be counted twice;
+* an absolute (replacement) delta without `starting_vintage`, or mixed with an increment on the same
+  input → refused: the two are relative to different bases, so their sum is not defined;
 * a correction drawn outside the declared uncertainty set → the violation is measured and reported,
   not hidden.
 

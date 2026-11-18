@@ -80,6 +80,8 @@ def revision(index: int, delta: float, available_at: str = "2024-11-02T22:00:00Z
 def compile_audited(base, revisions, sensitivities, **kwargs):
     """Compile with an explicit audit clock: the ordinary revision-audit configuration."""
     kwargs.setdefault("audit_as_of", AUDIT_CLOCK)
+    # Absolute (replacement) deltas are relative to the frozen baseline, so it is named.
+    kwargs.setdefault("starting_vintage", "decision-vintage")
     return compile_revisions(base, revisions, sensitivities, **kwargs)
 
 

@@ -427,7 +427,10 @@ def _compile(revisions, *, audit: str = AUDIT_CLOCK):
         as_of=DECISION_CLOCK,
     )
     sensitivity = InputSensitivity("ret_0", (-1.0, 0.0, 0.0))
-    return compile_revisions(problem, list(revisions), [sensitivity], audit_as_of=audit)
+    # An operative absolute (replacement) delta is relative to a frozen baseline, so the baseline
+    # vintage is recorded rather than left implicit.
+    return compile_revisions(problem, list(revisions), [sensitivity], audit_as_of=audit,
+                             starting_vintage="decision-vintage")
 
 
 def test_a_successor_published_after_the_cutoff_does_not_suppress_its_predecessor():

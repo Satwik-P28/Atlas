@@ -86,6 +86,24 @@ ZERO_GAP_TOLERANCE = 1e-9
 #: decision-relevant information. The value is in objective units and is overridable.
 DEFAULT_USEFUL_BOUND = 1.0e-3
 
+#: Three statements that are often conflated and must not be. The certificate makes the first two;
+#: it does not make the third, and says so in the same record.
+CLAIM_CLASSES = {
+    "analytic_under_exact_arithmetic": (
+        "For any dual-feasible multipliers, weak duality gives f(w) - g(lam) >= f(w) - f* in exact "
+        "arithmetic. A theorem about the declared program and the declared linear sensitivity; it "
+        "is not a statement about floating-point arithmetic."),
+    "empirical_agreement": (
+        "The computed bound and an independently measured reference regret agree within the observed "
+        "solver-disagreement threshold. This is a numerical observation on float64 arithmetic, not "
+        "a proof that the value encloses the true error."),
+    "verified_floating_point_enclosure": (
+        "A rigorous upper bound on the floating-point error itself, established by directed rounding "
+        "or interval arithmetic. Not available: ``rounding_margin`` is a forward-error *estimate* "
+        "under the standard model, so it bounds the arithmetic only up to an unverified modelling "
+        "step."),
+}
+
 
 @dataclass(frozen=True, slots=True)
 class RevisionCertificate:
@@ -105,6 +123,8 @@ class RevisionCertificate:
     hindsight: bool = False
     reference: dict[str, Any] | None = None
     recorded_dual_status: str = "not_supplied"
+    #: Which of the three claim classes this certificate actually makes; see :data:`CLAIM_CLASSES`.
+    claims: dict[str, Any] = field(default_factory=dict)
 
     @property
     def zero_regret(self) -> bool:
@@ -141,6 +161,7 @@ class RevisionCertificate:
             "hindsight": self.hindsight,
             "reference": dict(self.reference) if self.reference else None,
             "recorded_dual_status": self.recorded_dual_status,
+            "claims": dict(self.claims),
         }
 
 
@@ -449,6 +470,41 @@ def certify_revision_impact(
             reference_block["bound_over_realized_regret"] = float(bound / denominator)
             reference_block["bound_understates"] = bool((bound + 1e-15) < realized)
 
+    # ------------------------------------------------ what is actually being claimed, in three parts
+    # The analytic theorem holds whenever a dual-feasible point generated the bound. The empirical
+    # statement holds only where a reference measurement exists, and only to the resolution of that
+    # measurement. The third class -- a verified floating-point enclosure -- is not available, and
+    # saying so is part of the certificate rather than a caveat in a document.
+    analytic_holds = bound is not None
+    claims = {
+        "made": (["analytic_under_exact_arithmetic"] if analytic_holds else []) +
+                (["empirical_agreement"] if reference_block is not None and bound is not None else []),
+        "not_made": ["verified_floating_point_enclosure"],
+        "analytic_under_exact_arithmetic": {
+            "holds": analytic_holds,
+            "statement": CLAIM_CLASSES["analytic_under_exact_arithmetic"],
+            "assumptions": [
+                "the recorded decision is feasible for the revised program",
+                "the multipliers are dual feasible for the revised program's constraint structure",
+                "the revision's input-to-cost mapping is the declared linear sensitivity",
+            ],
+            "algebraic_bound": bounded_block.get("regret_upper_bound_exact_arithmetic"),
+            "emitted_bound": bound,
+        },
+        "empirical_agreement": {
+            "measured": reference_block is not None and bound is not None,
+            "statement": CLAIM_CLASSES["empirical_agreement"],
+            "verification_tolerance": bounded_block.get("verification_tolerance"),
+            "reference_regret": (reference_block or {}).get("realized_regret"),
+            "note": ("agreement is with a reference solver's own float64 result; it is evidence about "
+                     "the bound and the solver jointly, not a proof about either"),
+        },
+        "verified_floating_point_enclosure": {
+            "available": False,
+            "statement": CLAIM_CLASSES["verified_floating_point_enclosure"],
+            "margin_kind": "forward_error_estimate",
+        },
+    }
     return RevisionCertificate(
         schema=CERTIFICATE_SCHEMA,
         revision_id=(compilation.applied[0].revision_id if compilation.applied else None),
@@ -470,6 +526,7 @@ def certify_revision_impact(
         hindsight=compilation.hindsight,
         reference=reference_block,
         recorded_dual_status=recorded_dual_status,
+        claims=claims,
     )
 
 

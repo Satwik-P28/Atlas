@@ -320,6 +320,11 @@ def main() -> None:
         kind="linear_objective",
         source_id=f"SEC 10-K {LATER_ACCESSION}",
         version=2,
+        # Replacement semantics, stated rather than inferred: the recast *replaces* the growth rate
+        # computed from the FY2023 filing. Because no other correction touches this input, the
+        # compiled contribution would be the same under incremental semantics; the declaration records
+        # which question the number answers, and the baseline it is relative to.
+        delta_semantics="absolute",
         note=("FY2023 revenue as recast in the FY2024 annual report's comparative column after "
               "royalty income was reclassified into Total revenues, replacing the figure first "
               "filed in the FY2023 annual report; the model input is the implied growth rate "
@@ -395,6 +400,24 @@ def main() -> None:
             "relative_change": (later_filing["value"] - original["value"]) / original["value"],
             "compiled_revision": revision.as_dict(),
             "declared_sensitivity": sensitivity.as_dict(),
+            # The mapping the audit depends on, checked rather than asserted: what the declared
+            # semantics mean for this number, which baseline it is relative to, and whether the
+            # compiled cost perturbation is that delta times the declared effect.
+            "semantics": {
+                "delta_semantics": "absolute",
+                "baseline_vintage": "fy2023-10K-vintage",
+                "baseline_value": growth_original,
+                "corrected_value": growth_later,
+                "delta_equals_corrected_minus_baseline": bool(
+                    abs(delta_growth - (growth_later - growth_original)) <= 1e-15),
+                "other_corrections_on_this_input": 0,
+                "compiled_delta_cost_equals_delta_times_effect": bool(
+                    np.allclose(compilation.delta_cost,
+                                delta_growth * np.asarray(sensitivity.cost_effect))),
+                "note": ("an absolute delta is the total correction relative to the frozen baseline "
+                         "vintage; with no competing correction on this input it is also the "
+                         "increment over the originally filed figure"),
+            },
         },
         "model": {
             "kind": "stylised_three_line_allocation",
