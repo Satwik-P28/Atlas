@@ -51,11 +51,13 @@ curvature term, and remains convex in the multiplier even though the uncertainty
 not.
 
 On 598 seeded revision events, verified against OSQP and Clarabel, no bound understated realized
-regret; exactly-certified decisions had realized regret below `2.1e-16`; five dual ascent steps
+regret; certified decisions carried a validated residual bound of at most `1.8e-17`; five dual
+ascent steps
 bring the median bound from `24.1×` to `1.24×` and twenty bring it to `1.000×`. Over an interval
 uncertainty set the worst-case bound was sound in 40/40 trials at `52×` less cost than enumerating
-the vertices. One real SEC restatement is compiled end to end, with accession numbers, acceptance
-instants and payload hashes.
+the vertices. One real SEC revenue reclassification — a conforming recast, not a restatement — is
+compiled end to end, with accession numbers, acceptance instants, quoted disclosure language and
+payload hashes.
 
 **What is not claimed.** The data are synthetic apart from one filing. There is no user interface.
 The certificate is *slower* than OSQP (1.8–6.7×), so no time advantage is claimed. No new theorem

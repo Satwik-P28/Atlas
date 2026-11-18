@@ -332,10 +332,17 @@ def residual_regret_bound(
     """Turn a KKT residual into an explicit, conservative regret bound.
 
     A KKT check compares residuals against a tolerance, and a tolerance is not a proof. This
-    routine converts the residual into a *quantity*. Write ``L`` for the Lagrangian at the given
-    multipliers, ``x*`` for its unconstrained minimiser, ``r = Q(w - x*) = Qw + c + nu*1 - alpha
-    + beta + A'gamma``, and ``slack = alpha'(w-l) + beta'(u-w) - gamma'(d-Aw) >= 0`` at a feasible
-    ``w``. Then, exactly,
+    routine converts the residual into a *quantity*. Write     ``L`` for the Lagrangian at the given multipliers, ``x*`` for its unconstrained minimiser,
+    ``r = Q(w - x*) = Qw + c + nu*1 - alpha + beta + A'gamma``, and
+
+        slack = alpha'(w-l) + beta'(u-w) + gamma'(d-Aw) >= 0      at a feasible ``w``.
+
+    **Every term of ``slack`` is added.** The Lagrangian convention is
+    ``L(x) = f(x) + nu(1'x - b) + alpha'(l - x) + beta'(x - u) + gamma'(Ax - d)``, so stationarity
+    reads ``grad f + nu*1 - alpha + beta + A'gamma = 0`` and
+    ``f(w) - L(w) = alpha'(w-l) + beta'(u-w) + gamma'(d-Aw)``. A minus sign on the ``gamma``
+    term -- which this routine had -- understates the gap whenever an inequality is inactive,
+    and produces a number that is not a bound. Then, exactly,
 
         f(w) - g(lam) = L(w) - L(x*) + [f(w) - L(w)] = 0.5 r' Q^-1 r + slack.
 
@@ -344,10 +351,12 @@ def residual_regret_bound(
         regret(w) = f(w) - f* <= 0.5 r' Q^-1 r + slack,
 
     which is sound for **any** feasible ``w`` and any dual-feasible point, complementary or not.
-    ``slack`` is what the earlier version of this routine dropped: it reported only the
-    quadratic form, which is smaller than the true gap whenever the multipliers are not exactly
-    complementary at ``w`` (14 orders of magnitude smaller on the first instance tested), so
-    the reported number was not a bound. Adding ``slack`` makes the identity exact.
+    The identity is verified at run time and returned as ``gap_identity_residual``; a value above
+    round-off means the reported bound is not trustworthy and the caller should refuse it. Two
+    versions of this routine understated the gap: the first dropped ``slack`` entirely, the second
+    negated its ``gamma`` component. Both defects produced numbers smaller than the true gap on an
+    instance where the identity is checkable by hand, which is why it is now checked on every
+    call rather than argued in a comment.
 
     The multipliers are *not* required to be the optimal ones. ``||r||^2/(2 lambda_min) + slack``
     is returned as a conservative variant that only needs ``Q >= lambda_min I``; it avoids the
@@ -390,7 +399,10 @@ def residual_regret_bound(
     if beta.size:
         slack += float(beta @ (upper - w))
     if gamma.size:
-        slack -= float(gamma @ (d_vector - a_matrix @ w))
+        # ADDED, not subtracted: f(w) - L(w) = alpha'(w-l) + beta'(u-w) + gamma'(d-Aw), because
+        # the Lagrangian carries +gamma'(Ax - d). The opposite sign made the reported "bound"
+        # 0.235 on an instance whose true dual gap is 0.655 and whose regret is 0.510.
+        slack += float(gamma @ (d_vector - a_matrix @ w))
     eigenvalues = np.linalg.eigvalsh(q)
     lambda_min = float(eigenvalues[0]) if eigenvalues.size else 0.0
     conservative = ((float(residual @ residual) / (2.0 * lambda_min)) if lambda_min > 0
@@ -398,9 +410,13 @@ def residual_regret_bound(
     dual_value, _w, _grad = dual_objective(problem, point, strict=False)
     duality_gap = float(problem.objective(w) - dual_value)
     bound = quadratic + slack
+    # The identity must hold to round-off at every call; if it does not, the bound is not a bound.
+    identity_residual = abs(bound - duality_gap)
+    identity_ok = bool(identity_residual <= 1e-8 * max(1.0, abs(duality_gap)) + 1e-12)
     # Sound whenever w is feasible and the multipliers are dual feasible; complementarity is
     # measured and reported, but it affects only how much slack the bound carries.
-    valid = bool(feasibility.feasible and math.isfinite(bound) and bound >= -1e-12 * gap_scale)
+    valid = bool(feasibility.feasible and math.isfinite(bound) and bound >= -1e-12 * gap_scale
+                 and identity_ok)
     return {
         "bound": max(bound, 0.0) if valid else None,
         "bound_kind": "quadratic_form_plus_complementarity_slack",
@@ -417,7 +433,14 @@ def residual_regret_bound(
         "identity_check": {
             "quadratic_plus_slack": bound,
             "duality_gap": duality_gap,
-            "absolute_difference": abs(bound - duality_gap),
+            "absolute_difference": identity_residual,
+            "identity_ok": identity_ok,
+        },
+        "gap_identity_residual": identity_residual,
+        "slack_terms": {
+            "alpha_w_minus_l": float(alpha @ (w - lower)) if alpha.size else 0.0,
+            "beta_u_minus_w": float(beta @ (upper - w)) if beta.size else 0.0,
+            "gamma_d_minus_Aw": (float(gamma @ (d_vector - a_matrix @ w)) if gamma.size else 0.0),
         },
         "assumptions": {
             "primal_feasibility": bool(feasibility.feasible),

@@ -71,7 +71,7 @@ from typing import Any, Sequence
 import numpy as np
 
 from ..core.errors import ValidationError
-from .problem import ConvexDecisionProblem
+from .problem import ConvexDecisionProblem, check_feasibility
 from .qp import DualPoint, _dual_terms, _factor, maximize_dual, validate_dual_point
 
 UNCERTAINTY_SCHEMA = "atlas.decision.uncertainty_set.v1"
@@ -86,8 +86,14 @@ class UncertaintySet:
 
     ``interval``   coordinate-wise ``|delta_i| <= half_width_i``, independently. The support
                    function is ``sum_i half_width_i |d_i|`` (attained at a vertex).
-    ``ellipsoid``  ``||L^{-1} (delta - center)||_2 <= radius``; the support function is
-                   ``center'd + radius ||L'd||_2``.
+    ``ellipsoid``  ``U = {center + shape @ z : ||z||_2 <= radius}``, equivalently
+                   ``||shape^-1 (delta - center)||_2 <= radius`` with ``shape`` symmetric positive
+                   definite. The support function is ``center'd + radius ||shape @ d||_2``, the
+                   maximiser is ``center + radius * shape @ (shape @ d) / ||shape @ d||``, the
+                   curvature envelope uses the row norms of ``shape``, and membership inverts
+                   ``shape`` (not its Cholesky factor). All four must use this one definition.
+
+    ``singleton``  the exact-revision case, reproducing CRI.
     ``singleton``  the exact-revision case, reproducing CRI.
 
     ``coverage`` is prose that states where the numbers came from. It is required, because an
@@ -163,6 +169,43 @@ class UncertaintySet:
             return center
         return center + self.radius * (shape @ (gradient / norm))
 
+    def distance_outside(self, delta: Sequence[float]) -> float:
+        """Signed distance from ``delta`` to ``U``: ``<= 0`` means inside.
+
+        For the ellipsoid this inverts ``shape`` itself, matching the definition
+        ``U = {center + shape z : ||z|| <= radius}`` used by :meth:`support` and
+        :meth:`argmax`. Inverting the Cholesky factor instead -- which an earlier version did --
+        describes a *different* set and misclassifies points on it: with
+        ``shape = diag(0.25, 1)``, ``radius = 1`` and an offset of ``(0.4, 0)``, the offset is
+        outside (norm 1.6 through ``shape^-1``) but was reported inside (norm 0.8 through the
+        Cholesky factor).
+        """
+
+        d = np.asarray(delta, dtype=float)
+        if d.shape != (self.dimension,):
+            raise ValidationError("point must match the uncertainty dimension",
+                                  expected=self.dimension, received=int(d.size))
+        offset = d - np.asarray(self.center, dtype=float)
+        if self.kind == "singleton":
+            return float(np.max(np.abs(offset))) if offset.size else 0.0
+        if self.kind == "interval":
+            return float(np.max(np.abs(offset) - np.asarray(self.half_width, dtype=float)))
+        z = np.linalg.solve(np.asarray(self.shape, dtype=float), offset)
+        return float(np.linalg.norm(z) - self.radius)
+
+    def contains(self, delta: Sequence[float], tolerance: float = 1e-12) -> bool:
+        """Membership, using the same geometry as :meth:`support` and :meth:`argmax`.
+
+        ``tolerance`` is absolute in the normalised coordinate (the norm of ``shape^-1 (delta -
+        center)``), so a point constructed by :meth:`argmax` -- which sits exactly on the boundary
+        in exact arithmetic -- is a member even when inverting ``shape`` leaves a few ulps of
+        positive residual. The tolerance is far below any economically meaningful correction, so
+        it cannot classify a genuinely exterior point as interior: the review's counterexample is
+        0.6 outside, twelve orders of magnitude beyond this.
+        """
+
+        return self.distance_outside(delta) <= tolerance
+
     def as_dict(self) -> dict[str, Any]:
         return {
             "schema": UNCERTAINTY_SCHEMA,
@@ -207,6 +250,15 @@ class WorstCaseCertificate:
     iterations: dict[str, int]
     runtime_ms: float
     valid: bool
+    #: The algebraic objective-value bound. It is a fact about the program and the numbers, and
+    #: it holds whether or not the recorded weights are feasible.
+    objective_bound: float = float("nan")
+    #: Whether the recorded decision is feasible for the program. An objective-value bound at an
+    #: infeasible point is not a decision regret certificate.
+    decision_feasible: bool = True
+    #: ``valid and decision_feasible``: the only flag a caller should act on.
+    actionable: bool = True
+    feasibility: dict[str, Any] = field(default_factory=dict)
     reason: str | None = None
     verification: dict[str, Any] = field(default_factory=dict)
     limitations: tuple[str, ...] = ()
@@ -227,6 +279,10 @@ class WorstCaseCertificate:
             "iterations": dict(self.iterations),
             "runtime_ms": self.runtime_ms,
             "valid": self.valid,
+            "objective_bound": self.objective_bound,
+            "decision_feasible": self.decision_feasible,
+            "actionable": self.actionable,
+            "feasibility": dict(self.feasibility),
             "reason": self.reason,
             "verification": dict(self.verification),
             "limitations": list(self.limitations),
@@ -321,6 +377,9 @@ def certify_worst_case(
                               expected=decision_problem.dimension,
                               received=uncertainty.dimension)
     objective_at_decision = float(decision_problem.objective(w))
+    # Whether the recorded decision is admissible is a property of the decision, computed once and
+    # reported on every path, including the ones that fail earlier for other reasons.
+    feasibility = check_feasibility(decision_problem, w, tolerance=1e-9)
     curvature = curvature_bound(decision_problem, uncertainty)
     limitations = (
         "the bound is conditional on the true correction lying inside the declared set",
@@ -348,6 +407,9 @@ def certify_worst_case(
                 bound_at_recorded_multipliers=None, multipliers_optimised=False,
                 iterations={"requested": int(dual_iterations), "performed": 0},
                 runtime_ms=(time.perf_counter() - started) * 1000.0, valid=False,
+                objective_bound=float("inf"),
+                decision_feasible=bool(feasibility.feasible), actionable=False,
+                feasibility=feasibility.as_dict(),
                 reason=f"the recorded multipliers were rejected: {exc}",
                 limitations=limitations + ("no bound is claimed from invalid multipliers",),
             )
@@ -374,6 +436,9 @@ def certify_worst_case(
             bound_at_recorded_multipliers=None, multipliers_optimised=False,
             iterations={"requested": int(dual_iterations), "performed": 0},
             runtime_ms=(time.perf_counter() - started) * 1000.0, valid=False,
+            objective_bound=float("inf"),
+            decision_feasible=bool(feasibility.feasible), actionable=False,
+            feasibility=feasibility.as_dict(),
             reason="no dual feasible point was available; the bound needs recorded multipliers "
                    "or an explicit dual ascent budget",
             limitations=limitations,
@@ -382,11 +447,28 @@ def certify_worst_case(
     bound, gap, support, _curvature, direction = _bound_at(
         decision_problem, w, uncertainty, point, float(curvature["value"]))
     scale = max(1.0, abs(objective_at_decision))
-    valid = bool(math.isfinite(bound) and bound >= -1e-9 * scale)
-    reason = None if valid else (
+    algebra_valid = bool(math.isfinite(bound) and bound >= -1e-9 * scale)
+    reason = None if algebra_valid else (
         f"the computed bound {bound:.6g} is negative beyond numerical noise, which means the "
         "multipliers or the set are inconsistent; no bound is claimed"
     )
+    # A regret certificate is a statement about a *decision*, not only about a number. If the
+    # recorded weights are infeasible for the program, the Lagrangian identity still produces an
+    # objective-value bound, but the quantity it bounds is not the regret of a decision anyone
+    # could have taken. The two are now separated rather than conflated.
+    actionable = bool(algebra_valid and feasibility.feasible)
+    if not feasibility.feasible:
+        infeasibility_note = (
+            "the recorded decision is infeasible for the program; the algebraic objective bound "
+            f"{bound:.6g} is reported for transparency and is not a decision guarantee"
+        )
+        reason = f"{reason} {infeasibility_note}" if reason else infeasibility_note
+    if not feasibility.feasible:
+        limitations = limitations + (
+            "the recorded decision violates the program's constraints, so no decision regret "
+            "certificate is claimed",
+        )
+    valid = actionable
     return WorstCaseCertificate(
         schema=WORST_CASE_SCHEMA,
         problem_id=decision_problem.problem_id,
@@ -404,6 +486,10 @@ def certify_worst_case(
                     "gradient_performed": gradient_iterations},
         runtime_ms=(time.perf_counter() - started) * 1000.0,
         valid=valid,
+        objective_bound=float(bound),
+        decision_feasible=bool(feasibility.feasible),
+        actionable=actionable,
+        feasibility=feasibility.as_dict(),
         reason=reason,
         limitations=limitations,
     )
@@ -564,23 +650,10 @@ def adversarial_out_of_set_check(
     from .qp import solve
 
     delta = np.asarray(actual_delta, dtype=float)
-    center = np.asarray(uncertainty.center, dtype=float)
-    inside = True
-    distance = 0.0
-    if uncertainty.kind == "interval":
-        excess = np.abs(delta - center) - np.asarray(uncertainty.half_width, dtype=float)
-        distance = float(np.max(excess))
-        inside = bool(distance <= 0)
-    elif uncertainty.kind == "ellipsoid":
-        from scipy.linalg import solve_triangular
-        shape = np.asarray(uncertainty.shape, dtype=float)
-        factor = np.linalg.cholesky(shape)
-        z = solve_triangular(factor, delta - center, lower=True)
-        distance = float(np.linalg.norm(z) - uncertainty.radius)
-        inside = bool(distance <= 0)
-    else:
-        distance = float(np.max(np.abs(delta - center)))
-        inside = bool(distance <= 1e-12)
+    # One membership predicate, shared with the support function and the maximiser. Computing
+    # membership separately is how the Cholesky/shapec inversion bug survived a test suite.
+    distance = uncertainty.distance_outside(delta)
+    inside = uncertainty.contains(delta)
     perturbed = decision_problem.replace(
         linear_costs=tuple(float(v) for v in decision_problem.cost_vector() + delta))
     reference = solve(perturbed)

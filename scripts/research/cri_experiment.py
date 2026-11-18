@@ -255,7 +255,7 @@ def experiment_certificates(seed: int) -> dict[str, Any]:
             "weights_changed": bool(np.max(np.abs(np.asarray(decision.weights) -
                                                   np.asarray(reference["external_weights"]))) > 1e-6),
             "verdict": warm.verdict,
-            "zero_regret": warm.zero_regret,
+            "certified_within_residual": warm.zero_regret,
             "bound_warm": warm.bounded["regret_upper_bound"],
             "bound_arms": budget_arms,
             "bound_convex": convex["bound"] if convex["valid"] else None,
@@ -276,7 +276,7 @@ def experiment_certificates(seed: int) -> dict[str, Any]:
     usable = [record for record in records]
     realized = [record["realized_regret"] for record in usable]
     arms = {
-        "zero_regret_certificate": [record["zero_regret"] for record in usable],
+        "certified_within_residual": [record["certified_within_residual"] for record in usable],
         "bounded_within_tolerance": [record["meets_tolerance"] for record in usable],
         "warm_bound_sound": [record["bound_warm"] is not None and
                              record["bound_warm"] + 1e-12 >= record["realized_regret"]
@@ -302,9 +302,13 @@ def experiment_certificates(seed: int) -> dict[str, Any]:
                   and record["realized_regret"] > 1e-10]
         tightness[str(budget)] = {"median": percentile(values, 0.5),
                                   "p90": percentile(values, 0.9), "count": len(values)}
-    certified_zero = [r["realized_regret"] for r in usable if r["zero_regret"]]
+    certified_zero = [r["realized_regret"] for r in usable if r["certified_within_residual"]]
+    # The residual bound attached to the *certified* verdict, which is the set the report
+    # describes. Records carry a numerical bound under both verdicts, and mixing them made the
+    # headline maximum describe a `regret_bounded` event rather than a certified one.
     residual_bounds = [r["numerical_regret_bound"] for r in usable
-                       if r["numerical_regret_bound"] is not None]
+                       if r["certified_within_residual"]
+                       and r["numerical_regret_bound"] is not None]
     return {
         "seed": seed,
         "dataset_digest": market.dataset_digest,
@@ -313,8 +317,8 @@ def experiment_certificates(seed: int) -> dict[str, Any]:
         "rejected": len(attempts) - len(usable),
         "rejection_reasons": _reason_counts(attempts),
         "events": len(usable),
-        "zero_regret_certified_realized_max": max(certified_zero) if certified_zero else None,
-        "zero_regret_certified_realized_p95": percentile(certified_zero, 0.95),
+        "residual_certified_realized_max": max(certified_zero) if certified_zero else None,
+        "residual_certified_realized_p95": percentile(certified_zero, 0.95),
         "mean_realized_regret": float(np.mean(realized)) if realized else None,
         "median_realized_regret": float(np.median(realized)) if realized else None,
         "max_solver_spread": max((r["solver_spread"] for r in usable), default=None),
@@ -332,7 +336,7 @@ def experiment_certificates(seed: int) -> dict[str, Any]:
             [{"reason": r["recovery_method"]} for r in usable]),
         "conditional_on_positive_regret": {
             "count": len(positive),
-            "zero_regret_rate": rate([r["zero_regret"] for r in positive]),
+            "certified_within_residual_rate": rate([r["certified_within_residual"] for r in positive]),
         },
         "cost_ms": {
             "certificate_median": percentile([r["certificate_ms"] for r in usable], 0.5),
@@ -397,7 +401,7 @@ def experiment_cap_tightness(seed: int) -> dict[str, Any]:
             changed += int(abs(reference["regret"]) > 1e-10)
             if certificate.zero_regret:
                 certified_regrets.append(reference["regret"])
-        output.append({"cap": cap, "trials": trials, "zero_regret_rate": certified / trials,
+        output.append({"cap": cap, "trials": trials, "certified_within_residual_rate": certified / trials,
                        "weights_changed_rate": changed / trials,
                        "max_regret_when_certified": max(certified_regrets) if certified_regrets else None})
     return {"seed": seed, "sweep": output}
@@ -539,10 +543,10 @@ def experiment_hindsight(seed: int) -> dict[str, Any]:
     return {
         "seed": seed,
         "trials": trials,
-        "honest_zero_regret_rate": honest_zero / trials,
-        "hindsight_zero_regret_rate": hindsight_zero / trials,
+        "honest_certified_within_residual_rate": honest_zero / trials,
+        "hindsight_certified_within_residual_rate": hindsight_zero / trials,
         "mean_regret_of_the_actual_decision": float(np.mean(hindsight_regret)),
-        "note": ("the hindsight arm audits a decision that was never available; its zero-regret "
+        "note": ("the hindsight arm audits a decision that was never available; its within-residual "
                  "rate is an artefact of the construction, not evidence of stability"),
     }
 
@@ -644,7 +648,7 @@ def experiment_cross_domain(seed: int) -> dict[str, Any]:
         results.append({
             "trial": trial,
             "verdict": certificate.verdict,
-            "zero_regret": certificate.zero_regret,
+            "certified_within_residual": certificate.zero_regret,
             "realized_regret": reference["regret"],
             "bound": certificate.bounded["regret_upper_bound"],
             "below_solver_resolution": reference["below_solver_resolution"],
@@ -653,7 +657,7 @@ def experiment_cross_domain(seed: int) -> dict[str, Any]:
         "seed": seed,
         "status": decision.status,
         "certified_optimal": decision.certified_optimal,
-        "zero_regret_rate": rate([item["zero_regret"] for item in results]),
+        "certified_within_residual_rate": rate([item["certified_within_residual"] for item in results]),
         "bound_sound_rate": rate([item["bound"] is not None and
                                   item["bound"] + 1e-9 >= item["realized_regret"]
                                   for item in results]),
@@ -745,7 +749,7 @@ def aggregate(seed_results: Sequence[dict[str, Any]], *, block: int, seed: int) 
 
     records = [record for result in seed_results for record in result["records"]]
     flags = {
-        "zero_regret_certificate": [record["zero_regret"] for record in records],
+        "certified_within_residual": [record["certified_within_residual"] for record in records],
         "bounded_within_tolerance": [record["meets_tolerance"] for record in records],
         "warm_bound_sound": [record["bound_warm"] is not None and
                              record["bound_warm"] + 1e-12 >= record["realized_regret"]
@@ -842,8 +846,10 @@ def to_markdown(results: dict[str, Any]) -> str:
     lines.append("## Numerical residual certificate")
     lines.append("")
     residual = results["certificates"]["residual"]
-    lines.append(f"Median `0.5 r'Q^-1 r + slack` over events: {residual['median']:.3e}; "
-                 f"maximum {residual['max']:.3e}.")
+    lines.append(f"Over the {residual['count']} events certified within the residual, "
+                 f"`0.5 r'Q^-1 r + slack` has median {residual['median']:.3e} and maximum "
+                 f"{residual['max']:.3e}; the largest realized regret in that set is "
+                 f"{residual['realized_max']:.3e}.")
     lines.append(f"LP fallback used in {results['certificates']['lp_fallback_rate']:.3f} of events; "
                  f"recovery methods: {json.dumps(results['certificates']['recovery_methods'])}.")
     lines.append("")
@@ -870,11 +876,11 @@ def to_markdown(results: dict[str, Any]) -> str:
 
     lines.append("## Position-cap sweep")
     lines.append("")
-    lines.append("| cap | zero-regret rate | weights changed | max regret when certified |")
+    lines.append("| cap | within-residual rate | weights changed | max regret when certified |")
     lines.append("|---|---|---|---|")
     for row in results["cap_tightness"]["sweep"]:
         worst = row.get("max_regret_when_certified")
-        lines.append(f"| {row['cap']:.2f} | {row['zero_regret_rate']:.3f} | "
+        lines.append(f"| {row['cap']:.2f} | {row['certified_within_residual_rate']:.3f} | "
                      f"{row['weights_changed_rate']:.3f} | "
                      f"{'n/a' if worst is None else f'{worst:.2e}'} |")
     lines.append("")
@@ -913,12 +919,12 @@ def to_markdown(results: dict[str, Any]) -> str:
                  f"twins {degeneracy['objective_gap_between_twins']:.3e}, primary verdict "
                  f"`{degeneracy['primary_verdict']}`, twin verdict `{degeneracy['twin_verdict']}`.")
     hindsight = results["hindsight"]
-    lines.append(f"Hindsight: honest zero-regret rate {hindsight['honest_zero_regret_rate']:.3f}; "
-                 f"hindsight zero-regret rate {hindsight['hindsight_zero_regret_rate']:.3f}; mean "
+    lines.append(f"Hindsight: honest within-residual rate {hindsight['honest_certified_within_residual_rate']:.3f}; "
+                 f"hindsight within-residual rate {hindsight['hindsight_certified_within_residual_rate']:.3f}; mean "
                  f"regret of the actual decision "
                  f"{hindsight['mean_regret_of_the_actual_decision']:.3e}.")
     cross = results["cross_domain"]
-    lines.append(f"Capacity allocation: zero-regret rate {cross['zero_regret_rate']:.3f}, bound sound "
+    lines.append(f"Capacity allocation: within-residual rate {cross['certified_within_residual_rate']:.3f}, bound sound "
                  f"rate {cross['bound_sound_rate']:.3f}, mean realized regret "
                  f"{cross['mean_realized_regret']:.3e}.")
     lines.append("")
@@ -932,6 +938,7 @@ def main() -> None:
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=True)
     ledger = TrialLedger(output / "cri_ledger.jsonl")
+    ledger.reset()
 
     started = time.perf_counter()
     per_seed = []
@@ -947,14 +954,15 @@ def main() -> None:
             "rejected": result["rejected"],
             "outcome": "completed",
             "warm_bound_sound_rate": result["rates"]["warm_bound_sound"],
-            "zero_regret_rate": result["rates"]["zero_regret_certificate"],
+            "certified_within_residual_rate": result["rates"]["certified_within_residual"],
         })
 
     aggregate_certificates = aggregate(per_seed, block=CONFIG["bootstrap"]["block"],
                                        seed=CONFIG["bootstrap"]["seed"])
     records = [record for result in per_seed for record in result["records"]]
     residual_bounds = [r["numerical_regret_bound"] for r in records
-                       if r["numerical_regret_bound"] is not None]
+                       if r["verdict"] == "zero_regret_within_residual"
+                       and r["numerical_regret_bound"] is not None]
     results: dict[str, Any] = {
         "generated_by": "scripts/research/cri_experiment.py",
         "config": CONFIG,
@@ -970,7 +978,11 @@ def main() -> None:
             "tightness_by_budget": aggregate_certificates["tightness_by_budget"],
             "fraction_with_regret": aggregate_certificates["fraction_with_regret"],
             "residual": {"median": percentile(residual_bounds, 0.5),
-                         "max": max(residual_bounds) if residual_bounds else None},
+                         "max": max(residual_bounds) if residual_bounds else None,
+                         "count": len(residual_bounds),
+                         "realized_max": max(
+                             (r["realized_regret"] for r in records
+                              if r["verdict"] == "zero_regret_within_residual"), default=None)},
             "lp_fallback_rate": rate([r["used_lp_fallback"] for r in records]),
             "recovery_methods": _reason_counts([{"reason": r["recovery_method"]} for r in records]),
             "below_resolution_rate": rate([r["below_solver_resolution"] for r in records]),

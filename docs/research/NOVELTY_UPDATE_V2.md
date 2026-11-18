@@ -119,9 +119,10 @@ empirical characterisation, including the conservatism factor and the failure mo
 Listed because the honest assessment is "not yet sufficient for a strong venue", and the reasons
 are specific:
 
-1. **A real multi-firm study.** One SEC restatement is a pipeline demonstration. A study over a few
-   hundred revenue/inventory restatements, with the sensitivity estimated rather than declared,
-   would turn §7 into evidence.
+1. **A real multi-firm study.** One documented SEC revenue reclassification — a conforming recast,
+   not a restatement — is a pipeline demonstration. A study over a few hundred
+   revenue/inventory restatements and reclassifications, with the sensitivity estimated rather
+   than declared, would turn §7 into evidence.
 2. **The set-valued case with a calibrated set.** CRI-U is sound but conservative; a comparison
    against a conformal or DRO-calibrated set on the same data would establish whether the
    conservatism is a modelling artefact or intrinsic.

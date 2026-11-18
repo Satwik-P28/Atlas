@@ -68,7 +68,7 @@ the technical report is copied from this file.
 
 | arm | rate | 95% moving-block interval |
 |---|---|---|
-| zero_regret_certificate | 0.413 | [0.373, 0.453] |
+| certified_within_residual | 0.413 | [0.373, 0.453] |
 | bounded_within_tolerance | 0.425 | [0.383, 0.468] |
 | warm_bound_sound | 1.000 | [1.000, 1.000] |
 | convex_bound_sound | 1.000 | [1.000, 1.000] |
@@ -97,7 +97,7 @@ Events with realized regret above `1e-10`: 0.587 of accepted events.
 
 ## Numerical residual certificate
 
-Median `0.5 r'Q^-1 r + slack` over events: 4.715e-19; maximum 1.043e-02.
+Over the 247 events certified within the residual, `0.5 r'Q^-1 r + slack` has median 3.833e-19 and maximum 1.770e-17; the largest realized regret in that set is 3.732e-15.
 LP fallback used in 0.304 of events; recovery methods: {"nonnegative_lp": 182, "least_squares": 416}.
 
 ## Reference agreement
@@ -109,15 +109,15 @@ Share of events whose regret is below ten times that spread: 0.413.
 
 | n | certificate ms | dual construction ms | re-solve cold ms | re-solve warm ms | OSQP ms | ratio vs cold SLSQP | ratio vs warm SLSQP | ratio vs OSQP |
 |---|---|---|---|---|---|---|---|---|
-| 8 | 1.700 | 5.359 | 5.193 | 5.024 | 0.941 | 3.06× | 2.96× | 0.55× |
-| 16 | 2.716 | 7.293 | 7.363 | 6.464 | 0.967 | 2.71× | 2.38× | 0.36× |
-| 32 | 5.215 | 13.766 | 13.546 | 11.634 | 1.164 | 2.60× | 2.23× | 0.22× |
-| 64 | 13.130 | 86.577 | 75.441 | 57.356 | 2.148 | 5.75× | 4.37× | 0.16× |
-| 128 | 51.141 | 983.571 | 857.724 | 845.089 | 7.553 | 16.77× | 16.52× | 0.15× |
+| 8 | 1.627 | 5.261 | 5.054 | 4.983 | 0.920 | 3.11× | 3.06× | 0.57× |
+| 16 | 2.664 | 7.163 | 7.331 | 6.400 | 0.938 | 2.75× | 2.40× | 0.35× |
+| 32 | 5.084 | 13.679 | 13.481 | 11.527 | 1.144 | 2.65× | 2.27× | 0.22× |
+| 64 | 12.893 | 82.467 | 73.366 | 102.960 | 2.269 | 5.69× | 7.99× | 0.18× |
+| 128 | 61.395 | 918.697 | 949.396 | 833.054 | 8.668 | 15.46× | 13.57× | 0.14× |
 
 ## Position-cap sweep
 
-| cap | zero-regret rate | weights changed | max regret when certified |
+| cap | within-residual rate | weights changed | max regret when certified |
 |---|---|---|---|
 | 0.18 | 0.525 | 0.475 | 2.93e-18 |
 | 0.22 | 0.400 | 0.600 | 1.08e-18 |
@@ -141,11 +141,11 @@ dimension 4, 40 trials, 16 vertices enumerated per trial.
 
 - sound rate: 1.000
 - median bound / true worst case: 1.530 (p90 2.988)
-- median bound cost: 1.479 ms; median enumeration cost: 78.485 ms; ratio 51.84×
+- median bound cost: 1.527 ms; median enumeration cost: 79.717 ms; ratio 51.54×
 - corrections drawn outside the declared set violated the bound in 0.875 of trials, as expected
 
 ## Degeneracy, hindsight and the second domain
 
 Degeneracy: rank 4 / 4, identifiability `unique`, objective gap between twins 8.977e-06, primary verdict `regret_bounded`, twin verdict `regret_bounded`.
-Hindsight: honest zero-regret rate 0.525; hindsight zero-regret rate 1.000; mean regret of the actual decision 6.084e-04.
-Capacity allocation: zero-regret rate 0.000, bound sound rate 1.000, mean realized regret 1.558e-04.
+Hindsight: honest within-residual rate 0.525; hindsight within-residual rate 1.000; mean regret of the actual decision 6.084e-04.
+Capacity allocation: within-residual rate 0.000, bound sound rate 1.000, mean realized regret 1.558e-04.

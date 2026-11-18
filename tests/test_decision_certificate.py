@@ -271,17 +271,31 @@ def test_without_a_revision_the_program_is_unchanged():
 
 
 # ------------------------------------------------------------------------ certificates
-def test_exact_certificate_coincides_with_zero_realized_regret():
+def test_exact_certificate_reports_a_residual_bound_not_an_exact_zero():
+    """A tolerance-satisfied KKT test licenses a numerical statement, not ``0.0``.
+
+    The certificate must report the validated residual bound and the residuals behind it. An
+    exact zero would be a claim the arithmetic does not support, and it would silently discard
+    the only quantity that makes the verdict checkable.
+    """
+
     base = problem()
     solution = solve(base)
     compilation = compile_audited(base, [revision(0, 1e-9)], [sensitivity_for(0)])
     certificate = certify_revision_impact(base, solution.weights, compilation,
                                           decision_dual=solution.dual)
     reference = solve(compilation.problem)
-    realized = compilation.problem.objective(solution.weights) - reference.objective
+    realized = max(0.0, compilation.problem.objective(solution.weights) - reference.objective)
     assert certificate.zero_regret
-    assert realized < 1e-7
-    assert certificate.bounded["regret_upper_bound"] == 0.0
+    assert certificate.verdict == "zero_regret_within_residual"
+    bound = certificate.bounded["regret_upper_bound"]
+    assert bound is not None
+    assert 0.0 < bound < 1e-12, "the bound must be the computed residual, not a literal zero"
+    assert bound >= realized - 1e-15, "and it must still be sound"
+    assert certificate.exact["numerical_regret_bound"] is not None
+    residuals = certificate.bounded["residual_kkt_residuals"]
+    assert residuals["stationarity"] >= 0.0
+    assert residuals["gap_identity_residual"] is not None
 
 
 def test_bound_never_understates_realized_regret_across_random_revisions():

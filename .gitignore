@@ -28,3 +28,7 @@ web/*.tsbuildinfo
 
 # Locally extracted Chromium support libraries (no root in the cloud container)
 .deps/
+
+# Primary SEC filings are fetched on demand (11 MB) and verified by the digest recorded in the
+# case-study JSON; they are not part of the archive.
+artifacts/research/evidence/pfe-20*.htm

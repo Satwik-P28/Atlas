@@ -130,6 +130,19 @@ class TrialLedger:
     def __init__(self, path: str | os.PathLike[str]) -> None:
         self.path = Path(path)
 
+    def reset(self) -> None:
+        """Start a fresh ledger for a new run.
+
+        The ledger records *a* run, not an unbounded history. Rerunning the experiment on top of an
+        existing file silently doubles every arm (12 entries became 24) and leaves the summary
+        describing two runs while the JSON beside it describes one, so each run clears it first.
+        Superseded runs are preserved in the correction log, where they can be described, rather
+        than by appending to a file whose sequence numbers then no longer mean anything.
+        """
+
+        if self.path.exists():
+            self.path.unlink()
+
     def append(self, entry: dict[str, Any]) -> dict[str, Any]:
         if "arm" not in entry or "hypothesis" not in entry:
             raise ValidationError("a ledger entry must name its arm and hypothesis")

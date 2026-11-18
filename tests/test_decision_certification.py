@@ -190,7 +190,7 @@ def test_certificate_reports_rejected_recorded_multipliers_instead_of_using_them
     assert certificate.recorded_dual_status == "rejected"
     assert certificate.bounded["regret_upper_bound"] is None
     assert "non-negative" in certificate.bounded["recorded_dual_rejected_reason"]
-    assert certificate.verdict in {"uncertified", "zero_regret_certified"}
+    assert certificate.verdict in {"uncertified", "zero_regret_within_residual"}
 
 
 def test_infeasible_recorded_decision_suppresses_the_bound():

@@ -73,7 +73,7 @@ A useful certificate has to distinguish states that a single boolean would confl
 
 | verdict | meaning |
 |---|---|
-| `zero_regret_certified` | the recorded decision satisfies the KKT system of the corrected program within a declared tolerance; the residual certificate quantifies the remainder |
+| `zero_regret_within_residual` | the recorded decision satisfies the KKT system of the corrected program within a declared tolerance; the verdict reports the validated residual bound (`0.5 r'Q⁻¹r + slack`) and the residuals behind it, never a literal zero |
 | `regret_bounded` | a valid upper bound exists; whether it is small is a separate flag (`meets_tolerance`) against a user-declared tolerance |
 | `uncertified` | no bound and no exact certificate — the honest answer when the risk matrix is singular or no dual point is available |
 | `infeasible_under_revision` | the recorded decision is infeasible for the corrected program; no regret bound is claimed, because the recorded point is not a decision the auditor may take |

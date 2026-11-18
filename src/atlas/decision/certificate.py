@@ -108,11 +108,18 @@ class RevisionCertificate:
 
     @property
     def zero_regret(self) -> bool:
-        return self.verdict == "zero_regret_certified"
+        """Zero regret *up to the reported residual*, never an exact mathematical zero.
+
+        The KKT test compares residuals against a tolerance, so the certificate reports the
+        validated residual bound (``0.5 r'Q^-1 r + slack``) instead of overwriting it with ``0.0``.
+        The property name is kept for callers; the verdict says what is actually claimed.
+        """
+
+        return self.verdict == "zero_regret_within_residual"
 
     @property
     def certified(self) -> bool:
-        return self.verdict in {"zero_regret_certified", "regret_bounded"}
+        return self.verdict in {"zero_regret_within_residual", "regret_bounded"}
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -347,13 +354,29 @@ def certify_revision_impact(
                 else f"duality_gap_after_{ascent_block['actual_iterations']}_iterations"
             )
 
+    residual_bound = None
+    if residual_block is not None and residual_block.get("valid"):
+        residual_bound = residual_block.get("bound")
     if not feasibility.feasible:
         verdict = "infeasible_under_revision"
-    elif exact_report.satisfied:
-        verdict = "zero_regret_certified"
-        bounded_block["regret_upper_bound"] = 0.0
+    elif exact_report.satisfied and residual_bound is not None:
+        # A satisfied KKT system under a tolerance licenses a *numerical* statement, not an exact
+        # zero. The residual certificate is the validated upper bound; reporting 0.0 here discarded
+        # the only quantity that makes the claim checkable.
+        verdict = "zero_regret_within_residual"
+        bounded_block["regret_upper_bound"] = float(residual_bound)
         bounded_block["bound_valid"] = True
-        bounded_block["bound_kind"] = "kkt_numerical_certificate"
+        bounded_block["bound_kind"] = "residual_regret_certificate"
+        bounded_block["bound_source"] = "residual_certificate"
+        bounded_block["residual_kkt_residuals"] = {
+            "stationarity": exact_report.stationarity,
+            "dual_feasibility": exact_report.dual_feasibility,
+            "complementarity": exact_report.complementarity,
+            "primal_feasibility": exact_report.primal_feasibility,
+            "tolerance": exact_report.tolerance,
+            "gap_identity_residual": residual_block.get("gap_identity_residual")
+            if residual_block else None,
+        }
     elif bounded_block["regret_upper_bound"] is not None:
         # A finite bound is a certificate whether or not it is small. Whether it is small
         # enough to act on is a separate, declared-tolerance question, so it is reported as

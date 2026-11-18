@@ -89,6 +89,16 @@ class EvidenceRevision:
     note: str = ""
     status: str = "active"
     incorporated_in: str | None = None
+    #: Immutable effective-time record. ``available_at`` is when the document became public;
+    #: ``effective_at`` is when the correction takes effect for the data. They default to the same
+    #: instant, and when they differ the *effective* instant governs eligibility and supersession.
+    effective_at: str | None = None
+    #: When the correction was withdrawn, if it ever was. A withdrawal dated after the audit clock
+    #: cannot un-apply a correction that was live at the cut-off.
+    withdrawn_at: str | None = None
+    #: Monotone version number. A successor must carry a strictly larger version than the revision
+    #: it supersedes; a violation is refused rather than silently reordered.
+    version: int | None = None
 
     def availability(self) -> datetime:
         parsed = parse_instant(self.available_at)
@@ -110,6 +120,9 @@ class EvidenceRevision:
             "note": self.note,
             "status": self.status,
             "incorporated_in": self.incorporated_in,
+            "effective_at": self.effective_at,
+            "withdrawn_at": self.withdrawn_at,
+            "version": self.version,
         }
 
 
@@ -230,10 +243,20 @@ def compile_revisions(
     explicit opt-in for a "the model missed evidence that was already public" experiment, which
     is a different question from an evidence revision.
 
-    Corrections that were withdrawn or superseded before the audit clock are excluded, with the
+    Corrections that were withdrawn or superseded *by the audit clock* are excluded, with the
     reason recorded, because a retracted correction is not part of the corrected program. Every
     revision receives exactly one lineage category, so the compiler's decisions can be audited
     without reading its control flow.
+
+    Supersession and withdrawal are resolved **against the cut-off, not against the archive**. A
+    successor that is published after the audit clock, or withdrawn before it, cannot retroactively
+    erase the revision it was meant to replace: at the audit instant the earlier revision was the
+    operative record. Resolution is recursive, so a chain of replacements is followed only as far
+    as the cut-off allows, and a cycle cannot suppress anything. Version numbers, where supplied,
+    must strictly increase along a replacement chain and a revision cannot take effect before the
+    one it replaces; both are refused rather than reordered. Each revision carries an immutable
+    ``effective_at`` (defaulting to ``available_at``) and, if retracted, an immutable
+    ``withdrawn_at``.
     """
 
     clock = as_of if as_of is not None else problem.as_of
@@ -269,9 +292,88 @@ def compile_revisions(
     superseded: list[str] = []
     withdrawn: list[str] = []
     supplied_ids = {item.revision_id for item in revisions}
-    # A revision is superseded when some *other supplied* revision declares that it replaces it.
-    superseded_ids = {item.supersedes for item in revisions
-                      if item.supersedes and item.supersedes != item.revision_id}
+    by_id = {item.revision_id: item for item in revisions}
+
+    def effective(revision: EvidenceRevision) -> datetime:
+        """The instant the correction takes effect (immutable; defaults to publication)."""
+
+        return parse_instant(revision.effective_at or revision.available_at)
+
+    def withdrawn_at_audit(revision: EvidenceRevision) -> bool:
+        """Was this revision withdrawn *by the audit clock*?"""
+
+        if revision.status != "withdrawn":
+            return False
+        if revision.withdrawn_at is None:
+            return True
+        stamp = parse_instant(revision.withdrawn_at)
+        return bool(stamp is not None and stamp <= audit_instant)
+
+    successors: dict[str, list[EvidenceRevision]] = {}
+    for item in revisions:
+        if item.supersedes and item.supersedes != item.revision_id:
+            successors.setdefault(item.supersedes, []).append(item)
+
+    def _walk(node: str, path: tuple[str, ...] = ()) -> None:
+        if node in path:
+            raise ValidationError("a supersedes chain forms a cycle; version lineage must be a "
+                                  "directed acyclic graph", chain=[*path, node])
+        for candidate in successors.get(node, []):
+            _walk(candidate.revision_id, (*path, node))
+
+    for start in list(successors):
+        _walk(start)
+
+    # Version ordering is an invariant of the record, not a preference: check every declared
+    # replacement once, before any temporal filtering, so an inconsistent archive is refused even
+    # when the cut-off would have hidden the inconsistency.
+    for predecessor_id, candidates in successors.items():
+        predecessor = by_id.get(predecessor_id)
+        if predecessor is None:
+            continue
+        for candidate in candidates:
+            if (candidate.version is not None and predecessor.version is not None
+                    and candidate.version <= predecessor.version):
+                raise ValidationError(
+                    "a superseding revision must carry a strictly larger version",
+                    predecessor=predecessor_id, predecessor_version=predecessor.version,
+                    successor=candidate.revision_id, successor_version=candidate.version,
+                )
+            if effective(candidate) < effective(predecessor):
+                raise ValidationError(
+                    "a superseding revision cannot take effect before the revision it replaces",
+                    predecessor=predecessor_id, successor=candidate.revision_id,
+                )
+
+    def has_live_successor(revision_id: str, seen: frozenset[str] = frozenset()) -> bool:
+        """Is there a replacement that is itself live *at the audit clock*?
+
+        A successor published after the cut-off, or withdrawn before it, cannot retroactively
+        erase the revision it was meant to replace: at the audit instant the earlier revision was
+        the operative record. This is the defect the review found, and it is the whole reason the
+        resolution is recursive rather than a set comprehension.
+        """
+
+        if revision_id in seen:
+            return False
+        seen = seen | {revision_id}
+        for candidate in successors.get(revision_id, []):
+            if withdrawn_at_audit(candidate):
+                continue
+            if effective(candidate) > audit_instant:
+                continue
+            if has_live_successor(candidate.revision_id, seen):
+                continue
+            return True
+        return False
+
+    superseded_ids = {predecessor for predecessor in successors
+                      if predecessor in supplied_ids and has_live_successor(predecessor)}
+    pending_successor_ids = {
+        predecessor for predecessor in successors
+        if predecessor in supplied_ids and predecessor not in superseded_ids
+        and successors.get(predecessor)
+    }
 
     def record(revision: EvidenceRevision, category: str, included: bool, reason: str | None,
                detail: str) -> None:
@@ -300,31 +402,38 @@ def compile_revisions(
             record(revision, "unsupported_kind", False, "unsupported_perturbation_kind",
                    "a risk-matrix revision is a different mathematical object")
             continue
-        if revision.status == "withdrawn":
+        if withdrawn_at_audit(revision):
             excluded.append({
                 "revision_id": revision.revision_id,
                 "reason": "withdrawn_before_audit",
                 "available_at": revision.available_at,
-                "detail": "the correction was retracted; a retracted correction is not part "
-                          "of the corrected program",
+                "withdrawn_at": revision.withdrawn_at,
+                "audit_as_of": audit_clock,
+                "detail": "the correction was retracted before the audit clock; a retracted "
+                          "correction is not part of the corrected program",
             })
             withdrawn.append(revision.revision_id)
             record(revision, "withdrawn", False, "withdrawn_before_audit",
-                   "retracted before the audit clock")
+                   "retracted on or before the audit clock")
             continue
         if revision.revision_id in superseded_ids:
+            replacement = next(
+                candidate.revision_id for candidate in successors[revision.revision_id]
+                if not withdrawn_at_audit(candidate) and effective(candidate) <= audit_instant
+                and not has_live_successor(candidate.revision_id))
             excluded.append({
                 "revision_id": revision.revision_id,
                 "reason": "superseded_before_audit",
-                "superseded_by": next(item.revision_id for item in revisions
-                                      if item.supersedes == revision.revision_id),
-                "detail": "a later revision in the supplied set replaces this one",
+                "superseded_by": replacement,
+                "audit_as_of": audit_clock,
+                "detail": "a later revision, itself effective at the audit clock, replaces this "
+                          "one",
             })
             superseded.append(revision.revision_id)
             record(revision, "superseded", False, "superseded_before_audit",
-                   "replaced by a later revision in the supplied set")
+                   f"replaced by {replacement}, which was effective by the audit clock")
             continue
-        available = revision.availability()
+        available = effective(revision)
         if available > audit_instant and not allow_future:
             excluded.append({
                 "revision_id": revision.revision_id,
@@ -376,10 +485,19 @@ def compile_revisions(
         record(revision, "published_after_decision" if available > decision_instant
                else "pre_decision_explicitly_included", True, None,
                "applied to the corrected program")
-    if superseded_ids - supplied_ids:
+    dangling = {item.supersedes for item in revisions
+                if item.supersedes and item.supersedes not in supplied_ids
+                and item.supersedes != item.revision_id}
+    if dangling:
         notes.append(
-            f"{len(superseded_ids - supplied_ids)} 'supersedes' reference(s) point outside the "
-            "supplied revision set; the replacement was not compiled"
+            f"{len(dangling)} 'supersedes' reference(s) point outside the supplied revision set; "
+            "the predecessor was not compiled and nothing was suppressed"
+        )
+    for predecessor in pending_successor_ids:
+        replacement = successors[predecessor][0]
+        notes.append(
+            f"revision {predecessor} has a declared successor {replacement.revision_id} that is "
+            "not effective at the audit clock; the earlier revision stands"
         )
 
     if allow_future:

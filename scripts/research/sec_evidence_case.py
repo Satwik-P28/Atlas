@@ -13,18 +13,36 @@ Pfizer's FY2023 revenue appears twice in the SEC's XBRL company-facts archive:
 * ``59,553,000,000`` for the *same* fiscal year in the FY2024 Form 10-K, accession
   ``0000078003-25-000054``, accepted ``2025-02-27T21:27:18Z``.
 
-The second figure is the comparative column of a later annual report, i.e. a restatement of the
-prior year rather than an amendment on Form 10-K/A. Both values, forms, accession numbers and
-acceptance instants are read from the archive at run time and checked against these constants;
-nothing is typed in by hand.
+The second figure is the comparative column of a later annual report -- a *revision of a previously
+reported number*, which is the only fact the archive establishes on its own. Whether such a
+revision is a formal restatement is a separate, checkable question, and an earlier version of this
+script simply asserted that it was. It is not. Both primary documents leave Item 9C ("do the
+financial statements reflect the correction of an error") unchecked, and the FY2024 document says
+why the figure moved:
+
+    In the first quarter of 2024, we reclassified royalty income ... from Other
+    (income)/deductions--net and began presenting Royalty revenues as a separate line item within
+    Total revenues ... Prior-period amounts have been recast to conform to the current
+    presentation.
+
+So the ``+1,057`` million is royalty income moved into ``Total revenues`` and the comparative
+column recast to follow, not an error correction. In accounting terms this is a reclassification
+disclosed under a change in presentation (ASC 220/280), not a restatement under ASC 250, and no
+Form 10-K/A was filed. The classification below is *derived* from the two documents at run time --
+the Item 9C checkbox state and the disclosure sentences are recorded with their hashes -- so a
+future archive change would show up as a changed verdict rather than a stale caption.
+
+Both values, forms, accession numbers, primary-document digests and acceptance instants are read
+from the archive at run time and checked against these constants; nothing is typed in by hand.
 
 What the case *is not*
 ----------------------
 The decision model is a **stylised three-line allocation** in which the only evidence-linked
 coefficient is the revenue forecast of one line. The other coefficients, the risk matrix and the
 budget are model parameters with no claim to empirical validity, and the mapping from a revenue
-restatement to an expected-return change is a *declared* sensitivity of ``-1/1000`` per dollar
-of revenue. This case study demonstrates that a real revision can be dated, identified and
+revision to an expected-return change is a *declared* sensitivity of ``-1/1000`` per dollar
+of revenue. Nothing here interprets the reclassification as a signal about Pfizer's prospects; the
+point is that the compiler dates, filters and prices a real documented revision correctly. This case study demonstrates that a real revision can be dated, identified and
 compiled with the same eligibility rules as the synthetic experiments. It does **not** audit a
 real portfolio, and it says nothing about realized returns.
 
@@ -61,7 +79,15 @@ PERIOD_END = "2023-12-31"
 BASE_PERIOD_END = "2022-12-31"
 
 ORIGINAL_ACCESSION = "0000078003-24-000039"
-RESTATED_ACCESSION = "0000078003-25-000054"
+LATER_ACCESSION = "0000078003-25-000054"
+
+#: The sentence Item 9C of Form 10-K asks, followed by its checkbox. Unchecked means the filer does
+#: not report the statements as reflecting a correction of an error.
+ERROR_CORRECTION_ITEM = "correction of an error to previously issued financial statements"
+
+#: Disclosure language that distinguishes a conforming recast from an error correction.
+RECAST_MARKERS = ("recast to conform", "reclassified royalty income",
+                  "will restate prior periods for consistency")
 
 #: The model input is the *reported revenue growth rate* for FY2023 against FY2022, and the
 #: declared mapping from that growth rate to the first line's expected return is ``0.1``. Both
@@ -70,9 +96,9 @@ RESTATED_ACCESSION = "0000078003-25-000054"
 #: comparable scales so the allocation is not trivially pinned to one cap.
 GROWTH_SCALE = 0.1
 
-#: The decision was taken after the original annual report and before the restatement.
+#: The decision was taken after the original annual report and before the recast.
 DECISION_CLOCK = "2024-06-30T20:00:00Z"
-#: The audit is run after the restated comparative was accepted.
+#: The audit is run after the recast comparative was accepted.
 AUDIT_CLOCK = "2025-03-01T12:00:00Z"
 
 URLS = {
@@ -96,6 +122,72 @@ def fetch(url: str, cache: Path) -> tuple[bytes, str, bool]:
         cache.write_bytes(payload)
         from_cache = False
     return payload, hashlib.sha256(payload).hexdigest(), from_cache
+
+
+def plain_text(payload: bytes) -> str:
+    """Primary-document text with tags stripped, for disclosure inspection only."""
+
+    import html as _html
+    import re as _re
+
+    text = _re.sub(r"<[^>]+>", " ", payload.decode("utf-8", errors="ignore"))
+    return _re.sub(r"\s+", " ", _html.unescape(text))
+
+
+def characterize_documents(original_payload: bytes, later_payload: bytes) -> dict[str, Any]:
+    """Derive what kind of revision this is from the two primary documents themselves.
+
+    Two independent signals, both recorded verbatim:
+
+    * the Item 9C checkbox -- checked only when the filer reports the statements as reflecting a
+      correction of an error, which is the formal definition of a restatement;
+    * disclosure language about recasting comparatives to conform to a new presentation.
+
+    The verdict is ``error_correction`` only if the checkbox is checked. Otherwise a recast
+    disclosure makes it a ``conforming_recast``; with neither signal the case is reported as an
+    ``unexplained_revision`` and no accounting interpretation is offered, because the documents
+    would not support one.
+    """
+
+    signals: dict[str, Any] = {}
+    for label, payload in (("original", original_payload), ("later", later_payload)):
+        text = plain_text(payload)
+        index = text.lower().find(ERROR_CORRECTION_ITEM)
+        window = text[index:index + 400] if index >= 0 else ""
+        after = window.split("statements.", 1)[1][:8] if "statements." in window else ""
+        checked = "\u2612" in after or "\u2611" in after
+        quotes = [sentence for sentence in
+                  (" ".join(segment.split()) for segment in text.replace("?", ".").split("."))
+                  if any(marker.lower() in sentence.lower() for marker in RECAST_MARKERS)]
+        signals[label] = {
+            "item_9c_sentence_found": bool(index >= 0),
+            "item_9c_glyph_after_sentence": after.strip(),
+            "error_correction_checkbox_checked": bool(checked),
+            "recast_disclosures": quotes[:4],
+        }
+
+    error_correction = any(item["error_correction_checkbox_checked"] for item in signals.values())
+    recast = any(item["recast_disclosures"] for item in signals.values())
+    if error_correction:
+        characterization = "error_correction"
+    elif recast:
+        characterization = "conforming_recast"
+    else:
+        characterization = "unexplained_revision"
+    return {
+        "characterization": characterization,
+        "formal_restatement": error_correction,
+        "error_correction_reported": error_correction,
+        "conforming_recast_disclosed": recast,
+        "signals": signals,
+        "method": ("Item 9C checkbox state plus recast disclosures read from both primary "
+                   "documents at run time; no classification is typed in"),
+        "accounting_note": (
+            "A recast of comparative periods to follow a new presentation is a reclassification "
+            "disclosure, not a restatement of previously issued financial statements; "
+            "it does not by itself indicate an error, and no Form 10-K/A was filed for FY2023"
+        ),
+    }
 
 
 def extract_revenue(payload: bytes) -> dict[str, Any]:
@@ -185,30 +277,53 @@ def main() -> None:
 
     revenue = extract_revenue(concept_payload)
     acceptance = extract_acceptance(submissions_payload,
-                                    {ORIGINAL_ACCESSION, RESTATED_ACCESSION})
+                                    {ORIGINAL_ACCESSION, LATER_ACCESSION})
+
+    # The primary documents are fetched and hashed so the accounting characterisation below is
+    # auditable from the archive, not asserted by this script.
+    documents: dict[str, Any] = {}
+    payloads: dict[str, bytes] = {}
+    for role, accession in (("original", ORIGINAL_ACCESSION), ("later", LATER_ACCESSION)):
+        filing = acceptance[accession]
+        payload, digest, cached = fetch(filing["filing_url"],
+                                        output / str(filing["primary_document"]))
+        payloads[role] = payload
+        documents[role] = {
+            "accession": accession,
+            "form": filing["form"],
+            "primary_document": filing["primary_document"],
+            "url": filing["filing_url"],
+            "sha256": digest,
+            "bytes": len(payload),
+            "served_from_cache": cached,
+        }
+    characterization = characterize_documents(payloads["original"], payloads["later"])
+
     by_key = {(fact["accession"], fact["period_end"]): fact for fact in revenue["facts"]}
     original = by_key[(ORIGINAL_ACCESSION, PERIOD_END)]
     base = by_key[(ORIGINAL_ACCESSION, BASE_PERIOD_END)]
-    restated = by_key[(RESTATED_ACCESSION, PERIOD_END)]
-    if original["value"] == restated["value"]:  # pragma: no cover - guards the archive
+    later_filing = by_key[(LATER_ACCESSION, PERIOD_END)]
+    if original["value"] == later_filing["value"]:  # pragma: no cover - guards the archive
         raise SystemExit("the archive no longer shows two distinct values for this period")
 
     growth_original = original["value"] / base["value"] - 1.0
-    growth_restated = restated["value"] / base["value"] - 1.0
-    delta_growth = growth_restated - growth_original
+    growth_later = later_filing["value"] / base["value"] - 1.0
+    delta_growth = growth_later - growth_original
     problem = build_problem(growth_original)
     decision = solve(problem)
     revision = EvidenceRevision(
-        revision_id=f"pfe-fy2023-revenue-growth-restated-{RESTATED_ACCESSION}",
-        evidence_id=RESTATED_ACCESSION,
+        revision_id=f"pfe-fy2023-revenue-growth-recast-{LATER_ACCESSION}",
+        evidence_id=LATER_ACCESSION,
         input_key="pfe_fy2023_revenue_growth",
         delta=delta_growth,
-        available_at=acceptance[RESTATED_ACCESSION]["acceptance"],
+        available_at=acceptance[LATER_ACCESSION]["acceptance"],
         kind="linear_objective",
-        source_id=f"SEC 10-K {RESTATED_ACCESSION}",
-        note=("FY2023 revenue as reported in the FY2024 annual report's comparative column, "
-              "replacing the figure first filed in the FY2023 annual report; the model input "
-              "is the implied growth rate against FY2022"),
+        source_id=f"SEC 10-K {LATER_ACCESSION}",
+        version=2,
+        note=("FY2023 revenue as recast in the FY2024 annual report's comparative column after "
+              "royalty income was reclassified into Total revenues, replacing the figure first "
+              "filed in the FY2023 annual report; the model input is the implied growth rate "
+              "against FY2022. A conforming recast, not an error correction"),
     )
     sensitivity = InputSensitivity(
         input_key="pfe_fy2023_revenue_growth",
@@ -238,7 +353,7 @@ def main() -> None:
                                       audit_as_of="2025-09-30T12:00:00Z",
                                       starting_vintage="fy2024-10K-vintage")
 
-    # And the archived-but-not-yet-public case: an audit run before the restatement existed.
+    # And the archived-but-not-yet-public case: an audit run before the recast existed.
     early = compile_revisions(problem, [revision], [sensitivity],
                              audit_as_of="2025-01-15T12:00:00Z",
                              starting_vintage="fy2023-10K-vintage")
@@ -246,6 +361,18 @@ def main() -> None:
     results: dict[str, Any] = {
         "schema": "atlas.research.sec_evidence_case.v1",
         "generated_by": "scripts/research/sec_evidence_case.py",
+        "characterization": {
+            **characterization,
+            "what_changed": (
+                "beginning in 2024 Pfizer presents royalty income within Total revenues instead "
+                "of Other (income)/deductions--net, and recast prior-period comparatives to "
+                "follow; the FY2023 comparative therefore exceeds the FY2023 as-filed figure by "
+                "the reclassified royalty amount"),
+            "what_it_is_not": (
+                "not an error correction, not a restatement under ASC 250, not a Form 10-K/A, "
+                "not an enforcement action, and not evidence about Pfizer's performance"),
+        },
+        "documents": documents,
         "source": {
             "company": revenue["entity"] or COMPANY,
             "cik": CIK,
@@ -259,13 +386,13 @@ def main() -> None:
         },
         "revision": {
             "original": {**original, **acceptance[ORIGINAL_ACCESSION]},
-            "restated": {**restated, **acceptance[RESTATED_ACCESSION]},
+            "later_filing": {**later_filing, **acceptance[LATER_ACCESSION]},
             "base_period": {**base, "url": URLS["concept"]},
             "growth_original": growth_original,
-            "growth_restated_in_later_filing": growth_restated,
+            "growth_in_later_filing": growth_later,
             "delta_growth": delta_growth,
-            "delta_revenue_usd": restated["value"] - original["value"],
-            "relative_change": (restated["value"] - original["value"]) / original["value"],
+            "delta_revenue_usd": later_filing["value"] - original["value"],
+            "relative_change": (later_filing["value"] - original["value"]) / original["value"],
             "compiled_revision": revision.as_dict(),
             "declared_sensitivity": sensitivity.as_dict(),
         },
@@ -304,46 +431,73 @@ def main() -> None:
                 "temporal_relationship": None,
             },
             "not_yet_public": {
-                "purpose": "an audit run before the restatement was accepted",
+                "purpose": "an audit run before the recast was accepted",
                 "status": early.status,
                 "applied": [item.revision_id for item in early.applied],
                 "excluded_reasons": [item["reason"] for item in early.excluded],
             },
         },
         "limitations": [
-            "one restatement of one line; no portfolio-level conclusion follows",
+            "one reclassification of one line; no portfolio-level conclusion follows",
             "the revenue-to-coefficient mapping is declared, not estimated",
             "the second and third lines of the model are illustrative parameters",
-            "a comparative-column restatement is not an enforcement action or a fraud finding",
+            "a comparative-column recast is not an enforcement action or a fraud finding",
+            "the revised figure is not an independent measurement of the same quantity: it "
+            "includes royalty income the as-filed figure excluded, so the difference is a "
+            "change in presentation as well as in amount",
+            "the characterisation rests on two documents and their Item 9C checkboxes; it does "
+            "not audit Pfizer's accounting",
         ],
     }
     write_json(output / "sec_evidence_case.json", results)
 
     lines = [
-        "# Real-evidence case study: an SEC revenue restatement",
+        "# Real-evidence case study: an SEC revenue revision",
         "",
         "Generated by `scripts/research/sec_evidence_case.py`. Source documents are cached next to",
         "this file with their SHA-256 digests.",
         "",
         f"**{results['source']['company']}** (CIK {CIK}), `us-gaap:Revenues`, FY2023.",
         "",
-        "| | original | restated |",
+        "| | original filing | later filing |",
         "|---|---|---|",
-        f"| value (USD) | {original['value']:,.0f} | {restated['value']:,.0f} |",
-        f"| form | {original['form']} | {restated['form']} |",
-        f"| accession | {ORIGINAL_ACCESSION} | {RESTATED_ACCESSION} |",
+        f"| value (USD) | {original['value']:,.0f} | {later_filing['value']:,.0f} |",
+        f"| form | {original['form']} | {later_filing['form']} |",
+        f"| accession | {ORIGINAL_ACCESSION} | {LATER_ACCESSION} |",
         f"| accepted | {acceptance[ORIGINAL_ACCESSION]['acceptance']} | "
-        f"{acceptance[RESTATED_ACCESSION]['acceptance']} |",
+        f"{acceptance[LATER_ACCESSION]['acceptance']} |",
         "",
         f"Relative change: {results['revision']['relative_change']:.4%}. Compiled cost "
         f"perturbation: {results['audit']['cost_effect_applied']}.",
+        "",
+        "## What kind of revision this is",
+        "",
+        f"Characterisation: **`{characterization['characterization']}`** "
+        f"(formal restatement: {characterization['formal_restatement']}).",
+        "",
+        "Read from the primary documents at run time:",
+        "",
+    ]
+    for role, signal in characterization["signals"].items():
+        lines.append(f"- {role}: Item 9C error-correction box "
+                     f"{'checked' if signal['error_correction_checkbox_checked'] else 'unchecked'}"
+                     f" ({len(signal['recast_disclosures'])} recast disclosure(s) found)")
+        for quote in signal["recast_disclosures"][:2]:
+            lines.append(f"  > {quote}")
+    lines += [
+        "",
+        f"_{characterization['accounting_note']}._",
+        "",
+        f"{results['characterization']['what_changed']}",
+        "",
+        f"It is {results['characterization']['what_it_is_not']}.",
         "",
         "## Audit",
         "",
         f"- decision clock {DECISION_CLOCK}, audit clock {AUDIT_CLOCK}",
         f"- temporal relationship: `{certificate.temporal_relationship}`",
         f"- verdict: `{certificate.verdict}`",
-        f"- certified regret bound: {certificate.bounded['regret_upper_bound']}",
+        f"- certified regret bound: {certificate.exact['numerical_regret_bound']}",
         f"- realized regret (OSQP reference): {realized:.3e}",
         f"- bound sound: {results['audit']['bound_sound']}",
         "",
@@ -351,7 +505,7 @@ def main() -> None:
         "",
         f"- re-offered after the decision clock: status `{reincorporated.status}`, "
         f"excluded because {[item['reason'] for item in reincorporated.excluded]}",
-        f"- audited before the restatement was accepted: status `{early.status}`, "
+        f"- audited before the recast was accepted: status `{early.status}`, "
         f"excluded because {[item['reason'] for item in early.excluded]}",
         "",
         "## What this does not show",

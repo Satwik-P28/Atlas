@@ -55,13 +55,24 @@ The prose report copies numbers from `cri_tables.md`. If they disagree, the tabl
 .venv/bin/python scripts/research/sec_evidence_case.py --output artifacts/research/evidence
 ```
 
-Fetches two SEC EDGAR payloads (company facts and submissions) and caches the exact bytes next to
-the outputs with their SHA-256 digests. Without network access it replays from the cache and
-records `served_from_cache: true` in the JSON, so a reviewer can tell which run they are looking at.
+Fetches four SEC EDGAR payloads — company facts, submissions, and both primary 10-K documents —
+and caches the exact bytes next to the outputs with their SHA-256 digests. The primary documents
+are what the case study's accounting characterisation is read from: the Item 9C error-correction
+checkbox and the recast disclosure sentences, both recorded verbatim in the JSON alongside each
+document's digest, URL and byte count.
+
+Without network access it replays from the cache and records `served_from_cache: true` in the JSON,
+so a reviewer can tell which run they are looking at. **The two API payloads are committed**
+(`concept.json`, `submissions.json`, ~1 MB); **the two 10-K documents are not** (11 MB of HTML), so
+a fresh clone fetches those once and verifies them against the digests in
+`sec_evidence_case.json`. The quotes and the checkbox state are in the committed JSON either way,
+so the accounting characterisation can be read and re-checked without holding the filings.
 
 The script checks the archive's current values against the accession numbers it expects and refuses
-to proceed if the restatement has disappeared — an archive can be re-stated, and the case study
-should fail loudly rather than silently compare a figure with itself.
+to proceed if the later figure has disappeared — an archive can be revised again, and the case
+study should fail loudly rather than silently compare a figure with itself. The same guard applies
+to the characterisation: if a filing's Item 9C box ever reads as checked, the script reports
+`error_correction` rather than the recast label, so the verdict follows the documents.
 
 ## 5. What is *not* reproducible
 

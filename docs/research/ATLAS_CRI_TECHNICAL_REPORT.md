@@ -44,12 +44,14 @@ re-solving any corrected program and without enumerating vertices.
 Results on 598 seeded revision events, with an independent solver (OSQP) as the reference:
 
 * no bound understated realized regret in any of the seven dual-iteration arms;
-* every decision receiving the exact certificate had realized regret below `2.1e-16` (the prior
-  claim of "exactly zero" is replaced by the computed residual bound, whose median is `4.7e-19`);
+* every decision receiving the residual certificate carries a validated bound of at most
+  `1.8e-17` (median `3.8e-19`, `n = 247`) against realized regret of at most `3.7e-15` — a
+  numerical statement, not the exact zero the previous revision claimed;
 * the free bound is loose by a factor of ~24; **five actual dual ascent steps reduce that to
   1.24, and twenty steps to 1.000** — the previously reported "1.00 at five steps" was an
   artefact of a silent 20-iteration floor;
-* exact certification covers 41.3% of events and is a statement about *corner* solutions;
+* certification within the residual covers 41.3% of events (95% interval `[0.373, 0.453]`) and
+  is a statement about *corner* solutions;
 * over an interval uncertainty set, the worst-case bound was sound in **40/40 trials**, median
   1.53× the true worst case, and cost **52×** less than enumerating the 16 vertices.
 
@@ -67,7 +69,7 @@ method fails. No new theorem is claimed.
 | `dual_objective` accepted negative multipliers, and the certificate copied a recorded dual point without checking it | P0 | Sign feasibility, dimensions, finiteness and **constraint-structure identity** are now validated; an invalid point is refused with a recorded reason. The false bound it would have produced is exhibited as a test (§9.2). |
 | The five-iteration arm actually ran at least twenty iterations | P0 | The floor is removed; the requested, performed, objective-evaluation and gradient-evaluation counts are recorded per call, and budgets 0/1/2/5/10/20/50/200 are tested. **The tightness claim changes: 1.238 at five steps, not 1.000** (§6.4). |
 | The exact test was described as `O(n²)` linear algebra with no optimisation | P1 | Corrected: least squares on the active set, with a HiGHS non-negative feasibility LP when least squares is sign-infeasible. The LP fallback runs in **30.4%** of events and both stages are timed separately (§6.6). |
-| A KKT tolerance was described as proof of exactly zero regret | P1 | Replaced by an explicit residual certificate: `regret ≤ ½ r'Q⁻¹r + slack`, proved in §5.3, computed per event, median `4.7e-19` (§6.5). |
+| A KKT tolerance was described as proof of exactly zero regret | P1 | Replaced by an explicit residual certificate: `regret ≤ ½ r'Q⁻¹r + slack`, proved in §5.3, computed per event (§6.5). **Second review:** the verdict still *assigned* `0.0`; it now reports the computed bound — median `3.8e-19`, maximum `1.8e-17` over the 247 certified events. |
 | Reference regret was computed by the same solver under test | P1 | OSQP and Clarabel are used as references, and exhaustive active-set enumeration for small instances. Maximum disagreement over the study: `9.4e-14` (§6.7). |
 | Revision compilation could double count a correction published before the decision clock | P1 | Version lineage added: every revision receives one of six categories, and a pre-decision revision is excluded with reason `already_incorporated_in_decision_vintage` unless explicitly opted in (§5.5). |
 | The report claimed a 25.6× speed-up; the committed run said 18.92× | P1 | All tables now render from one JSON. The current run gives 16.8× against the project's SLSQP re-solve — and **0.15× against OSQP**, i.e. the certificate is slower. **The speed claim is withdrawn** (§6.8). |
@@ -81,6 +83,23 @@ Two further defects were found by this revision's own checks and are disclosed h
 * **The residual bound initially omitted the complementarity slack**, so it was smaller than the
   duality gap (`6.97e-31` against `1.39e-17`) and therefore not a bound. §5.3 gives the identity
   that fixes it.
+
+### 1.2 Corrections required by the second independent review (`04198d2`)
+
+The review supplied a program whose certificate can be checked by hand: `Q = I₂`, `c = (−2, 0)`,
+budget 1, bounds `[0,1]`, one row `w₁ ≤ 0.8`, recorded `w = (0.5, 0.5)`, `ν = α = β = 0` and
+`γ = 0.7`. Its regret is `0.510`, its dual gap `0.655`, and the routine reported `0.235`. All six
+defects below were reproduced numerically before being fixed, and each has a test that fails if it
+returns.
+
+| Issue found in the second review | Severity | Resolution |
+|---|---|---|
+| `residual_regret_bound` **subtracted** `γ'(d−Aw)` | P0 | Sign corrected and the identity re-derived in the docstring; it is now *checked on every call* (`gap_identity_residual`) and a call whose identity fails is refused. On the review's instance the bound is `0.655`, matching the true gap, against a regret of `0.510`; OSQP, Clarabel and the internal solver all give `f* = −1.26`. §5.3, `tests/test_decision_counterexample.py`. |
+| The KKT verdict assigned `regret_upper_bound = 0.0` | P0 | The verdict is now `zero_regret_within_residual` and reports the validated residual bound together with the residuals behind it. No emitted bound is a literal zero. §5.2, §6.5. |
+| Supersession and withdrawal were resolved against the *archive*, not the audit clock | P0 | Resolution is cutoff-relative and recursive: a successor published after the cut-off, or withdrawn before it, cannot suppress its predecessor. `effective_at`, `withdrawn_at` and `version` are immutable fields; version order, effective order and acyclicity are enforced rather than reordered. §4.3, `tests/test_decision_properties.py`. |
+| Ellipsoid membership inverted the Cholesky factor of `shape`, while the support function and the maximiser used `shape` | P0 | A single `UncertaintySet.contains` / `distance_outside` predicate now serves membership, support, argmax and the curvature envelope, matching `U = {c + S z : ‖z‖ ≤ r}`. With `S = diag(0.25, 1)`, `r = 1` and offset `(0.4, 0)`, the offset is `1.6` in normalised coordinates — outside — and is now classified as outside rather than at `0.8`. §5.6. |
+| CRI-U evaluated its bound at recorded decisions that were **infeasible** for the program | P0 | Feasibility is checked before any guarantee is claimed: `objective_bound` (a fact about the numbers) is reported separately from `actionable = valid ∧ decision_feasible`, and an infeasible decision yields `valid = false` with the reason recorded. §5.6. |
+| The SEC case described a conforming recast as a "restatement" | P1 | Both 10-Ks leave Item 9C (the correction-of-an-error question) unchecked, and the FY2024 filing states that royalty income was reclassified into `Total revenues` and that *"prior-period amounts have been recast to conform to the current presentation"*. The script now derives `conforming_recast` from both primary documents and records the checkbox state, the quoted disclosures and their SHA-256 digests. §7.2. |
 
 ## 2. Introduction
 
@@ -151,6 +170,18 @@ Collapsing them is an error in either direction: using the decision clock as the
 cutoff excludes exactly the revisions the audit exists to evaluate; using neither admits a
 not-yet-public revision.
 
+Supersession and withdrawal are resolved **against the cut-off, not against the archive**. A
+successor that is published after `audit_as_of`, or withdrawn before it, cannot retroactively erase
+the revision it was meant to replace: at the audit instant the earlier revision was the operative
+record. The resolution is recursive, so a chain of replacements is followed only as far as the
+cut-off allows, and it cannot cycle. Each revision carries an immutable `effective_at` (defaulting
+to `available_at`) and, if retracted, `withdrawn_at`; a successor must carry a strictly larger
+`version`, cannot take effect before its predecessor, and neither inversion is silently reordered.
+An earlier version of this compiler computed the superseded set as a plain comprehension over every
+supplied `supersedes` and ignored time in the withdrawal test, so a later filing suppressed an
+earlier one even when it did not yet exist at the audit clock — a look-ahead leak of exactly the
+kind this branch forbids in the evidence layer.
+
 Eligibility is not novelty. A correction published *before* the decision clock is already inside
 the vintage the decision was computed from, so applying it again double counts it. The compiler
 therefore classifies every supplied revision into exactly one lineage category:
@@ -161,8 +192,8 @@ therefore classifies every supplied revision into exactly one lineage category:
 | `pre_decision_explicitly_included` | public before the decision, included on request | applied |
 | `published_after_decision` | published in `(t, τ]` | applied |
 | `published_after_audit` | not public at the audit clock | excluded |
-| `superseded` | replaced by a later revision in the supplied set | excluded |
-| `withdrawn` | retracted before the audit | excluded |
+| `superseded` | replaced by a later revision that is itself live at the audit clock | excluded |
+| `withdrawn` | retracted on or before the audit clock | excluded |
 | `unsupported_kind` / `unmapped` | not compilable | excluded |
 
 `starting_vintage` records which data vintage the base program represents. §7.2 shows the guard
@@ -247,7 +278,18 @@ negligible.
 ### 5.3 From a residual to a quantity
 
 Write `L` for the Lagrangian at given multipliers, `x*` for its unconstrained minimiser,
-`r = Q(w − x*)`, and `slack = α'(w−l) + β'(u−w) − γ'(d−Aw) ≥ 0` at a feasible `w`.
+`r = Q(w − x*) = Qw + c + ν1 − α + β + A'γ`, and
+
+```
+slack = α'(w−l) + β'(u−w) + γ'(d−Aw) ≥ 0          at a feasible w.
+```
+
+Every term is **added**. The Lagrangian is `L(x) = f(x) + ν(1'x − b) + α'(l−x) + β'(x−u) +
+γ'(Ax − d)`, so stationarity reads `∇f + ν1 − α + β + A'γ = 0`, and `f(w) − L(w)` collects three
+non-negative products with a **plus** on the inequality one. An earlier version of this section —
+and of the routine implementing it — carried a minus there. The consequence is not a looser bound
+trifiable by assumption: it understates the gap whenever a row is inactive and produces a number
+that is not a bound at all.
 
 **Proposition 3b (residual certificate).** For any feasible `w` and any dual-feasible point,
 
@@ -256,16 +298,18 @@ regret(w) ≤ f(w) − g(λ) = 0.5 · r' Q⁻¹ r + slack ≤ ||r||² / (2 λ_mi
 ```
 
 *Proof.* `L(w) − L(x*) = ½ r'Q⁻¹r` because `L` is quadratic with Hessian `Q`. Also
-`f(w) − L(w) = α'(w−l) + β'(u−w) − γ'(d−Aw) = slack` at a feasible `w`. Adding,
+`f(w) − L(w) = α'(w−l) + β'(u−w) + γ'(d−Aw) = slack` at a feasible `w`. Adding,
 `f(w) − g(λ) = ½r'Q⁻¹r + slack`; Proposition 1 finishes the argument. The second inequality uses
 `Q ⪰ λ_min I`. ∎
 
 This is an identity, not a loosening, and it holds whether or not the multipliers are
-complementary. Dropping `slack` — as the first version of the routine did — produced a number
-14 orders of magnitude *below* the true gap on the first instance tested, which is why it is now
-computed explicitly. The test suite asserts that `½r'Q⁻¹r + slack` reproduces `f(w) − g(λ)` to
-`1e-12`, and that the bound remains valid when deliberately non-complementary multipliers are
-supplied.
+complementary. Two versions of the routine got it wrong in different ways: the first dropped
+`slack` entirely (`6.97e-31` against a true gap of `1.39e-17`), and the second negated its `γ`
+component, reporting `0.235` on an instance whose gap is `0.655` and whose regret is `0.510`. Both
+numbers are now checked rather than argued: the routine recomputes `f(w) − g(λ)` and exposes
+`gap_identity_residual`, refusing a certificate whose identity fails, and the test suite asserts
+the identity to `1e-12` across five numerical scales, zero to three inequality rows and random
+dual-feasible points with mass on inactive rows.
 
 ### 5.4 Bounded certificate and the measured value of an iteration
 
@@ -320,6 +364,21 @@ curv(U) = 0.5 · m' |Q⁻¹| m,      m_i = max_{Δc ∈ U} |Δc_i|,
 
 and `h_U` is the support function: `Σ h_i|d_i| + c'd` for an interval set,
 `c'd + radius·||L'd||₂` for an ellipsoid `{c + Lz : ||z|| ≤ radius}`, and `c'd` for a singleton.
+
+**`L` is the shape matrix itself, not a factor of it.** Membership is `‖L⁻¹(Δc − c)‖ ≤ radius`,
+and the support function, the maximiser `c + radius·L(L'd)/‖L'd‖` and the curvature envelope are all
+built from `L`. An earlier version solved the membership test against `chol(L)`, which describes a
+different set: with `L = diag(0.25, 1)`, `radius = 1` and offset `(0.4, 0)`, the offset is `1.6` in
+normalised coordinates — outside — but the Cholesky reading places it at `0.8`, inside. An
+out-of-set correction certified as in-set is the one failure this extension cannot have, so
+membership is now a single `contains`/`distance_outside` method used by every path, including the
+adversarial probe that measures out-of-set violations.
+
+**The bound is conditional on the decision being admissible.** An objective-value bound evaluated at
+weights that violate the program's constraints is a true statement about numbers and a false one
+about decisions. The certificate therefore reports `objective_bound` separately from
+`actionable = valid ∧ decision_feasible`, sets `valid = false` when the recorded decision is
+infeasible, and records the feasibility report alongside the reason.
 
 *Proof.* By Proposition 1, `regret(Δc) ≤ f_{c+Δc}(w) − g_{c+Δc}(λ)`. Expanding,
 `f_{c+Δc}(w) = f_c(w) + Δc'w`, and the dual value moves as
@@ -391,7 +450,7 @@ two events out of 600 and is not corrected; it is disclosed instead.
 | First-order Taylor estimate sound | 0.774 | [0.741, 0.809] |
 
 Realized regret of events receiving the exact certificate: **maximum `2.1e-16`**. The residual
-certificate of §5.3 has median `4.7e-19` over all events.
+certificate of §5.3 has median `3.8e-19` and maximum `1.8e-17` over the 247 certified events.
 
 Realized regret is measured by two independent solvers. The maximum disagreement between them over
 the whole study is **`9.4e-14`** in objective units, and 41.3% of events have regret below ten
@@ -433,9 +492,12 @@ measurement is the argument against using it as one.
 
 ### 6.5 The numerical certificate and the LP fallback
 
-* Median `½r'Q⁻¹r + slack` over all events: **`4.7e-19`**; maximum `1.0e-2`, which occurs on
-  events where the recorded decision is genuinely not optimal and the residual bound is therefore
-  a real regret bound rather than a formality.
+* Over the **247** events carrying the residual certificate, `½r'Q⁻¹r + slack` has median
+  **`3.8e-19`** and maximum **`1.8e-17`**; the largest realized regret in that same set is
+  `3.7e-15`. The bound is a computed number and is never exactly zero, which is why the verdict
+  records what was measured (`zero_regret_within_residual`) instead of asserting a zero. An
+  earlier version of this bullet reported a maximum of `1.0e-2`, because it pooled certified
+  events with `regret_bounded` ones; that was the wrong set.
 * Multiplier recovery: least squares in 416 events, non-negative LP in **182 (30.4%)**. The LP
   is a HiGHS call, not `O(n²)` linear algebra, and the frequency is now measured rather than
   asserted. Both stages are timed separately in the certificate (`multiplier_recovery_ms`,
@@ -560,7 +622,7 @@ demonstrates structural generality and **not** operational usefulness.
 
 Pfizer's FY2023 revenue appears twice in the SEC's XBRL company-facts archive:
 
-| | original | restated |
+| | original filing | later filing |
 |---|---|---|
 | value (USD) | 58,496,000,000 | 59,553,000,000 |
 | form | 10-K | 10-K |
@@ -568,41 +630,64 @@ Pfizer's FY2023 revenue appears twice in the SEC's XBRL company-facts archive:
 | accepted | `2024-02-22T18:17:37Z` | `2025-02-27T21:27:18Z` |
 | primary document | `pfe-20231231.htm` | `pfe-20241231.htm` |
 
-The second figure is the comparative column of the FY2024 annual report, i.e. a restatement of the
-prior year inside a later filing rather than an amendment on Form 10-K/A. Both values, form
-types, accession numbers and acceptance instants are read from the archive at run time and checked
-against the constants in the script; the fetched bytes are cached with their SHA-256 digests in
-`artifacts/research/evidence/`. Relative change: **1.807%**.
+The second figure is the comparative column of the FY2024 annual report — a revision of a
+previously reported number inside a later filing, not an amendment on Form 10-K/A. Relative
+change: **1.807%** (`+1,057` million).
+
+**It is not a restatement, and the case study no longer says it is.** Both annual reports leave
+Item 9C — the question whether the financial statements reflect the correction of an error —
+unchecked, and the FY2024 filing gives the reason the figure moved:
+
+> In the first quarter of 2024, we reclassified royalty income … from Other
+> (income)/deductions—net and began presenting Royalty revenues as a separate line item within
+> Total revenues … Prior-period amounts have been recast to conform to the current presentation.
+
+So the difference is royalty income moved into `Total revenues`, with the comparative recast to
+follow: a change in presentation, not an error correction under ASC 250, and no Form 10-K/A was
+filed. The script reads the checkbox state and the disclosure sentences from **both primary
+documents** at run time, classifies the revision (`conforming_recast`), and records the quoted
+disclosures with their digests, so the label is derived from the filings rather than asserted by
+the script. A caption is only as good as the check behind it, and this one had none.
+
+Both values, form types, accession numbers and acceptance instants are read from the archive at
+run time and checked against the constants in the script; the fetched bytes are cached with their
+SHA-256 digests in `artifacts/research/evidence/`.
 
 ### 7.2 Compilation and audit
 
-The model input is the implied FY2023 revenue **growth** against FY2022 (`−41.70%` originally,
-`−40.64%` restated), mapped to the first line's expected return by a declared sensitivity of
-`0.1` per unit of growth. Decision clock `2024-06-30T20:00:00Z`, audit clock
+The model input is the implied FY2023 revenue **growth** against FY2022 (`−41.70%` as filed,
+`−40.64%` in the later filing), mapped to the first line's expected return by a declared
+sensitivity of `0.1` per unit of growth. Decision clock `2024-06-30T20:00:00Z`, audit clock
 `2025-03-01T12:00:00Z`.
 
 | quantity | value |
 |---|---|
+| characterisation | `conforming_recast` (formal restatement: `false`) |
 | temporal relationship | `revision_available_after_decision` |
-| verdict | `zero_regret_certified` |
-| bound | `0.0` |
+| verdict | `zero_regret_within_residual` |
+| bound | `7.6e-31` |
 | realized regret (OSQP reference) | `0.0` |
 
 Two controls exercise the lineage logic on the same real revision:
 
-* re-offered for a decision taken *after* the restatement was published, it is excluded with
-  reason `already_incorporated_in_decision_vintage` — the double-counting defect would otherwise
-  have applied a 1.8% correction that the recorded evidence already contained;
-* audited at `2025-01-15`, before the restatement existed, it is excluded with reason
-  `not_available_at_audit` — the look-ahead defect.
+* re-offered for a decision taken *after* the recast was published, it is excluded with reason
+  `already_incorporated_in_decision_vintage` — the double-counting defect would otherwise have
+  applied a 1.8% correction that the recorded evidence already contained;
+* audited at `2025-01-15`, before the recast existed, it is excluded with reason
+  `not_available_at_audit` — the look-ahead defect;
+* audited at `2025-03-01` while a *successor* revision is dated after the cut-off, the earlier
+  record stands rather than being suppressed — the lineage defect the second review found, which
+  the synthetic suite in `tests/test_decision_properties.py` exercises on both sides of the clock.
 
 ### 7.3 What this case does not show
 
 The decision model is a **stylised three-line allocation** in which only the first coefficient is
 evidence-linked; the risk matrix, the other two coefficients and the budget are model parameters.
-The revenue-to-return sensitivity is declared, not estimated. A comparative-column restatement is
-not an enforcement action or a fraud finding. The case demonstrates that a real, dated, identified
-revision can be compiled and certified with the same eligibility rules as the synthetic
+The revenue-to-return sensitivity is declared, not estimated. A conforming recast of comparatives
+is not an error correction, an enforcement action or a fraud finding, and the revised figure is
+not an independent measurement of the same quantity — it includes royalty income the as-filed
+figure excluded. The case demonstrates that a real, dated, identified revision can be compiled and
+certified with the same eligibility rules as the synthetic
 experiments. It does **not** audit a real portfolio, and it says nothing about realized returns.
 
 ## 8. What is new, and what is not
