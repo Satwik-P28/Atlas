@@ -16,6 +16,10 @@ dependencies = ["numpy>=2.5,<3"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "hypothesis>=6", "httpx>=0.27"]
+# Convex decision programs, revision certificates and their baselines. Deliberately its own
+# extra: the packaging contract forbids pulling the numerical stack into `dev`, and the
+# decision tests skip cleanly when this extra is absent.
+optimization = ["scipy>=1.18,<2"]
 columnar = ["pyarrow>=15"]  # optional: Parquet market-bar import
 learning = [
   "scipy>=1.18,<2",
@@ -23,6 +27,7 @@ learning = [
   "pyarrow>=15",
 ]  # Phase 6 trained models and calibration; CPU only (numpy is a core dependency)
 terminal = ["fastapi>=0.115", "uvicorn[standard]>=0.30"]  # HTTP API + static hosting
+
 
 [project.scripts]
 atlas = "atlas.cli:main"

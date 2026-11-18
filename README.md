@@ -37,6 +37,31 @@ inadmissible model. See [docs/PHASE9_IMPLEMENTATION.md](docs/PHASE9_IMPLEMENTATI
 [docs/PHASE9_FINANCIAL_RECONCILIATION.md](docs/PHASE9_FINANCIAL_RECONCILIATION.md) and
 [docs/PHASE9_READINESS.md](docs/PHASE9_READINESS.md).
 
+**Research branch: Certified Revision Impact (CRI).** `review/decision-intelligence-cri` adds
+`src/atlas/decision/`, a verified convex-programming layer that answers an audit question the
+rest of Atlas does not: *given a decision taken under the evidence available at the time, what
+can be proved about it now that the evidence has changed?* Two certificates are produced — an
+exact KKT test that costs `O(n²)` linear algebra and certifies zero regret, and a duality-gap
+bound that reuses the decision's own multiplier vector (the dual feasible set does not depend on
+the objective's linear costs, so the bound costs one Cholesky solve). On 598 seeded revision
+events no bound understated realized regret, every exactly-certified decision had realized regret
+below `1.7e-17`, and the guarantee's failure under a misspecified revision is measured rather
+than assumed. This is a formulation-and-systems contribution on classical sensitivity analysis;
+no new theorem and no profitable-strategy claim is made. The data are **synthetic**, and there
+is **no user interface** for the layer yet.
+
+Start with [the technical report](docs/research/ATLAS_CRI_TECHNICAL_REPORT.md), then the
+[prior-art and novelty audit](docs/research/PRIOR_ART_AND_NOVELTY_AUDIT.md), the
+[preregistration](docs/research/PREREGISTRATION.md), the
+[gate status ledger](docs/research/GATE_STATUS_LEDGER.md) and the
+[architecture note](docs/DECISION_RESEARCH_LAB.md). Reproduce with:
+
+```bash
+.venv/bin/python -m pip install -e ".[dev,terminal,optimization]"
+.venv/bin/python -m pytest -q
+.venv/bin/python scripts/research/cri_experiment.py --output artifacts/research
+```
+
 **The canonical Atlas Master Specification v3.0.0 is present and byte-verified.**
 `ATLAS_MASTER_SPEC.md` at the repository root is 289,963 bytes with SHA-256
 `c1228db93e66a04fb211bea85f6c978289a6040b1f655f934da76498c8c4752d`, confirmed by
