@@ -77,7 +77,10 @@ a mistake.
 
 **Accessibility findings.** The Philadelphia Fed's Real-Time Data Set for Macroeconomists was assessed
 first and not used: its documented data-file paths now return the site's 404 page. `PCEC1` has no ALFRED
-vintage archive, which is why the quarterly cohort uses the four real expenditure aggregates that do.
+vintage archive (its download page 404s), so the protocol's personal-consumption series could not be
+built; the cohort uses `EXPGSC1` (real exports) in its place — the fourth real expenditure aggregate with
+a complete archive. That substitution is a data-availability convenience, not an economic argument, and
+it is recorded as amendment A0 rather than folded silently into the design.
 ALFRED's edge stalls on any non-default `curl` User-Agent and intermittently drops HTTP/2 streams; the
 fetch uses the default agent, HTTP/1.1 and bounded retries.
 
@@ -248,6 +251,12 @@ produced them came after the test sample had been inspected, and cohort A's four
 Materiality and certifiability both depend on the risk weight: with a nearly linear objective the
 decision sits on a corner, revisions rarely move it, and certification rises to 66–68%. The qualitative
 conclusions hold across the grid; the percentages do not.
+
+Two sensitivity families the protocol specified were **not run**, and the report does not pretend
+otherwise: the mapping variants (raw growth, log growth, sign only) and the horizon grid (1/2/4 quarters;
+3/6/12 months). Both require re-deriving the whole pipeline rather than re-thresholding it. Every claim
+here is therefore conditional on the declared mapping `c = -z` and on a twelve-calendar-month audit
+horizon. The record is in amendment A10.
 
 ## 5. What survived, what did not
 

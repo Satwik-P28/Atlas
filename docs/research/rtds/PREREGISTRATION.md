@@ -32,6 +32,9 @@ Two cohorts, analysed **separately and never pooled**, because they are differen
 * **Cohort A — BEA quarterly expenditure components.** `GDPC1`, `PCEC1`, `GPDIC1`, `GCEC1`
   (real GDP, personal consumption, gross private domestic investment, government consumption).
   Vintage structure: advance / second / third estimate, then annual benchmark revisions.
+  *Erratum, recorded rather than rewritten:* `PCEC1` turned out to have no ALFRED vintage archive, so
+  the implemented cohort uses `EXPGSC1` (real exports of goods and services) in its place; see
+  amendment **A0** in §9. The list above is left as it was written.
 * **Cohort B — BLS monthly payroll employment.** `PAYEMS`, `MANEMP`, `USCONS` (total nonfarm,
   manufacturing, construction). Vintage structure: monthly first print, two monthly revisions, then
   the annual benchmark.
@@ -156,6 +159,15 @@ existed, so corrected results from that sample are a **reanalysis**, not a prist
 
 ### Pre-confirmatory (written before any test-split regret was computed)
 
+**A0. Series substitution in cohort A.** `PCEC1` (real personal consumption expenditures) has no
+ALFRED vintage archive — its download page returns 404 — so no real-time vintage series exists to
+build decision events from. The cohort was built from `EXPGSC1` (real exports) instead, keeping the
+cohort at four series and keeping the substitution visible: it was made while building the dataset,
+before any test-split regret was computed, and it is not a modelling choice about revisions. A
+reader who wants personal consumption in the cohort would have to source its vintages elsewhere. The
+only other real expenditure aggregate with a complete ALFRED archive at the time of building was
+exports; the report records that this is a convenience substitution, not an economic argument.
+
 **A1. Risk weight.** §4 fixed `ρ = 0.05` without knowing its
 scale against standardised growth. The value was not simply changed: a rule was prespecified — choose
 ρ from {0.25, 0.5, 1, 2} to maximise the share of **train-split** events with an interior optimum, ties
@@ -209,6 +221,23 @@ costs, clocks, digests) plus a per-cohort shared block, and its size is compared
 representation a re-solve needs rather than with a full serialised problem.
 
 ### Samples
+
+**A10. Prespecified sensitivity experiments: what was run, and what was not.** §7 prespecified four
+secondary sensitivity families. Reported here so the record is complete rather than selective:
+
+* **Threshold** `τ ∈ {1e-2, 1e-3, 1e-4}`: **run**, both cohorts (§4.8 of the report).
+* **Risk weight**: **run**, but not exactly as written. §7 listed `ρ ∈ {0.01, 0.05, 0.2}`; the grid used
+  `{0.02, 0.05, 0.2, 1.0}`. `0.01` was replaced by `0.02` (the smaller value left almost every solution
+  on a corner, so the two are indistinguishable in the grid), and `1.0` was added because it is the
+  calibrated value actually used.
+* **Mapping variants** (raw growth, log growth, sign only): **not run.** Each variant changes `c` and
+  therefore the whole pipeline; running three more full passes was not done, so the report's claims are
+  conditional on the declared mapping and are not evidence about its functional form. This is a gap, not
+  a null result.
+* **Horizon grid** (1, 2, 4 quarters for A; 3, 6, 12 months for B): **not run.** It now requires
+  rebuilding the event archive at each horizon (the builder is calendar-aware, so this is feasible) and
+  was out of scope for the correction pass. The report's horizon statements are therefore about twelve
+  calendar months only.
 
 **S1. Untouched later period (exploratory, added post hoc).** 2024-07-01 .. 2025-06-30 was never
 computed before this correction pass. It is reported separately, with all parameters fixed on the train
