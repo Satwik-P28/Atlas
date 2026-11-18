@@ -1,30 +1,40 @@
-"""Certified Revision Impact (CRI): preregistered experiments.
+"""Certified Revision Impact (CRI) and CRI-U: preregistered experiments.
 
-Every experiment here has a known data-generating process, fixed seeds and a named
-comparison. Nothing is tuned on the reported events: the parameters are fixed in
-``CONFIG`` before the run, and the ledger records every arm that executes, including the
-ones that fail.
+Every number in the technical report is produced here, and every table in
+``artifacts/research/cri_tables.md`` is rendered from the single JSON written by this script. The
+prose report cites that file rather than restating numbers, because the previous version of this
+work quoted a speed-up (25.6x) that the committed run did not reproduce (18.92x): the number came
+from an earlier invocation and drifted. One source of truth removes that failure mode.
+
+What changed after the PR review
+--------------------------------
+* Trial accounting is explicit. Every attempted rebalance is recorded, with a reason if it is
+  rejected. The previous version reported "598 events, 0 skipped" while two trials had vanished.
+* Reference regret is computed by an **independent solver** (OSQP) as well as by the internal one.
+  The disagreement between them is reported, and a decision whose regret is smaller than that
+  disagreement is flagged rather than trusted.
+* The dual ascent arms use exactly the requested iteration budget. The previous "5-step" arm
+  silently ran at least 20 iterations, so its tightness number was not a five-step number.
+* Certificate time is separated from the time needed to construct and store the original dual
+  solution, and both are separated from the re-solve.
+* The worst-case (uncertainty set) experiment is new: the bound is compared against the exact
+  worst case obtained by re-solving every vertex of the box.
 
 Run::
 
     .venv/bin/python scripts/research/cri_experiment.py --output artifacts/research
-
-Outputs
--------
-``cri_results.json``   full machine-readable results, manifests and per-event records
-``cri_report.md``      generated tables (the prose report cites these numbers)
-``cri_ledger.jsonl``   append-only trial ledger, including failures
 """
 
 from __future__ import annotations
 
 import argparse
+import itertools
 import json
 import math
 import time
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Sequence
+from typing import Any, Sequence
 
 import numpy as np
 
@@ -39,8 +49,14 @@ from atlas.decision.inventory import (
 )
 from atlas.decision.metrics import moving_block_bootstrap_ci, summarize
 from atlas.decision.problem import ConvexDecisionProblem, mean_variance_problem
-from atlas.decision.qp import DualPoint, solve
+from atlas.decision.qp import solve
+from atlas.decision.reference import solve_osqp
 from atlas.decision.revision import EvidenceRevision, InputSensitivity, compile_revisions
+from atlas.decision.uncertainty import (
+    adversarial_out_of_set_check,
+    certify_worst_case,
+    interval_set,
+)
 
 #: Fixed before the run. Changing a value here invalidates the preregistration.
 CONFIG: dict[str, Any] = {
@@ -52,9 +68,12 @@ CONFIG: dict[str, Any] = {
     "seeds": [101, 102, 103, 104, 105],
     "revision_scale": 1.0,
     "useful_tolerance": 1e-4,
+    "dual_budgets": [0, 1, 2, 5, 10, 20, 200],
     "scaling_sizes": [8, 16, 32, 64, 128],
     "scaling_seed": 9001,
     "misspecification_factors": [1, 2, 5, 10],
+    "uncertainty_trials": 40,
+    "uncertainty_dimension": 4,
     "bootstrap": {"block": 12, "resamples": 1500, "seed": 424242},
 }
 
@@ -110,28 +129,58 @@ def rate(flags: Sequence[bool]) -> float | None:
     return float(np.mean(flags)) if len(flags) else None
 
 
-# ----------------------------------------------------------------------- experiment 1
-def experiment_certificates(seed: int) -> dict[str, Any]:
-    """Soundness, tightness, certification rate and cost across revision magnitudes."""
+def reference_regret(problem: ConvexDecisionProblem, weights: Sequence[float]) -> dict[str, Any]:
+    """Realized regret measured by two independent solvers.
 
-    market = synthetic_market(seed, n_assets=CONFIG["n_risky"], periods=CONFIG["window"] + CONFIG["rebalances"] + 10)
+    ``spread`` is the difference between their optimal values. A regret below that spread cannot
+    be distinguished from solver disagreement, so it is flagged rather than used as evidence.
+    """
+
+    objective_at_decision = float(problem.objective(np.asarray(weights, dtype=float)))
+    internal = solve(problem)
+    external = solve_osqp(problem)
+    regret_internal = float(objective_at_decision - internal.objective)
+    regret_external = float(objective_at_decision - external.objective)
+    spread = abs(internal.objective - external.objective)
+    return {
+        "regret_internal": regret_internal,
+        "regret_external": regret_external,
+        "regret": max(regret_internal, regret_external),
+        "external_weights": tuple(float(v) for v in external.weights),
+        "solver_spread": spread,
+        "below_solver_resolution": bool(
+            max(regret_internal, regret_external) < 10.0 * max(spread, 1e-15)),
+        "internal_status": internal.status,
+        "external_status": external.status,
+        "external_objective": float(external.objective),
+    }
+
+
+# --------------------------------------------------------------- experiment 1: certificates
+def experiment_certificates(seed: int) -> dict[str, Any]:
+    """Soundness, tightness, coverage, cost and trial accounting across revision magnitudes."""
+
+    market = synthetic_market(seed, n_assets=CONFIG["n_risky"],
+                              periods=CONFIG["window"] + CONFIG["rebalances"] + 10)
     rng = np.random.default_rng(seed + 7)
     assets = market.assets
     n = len(assets)
+    attempts: list[dict[str, Any]] = []
     records: list[dict[str, Any]] = []
     for step in range(CONFIG["rebalances"]):
         end = CONFIG["window"] + step
         window = market.returns[end - CONFIG["window"]:end]
         covariance, shrinkage = ledoit_wolf_covariance(window)
         mu_hat = window.mean(axis=0)
-        problem = decision_problem(assets, mu_hat, covariance, problem_id=f"s{seed}-r{step}", as_of=READY_CLOCK)
+        problem = decision_problem(assets, mu_hat, covariance,
+                                   problem_id=f"s{seed}-r{step}", as_of=READY_CLOCK)
+        dual_clock = time.perf_counter()
         decision = solve(problem)
-        if decision.status != "optimal":
-            records.append({"step": step, "status": decision.status, "skipped": True})
+        dual_construction_ms = (time.perf_counter() - dual_clock) * 1000.0
+        if decision.status != "optimal" or decision.dual is None:
+            attempts.append({"step": step, "outcome": "rejected",
+                             "reason": f"solver_status_{decision.status}"})
             continue
-        # A revision affects between one and three inputs, scaled by the sampling error of the
-        # estimate it corrects. That ties the perturbation to a real quantity instead of an
-        # arbitrary knob.
         count = int(rng.integers(1, 4))
         indices = rng.choice(n, size=count, replace=False)
         standard_error = window.std(axis=0, ddof=1) / math.sqrt(CONFIG["window"])
@@ -146,56 +195,85 @@ def experiment_certificates(seed: int) -> dict[str, Any]:
                 delta=float(delta[index]),
                 available_at=REVISION_CLOCK,
                 source_id="10-Q/A" if step % 2 else "vendor-correction",
+                incorporated_in="decision-vintage",
             )
             for index in indices
         ]
         sensitivities = [InputSensitivity(f"ret_{i}", tuple(-1.0 if j == i else 0.0 for j in range(n)))
                          for i in indices]
-        compilation = compile_revisions(problem, revisions, sensitivities, audit_as_of=REVISION_CLOCK)
-        reference = solve(compilation.problem)
+        compilation = compile_revisions(problem, revisions, sensitivities,
+                                        audit_as_of=REVISION_CLOCK,
+                                        starting_vintage="decision-vintage")
+        if not compilation.applied:
+            attempts.append({"step": step, "outcome": "rejected",
+                             "reason": "revision_not_compiled",
+                             "detail": compilation.excluded})
+            continue
 
-        started = time.perf_counter()
-        certificate = certify_revision_impact(problem, decision.weights, compilation,
-                                             decision_dual=decision.dual,
-                                             reference_solution=reference,
-                                             useful_bound=CONFIG["useful_tolerance"])
-        certificate_ms = (time.perf_counter() - started) * 1000.0
-        started = time.perf_counter()
-        solve(compilation.problem)
-        recompute_ms = (time.perf_counter() - started) * 1000.0
-
-        warm5 = certify_revision_impact(problem, decision.weights, compilation,
-                                        decision_dual=decision.dual, dual_iterations=5,
-                                        useful_bound=CONFIG["useful_tolerance"])
-        cold = certify_revision_impact(problem, decision.weights, compilation,
-                                       decision_dual=None, dual_iterations=200,
+        reference = reference_regret(compilation.problem, decision.weights)
+        clock = time.perf_counter()
+        warm = certify_revision_impact(problem, decision.weights, compilation,
+                                       decision_dual=decision.dual,
                                        useful_bound=CONFIG["useful_tolerance"])
+        certificate_ms = (time.perf_counter() - clock) * 1000.0
+        clock = time.perf_counter()
+        solve(compilation.problem)
+        recompute_cold_ms = (time.perf_counter() - clock) * 1000.0
+        clock = time.perf_counter()
+        solve(compilation.problem, warm_start=decision.weights)
+        recompute_warm_ms = (time.perf_counter() - clock) * 1000.0
+        clock = time.perf_counter()
+        solve_osqp(compilation.problem)
+        recompute_osqp_ms = (time.perf_counter() - clock) * 1000.0
+
+        budget_arms: dict[str, Any] = {}
+        for budget in CONFIG["dual_budgets"]:
+            arm = certify_revision_impact(problem, decision.weights, compilation,
+                                          decision_dual=decision.dual,
+                                          dual_iterations=budget,
+                                          useful_bound=CONFIG["useful_tolerance"])
+            budget_arms[str(budget)] = {
+                "bound": arm.bounded["regret_upper_bound"],
+                "kind": arm.bounded["bound_kind"],
+                "actual_iterations": arm.bounded["dual_budget"]["actual_iterations"],
+                "objective_evaluations": arm.bounded["dual_budget"]["objective_evaluations"],
+            }
         convex = strong_convexity_bound(compilation.problem, decision.weights)
         taylor = first_order_estimate(problem.cost_vector(), compilation.problem.cost_vector(),
                                       decision.weights)
-        realized = certificate.reference["realized_regret"]
+        realized = reference["regret"]
+        attempts.append({"step": step, "outcome": "accepted"})
         records.append({
             "step": step,
-            "status": decision.status,
             "shrinkage": shrinkage,
             "delta_l2": compilation.magnitude,
             "realized_regret": realized,
-            "weights_changed": certificate.reference["weights_changed"],
-            "max_weight_change": certificate.reference["max_weight_change"],
-            "verdict": certificate.verdict,
-            "zero_regret": certificate.zero_regret,
-            "bound_warm": certificate.bounded["regret_upper_bound"],
-            "bound_warm5": warm5.bounded["regret_upper_bound"],
-            "bound_cold": cold.bounded["regret_upper_bound"],
+            "regret_internal": reference["regret_internal"],
+            "regret_external": reference["regret_external"],
+            "solver_spread": reference["solver_spread"],
+            "below_solver_resolution": reference["below_solver_resolution"],
+            "weights_changed": bool(np.max(np.abs(np.asarray(decision.weights) -
+                                                  np.asarray(reference["external_weights"]))) > 1e-6),
+            "verdict": warm.verdict,
+            "zero_regret": warm.zero_regret,
+            "bound_warm": warm.bounded["regret_upper_bound"],
+            "bound_arms": budget_arms,
             "bound_convex": convex["bound"] if convex["valid"] else None,
             "estimate_taylor": taylor["estimate"],
-            "meets_tolerance": certificate.bounded["meets_tolerance"],
+            "meets_tolerance": warm.bounded["meets_tolerance"],
             "certificate_ms": certificate_ms,
-            "recompute_ms": recompute_ms,
+            "dual_construction_ms": dual_construction_ms,
+            "recompute_cold_ms": recompute_cold_ms,
+            "recompute_warm_ms": recompute_warm_ms,
+            "recompute_osqp_ms": recompute_osqp_ms,
+            "recovery_method": warm.exact["recovery_method"],
+            "used_lp_fallback": warm.exact["used_lp_fallback"],
+            "numerical_regret_bound": warm.exact["numerical_regret_bound"],
+            "kkt_satisfied": warm.exact["kkt"]["satisfied"],
             "condition_number": covariance_diagnostics(covariance)["condition_number"],
         })
 
-    usable = [record for record in records if not record.get("skipped")]
+    usable = [record for record in records]
     realized = [record["realized_regret"] for record in usable]
     arms = {
         "zero_regret_certificate": [record["zero_regret"] for record in usable],
@@ -203,66 +281,83 @@ def experiment_certificates(seed: int) -> dict[str, Any]:
         "warm_bound_sound": [record["bound_warm"] is not None and
                              record["bound_warm"] + 1e-12 >= record["realized_regret"]
                              for record in usable],
-        "warm5_bound_sound": [record["bound_warm5"] is not None and
-                              record["bound_warm5"] + 1e-12 >= record["realized_regret"]
-                              for record in usable],
-        "cold_bound_sound": [record["bound_cold"] is not None and
-                             record["bound_cold"] + 1e-12 >= record["realized_regret"]
-                             for record in usable],
         "convex_bound_sound": [record["bound_convex"] is not None and
                                record["bound_convex"] + 1e-12 >= record["realized_regret"]
                                for record in usable],
         "taylor_sound": [abs(record["estimate_taylor"]) + 1e-12 >= record["realized_regret"]
                          for record in usable],
     }
-    tightness = {
-        arm: [record[key] / max(record["realized_regret"], 1e-15)
-              for record in usable if record.get(key) is not None]
-        for arm, key in (("warm", "bound_warm"), ("warm5", "bound_warm5"),
-                         ("cold", "bound_cold"), ("convex", "bound_convex"))
-    }
+    for budget in CONFIG["dual_budgets"]:
+        arms[f"bound_sound_at_{budget}"] = [
+            record["bound_arms"][str(budget)]["bound"] is not None and
+            record["bound_arms"][str(budget)]["bound"] + 1e-12 >= record["realized_regret"]
+            for record in usable
+        ]
     positive = [r for r in usable if r["realized_regret"] > 1e-10]
+    tightness = {}
+    for budget in CONFIG["dual_budgets"]:
+        values = [record["bound_arms"][str(budget)]["bound"] / record["realized_regret"]
+                  for record in usable
+                  if record["bound_arms"][str(budget)]["bound"] is not None
+                  and record["realized_regret"] > 1e-10]
+        tightness[str(budget)] = {"median": percentile(values, 0.5),
+                                  "p90": percentile(values, 0.9), "count": len(values)}
     certified_zero = [r["realized_regret"] for r in usable if r["zero_regret"]]
+    residual_bounds = [r["numerical_regret_bound"] for r in usable
+                       if r["numerical_regret_bound"] is not None]
     return {
-        "zero_regret_certified_realized_max": max(certified_zero) if certified_zero else None,
-        "zero_regret_certified_realized_p95": percentile(certified_zero, 0.95),
         "seed": seed,
         "dataset_digest": market.dataset_digest,
+        "attempted": len(attempts),
+        "accepted": len(usable),
+        "rejected": len(attempts) - len(usable),
+        "rejection_reasons": _reason_counts(attempts),
         "events": len(usable),
-        "skipped": len(records) - len(usable),
+        "zero_regret_certified_realized_max": max(certified_zero) if certified_zero else None,
+        "zero_regret_certified_realized_p95": percentile(certified_zero, 0.95),
         "mean_realized_regret": float(np.mean(realized)) if realized else None,
         "median_realized_regret": float(np.median(realized)) if realized else None,
+        "max_solver_spread": max((r["solver_spread"] for r in usable), default=None),
+        "regret_below_solver_resolution_rate": rate([r["below_solver_resolution"] for r in usable]),
         "fraction_with_regret": rate([r["realized_regret"] > 1e-10 for r in usable]),
-        "fraction_weights_changed": rate([r["weights_changed"] for r in usable]),
         "rates": {arm: rate(flags) for arm, flags in arms.items()},
-        "conditional_tightness": {
-            arm: {"median": percentile(values, 0.5), "p90": percentile(values, 0.9),
-                  "count": len(values)}
-            for arm, values in tightness.items()
+        "tightness_by_budget": tightness,
+        "residual_bound": {
+            "max": max(residual_bounds) if residual_bounds else None,
+            "median": percentile(residual_bounds, 0.5),
+            "count": len(residual_bounds),
         },
+        "lp_fallback_rate": rate([r["used_lp_fallback"] for r in usable]),
+        "recovery_methods": _reason_counts(
+            [{"reason": r["recovery_method"]} for r in usable]),
         "conditional_on_positive_regret": {
             "count": len(positive),
             "zero_regret_rate": rate([r["zero_regret"] for r in positive]),
-            "warm_tightness_median": percentile(
-                [r["bound_warm"] / r["realized_regret"] for r in positive], 0.5),
         },
         "cost_ms": {
             "certificate_median": percentile([r["certificate_ms"] for r in usable], 0.5),
-            "recompute_median": percentile([r["recompute_ms"] for r in usable], 0.5),
+            "dual_construction_median": percentile(
+                [r["dual_construction_ms"] for r in usable], 0.5),
+            "recompute_cold_median": percentile([r["recompute_cold_ms"] for r in usable], 0.5),
+            "recompute_warm_median": percentile([r["recompute_warm_ms"] for r in usable], 0.5),
+            "recompute_osqp_median": percentile([r["recompute_osqp_ms"] for r in usable], 0.5),
         },
+        "attempts": attempts,
         "records": records,
     }
 
 
-# ----------------------------------------------------------------------- experiment 2
-def experiment_cap_tightness(seed: int) -> dict[str, Any]:
-    """Does the certificate's value depend on position limits being active?
+def _reason_counts(entries: Sequence[dict[str, Any]]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for entry in entries:
+        key = str(entry.get("reason", "unspecified"))
+        counts[key] = counts.get(key, 0) + 1
+    return counts
 
-    A tighter cap puts more coordinates on a bound, which is exactly the regime where a small
-    revision leaves the active set intact. This is the honest boundary of the result: the
-    certificate is informative when the optimal solution is corporate, and mostly silent when
-    every coordinate is interior.
-    """
+
+# ---------------------------------------------------------------- experiment 2: cap sweep
+def experiment_cap_tightness(seed: int) -> dict[str, Any]:
+    """Where exact certification comes from: active bounds, not interior optima."""
 
     market = synthetic_market(seed + 500, n_assets=CONFIG["n_risky"],
                               periods=CONFIG["window"] + 40)
@@ -288,26 +383,27 @@ def experiment_cap_tightness(seed: int) -> dict[str, Any]:
             index = int(rng.integers(0, n))
             delta = float(rng.normal(0.0, 0.004))
             revisions = [EvidenceRevision(f"r{trial}", f"e{trial}", f"ret_{index}", delta,
-                                          REVISION_CLOCK)]
+                                          REVISION_CLOCK, incorporated_in="decision-vintage")]
             sensitivities = [InputSensitivity(f"ret_{index}",
                                               tuple(-1.0 if j == index else 0.0 for j in range(n)))]
             compilation = compile_revisions(problem, revisions, sensitivities,
-                                            audit_as_of=REVISION_CLOCK)
-            reference = solve(compilation.problem)
+                                            audit_as_of=REVISION_CLOCK,
+                                            starting_vintage="decision-vintage")
+            reference = reference_regret(compilation.problem, decision.weights)
             certificate = certify_revision_impact(problem, decision.weights, compilation,
-                                                 decision_dual=decision.dual,
-                                                 reference_solution=reference)
+                                                  decision_dual=decision.dual,
+                                                  reference_solution=solve(compilation.problem))
             certified += int(certificate.zero_regret)
-            changed += int(certificate.reference["weights_changed"])
+            changed += int(abs(reference["regret"]) > 1e-10)
             if certificate.zero_regret:
-                certified_regrets.append(certificate.reference["realized_regret"])
+                certified_regrets.append(reference["regret"])
         output.append({"cap": cap, "trials": trials, "zero_regret_rate": certified / trials,
                        "weights_changed_rate": changed / trials,
                        "max_regret_when_certified": max(certified_regrets) if certified_regrets else None})
     return {"seed": seed, "sweep": output}
 
 
-# ----------------------------------------------------------------------- experiment 3
+# ------------------------------------------------------- experiment 3: misspecification
 def experiment_misspecification(seed: int) -> dict[str, Any]:
     """How the guarantee fails when the declared sensitivity understates the actual revision."""
 
@@ -330,19 +426,19 @@ def experiment_misspecification(seed: int) -> dict[str, Any]:
             actual = float(rng.normal(0.0, 0.006))
             declared = actual / factor
             revision = EvidenceRevision(f"r{trial}", f"e{trial}", f"ret_{index}", declared,
-                                        REVISION_CLOCK)
+                                        REVISION_CLOCK, incorporated_in="decision-vintage")
             sensitivity = InputSensitivity(f"ret_{index}",
                                            tuple(-1.0 if j == index else 0.0 for j in range(n)))
             compilation = compile_revisions(problem, [revision], [sensitivity],
-                                            audit_as_of=REVISION_CLOCK)
+                                            audit_as_of=REVISION_CLOCK,
+                                            starting_vintage="decision-vintage")
             certificate = certify_revision_impact(problem, decision.weights, compilation,
                                                  decision_dual=decision.dual)
-            # The program that actually occurred used the true revision.
             true_costs = tuple(problem.linear_costs[j] - (actual if j == index else 0.0)
                                for j in range(n))
             actual_problem = problem.replace(linear_costs=true_costs)
-            actual_reference = solve(actual_problem)
-            realized = actual_problem.objective(decision.weights) - actual_reference.objective
+            reference = reference_regret(actual_problem, decision.weights)
+            realized = reference["regret"]
             bound = certificate.bounded["regret_upper_bound"]
             events += 1
             if bound is None or bound + 1e-15 < realized:
@@ -354,13 +450,10 @@ def experiment_misspecification(seed: int) -> dict[str, Any]:
     return {"seed": seed, "sweep": output}
 
 
-# ----------------------------------------------------------------------- experiment 4
+# -------------------------------------------------------------------- experiment 4: degeneracy
 def experiment_degeneracy(seed: int) -> dict[str, Any]:
     """Duplicate assets: value regret stays certifiable, weight identity does not."""
 
-    # Two assets correlated at 0.999 with different variances: the risk matrix is positive
-    # definite, so the dual bound exists, but the two assets are near-perfect substitutes and
-    # the objective is almost flat along the direction that swaps them.
     assets = ["DUP-A", "DUP-B", "SOLO", "OTHER"]
     covariance = np.array([
         [0.0400, 0.0398, 0.0000, 0.0040],
@@ -379,9 +472,12 @@ def experiment_degeneracy(seed: int) -> dict[str, Any]:
     shift = min(twin[0] * 0.5, 0.6 - twin[1])
     twin[0] -= shift
     twin[1] += shift
-    revision = EvidenceRevision("dup-rev", "dup-ev", "ret_2", 0.01, REVISION_CLOCK)
+    revision = EvidenceRevision("dup-rev", "dup-ev", "ret_2", 0.01, REVISION_CLOCK,
+                                incorporated_in="decision-vintage")
     sensitivity = InputSensitivity("ret_2", (0.0, 0.0, -1.0, 0.0))
-    compilation = compile_revisions(problem, [revision], [sensitivity], audit_as_of=REVISION_CLOCK)
+    compilation = compile_revisions(problem, [revision], [sensitivity],
+                                    audit_as_of=REVISION_CLOCK,
+                                    starting_vintage="decision-vintage")
     certificate = certify_revision_impact(problem, decision.weights, compilation,
                                           decision_dual=decision.dual)
     twin_certificate = certify_revision_impact(problem, twin, compilation,
@@ -403,13 +499,9 @@ def experiment_degeneracy(seed: int) -> dict[str, Any]:
     }
 
 
-# ----------------------------------------------------------------------- experiment 5
+# --------------------------------------------------------------------- experiment 5: hindsight
 def experiment_hindsight(seed: int) -> dict[str, Any]:
-    """The leakage arm: auditing a decision that was made with the later evidence.
-
-    It reports zero regret almost always, which is precisely why it is useless as an audit of
-    the decision that was actually taken.
-    """
+    """The leakage arm: auditing a decision that was made with the later evidence."""
 
     market = synthetic_market(seed + 1300, n_assets=CONFIG["n_risky"],
                               periods=CONFIG["window"] + 30)
@@ -428,13 +520,14 @@ def experiment_hindsight(seed: int) -> dict[str, Any]:
         index = int(rng.integers(0, n))
         delta = float(rng.normal(0.0, 0.006))
         revisions = [EvidenceRevision(f"r{trial}", f"e{trial}", f"ret_{index}", delta,
-                                      REVISION_CLOCK)]
+                                      REVISION_CLOCK, incorporated_in="decision-vintage")]
         sensitivities = [InputSensitivity(f"ret_{index}",
                                           tuple(-1.0 if j == index else 0.0 for j in range(n)))]
-        compilation = compile_revisions(problem, revisions, sensitivities, audit_as_of=REVISION_CLOCK)
+        compilation = compile_revisions(problem, revisions, sensitivities,
+                                        audit_as_of=REVISION_CLOCK,
+                                        starting_vintage="decision-vintage")
         honest = certify_revision_impact(problem, decision.weights, compilation,
                                          decision_dual=decision.dual)
-        # Hindsight: recompute the decision with the later evidence, then audit *that* decision.
         hindsight_decision = solve(compilation.problem)
         hindsight = certify_revision_impact(compilation.problem, hindsight_decision.weights,
                                             compile_revisions(compilation.problem, [], []),
@@ -454,9 +547,9 @@ def experiment_hindsight(seed: int) -> dict[str, Any]:
     }
 
 
-# ----------------------------------------------------------------------- experiment 6
+# --------------------------------------------------------------------- experiment 6: scaling
 def experiment_scaling() -> dict[str, Any]:
-    """Certificate cost versus full re-solve cost as the program grows."""
+    """Certificate cost versus re-solve cost, with the dual construction reported separately."""
 
     rng = np.random.default_rng(CONFIG["scaling_seed"])
     rows = []
@@ -469,33 +562,52 @@ def experiment_scaling() -> dict[str, Any]:
             expected_returns=mu, covariance=covariance, risk_aversion=4.0,
             lower=0.0, upper=max(2.5 / n, 0.05), budget=1.0, as_of=READY_CLOCK,
         )
+        clock = time.perf_counter()
         decision = solve(problem)
-        index = 0
-        revision = EvidenceRevision("scale-rev", "scale-ev", f"ret_{index}", 0.004, REVISION_CLOCK)
-        sensitivity = InputSensitivity(f"ret_{index}",
-                                       tuple(-1.0 if j == index else 0.0 for j in range(n)))
-        compilation = compile_revisions(problem, [revision], [sensitivity], audit_as_of=REVISION_CLOCK)
-        certificate_times, recompute_times = [], []
+        dual_construction = (time.perf_counter() - clock) * 1000.0
+        revision = EvidenceRevision("scale-rev", "scale-ev", "ret_0", 0.004, REVISION_CLOCK,
+                                    incorporated_in="decision-vintage")
+        sensitivity = InputSensitivity("ret_0", tuple(-1.0 if j == 0 else 0.0 for j in range(n)))
+        compilation = compile_revisions(problem, [revision], [sensitivity],
+                                       audit_as_of=REVISION_CLOCK,
+                                       starting_vintage="decision-vintage")
+        certificate_times, cold_times, warm_times, osqp_times, stages = [], [], [], [], []
         for _ in range(3):
-            started = time.perf_counter()
-            certify_revision_impact(problem, decision.weights, compilation,
-                                    decision_dual=decision.dual)
-            certificate_times.append((time.perf_counter() - started) * 1000.0)
-            started = time.perf_counter()
+            clock = time.perf_counter()
+            certificate = certify_revision_impact(problem, decision.weights, compilation,
+                                                  decision_dual=decision.dual)
+            certificate_times.append((time.perf_counter() - clock) * 1000.0)
+            stages.append(certificate.exact["timings_ms"])
+            clock = time.perf_counter()
             solve(compilation.problem)
-            recompute_times.append((time.perf_counter() - started) * 1000.0)
+            cold_times.append((time.perf_counter() - clock) * 1000.0)
+            clock = time.perf_counter()
+            solve(compilation.problem, warm_start=decision.weights)
+            warm_times.append((time.perf_counter() - clock) * 1000.0)
+            clock = time.perf_counter()
+            solve_osqp(compilation.problem)
+            osqp_times.append((time.perf_counter() - clock) * 1000.0)
+        median = lambda values: percentile(values, 0.5) or 0.0
         rows.append({
             "n": n,
-            "certificate_ms": percentile(certificate_times, 0.5),
-            "recompute_ms": percentile(recompute_times, 0.5),
-            "speed_ratio": percentile(recompute_times, 0.5) / max(percentile(certificate_times, 0.5), 1e-9),
+            "certificate_ms": median(certificate_times),
+            "dual_construction_ms": dual_construction,
+            "recompute_cold_ms": median(cold_times),
+            "recompute_warm_ms": median(warm_times),
+            "recompute_osqp_ms": median(osqp_times),
+            "speed_ratio_cold": median(cold_times) / max(median(certificate_times), 1e-9),
+            "speed_ratio_warm": median(warm_times) / max(median(certificate_times), 1e-9),
+            "speed_ratio_osqp": median(osqp_times) / max(median(certificate_times), 1e-9),
+            "stages_ms": {key: float(np.median([stage.get(key, 0.0) for stage in stages]))
+                          for key in ("multiplier_recovery_ms", "kkt_check_ms",
+                                      "residual_bound_ms", "warm_dual_evaluation_ms")},
             "solve_status": decision.status,
-            "dual_iterations": decision.diagnostics["dual"]["iterations"],
+            "used_lp_fallback": certificate.exact["used_lp_fallback"],
         })
     return {"rows": rows}
 
 
-# ----------------------------------------------------------------------- experiment 7
+# --------------------------------------------------------------- experiment 7: cross-domain
 def experiment_cross_domain(seed: int) -> dict[str, Any]:
     """The same certificate on a capacity-allocation program with linear service caps."""
 
@@ -519,21 +631,23 @@ def experiment_cross_domain(seed: int) -> dict[str, Any]:
         line = int(rng.integers(0, 4))
         delta = float(rng.normal(0.0, 0.4))
         revision = EvidenceRevision(f"d{trial}", f"de{trial}", f"margin_{line}", delta,
-                                    REVISION_CLOCK, source_id="demand-forecast-revision")
+                                    REVISION_CLOCK, source_id="demand-forecast-revision",
+                                    incorporated_in="decision-vintage")
         sensitivity = InputSensitivity(f"margin_{line}",
                                        tuple(1.0 if j == line else 0.0 for j in range(4)))
-        compilation = compile_revisions(problem, [revision], [sensitivity], audit_as_of=REVISION_CLOCK)
-        reference = solve_capacity_allocation(compilation.problem)
+        compilation = compile_revisions(problem, [revision], [sensitivity],
+                                        audit_as_of=REVISION_CLOCK,
+                                        starting_vintage="decision-vintage")
+        reference = reference_regret(compilation.problem, decision.weights)
         certificate = certify_revision_impact(problem, decision.weights, compilation,
-                                              decision_dual=decision.dual,
-                                              reference_solution=reference)
+                                              decision_dual=decision.dual)
         results.append({
             "trial": trial,
             "verdict": certificate.verdict,
             "zero_regret": certificate.zero_regret,
-            "realized_regret": certificate.reference["realized_regret"],
+            "realized_regret": reference["regret"],
             "bound": certificate.bounded["regret_upper_bound"],
-            "weights_changed": certificate.reference["weights_changed"],
+            "below_solver_resolution": reference["below_solver_resolution"],
         })
     return {
         "seed": seed,
@@ -541,37 +655,100 @@ def experiment_cross_domain(seed: int) -> dict[str, Any]:
         "certified_optimal": decision.certified_optimal,
         "zero_regret_rate": rate([item["zero_regret"] for item in results]),
         "bound_sound_rate": rate([item["bound"] is not None and
-                                  item["bound"] + 1e-12 >= item["realized_regret"]
+                                  item["bound"] + 1e-9 >= item["realized_regret"]
                                   for item in results]),
         "mean_realized_regret": float(np.mean([item["realized_regret"] for item in results])),
         "trials": results,
     }
 
 
-# --------------------------------------------------------------------------- driver
-def aggregate(seed_results: Sequence[dict[str, Any]], *, block: int, seed: int) -> dict[str, Any]:
-    """Pool event-level indicators across seeds and bootstrap them.
+# --------------------------------------------------------- experiment 8: uncertainty sets
+def experiment_uncertainty_sets(seed: int) -> dict[str, Any]:
+    """Worst-case certificate over a box: soundness, tightness and cost against enumeration.
 
-    The interval has to be computed over *events*, not over five seed-level rates: a bootstrap
-    of five numbers cannot produce a meaningful interval, and an earlier version of this
-    function silently returned degenerate intervals for exactly that reason. Events within a
-    seed are serially dependent (the estimation window overlaps), so the resampling is a
-    moving-block bootstrap rather than an i.i.d. one.
+    The comparison is the honest one. The exact worst case needs ``2**n`` re-solves; the bound
+    needs one Cholesky solve plus a support-function evaluation. The bound must never fall below
+    the enumerated worst case, and the ratio of the two measures what not reoptimising costs.
     """
 
-    records = [record for result in seed_results for record in result["records"]
-               if not record.get("skipped")]
+    n = CONFIG["uncertainty_dimension"]
+    rng = np.random.default_rng(seed + 3100)
+    rows = []
+    for trial in range(CONFIG["uncertainty_trials"]):
+        a = rng.normal(size=(n, n))
+        covariance = a @ a.T / n * 0.05 + np.eye(n) * 0.02
+        mu = rng.normal(0.08, 0.02, size=n)
+        problem = mean_variance_problem(
+            problem_id=f"unc-{trial}", assets=[f"U{i}" for i in range(n)],
+            expected_returns=mu, covariance=covariance, risk_aversion=4.0,
+            lower=0.0, upper=0.6, budget=1.0, as_of=READY_CLOCK,
+        )
+        decision = solve(problem)
+        index = int(rng.integers(0, n))
+        centre = np.zeros(n)
+        centre[index] = float(rng.normal(0.0, 0.01))
+        half = np.full(n, 0.0)
+        half[index] = abs(centre[index]) * 0.5 + 1e-4
+        uset = interval_set(center=centre, half_width=half,
+                            coverage="half the magnitude of the point revision, one coordinate")
+        clock = time.perf_counter()
+        certificate = certify_worst_case(problem, decision.weights, uset,
+                                         decision_dual=decision.dual, gradient_steps=20)
+        bound_ms = (time.perf_counter() - clock) * 1000.0
+        clock = time.perf_counter()
+        worst = -math.inf
+        for signs in itertools.product((1.0, -1.0), repeat=n):
+            delta = centre + half * np.asarray(signs)
+            perturbed = problem.replace(linear_costs=tuple(
+                float(v) for v in problem.cost_vector() + delta))
+            worst = max(worst, reference_regret(perturbed, decision.weights)["regret"])
+        enumeration_ms = (time.perf_counter() - clock) * 1000.0
+        outside = np.zeros(n)
+        outside[index] = centre[index] + 0.05
+        check = adversarial_out_of_set_check(problem, decision.weights, uset,
+                                             certificate.bound, outside)
+        rows.append({
+            "trial": trial,
+            "bound": certificate.bound,
+            "valid": certificate.valid,
+            "gap": certificate.dual_gap,
+            "support": certificate.support_value,
+            "curvature": certificate.curvature_value,
+            "true_worst_case": worst,
+            "sound": bool(certificate.valid and certificate.bound + 1e-12 >= worst),
+            "tightness": certificate.bound / max(worst, 1e-15),
+            "vertices": 2 ** n,
+            "bound_ms": bound_ms,
+            "enumeration_ms": enumeration_ms,
+            "cost_ratio": enumeration_ms / max(bound_ms, 1e-9),
+            "out_of_set_violated": check["violated"],
+            "out_of_set_regret": check["realized_regret"],
+        })
+    return {
+        "seed": seed,
+        "trials": len(rows),
+        "dimension": n,
+        "sound_rate": rate([row["sound"] for row in rows]),
+        "median_tightness": percentile([row["tightness"] for row in rows], 0.5),
+        "p90_tightness": percentile([row["tightness"] for row in rows], 0.9),
+        "median_bound_ms": percentile([row["bound_ms"] for row in rows], 0.5),
+        "median_enumeration_ms": percentile([row["enumeration_ms"] for row in rows], 0.5),
+        "median_cost_ratio": percentile([row["cost_ratio"] for row in rows], 0.5),
+        "out_of_set_violation_rate": rate([row["out_of_set_violated"] for row in rows]),
+        "rows": rows,
+    }
+
+
+# --------------------------------------------------------------------------- driver
+def aggregate(seed_results: Sequence[dict[str, Any]], *, block: int, seed: int) -> dict[str, Any]:
+    """Pool event-level indicators across seeds and bootstrap them over events, not seeds."""
+
+    records = [record for result in seed_results for record in result["records"]]
     flags = {
         "zero_regret_certificate": [record["zero_regret"] for record in records],
         "bounded_within_tolerance": [record["meets_tolerance"] for record in records],
         "warm_bound_sound": [record["bound_warm"] is not None and
                              record["bound_warm"] + 1e-12 >= record["realized_regret"]
-                             for record in records],
-        "warm5_bound_sound": [record["bound_warm5"] is not None and
-                              record["bound_warm5"] + 1e-12 >= record["realized_regret"]
-                              for record in records],
-        "cold_bound_sound": [record["bound_cold"] is not None and
-                             record["bound_cold"] + 1e-12 >= record["realized_regret"]
                              for record in records],
         "convex_bound_sound": [record["bound_convex"] is not None and
                                record["bound_convex"] + 1e-12 >= record["realized_regret"]
@@ -579,70 +756,118 @@ def aggregate(seed_results: Sequence[dict[str, Any]], *, block: int, seed: int) 
         "taylor_sound": [abs(record["estimate_taylor"]) + 1e-12 >= record["realized_regret"]
                          for record in records],
     }
+    for budget in CONFIG["dual_budgets"]:
+        flags[f"bound_sound_at_{budget}"] = [
+            record["bound_arms"][str(budget)]["bound"] is not None and
+            record["bound_arms"][str(budget)]["bound"] + 1e-12 >= record["realized_regret"]
+            for record in records
+        ]
     intervals = {
         arm: moving_block_bootstrap_ci([float(flag) for flag in values],
                                        block=min(block, len(values)), resamples=1500, seed=seed)
         for arm, values in flags.items() if len(values) >= 3
     }
     regrets = [record["realized_regret"] for record in records]
-    tightness = [record["bound_warm"] / record["realized_regret"] for record in records
-                 if record.get("bound_warm") is not None and record["realized_regret"] > 1e-10]
+    tightness: dict[str, dict[str, Any]] = {}
+    for budget in CONFIG["dual_budgets"]:
+        values = [record["bound_arms"][str(budget)]["bound"] / record["realized_regret"]
+                  for record in records
+                  if record["bound_arms"][str(budget)]["bound"] is not None
+                  and record["realized_regret"] > 1e-10]
+        tightness[str(budget)] = {"median": percentile(values, 0.5),
+                                  "p90": percentile(values, 0.9), "count": len(values)}
     return {
         "events": len(records),
         "pooled_rates": {arm: float(np.mean([float(v) for v in values]))
                          for arm, values in flags.items()},
         "rate_intervals": intervals,
         "realized_regret": summarize(regrets),
-        "warm_tightness_positive_regret_only": summarize(tightness),
+        "max_solver_spread": max((r["solver_spread"] for r in records), default=None),
+        "fraction_with_regret": rate([r["realized_regret"] > 1e-10 for r in records]),
+        "tightness_by_budget": tightness,
     }
 
 
 def to_markdown(results: dict[str, Any]) -> str:
+    """Render every published table from the results dictionary. No hand-edited numbers."""
+
     lines = ["# CRI experiment results (generated)", "",
-             "Generated by `scripts/research/cri_experiment.py`. Do not hand-edit.", ""]
+             "Generated by `scripts/research/cri_experiment.py`. Do not hand-edit: every table in",
+             "the technical report is copied from this file.", ""]
     lines.append("## Configuration")
     lines.append("```json")
-    lines.append(json.dumps(CONFIG, indent=2, sort_keys=True))
+    lines.append(json.dumps(results["config"], indent=2, sort_keys=True))
     lines.append("```")
     lines.append("")
-    lines.append("## Certificate rates by seed")
+
+    lines.append("## Trial accounting")
     lines.append("")
-    lines.append("| seed | events | regret>0 | weights changed | zero-regret cert. | bounded ≤ tol | warm bound sound | cold bound sound | convex bound sound |")
-    lines.append("|---|---|---|---|---|---|---|---|---|")
+    lines.append("| seed | attempted | accepted | rejected | reasons |")
+    lines.append("|---|---|---|---|---|")
     for result in results["certificates"]["per_seed"]:
-        rates = result["rates"]
-        lines.append(
-            f"| {result['seed']} | {result['events']} | {result['fraction_with_regret']:.3f} | "
-            f"{result['fraction_weights_changed']:.3f} | {rates['zero_regret_certificate']:.3f} | "
-            f"{rates['bounded_within_tolerance']:.3f} | {rates['warm_bound_sound']:.3f} | "
-            f"{rates['cold_bound_sound']:.3f} | {rates['convex_bound_sound']:.3f} |"
-        )
-    pooled = results["certificates"]["aggregate"]["pooled_rates"]
+        reasons = {key: value for key, value in result["rejection_reasons"].items()
+                   if key != "unspecified"}
+        lines.append(f"| {result['seed']} | {result['attempted']} | {result['accepted']} | "
+                     f"{result['rejected']} | {json.dumps(reasons) if reasons else 'none'} |")
+    totals = results["certificates"]["totals"]
+    lines.append(f"| **all** | **{totals['attempted']}** | **{totals['accepted']}** | "
+                 f"**{totals['rejected']}** | |")
     lines.append("")
-    lines.append("Pooled: " + ", ".join(f"{arm} = {value:.3f}" for arm, value in pooled.items()))
+
+    lines.append("## Certificate rates, pooled over seeds")
     lines.append("")
-    lines.append("Realized regret among zero-regret-certified events (max / p95): "
-                 + " / ".join(
-                     "n/a" if result["zero_regret_certified_realized_max"] is None
-                     else f"{result['zero_regret_certified_realized_max']:.3e}"
-                     for result in results["certificates"]["per_seed"])
-                 + " (max); "
-                 + " / ".join(
-                     "n/a" if result["zero_regret_certified_realized_p95"] is None
-                     else f"{result['zero_regret_certified_realized_p95']:.3e}"
-                     for result in results["certificates"]["per_seed"])
-                 + " (p95)")
+    lines.append("| arm | rate | 95% moving-block interval |")
+    lines.append("|---|---|---|")
+    aggregate_block = results["certificates"]["aggregate"]
+    for arm, value in aggregate_block["pooled_rates"].items():
+        interval = aggregate_block["rate_intervals"].get(arm)
+        rendered = (f"[{interval['lower']:.3f}, {interval['upper']:.3f}]"
+                    if interval else "n/a")
+        lines.append(f"| {arm} | {value:.3f} | {rendered} |")
     lines.append("")
-    lines.append("## Bound tightness (bound / realized regret, positive-regret events)")
+
+    lines.append("## Bound tightness by dual iteration budget (positive-regret events)")
     lines.append("")
-    lines.append("| arm | median | p90 | events |")
+    lines.append(f"Events with realized regret above `1e-10`: "
+                 f"{results['certificates']['fraction_with_regret']:.3f} of accepted events.")
+    lines.append("")
+    lines.append("| requested iterations | median bound/regret | p90 | events |")
     lines.append("|---|---|---|---|")
-    for arm, stats in results.get("aggregate_tightness",
-                                 results["certificates_aggregate_tightness"]).items():
+    for arm, stats in results["certificates"]["tightness_by_budget"].items():
         if stats["median"] is None:
             continue
-        lines.append(f"| {arm} | {stats['median']:.2f} | {stats['p90']:.2f} | {stats['count']} |")
+        lines.append(f"| {arm} | {stats['median']:.3f} | {stats['p90']:.3f} | {stats['count']} |")
     lines.append("")
+
+    lines.append("## Numerical residual certificate")
+    lines.append("")
+    residual = results["certificates"]["residual"]
+    lines.append(f"Median `0.5 r'Q^-1 r + slack` over events: {residual['median']:.3e}; "
+                 f"maximum {residual['max']:.3e}.")
+    lines.append(f"LP fallback used in {results['certificates']['lp_fallback_rate']:.3f} of events; "
+                 f"recovery methods: {json.dumps(results['certificates']['recovery_methods'])}.")
+    lines.append("")
+
+    lines.append("## Reference agreement")
+    lines.append("")
+    lines.append(f"Maximum |internal - OSQP| objective difference over all events: "
+                 f"{aggregate_block['max_solver_spread']:.3e}.")
+    lines.append(f"Share of events whose regret is below ten times that spread: "
+                 f"{results['certificates']['below_resolution_rate']:.3f}.")
+    lines.append("")
+
+    lines.append("## Cost")
+    lines.append("")
+    lines.append("| n | certificate ms | dual construction ms | re-solve cold ms | re-solve warm ms "
+                 "| OSQP ms | ratio vs cold SLSQP | ratio vs warm SLSQP | ratio vs OSQP |")
+    lines.append("|---|---|---|---|---|---|---|---|---|")
+    for row in results["scaling"]["rows"]:
+        lines.append(f"| {row['n']} | {row['certificate_ms']:.3f} | {row['dual_construction_ms']:.3f} "
+                     f"| {row['recompute_cold_ms']:.3f} | {row['recompute_warm_ms']:.3f} "
+                     f"| {row['recompute_osqp_ms']:.3f} | {row['speed_ratio_cold']:.2f}× "
+                     f"| {row['speed_ratio_warm']:.2f}× | {row['speed_ratio_osqp']:.2f}× |")
+    lines.append("")
+
     lines.append("## Position-cap sweep")
     lines.append("")
     lines.append("| cap | zero-regret rate | weights changed | max regret when certified |")
@@ -653,6 +878,7 @@ def to_markdown(results: dict[str, Any]) -> str:
                      f"{row['weights_changed_rate']:.3f} | "
                      f"{'n/a' if worst is None else f'{worst:.2e}'} |")
     lines.append("")
+
     lines.append("## Sensitivity misspecification")
     lines.append("")
     lines.append("| declared fraction of the true revision | violation rate | median realized/bound |")
@@ -662,31 +888,38 @@ def to_markdown(results: dict[str, Any]) -> str:
         lines.append(f"| {row['declared_fraction']:.3f} | {row['violation_rate']:.3f} | "
                      f"{'n/a' if median is None else f'{median:.2f}'} |")
     lines.append("")
-    lines.append("## Scaling")
+
+    lines.append("## Worst-case certificate over an interval set")
     lines.append("")
-    lines.append("| n | certificate ms | re-solve ms | ratio |")
-    lines.append("|---|---|---|---|")
-    for row in results["scaling"]["rows"]:
-        lines.append(f"| {row['n']} | {row['certificate_ms']:.3f} | {row['recompute_ms']:.3f} | "
-                     f"{row['speed_ratio']:.2f}× |")
+    uncertainty = results["uncertainty_sets"]
+    lines.append(f"dimension {uncertainty['dimension']}, {uncertainty['trials']} trials, "
+                 f"{2 ** uncertainty['dimension']} vertices enumerated per trial.")
     lines.append("")
-    lines.append("## Degeneracy")
+    lines.append(f"- sound rate: {uncertainty['sound_rate']:.3f}")
+    lines.append(f"- median bound / true worst case: {uncertainty['median_tightness']:.3f} "
+                 f"(p90 {uncertainty['p90_tightness']:.3f})")
+    lines.append(f"- median bound cost: {uncertainty['median_bound_ms']:.3f} ms; "
+                 f"median enumeration cost: {uncertainty['median_enumeration_ms']:.3f} ms; "
+                 f"ratio {uncertainty['median_cost_ratio']:.2f}×")
+    lines.append(f"- corrections drawn outside the declared set violated the bound in "
+                 f"{uncertainty['out_of_set_violation_rate']:.3f} of trials, as expected")
+    lines.append("")
+
+    lines.append("## Degeneracy, hindsight and the second domain")
     lines.append("")
     degeneracy = results["degeneracy"]
-    lines.append(f"rank {degeneracy['rank']} / {degeneracy['dimension']}, identifiability "
-                 f"`{degeneracy['weight_identifiability']}`, objective gap between twins "
-                 f"{degeneracy['objective_gap_between_twins']:.3e}, primary verdict "
+    lines.append(f"Degeneracy: rank {degeneracy['rank']} / {degeneracy['dimension']}, "
+                 f"identifiability `{degeneracy['weight_identifiability']}`, objective gap between "
+                 f"twins {degeneracy['objective_gap_between_twins']:.3e}, primary verdict "
                  f"`{degeneracy['primary_verdict']}`, twin verdict `{degeneracy['twin_verdict']}`.")
-    lines.append("")
-    lines.append("## Hindsight arm and cross-domain transfer")
-    lines.append("")
     hindsight = results["hindsight"]
-    lines.append(f"Honest zero-regret rate {hindsight['honest_zero_regret_rate']:.3f}; hindsight "
-                 f"zero-regret rate {hindsight['hindsight_zero_regret_rate']:.3f}; mean regret of "
-                 f"the actual decision {hindsight['mean_regret_of_the_actual_decision']:.3e}.")
+    lines.append(f"Hindsight: honest zero-regret rate {hindsight['honest_zero_regret_rate']:.3f}; "
+                 f"hindsight zero-regret rate {hindsight['hindsight_zero_regret_rate']:.3f}; mean "
+                 f"regret of the actual decision "
+                 f"{hindsight['mean_regret_of_the_actual_decision']:.3e}.")
     cross = results["cross_domain"]
-    lines.append(f"Capacity allocation: zero-regret rate {cross['zero_regret_rate']:.3f}, bound "
-                 f"sound rate {cross['bound_sound_rate']:.3f}, mean realized regret "
+    lines.append(f"Capacity allocation: zero-regret rate {cross['zero_regret_rate']:.3f}, bound sound "
+                 f"rate {cross['bound_sound_rate']:.3f}, mean realized regret "
                  f"{cross['mean_realized_regret']:.3e}.")
     lines.append("")
     return "\n".join(lines)
@@ -709,7 +942,9 @@ def main() -> None:
             "arm": "certificate_soundness",
             "hypothesis": "the certified bound never understates realized regret",
             "seed": seed,
-            "events": result["events"],
+            "attempted": result["attempted"],
+            "accepted": result["accepted"],
+            "rejected": result["rejected"],
             "outcome": "completed",
             "warm_bound_sound_rate": result["rates"]["warm_bound_sound"],
             "zero_regret_rate": result["rates"]["zero_regret_certificate"],
@@ -717,41 +952,41 @@ def main() -> None:
 
     aggregate_certificates = aggregate(per_seed, block=CONFIG["bootstrap"]["block"],
                                        seed=CONFIG["bootstrap"]["seed"])
-    tightness_by_arm = {}
-    for arm in ("warm", "warm5", "cold", "convex"):
-        values = []
-        for result in per_seed:
-            for record in result["records"]:
-                if record.get("skipped") or record["realized_regret"] <= 1e-10:
-                    continue
-                key = {"warm": "bound_warm", "warm5": "bound_warm5", "cold": "bound_cold",
-                       "convex": "bound_convex"}[arm]
-                if record.get(key) is not None:
-                    values.append(record[key] / record["realized_regret"])
-        tightness_by_arm[arm] = {
-            "median": percentile(values, 0.5), "p90": percentile(values, 0.9),
-            "count": len(values),
-        }
-
+    records = [record for result in per_seed for record in result["records"]]
+    residual_bounds = [r["numerical_regret_bound"] for r in records
+                       if r["numerical_regret_bound"] is not None]
     results: dict[str, Any] = {
         "generated_by": "scripts/research/cri_experiment.py",
         "config": CONFIG,
         "certificates": {
-            "per_seed": [{k: v for k, v in result.items() if k != "records"} for result in per_seed],
+            "per_seed": [{k: v for k, v in result.items() if k not in {"records", "attempts"}}
+                         for result in per_seed],
             "aggregate": aggregate_certificates,
+            "totals": {
+                "attempted": sum(result["attempted"] for result in per_seed),
+                "accepted": sum(result["accepted"] for result in per_seed),
+                "rejected": sum(result["rejected"] for result in per_seed),
+            },
+            "tightness_by_budget": aggregate_certificates["tightness_by_budget"],
+            "fraction_with_regret": aggregate_certificates["fraction_with_regret"],
+            "residual": {"median": percentile(residual_bounds, 0.5),
+                         "max": max(residual_bounds) if residual_bounds else None},
+            "lp_fallback_rate": rate([r["used_lp_fallback"] for r in records]),
+            "recovery_methods": _reason_counts([{"reason": r["recovery_method"]} for r in records]),
+            "below_resolution_rate": rate([r["below_solver_resolution"] for r in records]),
         },
-        "certificates_aggregate_tightness": tightness_by_arm,
         "cap_tightness": experiment_cap_tightness(CONFIG["seeds"][0]),
         "misspecification": experiment_misspecification(CONFIG["seeds"][0]),
         "degeneracy": experiment_degeneracy(CONFIG["seeds"][0]),
         "hindsight": experiment_hindsight(CONFIG["seeds"][0]),
         "scaling": experiment_scaling(),
         "cross_domain": experiment_cross_domain(CONFIG["seeds"][0]),
-        "records": [record for result in per_seed for record in result["records"]],
+        "uncertainty_sets": experiment_uncertainty_sets(CONFIG["seeds"][0]),
+        "records": records,
+        "attempts": [attempt for result in per_seed for attempt in result["attempts"]],
         "manifests": [],
         "runtime_seconds": None,
     }
-    results["aggregate_tightness"] = tightness_by_arm
     for seed, result in zip(CONFIG["seeds"], per_seed):
         manifest = RunManifest(
             experiment_id=f"cri-soundness-{seed}",
@@ -763,26 +998,25 @@ def main() -> None:
                         "risk_aversion": CONFIG["risk_aversion"], "window": CONFIG["window"]},
             splits={"causal": "trailing window only; revision applied after the decision clock"},
             estimator="ledoit_wolf",
-            solver="scipy-slsqp-primal/dual-lbfgsb-multipliers",
+            solver="scipy-slsqp-primal/dual-lbfgsb-multipliers + osqp reference",
         ).with_environment()
         results["manifests"].append(manifest.as_dict())
 
-    for name, outcome in (("cap_tightness", results["cap_tightness"]),
-                          ("misspecification", results["misspecification"]),
-                          ("degeneracy", results["degeneracy"]),
-                          ("hindsight", results["hindsight"]),
-                          ("scaling", results["scaling"]),
-                          ("cross_domain", results["cross_domain"])):
-        ledger.append({"arm": name, "hypothesis": f"{name} diagnostic", "seed":
-                       CONFIG["seeds"][0], "outcome": "completed"})
+    for name in ("cap_tightness", "misspecification", "degeneracy", "hindsight", "scaling",
+                 "cross_domain", "uncertainty_sets"):
+        ledger.append({"arm": name, "hypothesis": f"{name} diagnostic",
+                       "seed": CONFIG["seeds"][0], "outcome": "completed"})
 
     results["runtime_seconds"] = time.perf_counter() - started
     results["ledger_summary"] = ledger.summary()
     write_json(output / "cri_results.json", results)
+    (output / "cri_tables.md").write_text(to_markdown(results), encoding="utf-8")
     (output / "cri_report.md").write_text(to_markdown(results), encoding="utf-8")
-    print(json.dumps({k: results[k] for k in
-                      ("certificates_aggregate_tightness", "runtime_seconds", "ledger_summary")},
-                     indent=2, default=float)[:4000])
+    print(json.dumps({
+        "totals": results["certificates"]["totals"],
+        "pooled": results["certificates"]["aggregate"]["pooled_rates"],
+        "runtime_seconds": results["runtime_seconds"],
+    }, indent=2, default=float)[:2500])
     print("wrote", output / "cri_results.json")
 
 

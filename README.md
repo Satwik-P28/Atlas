@@ -39,27 +39,44 @@ inadmissible model. See [docs/PHASE9_IMPLEMENTATION.md](docs/PHASE9_IMPLEMENTATI
 
 **Research branch: Certified Revision Impact (CRI).** `review/decision-intelligence-cri` adds
 `src/atlas/decision/`, a verified convex-programming layer that answers an audit question the
-rest of Atlas does not: *given a decision taken under the evidence available at the time, what
-can be proved about it now that the evidence has changed?* Two certificates are produced — an
-exact KKT test that costs `O(n²)` linear algebra and certifies zero regret, and a duality-gap
-bound that reuses the decision's own multiplier vector (the dual feasible set does not depend on
-the objective's linear costs, so the bound costs one Cholesky solve). On 598 seeded revision
-events no bound understated realized regret, every exactly-certified decision had realized regret
-below `1.7e-17`, and the guarantee's failure under a misspecified revision is measured rather
-than assumed. This is a formulation-and-systems contribution on classical sensitivity analysis;
-no new theorem and no profitable-strategy claim is made. The data are **synthetic**, and there
-is **no user interface** for the layer yet.
+rest of Atlas does not: *given a decision taken under the evidence available at the time, what can
+be proved about it now that the evidence has changed — or turned out to be uncertain?*
+
+Three things are provided. An **exact certificate** recovers Lagrange multipliers from the
+recorded weights and verifies the KKT system of the corrected program. A **duality bound** reuses
+the decision's own multiplier vector — the dual feasible set does not depend on the objective's
+linear costs — so a valid regret bound costs one Cholesky solve. A **worst-case certificate**
+extends that to a *set* of admissible corrections, using the support function of the set plus a
+curvature term, and remains convex in the multiplier even though the uncertainty maximisation is
+not.
+
+On 598 seeded revision events, verified against OSQP and Clarabel, no bound understated realized
+regret; exactly-certified decisions had realized regret below `2.1e-16`; five dual ascent steps
+bring the median bound from `24.1×` to `1.24×` and twenty bring it to `1.000×`. Over an interval
+uncertainty set the worst-case bound was sound in 40/40 trials at `52×` less cost than enumerating
+the vertices. One real SEC restatement is compiled end to end, with accession numbers, acceptance
+instants and payload hashes.
+
+**What is not claimed.** The data are synthetic apart from one filing. There is no user interface.
+The certificate is *slower* than OSQP (1.8–6.7×), so no time advantage is claimed. No new theorem
+and no decision-quality improvement is claimed; the contribution is a formulation, a composition
+of classical pieces, and an empirical characterisation that includes the failure modes.
 
 Start with [the technical report](docs/research/ATLAS_CRI_TECHNICAL_REPORT.md), then the
-[prior-art and novelty audit](docs/research/PRIOR_ART_AND_NOVELTY_AUDIT.md), the
+[corrections log](docs/research/CORRECTIONS_AND_DISCLOSURE_V2.md), the
+[novelty assessment](docs/research/NOVELTY_UPDATE_V2.md) and the earlier
+[prior-art audit](docs/research/PRIOR_ART_AND_NOVELTY_AUDIT.md), the
 [preregistration](docs/research/PREREGISTRATION.md), the
-[gate status ledger](docs/research/GATE_STATUS_LEDGER.md) and the
+[gate status ledger](docs/research/GATE_STATUS_LEDGER.md), the
+[reproduction guide](docs/research/REPRODUCTION.md) and the
 [architecture note](docs/DECISION_RESEARCH_LAB.md). Reproduce with:
 
 ```bash
 .venv/bin/python -m pip install -e ".[dev,terminal,optimization]"
+.venv/bin/python -m pip install "osqp>=1,<2" "clarabel>=0.11,<1"
 .venv/bin/python -m pytest -q
 .venv/bin/python scripts/research/cri_experiment.py --output artifacts/research
+.venv/bin/python scripts/research/sec_evidence_case.py --output artifacts/research/evidence
 ```
 
 **The canonical Atlas Master Specification v3.0.0 is present and byte-verified.**

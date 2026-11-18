@@ -1,0 +1,224 @@
+{
+  "audit": {
+    "audit_as_of": "2025-03-01T12:00:00Z",
+    "bound_sound": true,
+    "cost_effect_applied": [
+      -0.0010535233728695248,
+      0.0,
+      0.0
+    ],
+    "decision_as_of": "2024-06-30T20:00:00Z",
+    "exact_optimal_for_revised_program": true,
+    "lineage": [
+      {
+        "available_at": "2025-02-27T21:27:18.000Z",
+        "category": "published_after_decision",
+        "detail": "applied to the corrected program",
+        "evidence_id": "0000078003-25-000054",
+        "included_in_revision": true,
+        "incorporated_in": null,
+        "input_key": "pfe_fy2023_revenue_growth",
+        "reason": null,
+        "revision_id": "pfe-fy2023-revenue-growth-restated-0000078003-25-000054",
+        "status": "active"
+      }
+    ],
+    "numerical_regret_bound": 7.556701381358338e-31,
+    "realized_regret_external_solver": 0.0,
+    "reference_objective_internal": -0.026500000000000003,
+    "reference_objective_osqp": -0.0265,
+    "reference_status_osqp": "solved",
+    "regret_upper_bound": 0.0,
+    "temporal_relationship": "revision_available_after_decision",
+    "verdict": "zero_regret_certified"
+  },
+  "controls": {
+    "double_count_guard": {
+      "applied": [],
+      "excluded_reasons": [
+        "already_incorporated_in_decision_vintage"
+      ],
+      "purpose": "re-offering a revision published before the decision clock",
+      "status": "no_material_change",
+      "temporal_relationship": null
+    },
+    "not_yet_public": {
+      "applied": [],
+      "excluded_reasons": [
+        "not_available_at_audit"
+      ],
+      "purpose": "an audit run before the restatement was accepted",
+      "status": "no_material_change"
+    }
+  },
+  "generated_by": "scripts/research/sec_evidence_case.py",
+  "limitations": [
+    "one restatement of one line; no portfolio-level conclusion follows",
+    "the revenue-to-coefficient mapping is declared, not estimated",
+    "the second and third lines of the model are illustrative parameters",
+    "a comparative-column restatement is not an enforcement action or a fraud finding"
+  ],
+  "model": {
+    "decision_objective": -0.026500000000000003,
+    "decision_status": "optimal",
+    "decision_weights": [
+      0.0,
+      0.5000000000000024,
+      0.4999999999999981
+    ],
+    "disclaimer": "the risk matrix, the other two coefficients and the budget are model parameters; only the first coefficient is evidence-linked",
+    "kind": "stylised_three_line_allocation",
+    "problem": {
+      "as_of": "2024-06-30T20:00:00Z",
+      "budget": 1.0,
+      "digest": "bf977c4d510920dc27475c6b699141571541a41dc7be59d76165ae799be206c9",
+      "dimension": 3,
+      "evidence_ids": [
+        "0000078003-24-000039"
+      ],
+      "inequalities": [],
+      "labels": {
+        "assumption": "revenue maps linearly to the objective coefficient at 1/1000",
+        "evidence": "SEC XBRL companyconcept us-gaap:Revenues",
+        "model": "stylised_three_line_allocation"
+      },
+      "linear_costs": [
+        0.0416964018738164,
+        -0.055,
+        -0.04
+      ],
+      "lower": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "problem_id": "sec-0000078003-fy2023",
+      "risk_matrix": [
+        [
+          0.12,
+          0.012,
+          0.006
+        ],
+        [
+          0.012,
+          0.09,
+          0.009000000000000001
+        ],
+        [
+          0.006,
+          0.009000000000000001,
+          0.06
+        ]
+      ],
+      "schema": "atlas.decision.problem.v1",
+      "semantics": "portfolio_mean_variance",
+      "upper": [
+        0.8,
+        0.8,
+        0.8
+      ],
+      "variables": [
+        "PFE-REVENUE-LINE",
+        "LINE-B",
+        "LINE-C"
+      ]
+    }
+  },
+  "revision": {
+    "base_period": {
+      "accession": "0000078003-24-000039",
+      "filed": "2024-02-22",
+      "form": "10-K",
+      "fp": "FY",
+      "fy": 2023,
+      "period_end": "2022-12-31",
+      "period_start": "2022-01-01",
+      "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000078003/us-gaap/Revenues.json",
+      "value": 100330000000.0
+    },
+    "compiled_revision": {
+      "amendment": true,
+      "available_at": "2025-02-27T21:27:18.000Z",
+      "delta": 0.010535233728695248,
+      "evidence_id": "0000078003-25-000054",
+      "incorporated_in": null,
+      "input_key": "pfe_fy2023_revenue_growth",
+      "kind": "linear_objective",
+      "note": "FY2023 revenue as reported in the FY2024 annual report's comparative column, replacing the figure first filed in the FY2023 annual report; the model input is the implied growth rate against FY2022",
+      "revision_id": "pfe-fy2023-revenue-growth-restated-0000078003-25-000054",
+      "schema": "atlas.decision.evidence_revision.v1",
+      "source_id": "SEC 10-K 0000078003-25-000054",
+      "status": "active",
+      "supersedes": null
+    },
+    "declared_sensitivity": {
+      "cost_effect": [
+        -0.1,
+        0.0,
+        0.0
+      ],
+      "input_key": "pfe_fy2023_revenue_growth",
+      "note": "declared: the objective minimises -growth*0.1 on the first line",
+      "schema": "atlas.decision.input_sensitivity.v1"
+    },
+    "delta_growth": 0.010535233728695248,
+    "delta_revenue_usd": 1057000000.0,
+    "growth_original": -0.416964018738164,
+    "growth_restated_in_later_filing": -0.4064287850094688,
+    "original": {
+      "acceptance": "2024-02-22T18:17:37.000Z",
+      "accession": "0000078003-24-000039",
+      "filed": "2024-02-22",
+      "filing_date": "2024-02-22",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/78003/000007800324000039/pfe-20231231.htm",
+      "form": "10-K",
+      "fp": "FY",
+      "fy": 2023,
+      "period_end": "2023-12-31",
+      "period_start": "2023-01-01",
+      "primary_document": "pfe-20231231.htm",
+      "report_date": "2023-12-31",
+      "value": 58496000000.0
+    },
+    "relative_change": 0.01806961159737418,
+    "restated": {
+      "acceptance": "2025-02-27T21:27:18.000Z",
+      "accession": "0000078003-25-000054",
+      "filed": "2025-02-27",
+      "filing_date": "2025-02-27",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/78003/000007800325000054/pfe-20241231.htm",
+      "form": "10-K",
+      "fp": "FY",
+      "fy": 2024,
+      "period_end": "2023-12-31",
+      "period_start": "2023-01-01",
+      "primary_document": "pfe-20241231.htm",
+      "report_date": "2024-12-31",
+      "value": 59553000000.0
+    }
+  },
+  "schema": "atlas.research.sec_evidence_case.v1",
+  "source": {
+    "cik": "0000078003",
+    "company": "PFIZER INC",
+    "concept": "Revenues",
+    "content_sha256": {
+      "concept": "3e004e2d58eb9b7ae8d37cf7afd7398164984668402fb8e05aca1cb96f0b669b",
+      "submissions": "843809baef78e9ce9d932d7163a5f4eb0b523cd52bb3211d61c4bdc4b1c00a47"
+    },
+    "period": {
+      "end": "2023-12-31",
+      "start": "2023-01-01"
+    },
+    "served_from_cache": {
+      "concept": false,
+      "submissions": false
+    },
+    "unit": "USD",
+    "urls": {
+      "concept": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000078003/us-gaap/Revenues.json",
+      "submissions": "https://data.sec.gov/submissions/CIK0000078003.json"
+    },
+    "user_agent": "Atlas research prototype (contact: satwik@example.com)"
+  }
+}
