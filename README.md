@@ -70,6 +70,15 @@ The certificate is *slower* than OSQP (1.8–6.7×), so no time advantage is cla
 and no decision-quality improvement is claimed; the contribution is a formulation, a composition
 of classical pieces, and an empirical characterisation that includes the failure modes.
 
+**Real-world study.** The synthetic work is complemented by a vintage study on authentic published
+data: 1,009 ALFRED real-time vintages of seven US series, 392 decision/audit pairs from BEA and BLS
+revisions, analysed per cohort. On the 152 confirmatory pairs, 47–63% of revisions moved the optimal
+decision by more than the declared tolerance; the certificate proved immateriality for 29–42% of
+events and never certified a material revision as immaterial, but its certified set coincided exactly
+with the classical active-set stability test; revision size did not predict materiality (AUC
+0.49–0.61) while decision geometry did (0.88–0.94). Start with the
+[study report](docs/research/rtds/REPORT.md) and [its protocol](docs/research/rtds/PREREGISTRATION.md).
+
 Start with [the technical report](docs/research/ATLAS_CRI_TECHNICAL_REPORT.md), then the
 [corrections log](docs/research/CORRECTIONS_AND_DISCLOSURE_V4.md), the
 [novelty assessment](docs/research/NOVELTY_UPDATE_V2.md) and the earlier
