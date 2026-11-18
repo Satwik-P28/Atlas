@@ -1,0 +1,51 @@
+{
+ "schema": "atlas.rtds.comparison.v1",
+ "cohorts": [
+  {
+   "cohort": "A",
+   "paired_test_events": 38,
+   "audit_vintage_changed": 38,
+   "audit_growth_coefficients_changed": 3,
+   "arms": {
+    "v1": {
+     "material": 24,
+     "certified": 11,
+     "events": 38
+    },
+    "mapping_fixed_old_horizon": {
+     "material": 27,
+     "certified": 9,
+     "events": 38
+    },
+    "v2": {
+     "material": 28,
+     "certified": 8,
+     "events": 38
+    }
+   }
+  },
+  {
+   "cohort": "B",
+   "paired_test_events": 114,
+   "audit_vintage_changed": 1,
+   "audit_growth_coefficients_changed": 0,
+   "arms": {
+    "v1": {
+     "material": 54,
+     "certified": 48,
+     "events": 114
+    },
+    "mapping_fixed_old_horizon": {
+     "material": 57,
+     "certified": 51,
+     "events": 114
+    },
+    "v2": {
+     "material": 57,
+     "certified": 51,
+     "events": 114
+    }
+   }
+  }
+ ]
+}
