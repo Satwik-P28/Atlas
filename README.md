@@ -37,17 +37,20 @@ inadmissible model. See [docs/PHASE9_IMPLEMENTATION.md](docs/PHASE9_IMPLEMENTATI
 [docs/PHASE9_FINANCIAL_RECONCILIATION.md](docs/PHASE9_FINANCIAL_RECONCILIATION.md) and
 [docs/PHASE9_READINESS.md](docs/PHASE9_READINESS.md).
 
-**The canonical Atlas Master Specification v3.0.0 is present and byte-verified.**
-`ATLAS_MASTER_SPEC.md` at the repository root is 289,963 bytes with SHA-256
-`c1228db93e66a04fb211bea85f6c978289a6040b1f655f934da76498c8c4752d`, confirmed by
+**The canonical Atlas Master Specification v3.1.0 is present and byte-verified.**
+`ATLAS_MASTER_SPEC.md` at the repository root is 333,547 bytes with SHA-256
+`d1800cfea35d973e2ff2b3570f8bf564fd3a7aceabca2f623ec5de17931a1111`, confirmed by
 `scripts/verify_master_spec.py` and by an independent `sha256sum`. It is the authoritative
 desired-state document for all subsequent Atlas work. Its presence proves document identity,
 not implementation conformance: the per-requirement status is recorded in
 [docs/MASTER_SPEC_TRACEABILITY.md](docs/MASTER_SPEC_TRACEABILITY.md) (61 sections),
 [docs/MASTER_SPEC_V3_IMPLEMENTATION_GAPS.md](docs/MASTER_SPEC_V3_IMPLEMENTATION_GAPS.md) and
 [docs/INSTITUTIONAL_CAPABILITY_SCOREBOARD.md](docs/INSTITUTIONAL_CAPABILITY_SCOREBOARD.md)
-(ICB-01 to ICB-48). Earlier checkpoints correctly reported that the then-expected v1.2.0
-document was absent; those historical records are preserved unchanged.
+(ICB-01 to ICB-64). Version 3.0.0 (289,963 bytes, SHA-256
+`c1228db9…c4752d`) was verified at `cf67cdf` and remains reachable there; v3.1.0 keeps
+Sections 1–61 unchanged and adds Appendices A–D. Earlier checkpoints correctly reported
+that the then-expected v1.2.0 document was absent; those historical records are preserved
+unchanged.
 
 **Phase 9.2 corrects the bank starting book:** SEC `StockholdersEquity` minus same-period
 SEC preferred stock, both GAAP basis. JPM opens at **$324.708B** common equity (not
@@ -461,9 +464,12 @@ never the reverse. The kernel does not know HTTP exists.
   or notification delivery. The scenario is not a company forecast or investment advice.
 * Phase 7 does not implement event markets, real-estate underwriting, live orders, credit
   modeling, forward power curves or a general equilibrium simulator.
-* `ATLAS_MASTER_SPEC.md` v3.0.0 is present and byte-verified (289,963 bytes, SHA-256
-  `c1228db9…c4752d`); conformance is unproven and tracked per section. The v1.2.0 document
-  expected by earlier checkpoints was absent at those checkpoints.
+* `ATLAS_MASTER_SPEC.md` v3.1.0 is present and byte-verified (333,547 bytes, SHA-256
+  `d1800cfe…1111`, 64 ICB ids); conformance is unproven and tracked per section. The v1.2.0
+  document expected by earlier checkpoints was absent at those checkpoints, and v3.0.0
+  (289,963 bytes) was verified at `cf67cdf` before v3.1.0 superseded it.
+  [docs/PHASE9_2_8_REVERIFICATION.md](docs/PHASE9_2_8_REVERIFICATION.md) records the gate
+  re-run at the current head, including the mobile browser journeys.
   The Phase 9.2 common-equity correction is complete, but master-spec conformance remains
   blocked. See `docs/MASTER_SPEC_GATE.md`.
 * No news, transcripts, estimates or analyst data; events are filings and actions only.
