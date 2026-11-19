@@ -13,6 +13,7 @@ import { chromium } from 'playwright'
 import { createHash } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import { LATEST_SCHEMA_VERSION } from './schema.mjs'
 
 const BASE = process.env.ATLAS_BASE ?? 'http://127.0.0.1:3000'
 const OUT = path.resolve(process.cwd(), '..', 'artifacts')
@@ -170,7 +171,10 @@ async function verifyExports(target, memo, objectId) {
 
 try {
   const health = await (await page.request.get(`${BASE}/api/health`)).json()
-  assert(health.schema_version === 13, `expected schema 13, found ${health.schema_version}`)
+  assert(
+    health.schema_version === LATEST_SCHEMA_VERSION,
+    `served schema ${health.schema_version} is not the migration head ${LATEST_SCHEMA_VERSION}`,
+  )
   evidence.health = health
 
   // ---------------------------------------------------------------- Scenario A: JPM

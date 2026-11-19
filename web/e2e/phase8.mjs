@@ -2,6 +2,7 @@
 import { chromium } from 'playwright'
 import { mkdir, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import { LATEST_SCHEMA_VERSION } from './schema.mjs'
 
 const BASE = process.env.ATLAS_BASE ?? 'http://127.0.0.1:8003'
 const OUT = path.resolve(process.cwd(), '..', 'artifacts')
@@ -22,7 +23,10 @@ page.on('console', (message) => {
 
 try {
   const health = await (await page.request.get(`${BASE}/api/health`)).json()
-  assert(health.schema_version === 10, `expected schema 10, found ${health.schema_version}`)
+  assert(
+    health.schema_version === LATEST_SCHEMA_VERSION,
+    `served schema ${health.schema_version} is not the migration head ${LATEST_SCHEMA_VERSION}`,
+  )
   assert(health.application_installations === 1, 'E2E database is missing the pinned installation')
   const fixtureInfo = await stat(PACKAGE)
   assert(fixtureInfo.size > 40000, 'pinned package fixture is unexpectedly small')

@@ -1,13 +1,13 @@
 {
   "schema": "atlas.phase9_2.browser.jpm.v1",
   "scenario": "real_regulatory_evidence_without_market_price",
-  "base": "http://127.0.0.1:3000",
+  "base": "http://127.0.0.1:8000",
   "assertions": [
     "A1 real JPM identity, FR Y-9C consolidated 4.00T/15.68%, FDIC CERT 628",
     "A2 price-relative analysis is unavailable without an authorised observation",
     "A3 model reproduction 295.4600 -> 287.9200",
     "A4 FCFF rejected for a bank; cutoff preserved",
-    "A5 URO-APP-4c54bbb5eb21 saved and reopened at 287.9200",
+    "A5 URO-APP-54a4e47f5cbb saved and reopened at 287.9200",
     "A6 exported equity-research.atlas",
     "A7 research surfaces render",
     "A8 390x844 no overflow, no clipped values, tables reachable"
@@ -15,51 +15,51 @@
   "values": {
     "baseline_value_per_share": 295.46,
     "modified_value_per_share": 287.92,
-    "report_sha256": "63c8237fd0ec419de01eb91d92e970dfbd0e796aa27e1e9ab45440ac5a82d147",
+    "report_sha256": "c77862eadffa279a2dc526a32f6678df69b62fce573d110f232df4a551df1ed7",
     "market_status": "unavailable"
   },
-  "saved_object_id": "URO-APP-4c54bbb5eb21",
+  "saved_object_id": "URO-APP-54a4e47f5cbb",
   "package_path": "artifacts/phase9_2_jpm_application.atlas",
   "routes": [
     {
       "route": "/",
       "heading": "Coverage overview",
-      "text_length": 1863
+      "text_length": 1795
     },
     {
       "route": "/studio",
       "heading": "Studio",
-      "text_length": 3010
+      "text_length": 2942
     },
     {
       "route": "/lab",
       "heading": "Research, not a performance chart",
-      "text_length": 1881
+      "text_length": 1813
     },
     {
       "route": "/lab/learning",
       "heading": "Learning Lab",
-      "text_length": 2687
+      "text_length": 2619
     },
     {
       "route": "/lab/economic",
       "heading": "Weather, electricity, financial consequence",
-      "text_length": 3705
+      "text_length": 3637
     },
     {
       "route": "/applications",
       "heading": "Portable research, without executable strangers",
-      "text_length": 2160
+      "text_length": 2092
     },
     {
       "route": "/equity",
       "heading": "Source-grounded equity research",
-      "text_length": 3960
+      "text_length": 4292
     },
     {
       "route": "/markets",
       "heading": "Coverage overview",
-      "text_length": 1863
+      "text_length": 1795
     }
   ],
   "mobile": {
@@ -78,20 +78,16 @@
       {
         "overflowX": "auto",
         "clippedCells": []
-      },
-      {
-        "overflowX": "auto",
-        "clippedCells": []
       }
     ]
   },
   "health": {
     "status": "ok",
     "database": "var/phase9.db",
-    "as_of": "2026-11-09T15:30:35Z",
+    "as_of": "2026-11-19T05:08:57Z",
     "terminal_schema": "atlas.terminal.v1",
-    "schema_version": 13,
-    "supported_schema": 13,
+    "schema_version": 14,
+    "supported_schema": 14,
     "integrity_check": "ok",
     "evidence": 26440,
     "issuers": 21,
@@ -104,8 +100,8 @@
   "known_data_gaps": [
     {
       "status": 422,
-      "url": "http://127.0.0.1:3000/api/economic/panel?mode=public_available"
+      "url": "http://127.0.0.1:8000/api/economic/panel?mode=public_available"
     }
   ],
-  "browser_workflow_ms": 44428
+  "browser_workflow_ms": 43627
 }

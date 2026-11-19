@@ -1,19 +1,19 @@
 {
   "schema": "atlas.phase9_2.browser.market.v1",
   "scenario": "synthetic_market_observation_provenance",
-  "base": "http://127.0.0.1:3000",
+  "base": "http://127.0.0.1:8000",
   "assertions": [
     "B1 ATLS is present and explicitly labelled synthetic",
     "B2 provenance MOB-356738f0eb64cd6ecce8b2d4 with a recomputable hash",
     "B3 browser identity equals the API identity",
     "B4 exact replay, and a missing pin is never substituted",
     "B5 pin, copy, revision and provider inspection work in the interface",
-    "B6 URO-DAT-c4d5f8ce4844 saved and reopened on the pinned revision",
+    "B6 URO-DAT-f64bc646f6e0 saved and reopened on the pinned revision",
     "B7 390x844 provenance panel fits without document overflow"
   ],
   "security_id": "SEC-6c79c0f6179e5d0282b4",
   "overview_status": "synthetic",
-  "saved_object_id": "URO-DAT-c4d5f8ce4844",
+  "saved_object_id": "URO-DAT-f64bc646f6e0",
   "mobile": {
     "scrollWidth": 390,
     "innerWidth": 390,
@@ -22,10 +22,10 @@
   "health": {
     "status": "ok",
     "database": "var/phase9.db",
-    "as_of": "2026-11-09T15:31:25Z",
+    "as_of": "2026-11-19T05:08:34Z",
     "terminal_schema": "atlas.terminal.v1",
-    "schema_version": 13,
-    "supported_schema": 13,
+    "schema_version": 14,
+    "supported_schema": 14,
     "integrity_check": "ok",
     "evidence": 26440,
     "issuers": 21,
@@ -35,5 +35,5 @@
     "application_installations": 0,
     "domain_packs": 0
   },
-  "browser_workflow_ms": 2941
+  "browser_workflow_ms": 2930
 }

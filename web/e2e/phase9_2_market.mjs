@@ -7,6 +7,7 @@
  */
 import { chromium } from 'playwright'
 import { mkdir, writeFile } from 'node:fs/promises'
+import { LATEST_SCHEMA_VERSION } from './schema.mjs'
 import path from 'node:path'
 
 const BASE = process.env.ATLAS_BASE ?? 'http://127.0.0.1:3000'
@@ -47,7 +48,10 @@ const evidence = {
 
 try {
   const health = await (await page.request.get(`${BASE}/api/health`)).json()
-  assert(health.schema_version === 13, `expected schema 13, found ${health.schema_version}`)
+  assert(
+    health.schema_version === LATEST_SCHEMA_VERSION,
+    `served schema ${health.schema_version} is not the migration head ${LATEST_SCHEMA_VERSION}`,
+  )
 
   const overview = await (await page.request.get(`${BASE}/api/markets/overview`)).json()
   const series = (overview.items ?? []).find((item) => item.ticker === 'ATLS')
