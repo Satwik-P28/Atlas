@@ -1,0 +1,78 @@
+{
+  "adjudications": "fixtures/answer_semantics/holdout_adjudications.json",
+  "adjudications_sha256": "cacfcbd8b581390ba4d4897007beefaf404446b67b9be09deb58d2199028443e",
+  "artifact": "artifacts/answer_semantics/holdout_evaluation.json",
+  "artifact_sha256": "06556b83ae5a6f68ed72eabfcf146e148ffcfbceb633383ea0eb77d9e0a02f15",
+  "headline_unchanged": true,
+  "note": "Counterfactual arithmetic over the preserved run. No gold label, question or historical artifact was modified.",
+  "schema": "atlas.answer_semantics.holdout_adjudication_sensitivity.v1",
+  "variants": [
+    {
+      "adjudications": [],
+      "answerable": 47,
+      "baseline": {
+        "correct": 23,
+        "exact_answer_rate": 0.4894,
+        "false": 7
+      },
+      "geometry": {
+        "correct": 33,
+        "exact_answer_rate": 0.7021,
+        "false": 4
+      },
+      "variant": "as_scored"
+    },
+    {
+      "adjudications": [
+        "A-001"
+      ],
+      "answerable": 46,
+      "baseline": {
+        "correct": 23,
+        "exact_answer_rate": 0.5,
+        "false": 6
+      },
+      "geometry": {
+        "correct": 33,
+        "exact_answer_rate": 0.7174,
+        "false": 3
+      },
+      "variant": "disney_ambiguous"
+    },
+    {
+      "adjudications": [
+        "A-002"
+      ],
+      "answerable": 47,
+      "baseline": {
+        "correct": 24,
+        "exact_answer_rate": 0.5106,
+        "false": 7
+      },
+      "geometry": {
+        "correct": 34,
+        "exact_answer_rate": 0.7234,
+        "false": 4
+      },
+      "variant": "jpm_citation_accepted"
+    },
+    {
+      "adjudications": [
+        "A-001",
+        "A-002"
+      ],
+      "answerable": 46,
+      "baseline": {
+        "correct": 24,
+        "exact_answer_rate": 0.5217,
+        "false": 6
+      },
+      "geometry": {
+        "correct": 34,
+        "exact_answer_rate": 0.7391,
+        "false": 3
+      },
+      "variant": "both"
+    }
+  ]
+}

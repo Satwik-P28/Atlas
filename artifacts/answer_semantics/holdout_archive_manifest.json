@@ -1,0 +1,247 @@
+{
+  "artifact": {
+    "path": "artifacts/answer_semantics/holdout_evaluation.json",
+    "schema": "atlas.answer_semantics.evaluation.v1",
+    "sha256": "06556b83ae5a6f68ed72eabfcf146e148ffcfbceb633383ea0eb77d9e0a02f15"
+  },
+  "checks": [
+    {
+      "actual": "1f7f4a80e0746a611800a22f8c19ac9f796120ac14af1011f947ed3c26288836",
+      "check": "input_at_62d392b:artifacts/answer_semantics/holdout_source_manifest.json",
+      "expected": "1f7f4a80e0746a611800a22f8c19ac9f796120ac14af1011f947ed3c26288836",
+      "ok": true
+    },
+    {
+      "actual": "ec9e27a5d5300ce98c715b02ba292efd725a5505437ebbd965312dc0a0b4c0bb",
+      "check": "input_at_62d392b:fixtures/answer_semantics/holdout_corpus.json",
+      "expected": "ec9e27a5d5300ce98c715b02ba292efd725a5505437ebbd965312dc0a0b4c0bb",
+      "ok": true
+    },
+    {
+      "actual": "c73a9c05f3ae3f6c396d4584e67e0fb29b25e976c76cca4cad50bc69c785852a",
+      "check": "input_at_8da2269:fixtures/answer_semantics/holdout_facts.json",
+      "expected": "c73a9c05f3ae3f6c396d4584e67e0fb29b25e976c76cca4cad50bc69c785852a",
+      "ok": true
+    },
+    {
+      "actual": "0926c5582f7460c71e5cc2064c6e605a831c0f193cbd2b3f424b6bf1cbfcc9ec",
+      "check": "input_at_8da2269:fixtures/answer_semantics/holdout_ledger.json",
+      "expected": "0926c5582f7460c71e5cc2064c6e605a831c0f193cbd2b3f424b6bf1cbfcc9ec",
+      "ok": true
+    },
+    {
+      "actual": "125311361e60160ec157af783ac8eed640f8f28816246048c8085f18dab8001d",
+      "check": "input_at_62d392b:fixtures/answer_semantics/holdout_plan.json",
+      "expected": "125311361e60160ec157af783ac8eed640f8f28816246048c8085f18dab8001d",
+      "ok": true
+    },
+    {
+      "actual": "31b925068562525b68eb1feca2afaa67516bd5c2762185f85e437e0ea44bb5a6",
+      "check": "input_at_62d392b:fixtures/answer_semantics/holdout_protocol.json",
+      "expected": "31b925068562525b68eb1feca2afaa67516bd5c2762185f85e437e0ea44bb5a6",
+      "ok": true
+    },
+    {
+      "actual": "2349fe989955eff85ae30074378b598a4039269ab29bbddb982849e4a65fc224",
+      "check": "input_at_8da2269:fixtures/answer_semantics/holdout_questions.json",
+      "expected": "2349fe989955eff85ae30074378b598a4039269ab29bbddb982849e4a65fc224",
+      "ok": true
+    },
+    {
+      "actual": "64f1a2effec749e1d1e33474b8e9b8ae230c5f44519731a9a0a731acc0cedde9",
+      "check": "input_at_62d392b:fixtures/answer_semantics/holdout_universe.json",
+      "expected": "64f1a2effec749e1d1e33474b8e9b8ae230c5f44519731a9a0a731acc0cedde9",
+      "ok": true
+    },
+    {
+      "actual": "566ade165268b3829e505eda8f480f191307a2b4311dba1b2900ce11cbd40ef1",
+      "check": "input_at_62d392b:scripts/answer_semantics_holdout_author_gold.py",
+      "expected": "566ade165268b3829e505eda8f480f191307a2b4311dba1b2900ce11cbd40ef1",
+      "ok": true
+    },
+    {
+      "actual": "116009148b4c5a9f1f5d15eb1aecb48805dcf0b63dc568c4634dd56a8341263b",
+      "check": "code_at_886e47f:scripts/answer_semantics_holdout_evaluate.py",
+      "expected": "116009148b4c5a9f1f5d15eb1aecb48805dcf0b63dc568c4634dd56a8341263b",
+      "ok": true
+    },
+    {
+      "actual": "1b214a71b26e97650e7d3fad55b6adeac963e6c89d7e9119496931b3d63ff531",
+      "check": "code_at_886e47f:scripts/answer_semantics_holdout_freeze.py",
+      "expected": "1b214a71b26e97650e7d3fad55b6adeac963e6c89d7e9119496931b3d63ff531",
+      "ok": true
+    },
+    {
+      "actual": "53c2f4d6e5c1aba55cd90e71aa933fbdaf3f7942a055fde416cfbe11c2afde24",
+      "check": "code_at_886e47f:src/atlas/research/answer_semantics.py",
+      "expected": "53c2f4d6e5c1aba55cd90e71aa933fbdaf3f7942a055fde416cfbe11c2afde24",
+      "ok": true
+    },
+    {
+      "actual": "1e2c0a9200ace44475d11031b352947a63ad9caf8947c4a78342bea642ab0742",
+      "check": "code_at_886e47f:src/atlas/research/financial_answers.py",
+      "expected": "1e2c0a9200ace44475d11031b352947a63ad9caf8947c4a78342bea642ab0742",
+      "ok": true
+    },
+    {
+      "actual": "515393dddb2f9bc72d859380a71046b267d4bb7537410f1d307b110a55c5932b",
+      "check": "code_at_886e47f:src/atlas/research/financial_concepts.py",
+      "expected": "515393dddb2f9bc72d859380a71046b267d4bb7537410f1d307b110a55c5932b",
+      "ok": true
+    },
+    {
+      "actual": "239b2c3d4ade12ab0adff518b18fa6348c5de247e136dc219a7cfcef6b3cfcd1",
+      "check": "code_at_886e47f:src/atlas/research/financial_verification.py",
+      "expected": "239b2c3d4ade12ab0adff518b18fa6348c5de247e136dc219a7cfcef6b3cfcd1",
+      "ok": true
+    },
+    {
+      "actual": "14db3a1d6327114ad1ad432b1a6a443063c3427d47b6b7cb7502dd4c0f6bf938",
+      "check": "code_at_886e47f:src/atlas/research/geometry_resolution.py",
+      "expected": "14db3a1d6327114ad1ad432b1a6a443063c3427d47b6b7cb7502dd4c0f6bf938",
+      "ok": true
+    },
+    {
+      "actual": "49d9d1d3428fe18fe9d30d0a8ff29e069ba1ae819c4fef8f7b550d0c60549de6",
+      "check": "code_at_886e47f:src/atlas/research/holdout.py",
+      "expected": "49d9d1d3428fe18fe9d30d0a8ff29e069ba1ae819c4fef8f7b550d0c60549de6",
+      "ok": true
+    },
+    {
+      "actual": "833ab0d173b9d636ec01e8c52c58c68622179a4596d917ec8942312a6a0ad799",
+      "check": "code_at_886e47f:src/atlas/research/knowledge.py",
+      "expected": "833ab0d173b9d636ec01e8c52c58c68622179a4596d917ec8942312a6a0ad799",
+      "ok": true
+    },
+    {
+      "actual": "e6bc49fb15475149b5a3fb504e2cecf5db4860af3a2240e0625f64482a3c3a70",
+      "check": "code_at_886e47f:src/atlas/research/table_cells.py",
+      "expected": "e6bc49fb15475149b5a3fb504e2cecf5db4860af3a2240e0625f64482a3c3a70",
+      "ok": true
+    },
+    {
+      "actual": "71de18aeb6a78d8493b6e51f92faf04394e618e8b8a26a49a285915ec13d36a0",
+      "check": "code_at_886e47f:src/atlas/research/table_geometry.py",
+      "expected": "71de18aeb6a78d8493b6e51f92faf04394e618e8b8a26a49a285915ec13d36a0",
+      "ok": true
+    },
+    {
+      "actual": "06556b83ae5a6f68ed72eabfcf146e148ffcfbceb633383ea0eb77d9e0a02f15",
+      "check": "first_run_artifact_committed",
+      "expected": "06556b83ae5a6f68ed72eabfcf146e148ffcfbceb633383ea0eb77d9e0a02f15",
+      "ok": true
+    },
+    {
+      "actual": "9a3695a9a5dc9494679cefa0ebfd5ef5c10de29a471176700e445081c77deba7",
+      "check": "gold_digest",
+      "expected": "9a3695a9a5dc9494679cefa0ebfd5ef5c10de29a471176700e445081c77deba7",
+      "ok": true
+    }
+  ],
+  "ci_runs": [
+    {
+      "commit": "5cf7726",
+      "conclusion": "success",
+      "run_id": 45270236799,
+      "run_number": 64,
+      "workflow": "CI"
+    },
+    {
+      "commit": "0090573",
+      "conclusion": "success",
+      "run_id": 45271271720,
+      "run_number": 65,
+      "workflow": "CI"
+    }
+  ],
+  "commits": {
+    "first_run": "7d3e509",
+    "freeze": "62d392b",
+    "gold": "8da2269",
+    "head_at_audit": "0090573",
+    "report": "1c5dea5"
+  },
+  "counts": {
+    "baseline": {
+      "abstention_ids": {
+        "resolution_failure": [
+          "H-8230-01",
+          "H-8230-02",
+          "H-8230-04",
+          "H-0727-02",
+          "H-4489-01",
+          "H-4489-02",
+          "H-2927-01",
+          "H-2927-02",
+          "H-1800-01",
+          "H-1800-02",
+          "H-1800-03",
+          "H-0667-01",
+          "H-0667-02",
+          "H-0667-03",
+          "H-0667-04"
+        ],
+        "unjustified": []
+      },
+      "answerable": 47,
+      "answerable_abstentions": 15,
+      "answered": 32,
+      "citation_failures": 2,
+      "false_answers": 7,
+      "resolution_failures": 15,
+      "results": 54,
+      "unjustified_abstentions": 0
+    },
+    "geometry": {
+      "abstention_ids": {
+        "resolution_failure": [
+          "H-4489-01",
+          "H-4489-02",
+          "H-2927-01",
+          "H-2927-02"
+        ],
+        "unjustified": [
+          "H-8230-01",
+          "H-8230-02",
+          "H-8230-03",
+          "H-2927-03",
+          "H-1800-03"
+        ]
+      },
+      "answerable": 47,
+      "answerable_abstentions": 9,
+      "answered": 38,
+      "citation_failures": 1,
+      "false_answers": 4,
+      "resolution_failures": 4,
+      "results": 54,
+      "unjustified_abstentions": 5
+    }
+  },
+  "gold_digest": "9a3695a9a5dc9494679cefa0ebfd5ef5c10de29a471176700e445081c77deba7",
+  "gold_files": {
+    "artifacts/answer_semantics/holdout_source_manifest.json": "1f7f4a80e0746a611800a22f8c19ac9f796120ac14af1011f947ed3c26288836",
+    "fixtures/answer_semantics/holdout_corpus.json": "ec9e27a5d5300ce98c715b02ba292efd725a5505437ebbd965312dc0a0b4c0bb",
+    "fixtures/answer_semantics/holdout_facts.json": "c73a9c05f3ae3f6c396d4584e67e0fb29b25e976c76cca4cad50bc69c785852a",
+    "fixtures/answer_semantics/holdout_freeze.json": "225b7aa7c21f98dbdde041307c988ad459232d751980f7ba80199e98b07afd55",
+    "fixtures/answer_semantics/holdout_ledger.json": "0926c5582f7460c71e5cc2064c6e605a831c0f193cbd2b3f424b6bf1cbfcc9ec",
+    "fixtures/answer_semantics/holdout_protocol.json": "31b925068562525b68eb1feca2afaa67516bd5c2762185f85e437e0ea44bb5a6",
+    "fixtures/answer_semantics/holdout_questions.json": "2349fe989955eff85ae30074378b598a4039269ab29bbddb982849e4a65fc224"
+  },
+  "historical_label": "first_prospective_holdout_run",
+  "limitations": [
+    "CI conclusions are recorded from the hosted run pages; they are not recomputable offline.",
+    "Gold was authored by one reviewer. Printed cells and same-accession XBRL facts were cross-checked, which is not independent human annotation.",
+    "Two labels are contested after the run and are adjudicated separately; the frozen labels are unchanged."
+  ],
+  "live_code_drifted_from_freeze": [
+    "src/atlas/research/answer_semantics.py",
+    "src/atlas/research/financial_answers.py",
+    "src/atlas/research/financial_concepts.py",
+    "src/atlas/research/geometry_resolution.py",
+    "src/atlas/research/table_cells.py",
+    "src/atlas/research/table_geometry.py"
+  ],
+  "purpose": "Append-only audit record of the first prospective holdout. Verifies the frozen inputs and resolution code at the commits they name, not the working tree, so later development cannot invalidate the experiment's provenance.",
+  "schema": "atlas.answer_semantics.holdout_archive_manifest.v1"
+}

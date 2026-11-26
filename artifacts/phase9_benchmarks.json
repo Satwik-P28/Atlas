@@ -1,0 +1,89 @@
+{
+  "database": "var/phase9.db",
+  "environment": {
+    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+    "processor": "x86_64",
+    "python": "3.12.3"
+  },
+  "generated_at": "2026-11-05T23:20:16Z",
+  "identifier": "AAPL",
+  "notes": [
+    "Coverage runs the DCF core for every eligible issuer; it is the heaviest call.",
+    "analyse includes the report, scenarios and the 5x5 sensitivity grid.",
+    "Package timings exclude disk I/O for the caller's write; the bytes are held in memory.",
+    "These are single-machine measurements, not service-level guarantees."
+  ],
+  "schema": "atlas.phase9.benchmarks.v1",
+  "timings_ms": {
+    "analyse_report_scenarios_sensitivity": {
+      "max_ms": 2807.303,
+      "median_ms": 2381.635,
+      "min_ms": 2344.199,
+      "repeats": 3,
+      "samples_ms": [
+        2807.303,
+        2381.635,
+        2344.199
+      ]
+    },
+    "coverage_all_issuers": {
+      "max_ms": 271.953,
+      "median_ms": 271.953,
+      "min_ms": 271.953,
+      "repeats": 1,
+      "samples_ms": [
+        271.953
+      ]
+    },
+    "create_package": {
+      "max_ms": 2365.823,
+      "median_ms": 2348.131,
+      "min_ms": 2330.438,
+      "repeats": 2,
+      "samples_ms": [
+        2365.823,
+        2330.438
+      ]
+    },
+    "execute_package_clean_db": {
+      "max_ms": 5.132,
+      "median_ms": 4.843,
+      "min_ms": 4.805,
+      "repeats": 3,
+      "samples_ms": [
+        4.805,
+        5.132,
+        4.843
+      ]
+    },
+    "install_package_clean_db": {
+      "max_ms": 6.115,
+      "median_ms": 4.628,
+      "min_ms": 3.142,
+      "repeats": 2,
+      "samples_ms": [
+        6.115,
+        3.142
+      ]
+    },
+    "workspace": {
+      "max_ms": 2229.471,
+      "median_ms": 2196.757,
+      "min_ms": 2174.998,
+      "repeats": 3,
+      "samples_ms": [
+        2196.757,
+        2229.471,
+        2174.998
+      ]
+    }
+  },
+  "workload": {
+    "evidence_records": 26296,
+    "filings": 489,
+    "issuers": 20,
+    "package_bytes": 31671,
+    "report_characters": 9620,
+    "report_lines": 184
+  }
+}

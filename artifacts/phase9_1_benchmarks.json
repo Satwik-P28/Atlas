@@ -1,0 +1,32 @@
+{
+  "db": "var/phase9.db",
+  "limits": [
+    "Single-machine wall-clock timings; not a load test.",
+    "No market prices are bundled, so price-import and multiple paths are exercised only by tests."
+  ],
+  "results": {
+    "contract_states": {
+      "arithmetically_verified": 13,
+      "insufficient_source_coverage": 7
+    },
+    "dcf_executes": 17,
+    "financial_coverage_valid": 16,
+    "institution_models_execute": 3,
+    "issuers": 20,
+    "jpm_contract_state": "arithmetically_verified",
+    "jpm_method": "residual_income_equity",
+    "replay_status": "reproduced",
+    "unh_method": "justified_earnings_equity"
+  },
+  "schema": "atlas.phase9_1.benchmarks.v1",
+  "timings_ms": {
+    "bank_valuation_jpm": 2.507,
+    "coverage_20_issuers": 289.122,
+    "execute_package": 4.181,
+    "install_package": 4.743,
+    "insurer_valuation_unh": 1.91,
+    "package_jpm": 2030.065,
+    "report_and_audit_jpm": 2058.529,
+    "workspace_jpm": 2009.338
+  }
+}

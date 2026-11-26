@@ -1,0 +1,468 @@
+{
+  "schema": "atlas.knowledge.benchmark.v1",
+  "baseline": "sqlite-fts5-bm25",
+  "thresholds": {
+    "hit_at_5": 0.7,
+    "citation_support": 0.9,
+    "future_leak": 0.0,
+    "abstention_precision": 0.8
+  },
+  "metrics": {
+    "questions": 13,
+    "scored_answerable": 11,
+    "hit_at_5": 0.9091,
+    "citation_support": 1.0,
+    "future_leak_rate": 0.0,
+    "cross_issuer_rate": 0.0,
+    "abstention_recall_unanswerable": 1.0,
+    "answerable_abstention_rate": 0.0909,
+    "latency_ms": {
+      "p50": 7.7,
+      "p95": 18.71,
+      "max": 19.09
+    },
+    "index": {
+      "database_bytes": 47595520,
+      "documents": 6,
+      "passages": 6551,
+      "tables": 698
+    }
+  },
+  "gates": {
+    "hit_at_5": true,
+    "citation_support": true,
+    "no_future_leak": true,
+    "abstention": true
+  },
+  "rows": [
+    {
+      "key": "aapl-total-net-sales",
+      "category": "numerical_disclosure",
+      "issuer_id": "ISS-CIK0000320193",
+      "question": "total net sales",
+      "cutoff": "2026-11-10T00:00:00Z",
+      "count": 5,
+      "abstained": false,
+      "hit_at_k": true,
+      "future_leak": false,
+      "cross_issuer": false,
+      "citation_verified": true,
+      "answerable": true,
+      "latency_ms": 18.02,
+      "top": [
+        {
+          "unit_id": "UNI-77a4309dde916763",
+          "accession": "0000320193-26-000006",
+          "section": "Item 2. Management\u2019s Discussion and Analysis of Financial Condition and Results ",
+          "relevance": 10.154686
+        },
+        {
+          "unit_id": "UNI-96de7fe7eb9357be",
+          "accession": "0000320193-26-000026",
+          "section": "Item 7. Management\u2019s Discussion and Analysis of Financial Condition and Results ",
+          "relevance": 9.900975
+        },
+        {
+          "unit_id": "UNI-b424957107608540",
+          "accession": "0000320193-26-000026",
+          "section": "Item 8. Financial Statements and Supplementary Data",
+          "relevance": 9.588735
+        }
+      ]
+    },
+    {
+      "key": "jpm-net-interest-income",
+      "category": "numerical_disclosure",
+      "issuer_id": "ISS-CIK0000019617",
+      "question": "net interest income",
+      "cutoff": "2026-11-10T00:00:00Z",
+      "count": 4,
+      "abstained": false,
+      "hit_at_k": true,
+      "future_leak": false,
+      "cross_issuer": false,
+      "citation_verified": true,
+      "answerable": true,
+      "latency_ms": 12.71,
+      "top": [
+        {
+          "unit_id": "UNI-b9226904cd97bfbd",
+          "accession": "0001628280-26-069523",
+          "section": "Document",
+          "relevance": 11.094739
+        },
+        {
+          "unit_id": "UNI-a0558b0f50a385a8",
+          "accession": "0001628280-26-069523",
+          "section": "Document",
+          "relevance": 11.019348
+        },
+        {
+          "unit_id": "UNI-7428d54b80a245b0",
+          "accession": "0001628280-26-054343",
+          "section": "Document",
+          "relevance": 11.019348
+        }
+      ]
+    },
+    {
+      "key": "aapl-supply-chain-risk",
+      "category": "narrative_risk",
+      "issuer_id": "ISS-CIK0000320193",
+      "question": "supply chain disruption risk",
+      "cutoff": "2026-11-10T00:00:00Z",
+      "count": 5,
+      "abstained": false,
+      "hit_at_k": true,
+      "future_leak": false,
+      "cross_issuer": false,
+      "citation_verified": true,
+      "answerable": true,
+      "latency_ms": 7.07,
+      "top": [
+        {
+          "unit_id": "UNI-98ce01edc5c2cdf0",
+          "accession": "0000320193-26-000026",
+          "section": "Item 1A. Risk Factors",
+          "relevance": 13.831787
+        },
+        {
+          "unit_id": "UNI-855617a2129b58e0",
+          "accession": "0000320193-26-000026",
+          "section": "Item 1A. Risk Factors",
+          "relevance": 13.436611
+        },
+        {
+          "unit_id": "UNI-3d5d18acf49d44c1",
+          "accession": "0000320193-26-000026",
+          "section": "Item 1A. Risk Factors",
+          "relevance": 10.080168
+        }
+      ]
+    },
+    {
+      "key": "jpm-credit-risk",
+      "category": "narrative_risk",
+      "issuer_id": "ISS-CIK0000019617",
+      "question": "credit risk concentration",
+      "cutoff": "2026-11-10T00:00:00Z",
+      "count": 4,
+      "abstained": false,
+      "hit_at_k": true,
+      "future_leak": false,
+      "cross_issuer": false,
+      "citation_verified": true,
+      "answerable": true,
+      "latency_ms": 12.73,
+      "top": [
+        {
+          "unit_id": "UNI-279b601745f805d2",
+          "accession": "0001628280-26-069523",
+          "section": "Document",
+          "relevance": 7.211322
+        },
+        {
+          "unit_id": "UNI-dfdcd47e4861b40a",
+          "accession": "0001628280-26-054343",
+          "section": "Document",
+          "relevance": 7.211322
+        },
+        {
+          "unit_id": "UNI-70918f472dd817b9",
+          "accession": "0001628280-26-069523",
+          "section": "Document",
+          "relevance": 6.612367
+        }
+      ]
+    },
+    {
+      "key": "aapl-segment-products",
+      "category": "financial_table",
+      "issuer_id": "ISS-CIK0000320193",
+      "question": "iPhone net sales by segment",
+      "cutoff": "2026-11-10T00:00:00Z",
+      "count": 5,
+      "abstained": false,
+      "hit_at_k": true,
+      "future_leak": false,
+      "cross_issuer": false,
+      "citation_verified": true,
+      "answerable": true,
+      "latency_ms": 19.09,
+      "top": [
+        {
+          "unit_id": "UNI-6c79a9d5eddf01cd",
+          "accession": "0000320193-26-000006",
+          "section": "Item 1. Financial Statements",
+          "relevance": 17.641503
+        },
+        {
+          "unit_id": "UNI-ea5c6f33d89d5612",
+          "accession": "0000320193-26-000020",
+          "section": "Item 1. Financial Statements",
+          "relevance": 17.311141
+        },
+        {
+          "unit_id": "UNI-5b7492f6c89c5376",
+          "accession": "0000320193-26-000013",
+          "section": "Item 1. Financial Statements",
+          "relevance": 17.311141
+        }
+      ]
+    },
+    {
+      "key": "jpm-allowance-loans",
+      "category": "financial_table",
+      "issuer_id": "ISS-CIK0000019617",
+      "question": "allowance for credit losses",
+      "cutoff": "2026-11-10T00:00:00Z",
+      "count": 3,
+      "abstained": false,
+      "hit_at_k": true,
+      "future_leak": false,
+      "cross_issuer": false,
+      "citation_verified": true,
+      "answerable": true,
+      "latency_ms": 18.71,
+      "top": [
+        {
+          "unit_id": "UNI-706151cf49fb2f51",
+          "accession": "0001628280-26-069523",
+          "section": "Document",
+          "relevance": 13.456203
+        },
+        {
+          "unit_id": "UNI-5e9a70c310780aea",
+          "accession": "0001628280-26-069523",
+          "section": "Document",
+          "relevance": 13.446637
+        },
+        {
+          "unit_id": "UNI-46d1967dd6cac178",
+          "accession": "0001628280-26-069523",
+          "section": "Document",
+          "relevance": 13.446637
+        }
+      ]
+    },
+    {
+      "key": "aapl-legal-proceedings",
+      "category": "multi_document",
+      "issuer_id": "ISS-CIK0000320193",
+      "question": "legal proceedings",
+      "cutoff": "2026-11-10T00:00:00Z",
+      "count": 2,
+      "abstained": false,
+      "hit_at_k": true,
+      "future_leak": false,
+      "cross_issuer": false,
+      "citation_verified": true,
+      "answerable": true,
+      "latency_ms": 2.47,
+      "top": [
+        {
+          "unit_id": "UNI-b091d6f8d922ccad",
+          "accession": "0000320193-26-000026",
+          "section": "Item 3. Legal Proceedings",
+          "relevance": 16.192867
+        },
+        {
+          "unit_id": "UNI-4cb0accde1285afc",
+          "accession": "0000320193-26-000026",
+          "section": "Item 3. Legal Proceedings",
+          "relevance": 16.152033
+        }
+      ]
+    },
+    {
+      "key": "aapl-risk-as-of-2026-06",
+      "category": "historical_cutoff",
+      "issuer_id": "ISS-CIK0000320193",
+      "question": "risk factors",
+      "cutoff": "2026-06-01T00:00:00Z",
+      "count": 4,
+      "abstained": false,
+      "hit_at_k": true,
+      "future_leak": false,
+      "cross_issuer": false,
+      "citation_verified": true,
+      "answerable": true,
+      "latency_ms": 6.58,
+      "top": [
+        {
+          "unit_id": "UNI-393d5c19c1a2cd55",
+          "accession": "0000320193-26-000013",
+          "section": "Item 1A. Risk Factors",
+          "relevance": 10.443556
+        },
+        {
+          "unit_id": "UNI-876f9c1525788f8b",
+          "accession": "0000320193-26-000013",
+          "section": "Item 1A. Risk Factors",
+          "relevance": 10.204233
+        },
+        {
+          "unit_id": "UNI-91df86c14ef2abc1",
+          "accession": "0000320193-26-000013",
+          "section": "Item 1A. Risk Factors",
+          "relevance": 10.204233
+        }
+      ]
+    },
+    {
+      "key": "jpm-risk-as-of-2026-06",
+      "category": "historical_cutoff",
+      "issuer_id": "ISS-CIK0000019617",
+      "question": "risk factors",
+      "cutoff": "2026-06-01T00:00:00Z",
+      "count": 0,
+      "abstained": true,
+      "hit_at_k": false,
+      "future_leak": false,
+      "cross_issuer": false,
+      "citation_verified": null,
+      "answerable": true,
+      "latency_ms": 7.83,
+      "top": []
+    },
+    {
+      "key": "jpm-capital-scoped",
+      "category": "disambiguation",
+      "issuer_id": "ISS-CIK0000019617",
+      "question": "regulatory capital ratios",
+      "cutoff": "2026-11-10T00:00:00Z",
+      "count": 5,
+      "abstained": false,
+      "hit_at_k": true,
+      "future_leak": false,
+      "cross_issuer": false,
+      "citation_verified": true,
+      "answerable": true,
+      "latency_ms": 5.75,
+      "top": [
+        {
+          "unit_id": "UNI-febcb05250604bfb",
+          "accession": "0001628280-26-069523",
+          "section": "Document",
+          "relevance": 14.024895
+        },
+        {
+          "unit_id": "UNI-d3997f01ed38dcea",
+          "accession": "0001628280-26-054343",
+          "section": "Document",
+          "relevance": 14.024895
+        },
+        {
+          "unit_id": "UNI-83cce7a09a1ca303",
+          "accession": "0001628280-26-069523",
+          "section": "Document",
+          "relevance": 13.943686
+        }
+      ]
+    },
+    {
+      "key": "aapl-crypto-mining",
+      "category": "unanswerable",
+      "issuer_id": "ISS-CIK0000320193",
+      "question": "bitcoin mining rig depreciation schedule",
+      "cutoff": "2026-11-10T00:00:00Z",
+      "count": 5,
+      "abstained": true,
+      "hit_at_k": false,
+      "future_leak": false,
+      "cross_issuer": false,
+      "citation_verified": true,
+      "answerable": false,
+      "latency_ms": 1.62,
+      "top": [
+        {
+          "unit_id": "UNI-dc44d863a6ac732e",
+          "accession": "0000320193-26-000026",
+          "section": "Item 8. Financial Statements and Supplementary Data",
+          "relevance": 6.780303
+        },
+        {
+          "unit_id": "UNI-acfd1b4494f0f911",
+          "accession": "0000320193-26-000026",
+          "section": "Item 15. Exhibit and Financial Statement Schedules",
+          "relevance": 6.468525
+        },
+        {
+          "unit_id": "UNI-fa949c6750d58048",
+          "accession": "0000320193-26-000026",
+          "section": "Item 8. Financial Statements and Supplementary Data",
+          "relevance": 5.746371
+        }
+      ]
+    },
+    {
+      "key": "jpm-antarctic-subsidiary",
+      "category": "unanswerable",
+      "issuer_id": "ISS-CIK0000019617",
+      "question": "antarctic penguin subsidiary revenue",
+      "cutoff": "2026-11-10T00:00:00Z",
+      "count": 3,
+      "abstained": true,
+      "hit_at_k": false,
+      "future_leak": false,
+      "cross_issuer": false,
+      "citation_verified": true,
+      "answerable": false,
+      "latency_ms": 4.04,
+      "top": [
+        {
+          "unit_id": "UNI-24dee1ef99ce5709",
+          "accession": "0001628280-26-069523",
+          "section": "Document",
+          "relevance": 8.849824
+        },
+        {
+          "unit_id": "UNI-ed0bfae2b1846969",
+          "accession": "0001628280-26-069523",
+          "section": "Document",
+          "relevance": 7.538464
+        },
+        {
+          "unit_id": "UNI-bc53deca3f22d1a2",
+          "accession": "0001628280-26-069523",
+          "section": "Document",
+          "relevance": 6.996134
+        }
+      ]
+    },
+    {
+      "key": "aapl-amendment-awareness",
+      "category": "amendment_version",
+      "issuer_id": "ISS-CIK0000320193",
+      "question": "risk factors",
+      "cutoff": "2026-11-10T00:00:00Z",
+      "count": 2,
+      "abstained": false,
+      "hit_at_k": true,
+      "future_leak": false,
+      "cross_issuer": false,
+      "citation_verified": true,
+      "answerable": true,
+      "latency_ms": 7.7,
+      "top": [
+        {
+          "unit_id": "UNI-ee4ed23c2451d08a",
+          "accession": "0000320193-26-000026",
+          "section": "Item 1A. Risk Factors",
+          "relevance": 10.443556
+        },
+        {
+          "unit_id": "UNI-d845f11b143dd324",
+          "accession": "0000320193-26-000026",
+          "section": "Item 1A. Risk Factors",
+          "relevance": 10.383317
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "14 authored questions over 6 documents; small-sample and not independent.",
+    "No embedding or LLM baseline was evaluated, so no retrieval architecture comparison is claimed.",
+    "Scoring is term-presence at passage level, not human-judged answer correctness."
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "comparison": {
+    "baseline_warm_mean_ms": 238.633,
+    "geometry_cold_ms_delta": -12510.392,
+    "geometry_warm_mean_ms": 110.976
+  },
+  "corpus": {
+    "accessions": 12,
+    "questions": 54
+  },
+  "diagnostics": {
+    "baseline_questions_measured": 54,
+    "geometry_unresolved": 12
+  },
+  "historical_first_run": {
+    "baseline_cold_ms": 9089.823,
+    "baseline_warm_mean_ms": 67.628,
+    "build_baseline_ms": 2345.0,
+    "build_geometry_ms": 30039.0,
+    "geometry_cold_ms": 36783.261,
+    "geometry_warm_mean_ms": 46.836
+  },
+  "machine": {
+    "note": "single VM, single process; compare only like with like",
+    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "measured_at": "2026-11-23T22:46:42Z",
+  "memory": {
+    "note": "geometry tables for all twelve filings, one process",
+    "peak_tracemalloc_mb": 705.7
+  },
+  "schema": "atlas.answer_semantics.hardening_profile.v1",
+  "stages_ms": {
+    "baseline_cell_extraction": 2389.755,
+    "geometry_build_cold": 24272.869,
+    "geometry_resolution_mean": 110.976,
+    "geometry_resolution_total": 5992.685,
+    "html_parse_cold": 24272.869,
+    "html_parse_warm_cached": 45.195,
+    "repeated_query_mean": 165.857,
+    "statement_classification": 10.833,
+    "verification_cases": 12,
+    "verification_total": 0.435
+  }
+}

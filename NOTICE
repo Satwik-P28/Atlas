@@ -1,0 +1,26 @@
+Atlas — The Evidence-First Financial Research Operating System
+
+Copyright 2026 Satwik Peddireddi
+
+This product includes software developed at the Atlas project
+(https://github.com/Satwik-P28/Atlas).
+
+Atlas-authored source code, documentation and project-authored synthetic
+fixtures are licensed under the Apache License, Version 2.0. A copy of the
+licence is in LICENSE at the root of this distribution.
+
+The software licence covers Atlas-authored material only. It does not license,
+sublicense or grant any right over:
+
+  * third-party datasets and documents, including SEC filings, market data,
+    regulatory data and any other third-party input, which keep their own
+    terms (see docs/DATA_RIGHTS_AND_DISTRIBUTION.md and
+    docs/DATA_LICENSING.md);
+  * third-party software dependencies, each of which keeps its own licence and
+    notices (see THIRD_PARTY_NOTICES.md and docs/DEPENDENCY_LICENSES.json);
+  * any trademark, service mark or product name.
+
+This distribution includes third-party components. Their attribution notices
+are reproduced in THIRD_PARTY_NOTICES.md, with the machine-readable inventory
+in docs/DEPENDENCY_LICENSES.json and the per-obligation discussion in
+docs/THIRD_PARTY_ATTRIBUTION.md.

@@ -1,0 +1,457 @@
+{
+  "schema": "atlas.acceptance.phase10_4.v1",
+  "generated_at": "2026-11-25T21:25:50Z",
+  "commit": "dbdf966ce9bc4ba988bc75d1db85a5c0cc7ad452",
+  "python": "3.12.3",
+  "summary": {
+    "pass": 30,
+    "fail": 0,
+    "not_run": 0
+  },
+  "pass": true,
+  "surfaces": [
+    "api",
+    "cli",
+    "cli+api",
+    "knowledge",
+    "mcp",
+    "pdf"
+  ],
+  "cross_surface": {
+    "answer_value": 21690.0,
+    "mcp_value": 21690.0,
+    "surfaces_agree": true,
+    "pdf_figures": 228
+  },
+  "steps": [
+    {
+      "id": "offline_demonstration",
+      "surface": "cli",
+      "status": "pass",
+      "detail": "atlas demo exit 0, 8 sections, 12070912 bytes",
+      "seconds": null
+    },
+    {
+      "id": "demo_health",
+      "surface": "api",
+      "status": "pass",
+      "detail": "/api/health 200 status=ok evidence=6524",
+      "seconds": null
+    },
+    {
+      "id": "palette_search",
+      "surface": "api",
+      "status": "pass",
+      "detail": "1 palette result(s) for 'apple'",
+      "seconds": 0.0059,
+      "value": {
+        "issuer_id": "ISS-CIK0000320193",
+        "label": "Apple Inc.",
+        "cik": "0000320193",
+        "tickers": [
+          "AAPL"
+        ]
+      }
+    },
+    {
+      "id": "select_company",
+      "surface": "api",
+      "status": "pass",
+      "detail": "Apple Inc. (200)",
+      "seconds": null
+    },
+    {
+      "id": "statements",
+      "surface": "api",
+      "status": "pass",
+      "detail": "6 statement column(s), completeness=complete_for_query",
+      "seconds": null
+    },
+    {
+      "id": "filing_search",
+      "surface": "api",
+      "status": "pass",
+      "detail": "25 archived filing(s)",
+      "seconds": null
+    },
+    {
+      "id": "ask_question",
+      "surface": "api",
+      "status": "pass",
+      "detail": "gross_profit 2023 = 21690 USD (Gross profit / CONSOLIDATED STATEMENTS OF INCOME)",
+      "seconds": 0.0107,
+      "value": "21690"
+    },
+    {
+      "id": "answer_certificate",
+      "surface": "api",
+      "status": "pass",
+      "detail": "fingerprint 7ccf9ce4299ca8a1\u2026, level=unknown",
+      "seconds": null,
+      "fingerprint": "7ccf9ce4299ca8a1318046a3e221dc2bd53b5a3a525990189af7c326e8b61ed1"
+    },
+    {
+      "id": "verify_certificate",
+      "surface": "api",
+      "status": "pass",
+      "detail": "independent verification: {'report': {'schema': 'atlas.research_certificate.verify.v1', 'verifier_version': '1.1.0', 'level': 'ARITHMETIC_VERIFIED', 'status': 'arithmetic_only', 'certificate_fingerprint': '7ccf9ce4299ca8a1318046a3e221dc2bd53b5a3a525990189af7c326e8b61ed1', 'method': 'fraction_reimplementation_v2', 'source_route': None, 'recomputed_value': '21690.00', 'checks': [{'check': 'schema', 'passed': True, 'detail': \"expected atlas.research_certificate.v1, found 'atlas.research_certificate.v1'\"}, {'check': 'certificate_fingerprint', 'passed': True}, {'check': 'bindings', 'passed': True, 'detail': 'no input bindings'}, {'check': 'binding_objects', 'passed': True, 'detail': 'all input bindings must be objects'}, {'check': 'operator', 'passed': True, 'detail': \"cannot resolve operator from {'operator': 'lookup', 'concept': 'gross_profit', 'metric': 'Gross profit', 'period': '2023', 'answer_type': 'reported_value'}\"}, {'check': 'binding_count', 'passed': True, 'detail': 'lookup needs 1 inputs, certificate has 1'}, {'check': 'result_fields_present', 'passed': True, 'detail': []}, {'check': 'availability_present_0', 'passed': True, 'detail': 'binding has no availability time'}, {'check': 'not_future_evidence_0', 'passed': True, 'detail': 'available 2024-02-15T21:45:00Z after cutoff 2026-11-25T21:25:36Z'}, {'check': 'scale_present_0', 'passed': True, 'detail': 'scale must be an integer exponent between -12 and 18'}, {'check': 'binding_scale_consistent', 'passed': True, 'detail': \"input scales ['6'] must agree\"}, {'check': 'independent_arithmetic', 'passed': True}, {'check': 'exact_result', 'passed': True}, {'check': 'economic_amount', 'passed': True, 'detail': 'claimed 21690000000, expected 21690000000'}, {'check': 'binding_period_shape', 'passed': True, 'detail': ['2023']}, {'check': 'result_period', 'passed': True, 'detail': \"claimed '2023', inputs give '2023'\"}, {'check': 'binding_currency_consistent', 'passed': True, 'detail': ['USD']}, {'check': 'result_currency', 'passed': True, 'detail': \"claimed 'USD', inputs carry 'USD'\"}, {'check': 'result_unit_scale', 'passed': True, 'detail': 'claimed 6, inputs give 6'}, {'check': 'result_unit_kind', 'passed': True, 'detail': \"claimed 'USD', expected 'USD'\"}, {'check': 'requirement_objects', 'passed': True, 'detail': 'normalized_requirement and typed_computation must be objects'}, {'check': 'operator_agreement', 'passed': True, 'detail': \"requirement 'lookup', computation 'lookup', resolved 'lookup'\"}, {'check': 'requirement_concept', 'passed': True, 'detail': \"requirement 'gross_profit', input 'gross_profit'\"}, {'check': 'requirement_period', 'passed': True, 'detail': \"requirement '2023', input '2023'\"}, {'check': 'financial_concepts', 'passed': True, 'detail': \"declared ['gross_profit'], bound ['gross_profit']\"}, {'check': 'answer_type', 'passed': True, 'detail': \"claimed 'reported_value' for 'lookup'\"}, {'check': 'reporting_scope', 'passed': True, 'detail': \"certificate 'consolidated', issuer 'consolidated', inputs ['consolidated']\"}, {'check': 'operator_version', 'passed': True, 'detail': 'operator_version missing'}, {'check': 'execution_fingerprint', 'passed': True, 'detail': 'execution_fingerprint missing'}], 'reasons': [], 'problems': [], 'limitations': ['Requirement, computation, concept, scope and result metadata are checked for internal agreement only. Agreeing with each other does not establish that the concept or period is the economically correct reading of the statement.', 'No trusted source evidence was supplied. The computation matches the inputs the certificate carries; whether those inputs match the filing was not established.'], 'semantic_status': {'period_assignment': 'header_confirmed', 'details': [{'binding': 0, 'period': '2023', 'column_label': '2023', 'state': 'header_confirmed'}]}}, 'note': 'verification establishes internal consistency and, when pinned source bytes are supplied, source identity. It never establishes that the economic interpretation of the value is correct.'}",
+      "seconds": null,
+      "verification": {
+        "report": {
+          "schema": "atlas.research_certificate.verify.v1",
+          "verifier_version": "1.1.0",
+          "level": "ARITHMETIC_VERIFIED",
+          "status": "arithmetic_only",
+          "certificate_fingerprint": "7ccf9ce4299ca8a1318046a3e221dc2bd53b5a3a525990189af7c326e8b61ed1",
+          "method": "fraction_reimplementation_v2",
+          "source_route": null,
+          "recomputed_value": "21690.00",
+          "checks": [
+            {
+              "check": "schema",
+              "passed": true,
+              "detail": "expected atlas.research_certificate.v1, found 'atlas.research_certificate.v1'"
+            },
+            {
+              "check": "certificate_fingerprint",
+              "passed": true
+            },
+            {
+              "check": "bindings",
+              "passed": true,
+              "detail": "no input bindings"
+            },
+            {
+              "check": "binding_objects",
+              "passed": true,
+              "detail": "all input bindings must be objects"
+            },
+            {
+              "check": "operator",
+              "passed": true,
+              "detail": "cannot resolve operator from {'operator': 'lookup', 'concept': 'gross_profit', 'metric': 'Gross profit', 'period': '2023', 'answer_type': 'reported_value'}"
+            },
+            {
+              "check": "binding_count",
+              "passed": true,
+              "detail": "lookup needs 1 inputs, certificate has 1"
+            },
+            {
+              "check": "result_fields_present",
+              "passed": true,
+              "detail": []
+            },
+            {
+              "check": "availability_present_0",
+              "passed": true,
+              "detail": "binding has no availability time"
+            },
+            {
+              "check": "not_future_evidence_0",
+              "passed": true,
+              "detail": "available 2024-02-15T21:45:00Z after cutoff 2026-11-25T21:25:36Z"
+            },
+            {
+              "check": "scale_present_0",
+              "passed": true,
+              "detail": "scale must be an integer exponent between -12 and 18"
+            },
+            {
+              "check": "binding_scale_consistent",
+              "passed": true,
+              "detail": "input scales ['6'] must agree"
+            },
+            {
+              "check": "independent_arithmetic",
+              "passed": true
+            },
+            {
+              "check": "exact_result",
+              "passed": true
+            },
+            {
+              "check": "economic_amount",
+              "passed": true,
+              "detail": "claimed 21690000000, expected 21690000000"
+            },
+            {
+              "check": "binding_period_shape",
+              "passed": true,
+              "detail": [
+                "2023"
+              ]
+            },
+            {
+              "check": "result_period",
+              "passed": true,
+              "detail": "claimed '2023', inputs give '2023'"
+            },
+            {
+              "check": "binding_currency_consistent",
+              "passed": true,
+              "detail": [
+                "USD"
+              ]
+            },
+            {
+              "check": "result_currency",
+              "passed": true,
+              "detail": "claimed 'USD', inputs carry 'USD'"
+            },
+            {
+              "check": "result_unit_scale",
+              "passed": true,
+              "detail": "claimed 6, inputs give 6"
+            },
+            {
+              "check": "result_unit_kind",
+              "passed": true,
+              "detail": "claimed 'USD', expected 'USD'"
+            },
+            {
+              "check": "requirement_objects",
+              "passed": true,
+              "detail": "normalized_requirement and typed_computation must be objects"
+            },
+            {
+              "check": "operator_agreement",
+              "passed": true,
+              "detail": "requirement 'lookup', computation 'lookup', resolved 'lookup'"
+            },
+            {
+              "check": "requirement_concept",
+              "passed": true,
+              "detail": "requirement 'gross_profit', input 'gross_profit'"
+            },
+            {
+              "check": "requirement_period",
+              "passed": true,
+              "detail": "requirement '2023', input '2023'"
+            },
+            {
+              "check": "financial_concepts",
+              "passed": true,
+              "detail": "declared ['gross_profit'], bound ['gross_profit']"
+            },
+            {
+              "check": "answer_type",
+              "passed": true,
+              "detail": "claimed 'reported_value' for 'lookup'"
+            },
+            {
+              "check": "reporting_scope",
+              "passed": true,
+              "detail": "certificate 'consolidated', issuer 'consolidated', inputs ['consolidated']"
+            },
+            {
+              "check": "operator_version",
+              "passed": true,
+              "detail": "operator_version missing"
+            },
+            {
+              "check": "execution_fingerprint",
+              "passed": true,
+              "detail": "execution_fingerprint missing"
+            }
+          ],
+          "reasons": [],
+          "problems": [],
+          "limitations": [
+            "Requirement, computation, concept, scope and result metadata are checked for internal agreement only. Agreeing with each other does not establish that the concept or period is the economically correct reading of the statement.",
+            "No trusted source evidence was supplied. The computation matches the inputs the certificate carries; whether those inputs match the filing was not established."
+          ],
+          "semantic_status": {
+            "period_assignment": "header_confirmed",
+            "details": [
+              {
+                "binding": 0,
+                "period": "2023",
+                "column_label": "2023",
+                "state": "header_confirmed"
+              }
+            ]
+          }
+        },
+        "note": "verification establishes internal consistency and, when pinned source bytes are supplied, source identity. It never establishes that the economic interpretation of the value is correct."
+      }
+    },
+    {
+      "id": "follow_evidence",
+      "surface": "api",
+      "status": "pass",
+      "detail": "evidence accession 0000000000-24-000900 resolves on the filings surface (company-level listing only)",
+      "seconds": null
+    },
+    {
+      "id": "verify_calculation",
+      "surface": "knowledge",
+      "status": "pass",
+      "detail": "parsed table: net sales 48200.0 - cost of sales 26510.0 = 21690.0; gross profit row 21690.0; certificate 21690",
+      "seconds": null,
+      "value": 21690.0
+    },
+    {
+      "id": "valuation",
+      "surface": "api",
+      "status": "pass",
+      "detail": "base DCF value per share 133.31166590118627",
+      "seconds": null,
+      "value": 133.31166590118627
+    },
+    {
+      "id": "modify_assumptions",
+      "surface": "api",
+      "status": "pass",
+      "detail": "wacc 0.09 -> 0.11: 133.31166590118627 -> 100.51313638989481",
+      "seconds": null,
+      "value": {
+        "base": 133.31166590118627,
+        "higher_wacc": 100.51313638989481
+      }
+    },
+    {
+      "id": "scenario_comparison",
+      "surface": "api",
+      "status": "pass",
+      "detail": "3 scenario(s), 3 distinct value(s)",
+      "seconds": null,
+      "value": [
+        133.31166590118627,
+        191.515579075007,
+        94.61715471786094
+      ]
+    },
+    {
+      "id": "cross_company_compare",
+      "surface": "api",
+      "status": "pass",
+      "detail": "comparable=False, 4 finding(s) (2 blocking): ['insufficient_coverage', 'partial_coverage', 'insufficient_coverage', 'partial_coverage']",
+      "seconds": null,
+      "value": {
+        "blocking": 2,
+        "codes": [
+          "insufficient_coverage",
+          "partial_coverage",
+          "insufficient_coverage",
+          "partial_coverage"
+        ]
+      }
+    },
+    {
+      "id": "save_research",
+      "surface": "api",
+      "status": "pass",
+      "detail": "saved research object URO-MEM-234e4e7100e7",
+      "seconds": 1.6328,
+      "value": "URO-MEM-234e4e7100e7"
+    },
+    {
+      "id": "export_pdf",
+      "surface": "api",
+      "status": "pass",
+      "detail": "76804 bytes, 11 page object(s), 19992 characters of extractable text, manifest hash matches the served bytes",
+      "seconds": 0.0306
+    },
+    {
+      "id": "export_machine_readable",
+      "surface": "api",
+      "status": "pass",
+      "detail": "json export: schema atlas.research_memo.manifest.v1, 45 claim(s), manifest hash 2768599258f8ac20\u2026, memo hash f378c6904067bee2\u2026",
+      "seconds": null
+    },
+    {
+      "id": "pdf_matches_memo",
+      "surface": "pdf",
+      "status": "pass",
+      "detail": "34/34 memo figures appear verbatim in the PDF text (100%)",
+      "seconds": null,
+      "value": {
+        "matched": 34,
+        "claims": 34
+      }
+    },
+    {
+      "id": "verify_export",
+      "surface": "api",
+      "status": "pass",
+      "detail": "change report: ['unchanged']",
+      "seconds": null
+    },
+    {
+      "id": "reproduce_on_clean_install",
+      "surface": "cli+api",
+      "status": "pass",
+      "detail": "same value/cell/source-table-hash on a second database: identical ({\"value\": \"21690\", \"table_sha256\": \"d275616452f8bb8d171899cd9504489934b6f0963023e0f162f38d21fe835d86\", \"outcome\": \"answered\"})",
+      "seconds": null,
+      "value": {
+        "value": "21690",
+        "table_sha256": "d275616452f8bb8d171899cd9504489934b6f0963023e0f162f38d21fe835d86",
+        "outcome": "answered"
+      }
+    },
+    {
+      "id": "mcp_equivalent_query",
+      "surface": "mcp",
+      "status": "pass",
+      "detail": "MCP resolve_financial_question returned 21690.0 (outcome=answered tool_error=None); HTTP certificate returned 21690.0",
+      "seconds": null,
+      "value": 21690.0
+    },
+    {
+      "id": "import_lawful_dataset",
+      "surface": "cli",
+      "status": "pass",
+      "detail": "project-authored synthetic CSV of 260 sessions imported for SEC-591443842f68560d9063 (exit 0) METRIC         VALUE\n-------------  -----\ninserted       260  \nduplicates     0    \nrevisions      0    \nrejected       0    \nflagged        0    \nimport issues  0    \n\nread 260 ro",
+      "seconds": null
+    },
+    {
+      "id": "configure_strategy",
+      "surface": "api",
+      "status": "pass",
+      "detail": "2 instrument(s), 4 template(s)",
+      "seconds": null
+    },
+    {
+      "id": "strategy_preview",
+      "surface": "api",
+      "status": "pass",
+      "detail": "template buy_hold on SEC-591443842f68560d9063: preview metrics {'sessions': 260, 'return_observations': 259, 'start_date': '2023-01-02', 'end_date': '2023-12-29', 'start_equity': 100000.0, 'end_equity':  (200)",
+      "seconds": null
+    },
+    {
+      "id": "run_backtest",
+      "surface": "api",
+      "status": "pass",
+      "detail": "run QRUN-ad58993fbbe84129948b: 1 trade(s), 260 equity point(s), return=0.2453126925132001, benchmark=None",
+      "seconds": 0.0588
+    },
+    {
+      "id": "statistical_limitations",
+      "surface": "api",
+      "status": "pass",
+      "detail": "credibility None, 5 limitation(s), 259 return observations, 0 warning(s)",
+      "seconds": null
+    },
+    {
+      "id": "benchmark_comparison",
+      "surface": "api",
+      "status": "pass",
+      "detail": "benchmark comparison: {'total_return': 0.2453126925132001, 'annualized_return': 0.23795062169030468, 'max_drawdown': -0.34875827496129663, 'sharpe': 2.9580384228179146, 'transaction_",
+      "seconds": null
+    },
+    {
+      "id": "export_and_replay",
+      "surface": "api",
+      "status": "pass",
+      "detail": "reproduction capsule for QRUN-ad58993fbbe84129948b: ['schema', 'run_id', 'strategy', 'experiment', 'bars', 'corporate_actions', 'feature_metadata', 'strategy_spec', 'simula",
+      "seconds": null
+    },
+    {
+      "id": "negative_refusal",
+      "surface": "api",
+      "status": "pass",
+      "detail": "unregistered operator refused with 422: {'error': {'code': 'validation_error', 'message': \"unsupported strategy signal (kind='not_a_registered_operator', supported=['buy_hold', 'sma_cross', 'momentum', 'model', 'learning_probability'])\", 'c",
+      "seconds": null
+    }
+  ]
+}

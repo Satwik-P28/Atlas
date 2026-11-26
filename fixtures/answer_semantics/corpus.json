@@ -1,0 +1,119 @@
+{
+  "schema": "atlas.answer_semantics.corpus.v1",
+  "description": "Development-set real 10-K filings used to design and re-analyse the answer-semantics resolvers. This is not an independent confirmation cohort: the untouched prospective cohort is fixtures/answer_semantics/holdout_plan.json. Chosen for layout, fiscal-calendar, unit, restatement and reporting-scope variation. The Coca-Cola FY2022 and 3M FY2018 filings are the two known regression cases from the FOCUS review; they are included alongside filings never used to develop the resolver.",
+  "rights": "SEC EDGAR filings are free to access and reuse under the SEC's published web-access guidance. They are prepared and filed by issuers, not by federal employees, so 17 U.S.C. 105 does not apply and no public-domain status is asserted here. Bytes are fetched at build time and archived under var/ (gitignored); only accessions, URLs, digests and short printed figures are committed, pending source-rights review.",
+  "filings": [
+    {
+      "key": "WMT-FY2023",
+      "issuer": "Walmart Inc.",
+      "cik": "0000104169",
+      "accession": "0000104169-23-000020",
+      "period_of_report": "2023-01-31",
+      "layout": "January fiscal year end; multi-column income statement; 'Net sales' and 'Total revenues' both printed; scale millions",
+      "report_note": "January fiscal year; `Net sales` and `Total revenues` both printed"
+    },
+    {
+      "key": "AAPL-FY2023",
+      "issuer": "Apple Inc.",
+      "cik": "0000320193",
+      "accession": "0000320193-23-000106",
+      "period_of_report": "2023-09-30",
+      "layout": "September fiscal year end; consolidated statement plus product/product-category tables that repeat a similar row label; scale millions",
+      "report_note": "\"except number of shares\" unit line; 52/53-week year"
+    },
+    {
+      "key": "MSFT-FY2019",
+      "issuer": "Microsoft Corp",
+      "cik": "0000789019",
+      "accession": "0001564590-19-027952",
+      "period_of_report": "2019-06-30",
+      "layout": "June fiscal year end; 'Revenue' total with product and service subtotal rows; three-column statement plus segment tables; scale millions",
+      "report_note": "three-year comparison; `Revenue` total with product and service subtotals"
+    },
+    {
+      "key": "PEP-FY2019",
+      "issuer": "PepsiCo Inc.",
+      "cik": "0000077476",
+      "accession": "0000077476-20-000015",
+      "period_of_report": "2019-12-28",
+      "layout": "52/53-week fiscal year ending in late December; 'Net revenue' label; scale millions",
+      "report_note": "52/53-week year; `Total revenue`"
+    },
+    {
+      "key": "IBM-FY2018",
+      "issuer": "International Business Machines Corp",
+      "cik": "0000051143",
+      "accession": "0001047469-19-000712",
+      "period_of_report": "2018-12-31",
+      "document_name": "a2237254zex-13.htm",
+      "document_role": "Item 8 financial-statement exhibit; the primary document of this filing omits the statements",
+      "layout": "December fiscal year end; prior years restated for ASC 606; comparative columns differ from the prior filing; scale millions",
+      "report_note": "`Consolidated Statement of Earnings`; `Total revenue` vs `Sales`"
+    },
+    {
+      "key": "IBM-FY2017",
+      "issuer": "International Business Machines Corp",
+      "cik": "0000051143",
+      "accession": "0001047469-18-001117",
+      "period_of_report": "2017-12-31",
+      "document_name": "a2233835zex-13.htm",
+      "document_role": "Item 8 financial-statement exhibit; the primary document of this filing omits the statements",
+      "layout": "Original vintage for the FY2017 figures later restated in the FY2018 filing; scale millions",
+      "report_note": "prior-year restated gross profit (Item 8 exhibit 13)"
+    },
+    {
+      "key": "SFM-FY2022",
+      "issuer": "Sprouts Farmers Market, Inc.",
+      "cik": "0001575515",
+      "accession": "0000950170-22-001976",
+      "period_of_report": "2022-01-02",
+      "layout": "52/53-week year ending in early January; statements printed in thousands, not millions",
+      "report_note": "column headers say \"Fiscal 2021\" over 2020/2021 numbers"
+    },
+    {
+      "key": "UNFI-FY2022",
+      "issuer": "United Natural Foods Inc",
+      "cik": "0001020859",
+      "accession": "0001020859-22-000054",
+      "period_of_report": "2022-07-30",
+      "layout": "July/August fiscal year end; statements printed in thousands; income statement split across a product-mix table",
+      "report_note": "August fiscal year; `Net sales`"
+    },
+    {
+      "key": "DE-FY2018",
+      "issuer": "Deere & Co",
+      "cik": "0000315189",
+      "accession": "0001047469-18-007694",
+      "period_of_report": "2018-10-28",
+      "layout": "October fiscal year end; older pre-2020 EDGAR layout with in-table unit banners; scale millions",
+      "report_note": "decimal printed values (`2,368.4`); segment tables"
+    },
+    {
+      "key": "CVX-FY2021",
+      "issuer": "Chevron Corp",
+      "cik": "0000093410",
+      "accession": "0000093410-22-000019",
+      "period_of_report": "2021-12-31",
+      "layout": "December fiscal year end; oil-and-gas statement with no gross profit line (structurally unanswerable for that concept); scale millions",
+      "report_note": "no gross-profit line at all"
+    },
+    {
+      "key": "KO-FY2022",
+      "issuer": "Coca-Cola Co",
+      "cik": "0000021344",
+      "accession": "0000021344-23-000011",
+      "period_of_report": "2022-12-31",
+      "layout": "Regression case: merged HTML headers with colspan groups; flattened header row is shorter than the data row",
+      "report_note": "merged (`colspan`) header groups - regression case"
+    },
+    {
+      "key": "MMM-FY2018",
+      "issuer": "3M Co",
+      "cik": "0000066740",
+      "accession": "0001558370-19-000470",
+      "period_of_report": "2018-12-31",
+      "layout": "Regression case: older layout whose segment table repeats a 'Net sales' banner row and whose statement title is not adjacent to the table",
+      "report_note": "in-table segment banner - regression case"
+    }
+  ]
+}

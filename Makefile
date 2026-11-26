@@ -1,0 +1,188 @@
+# Atlas Quant — developer tasks
+#
+# Most tasks are offline. `sync-live` and `focus-corpus` need SEC network access and a
+# contact User-Agent as required by SEC fair-access policy.
+
+PYTHON ?= python3
+VENV   ?= .venv
+BIN     = $(VENV)/bin
+DB     ?= var/atlas.db
+CIK    ?= 320193
+FOCUS_DB        ?= var/focus_demo.db
+FOCUS_SNAPSHOTS ?= var/focus/snapshots
+FOCUS_MANIFEST  ?= artifacts/focus_source_manifest.json
+FOCUS_OUT       ?= artifacts/focus_demo
+CERT   ?= $(FOCUS_OUT)/certificate.json
+SEMANTICS_DB        ?= var/answer_semantics/semantics.db
+SEMANTICS_SNAPSHOTS ?= var/answer_semantics/snapshots
+
+.PHONY: help install test demo focus-corpus focus-manifest focus-demo focus-verify semantics-corpus semantics-eval bench cli-init sync sync-live facts history reconcile deps validate stats clean terminal-data serve web-install web-build phase8-fixtures phase8-bench release-manifest app-test
+
+help:
+	@echo "install    create the virtualenv and install the package (editable, dev extras)"
+	@echo "test       run the full offline test suite (count reported by pytest)"
+	@echo "demo       run the offline end-to-end demonstration"
+	@echo "focus-corpus  fetch and archive the FOCUS 10-K corpus (network; needs ATLAS_SEC_USER_AGENT)"
+	@echo "focus-manifest  pin the source manifest that strict verification compares against"
+	@echo "focus-demo  offline FOCUS demonstration: 13 cases, certificates, 16 tamper attempts"
+	@echo "focus-verify  verify one certificate strictly: make focus-verify CERT=path/to/cert.json"
+	@echo "semantics-corpus  fetch and archive the held-out answer-semantics 10-K corpus (network)"
+	@echo "semantics-eval    offline baseline-vs-geometry evaluation on that corpus"
+	@echo "semantics-report  check the report's corpus table against the committed fixtures"
+	@echo "semantics-holdout-{corpus,audit,freeze,run,replay,report,archive,adjudicate}"
+	@echo "semantics-postholdout-dev / semantics-profile  regression and measurement"
+	@echo "bench      run the reproducible benchmark suite"
+	@echo "cli-init   create/migrate the database at $(DB)"
+	@echo "sync       ingest a company from archived fixtures (CIK=$(CIK), no network)"
+	@echo "sync-live  ingest a company from SEC EDGAR (needs ATLAS_SEC_USER_AGENT)"
+	@echo "facts      show point-in-time facts for CIK=$(CIK)"
+	@echo "history    report SEC filing-archive coverage for CIK=$(CIK)"
+	@echo "reconcile  verify stored facts against the source payload for CIK=$(CIK)"
+	@echo "deps       inspect the derived-computation dependency index"
+	@echo "terminal-data  build var/atlas.db with 4 SEC issuers + synthetic market series"
+	@echo "serve      run the terminal API on 127.0.0.1:8000"
+	@echo "phase8-fixtures  rebuild the pinned .atlas package and domain pack"
+	@echo "phase8-bench  measure package build/install/verify/execute"
+	@echo "release-manifest  hash release files and emit an SBOM"
+	@echo "app-test  run only the Phase 8 application contract tests"
+	@echo "web-build  build the React terminal into web/dist"
+	@echo "validate   run dataset integrity checks"
+	@echo "stats      dataset and ingestion statistics"
+	@echo "clean      remove the virtualenv, demo database and benchmark output"
+
+install:
+	$(PYTHON) -m venv $(VENV)
+	$(BIN)/python -m pip install --quiet --upgrade pip
+	$(BIN)/python -m pip install --quiet -e ".[dev]"
+
+test:
+	$(BIN)/python -m pytest -q
+
+demo:
+	$(BIN)/atlas demo
+
+# FOCUS has three distinct procedures and never conflates them:
+#   focus-corpus   needs the network and a declared SEC contact User-Agent.
+#   focus-manifest writes the trust anchor; it is deliberate, reviewed and committed.
+#   focus-demo     is offline; it reads the archived bytes and never regenerates the anchor.
+
+focus-corpus:
+	@test -n "$$ATLAS_SEC_USER_AGENT" || (echo "set ATLAS_SEC_USER_AGENT='AtlasQuant/0.1 you@example.com'" && exit 2)
+	$(BIN)/python scripts/focus_build_corpus.py --db $(FOCUS_DB) --snapshots $(FOCUS_SNAPSHOTS)
+
+focus-manifest:
+	$(BIN)/python scripts/focus_manifest.py --db $(FOCUS_DB) --out $(FOCUS_MANIFEST)
+
+focus-demo:
+	$(BIN)/python scripts/focus_demo.py --db $(FOCUS_DB) --snapshots $(FOCUS_SNAPSHOTS) --manifest $(FOCUS_MANIFEST)
+
+# Verifies the flagship certificate by default; pass CERT=... to check another one.
+focus-verify:
+	@test -f "$(CERT)" || (echo "no certificate at $(CERT); run make focus-demo first, or pass CERT=path/to/certificate.json" && exit 2)
+	$(BIN)/atlas verify-certificate $(CERT) --manifest $(FOCUS_MANIFEST) --snapshots $(FOCUS_SNAPSHOTS) --strict
+
+# The answer-semantics milestone follows the same split as FOCUS: network fetch, then
+# offline scoring against committed ground truth. Filing bytes stay under var/.
+semantics-corpus:
+	@test -n "$$ATLAS_SEC_USER_AGENT" || (echo "set ATLAS_SEC_USER_AGENT='AtlasQuant/0.1 you@example.com'" && exit 2)
+	$(BIN)/python scripts/answer_semantics_corpus.py --db $(SEMANTICS_DB) --snapshots $(SEMANTICS_SNAPSHOTS)
+
+semantics-eval:
+	$(BIN)/python scripts/answer_semantics_evaluate.py --db $(SEMANTICS_DB) --snapshots $(SEMANTICS_SNAPSHOTS)
+
+semantics-report:
+	$(BIN)/python scripts/answer_semantics_report_table.py --check
+
+# Prospective holdout: the corpus step is network-only and never parses a filing; the run is
+# offline, verifies the preregistration first and refuses to overwrite its first-run artifact.
+semantics-holdout-corpus:
+	@test -n "$$ATLAS_SEC_USER_AGENT" || (echo "set ATLAS_SEC_USER_AGENT='AtlasQuant/0.1 you@example.com'" && exit 2)
+	$(BIN)/python scripts/answer_semantics_holdout_corpus.py
+
+semantics-holdout-audit:
+	$(BIN)/python scripts/answer_semantics_holdout_audit.py
+
+semantics-holdout-freeze:
+	$(BIN)/python scripts/answer_semantics_holdout_freeze.py --check
+
+semantics-holdout-run:
+	$(BIN)/python scripts/answer_semantics_holdout_evaluate.py
+
+semantics-holdout-replay:
+	$(BIN)/python scripts/answer_semantics_holdout_replay.py
+
+semantics-holdout-report:
+	$(BIN)/python scripts/answer_semantics_holdout_summary.py --check
+
+#: Historical experiment: verified at the commits it names, never against today's source.
+semantics-holdout-archive:
+	$(BIN)/python scripts/answer_semantics_holdout_archive.py --check
+
+semantics-holdout-adjudicate:
+	$(BIN)/python scripts/answer_semantics_holdout_adjudicate.py --check
+
+#: Post-holdout development on the exposed twelve issuers (not an independent evaluation).
+semantics-postholdout-dev:
+	$(BIN)/python scripts/answer_semantics_postholdout_dev.py --iteration 1
+
+semantics-profile:
+	$(BIN)/python scripts/answer_semantics_profile.py
+
+bench:
+	$(BIN)/python benchmarks/bench.py --json benchmarks/out/bench.json
+
+cli-init:
+	$(BIN)/atlas --db $(DB) init
+
+sync:
+	$(BIN)/atlas --db $(DB) sec sync --cik $(CIK) --offline fixtures/sec
+
+sync-live:
+	@test -n "$$ATLAS_SEC_USER_AGENT" || (echo "set ATLAS_SEC_USER_AGENT='AtlasQuant/0.1 you@example.com'" && exit 1)
+	$(BIN)/atlas --db $(DB) sec sync --cik $(CIK)
+
+facts:
+	$(BIN)/atlas --db $(DB) facts --cik $(CIK) --statement income
+
+history:
+	$(BIN)/atlas --db $(DB) sec history --cik $(CIK)
+
+reconcile:
+	$(BIN)/atlas --db $(DB) reconcile --cik $(CIK) --offline fixtures/sec
+
+deps:
+	$(BIN)/atlas --db $(DB) deps
+
+terminal-data:
+	$(PY) scripts/build_terminal_db.py --db $(DB) --force
+
+serve:
+	$(BIN)/atlas --db $(DB) serve --port 8000
+
+web-install:
+	cd web && npm install
+
+web-build:
+	cd web && npm run build
+
+phase8-fixtures:
+	$(BIN)/python scripts/build_phase8_fixtures.py
+
+phase8-bench:
+	$(BIN)/python scripts/benchmark_phase8.py --iterations 3
+
+release-manifest:
+	$(BIN)/python scripts/release_manifest.py
+
+app-test:
+	$(BIN)/python -m pytest -o addopts='' -q -p no:warnings tests/test_phase8_applications.py
+
+validate:
+	$(BIN)/atlas --db $(DB) validate
+
+stats:
+	$(BIN)/atlas --db $(DB) stats
+
+clean:
+	rm -rf $(VENV) var benchmarks/out .pytest_cache .hypothesis
+	find . -name '__pycache__' -type d -prune -exec rm -rf {} +

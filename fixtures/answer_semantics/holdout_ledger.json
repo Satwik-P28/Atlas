@@ -1,0 +1,669 @@
+{
+  "schema": "atlas.answer_semantics.holdout_ledger.v1",
+  "description": "Complete ledger of every question considered for the prospective cohort: scored questions, generated abstention probes and every slot that was recorded but not scored. A not_scored entry is never counted as a success or a failure.",
+  "summary": {
+    "attempted": 63,
+    "scored": 54,
+    "not_scored": 9
+  },
+  "entries": [
+    {
+      "key": "H-8230-01",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Caterpillar Inc",
+      "cik": "0000018230",
+      "accession": "0000018230-23-000011",
+      "concept": "revenue"
+    },
+    {
+      "key": "H-8230-02",
+      "kind": "scored_arithmetic",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Caterpillar Inc",
+      "cik": "0000018230",
+      "accession": "0000018230-23-000011",
+      "concept": "revenue",
+      "computed_percentage": "16.59"
+    },
+    {
+      "key": "H-8230-03",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Caterpillar Inc",
+      "cik": "0000018230",
+      "accession": "0000018230-23-000011",
+      "concept": "total_assets"
+    },
+    {
+      "key": "H-8230-04",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Caterpillar Inc",
+      "cik": "0000018230",
+      "accession": "0000018230-23-000011",
+      "concept": "operating_income"
+    },
+    {
+      "key": "H-8230-05",
+      "kind": "scored_abstention",
+      "status": "scored",
+      "reason": "structurally_unanswerable",
+      "issuer": "Caterpillar Inc",
+      "cik": "0000018230",
+      "accession": "0000018230-23-000011",
+      "concept": "gross_profit",
+      "detail": "Neither the printed statements nor the accession's XBRL facts report gross profit; Caterpillar prints sales, operating costs and operating profit."
+    },
+    {
+      "key": "8230-net_income",
+      "kind": "not_scored",
+      "status": "not_scored",
+      "reason": "concept_tag_absent",
+      "issuer": "Caterpillar Inc",
+      "cik": "0000018230",
+      "accession": "0000018230-23-000011",
+      "slot": "net_income",
+      "detail": "Caterpillar books its result as ProfitLoss and prints 'Profit attributable to common shareholders'; the accession carries no NetIncomeLoss fact, so there is no independent XBRL value for the concept. Recorded, not scored."
+    },
+    {
+      "key": "H-9617-01",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "JPMorgan Chase & Co",
+      "cik": "0000019617",
+      "accession": "0000019617-23-000231",
+      "concept": "revenue"
+    },
+    {
+      "key": "H-9617-02",
+      "kind": "scored_arithmetic",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "JPMorgan Chase & Co",
+      "cik": "0000019617",
+      "accession": "0000019617-23-000231",
+      "concept": "revenue",
+      "computed_percentage": "5.79"
+    },
+    {
+      "key": "H-9617-03",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "JPMorgan Chase & Co",
+      "cik": "0000019617",
+      "accession": "0000019617-23-000231",
+      "concept": "net_income"
+    },
+    {
+      "key": "H-9617-04",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "JPMorgan Chase & Co",
+      "cik": "0000019617",
+      "accession": "0000019617-23-000231",
+      "concept": "total_assets"
+    },
+    {
+      "key": "H-9617-05",
+      "kind": "scored_abstention",
+      "status": "scored",
+      "reason": "structurally_unanswerable",
+      "issuer": "JPMorgan Chase & Co",
+      "cik": "0000019617",
+      "accession": "0000019617-23-000231",
+      "concept": "gross_profit",
+      "detail": "A bank holding company statement reports net interest income, noninterest revenue and provision for credit losses; it prints no gross-profit subtotal and the accession carries no GrossProfit fact."
+    },
+    {
+      "key": "H-0863-01",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Intel Corp",
+      "cik": "0000050863",
+      "accession": "0000050863-23-000006",
+      "concept": "revenue"
+    },
+    {
+      "key": "H-0863-02",
+      "kind": "scored_arithmetic",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Intel Corp",
+      "cik": "0000050863",
+      "accession": "0000050863-23-000006",
+      "concept": "revenue",
+      "computed_percentage": "-20.21"
+    },
+    {
+      "key": "H-0863-03",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Intel Corp",
+      "cik": "0000050863",
+      "accession": "0000050863-23-000006",
+      "concept": "total_assets"
+    },
+    {
+      "key": "H-0863-04",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Intel Corp",
+      "cik": "0000050863",
+      "accession": "0000050863-23-000006",
+      "concept": "gross_profit"
+    },
+    {
+      "key": "0863-net_income",
+      "kind": "not_scored",
+      "status": "not_scored",
+      "reason": "definitional_ambiguity",
+      "issuer": "Intel Corp",
+      "cik": "0000050863",
+      "accession": "0000050863-23-000006",
+      "slot": "net_income",
+      "detail": "The statement prints 'Net income' 8,017 (ProfitLoss, before non-controlling interests) and 'Net income attributable to Intel' 8,014 (NetIncomeLoss). Two different amounts answer 'net income', so the slot was not resolved on the author's judgement and fell through to total assets. Recorded, not scored."
+    },
+    {
+      "key": "H-1439-01",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Oracle Corp",
+      "cik": "0001341439",
+      "accession": "0001564590-22-023675",
+      "concept": "revenue"
+    },
+    {
+      "key": "H-1439-02",
+      "kind": "scored_arithmetic",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Oracle Corp",
+      "cik": "0001341439",
+      "accession": "0001564590-22-023675",
+      "concept": "revenue",
+      "computed_percentage": "4.84"
+    },
+    {
+      "key": "H-1439-03",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Oracle Corp",
+      "cik": "0001341439",
+      "accession": "0001564590-22-023675",
+      "concept": "net_income"
+    },
+    {
+      "key": "H-1439-04",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Oracle Corp",
+      "cik": "0001341439",
+      "accession": "0001564590-22-023675",
+      "concept": "operating_income"
+    },
+    {
+      "key": "H-1439-05",
+      "kind": "scored_abstention",
+      "status": "scored",
+      "reason": "structurally_unanswerable",
+      "issuer": "Oracle Corp",
+      "cik": "0001341439",
+      "accession": "0001564590-22-023675",
+      "concept": "gross_profit",
+      "detail": "Oracle's statement of operations runs from total revenues straight to total operating expenses and operating income; no gross-profit row is printed and the accession carries no GrossProfit fact."
+    },
+    {
+      "key": "H-0727-01",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "United Parcel Service Inc",
+      "cik": "0001090727",
+      "accession": "0001090727-23-000006",
+      "concept": "revenue"
+    },
+    {
+      "key": "H-0727-02",
+      "kind": "scored_arithmetic",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "United Parcel Service Inc",
+      "cik": "0001090727",
+      "accession": "0001090727-23-000006",
+      "concept": "revenue",
+      "computed_percentage": "3.14"
+    },
+    {
+      "key": "H-0727-03",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "United Parcel Service Inc",
+      "cik": "0001090727",
+      "accession": "0001090727-23-000006",
+      "concept": "net_income"
+    },
+    {
+      "key": "H-0727-04",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "United Parcel Service Inc",
+      "cik": "0001090727",
+      "accession": "0001090727-23-000006",
+      "concept": "operating_income"
+    },
+    {
+      "key": "H-0727-05",
+      "kind": "scored_abstention",
+      "status": "scored",
+      "reason": "structurally_unanswerable",
+      "issuer": "United Parcel Service Inc",
+      "cik": "0001090727",
+      "accession": "0001090727-23-000006",
+      "concept": "gross_profit",
+      "detail": "UPS prints revenue, operating expenses and operating profit; it prints no gross-profit subtotal and the accession carries no GrossProfit fact."
+    },
+    {
+      "key": "H-6951-01",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Applied Materials Inc",
+      "cik": "0000006951",
+      "accession": "0000006951-22-000043",
+      "concept": "revenue"
+    },
+    {
+      "key": "H-6951-02",
+      "kind": "scored_arithmetic",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Applied Materials Inc",
+      "cik": "0000006951",
+      "accession": "0000006951-22-000043",
+      "concept": "revenue",
+      "computed_percentage": "11.80"
+    },
+    {
+      "key": "H-6951-03",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Applied Materials Inc",
+      "cik": "0000006951",
+      "accession": "0000006951-22-000043",
+      "concept": "net_income"
+    },
+    {
+      "key": "H-6951-04",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Applied Materials Inc",
+      "cik": "0000006951",
+      "accession": "0000006951-22-000043",
+      "concept": "gross_profit"
+    },
+    {
+      "key": "H-8724-01",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Amazon.com Inc",
+      "cik": "0001018724",
+      "accession": "0001018724-23-000004",
+      "concept": "revenue"
+    },
+    {
+      "key": "H-8724-02",
+      "kind": "scored_arithmetic",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Amazon.com Inc",
+      "cik": "0001018724",
+      "accession": "0001018724-23-000004",
+      "concept": "revenue",
+      "computed_percentage": "9.40"
+    },
+    {
+      "key": "H-8724-03",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Amazon.com Inc",
+      "cik": "0001018724",
+      "accession": "0001018724-23-000004",
+      "concept": "total_assets"
+    },
+    {
+      "key": "H-8724-04",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Amazon.com Inc",
+      "cik": "0001018724",
+      "accession": "0001018724-23-000004",
+      "concept": "operating_income"
+    },
+    {
+      "key": "8724-net_income",
+      "kind": "not_scored",
+      "status": "not_scored",
+      "reason": "negative_print",
+      "issuer": "Amazon.com Inc",
+      "cik": "0001018724",
+      "accession": "0001018724-23-000004",
+      "slot": "net_income",
+      "detail": "Amazon's consolidated net result for 2022 is printed as a parenthesised loss (-2,722 million). A parenthesised cell cannot round-trip the gold contract's unsigned printed-value check, so the slot fell through to total assets. Recorded, not scored."
+    },
+    {
+      "key": "8724-gross_profit_probe",
+      "kind": "not_scored",
+      "status": "not_scored",
+      "reason": "absence_contested",
+      "issuer": "Amazon.com Inc",
+      "cik": "0001018724",
+      "accession": "0001018724-23-000004",
+      "slot": "gross_profit_probe",
+      "detail": "Amazon prints a 'Gross profit' row inside a segment note (\u2014 (465) (2,123)). Absence of the concept is therefore not established, so no abstention probe is generated. Recorded, not scored."
+    },
+    {
+      "key": "H-4489-01",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Walt Disney Co",
+      "cik": "0001744489",
+      "accession": "0001744489-22-000213",
+      "concept": "revenue"
+    },
+    {
+      "key": "H-4489-02",
+      "kind": "scored_arithmetic",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Walt Disney Co",
+      "cik": "0001744489",
+      "accession": "0001744489-22-000213",
+      "concept": "revenue",
+      "computed_percentage": "22.70"
+    },
+    {
+      "key": "H-4489-03",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Walt Disney Co",
+      "cik": "0001744489",
+      "accession": "0001744489-22-000213",
+      "concept": "net_income"
+    },
+    {
+      "key": "H-4489-04",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Walt Disney Co",
+      "cik": "0001744489",
+      "accession": "0001744489-22-000213",
+      "concept": "total_assets"
+    },
+    {
+      "key": "H-4489-05",
+      "kind": "scored_abstention",
+      "status": "scored",
+      "reason": "structurally_unanswerable",
+      "issuer": "Walt Disney Co",
+      "cik": "0001744489",
+      "accession": "0001744489-22-000213",
+      "concept": "gross_profit",
+      "detail": "Disney's statement of income deducts costs and expenses from total revenues and reports segment operating income in a separate reconciliation; the statement prints no gross-profit row and the accession carries no GrossProfit fact."
+    },
+    {
+      "key": "4489-operating_income",
+      "kind": "not_scored",
+      "status": "not_scored",
+      "reason": "segment_only",
+      "issuer": "Walt Disney Co",
+      "cik": "0001744489",
+      "accession": "0001744489-22-000213",
+      "slot": "operating_income",
+      "detail": "The only printed 12,121 figure is 'Total segment operating income', a segment total, not a consolidated statement row. The slot fell through to total assets. Recorded, not scored."
+    },
+    {
+      "key": "H-2927-01",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Boeing Co",
+      "cik": "0000012927",
+      "accession": "0000012927-23-000007",
+      "concept": "revenue"
+    },
+    {
+      "key": "H-2927-02",
+      "kind": "scored_arithmetic",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Boeing Co",
+      "cik": "0000012927",
+      "accession": "0000012927-23-000007",
+      "concept": "revenue",
+      "computed_percentage": "6.94"
+    },
+    {
+      "key": "H-2927-03",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Boeing Co",
+      "cik": "0000012927",
+      "accession": "0000012927-23-000007",
+      "concept": "total_assets"
+    },
+    {
+      "key": "2927-net_income",
+      "kind": "not_scored",
+      "status": "not_scored",
+      "reason": "negative_print",
+      "issuer": "Boeing Co",
+      "cik": "0000012927",
+      "accession": "0000012927-23-000007",
+      "slot": "net_income",
+      "detail": "Boeing's consolidated result for 2022 is a parenthesised loss (-4,935 million). By the printed-sign rule the slot fell through to total assets. Recorded, not scored."
+    },
+    {
+      "key": "2927-third_substantive",
+      "kind": "not_scored",
+      "status": "not_scored",
+      "reason": "slot_unavailable",
+      "issuer": "Boeing Co",
+      "cik": "0000012927",
+      "accession": "0000012927-23-000007",
+      "slot": "third_substantive",
+      "detail": "GrossProfit is tagged at 3,502 but no gross-profit row is printed; the consolidated operating result is also a parenthesised loss (-3,547 million). With total assets already the second slot, no third substantive slot exists for this filing. Recorded, not scored."
+    },
+    {
+      "key": "H-1800-01",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Abbott Laboratories",
+      "cik": "0000001800",
+      "accession": "0001628280-23-004026",
+      "concept": "revenue"
+    },
+    {
+      "key": "H-1800-02",
+      "kind": "scored_arithmetic",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Abbott Laboratories",
+      "cik": "0000001800",
+      "accession": "0001628280-23-004026",
+      "concept": "revenue",
+      "computed_percentage": "1.34"
+    },
+    {
+      "key": "H-1800-03",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Abbott Laboratories",
+      "cik": "0000001800",
+      "accession": "0001628280-23-004026",
+      "concept": "net_income"
+    },
+    {
+      "key": "H-1800-04",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Abbott Laboratories",
+      "cik": "0000001800",
+      "accession": "0001628280-23-004026",
+      "concept": "total_assets"
+    },
+    {
+      "key": "H-1800-05",
+      "kind": "scored_abstention",
+      "status": "scored",
+      "reason": "structurally_unanswerable",
+      "issuer": "Abbott Laboratories",
+      "cik": "0000001800",
+      "accession": "0001628280-23-004026",
+      "concept": "gross_profit",
+      "detail": "Abbott's consolidated statement of earnings prints net sales, cost of products sold and operating earnings; gross profit appears only as a percentage in narrative, with no amount row and no GrossProfit fact."
+    },
+    {
+      "key": "1800-operating_income",
+      "kind": "not_scored",
+      "status": "not_scored",
+      "reason": "alias_gap",
+      "issuer": "Abbott Laboratories",
+      "cik": "0000001800",
+      "accession": "0001628280-23-004026",
+      "slot": "operating_income",
+      "detail": "Abbott prints 'Operating Earnings' 8,362; the shared concept vocabulary has no alias for that wording. Following the development-set precedent for Walmart's 'Total revenues', the wording gap is recorded as a limitation and the slot fell through to total assets rather than being scored against a vocabulary the system does not have."
+    },
+    {
+      "key": "H-8911-01",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "FedEx Corp",
+      "cik": "0001048911",
+      "accession": "0000950170-22-012762",
+      "concept": "revenue"
+    },
+    {
+      "key": "H-8911-02",
+      "kind": "scored_arithmetic",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "FedEx Corp",
+      "cik": "0001048911",
+      "accession": "0000950170-22-012762",
+      "concept": "revenue",
+      "computed_percentage": "11.38"
+    },
+    {
+      "key": "H-8911-03",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "FedEx Corp",
+      "cik": "0001048911",
+      "accession": "0000950170-22-012762",
+      "concept": "net_income"
+    },
+    {
+      "key": "H-8911-04",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "FedEx Corp",
+      "cik": "0001048911",
+      "accession": "0000950170-22-012762",
+      "concept": "operating_income"
+    },
+    {
+      "key": "H-8911-05",
+      "kind": "scored_abstention",
+      "status": "scored",
+      "reason": "structurally_unanswerable",
+      "issuer": "FedEx Corp",
+      "cik": "0001048911",
+      "accession": "0000950170-22-012762",
+      "concept": "gross_profit",
+      "detail": "FedEx's statement of income goes from revenue to operating expenses and operating income; no gross-profit row is printed and the accession carries no GrossProfit fact."
+    },
+    {
+      "key": "H-0667-01",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Lowe's Companies Inc",
+      "cik": "0000060667",
+      "accession": "0000060667-22-000038",
+      "concept": "revenue"
+    },
+    {
+      "key": "H-0667-02",
+      "kind": "scored_arithmetic",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Lowe's Companies Inc",
+      "cik": "0000060667",
+      "accession": "0000060667-22-000038",
+      "concept": "revenue",
+      "computed_percentage": "7.43"
+    },
+    {
+      "key": "H-0667-03",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Lowe's Companies Inc",
+      "cik": "0000060667",
+      "accession": "0000060667-22-000038",
+      "concept": "net_income"
+    },
+    {
+      "key": "H-0667-04",
+      "kind": "scored_lookup",
+      "status": "scored",
+      "reason": "printed_and_xbrl_agree",
+      "issuer": "Lowe's Companies Inc",
+      "cik": "0000060667",
+      "accession": "0000060667-22-000038",
+      "concept": "operating_income"
+    },
+    {
+      "key": "0667-gross_profit",
+      "kind": "not_scored",
+      "status": "not_scored",
+      "reason": "no_printed_row",
+      "issuer": "Lowe's Companies Inc",
+      "cik": "0000060667",
+      "accession": "0000060667-22-000038",
+      "slot": "gross_profit",
+      "detail": "GrossProfit is tagged at 32,056, but the statement of earnings prints no gross-profit row for it. The slot fell through to operating income. Recorded, not scored."
+    }
+  ]
+}

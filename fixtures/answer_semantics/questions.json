@@ -1,0 +1,1049 @@
+{
+  "schema": "atlas.answer_semantics.questions.v1",
+  "description": "Development-set real-filing questions (permanently development-only; not independent confirmation). Every question is accession-scoped to the filing it names, except AS-23, which is an as-of vintage question that must legitimately search several IBM filings.",
+  "period_convention": "period is the calendar year of the fiscal period end (the document's period_of_report), not the filer's fiscal-year label. Sprouts and United Natural Foods both label a January/August year by the prior calendar year; the evaluation states the period end in the question text.",
+  "abstention_policy": "conflicting_evidence means two 10-K vintages report different amounts for the same fiscal period; structurally_unanswerable means the statement never prints the concept. Both are scored as justified only when the system refuses for that reason or because the evidence is absent from the document.",
+  "questions": [
+    {
+      "id": "AS-01",
+      "question": "For Walmart's fiscal year ended January 31, 2023, what were consolidated net sales?",
+      "issuer_cik": "0000104169",
+      "accession": "0000104169-23-000020",
+      "cutoff": "2023-03-19T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "revenue",
+      "period": "2023",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2023-01-31",
+          "accn": "0000104169-23-000020"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000104169-23-000020",
+            "row_labels": [
+              "Net sales"
+            ],
+            "raw": "605,881",
+            "scale": 6,
+            "period": "2023"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "january_fiscal_year"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; printed income-statement row reviewed in colspan-expanded geometry",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-02",
+      "question": "What were Walmart's total assets at January 31, 2023?",
+      "issuer_cik": "0000104169",
+      "accession": "0000104169-23-000020",
+      "cutoff": "2023-03-19T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "total_assets",
+      "period": "2023",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Assets",
+          "end": "2023-01-31",
+          "accn": "0000104169-23-000020"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000104169-23-000020",
+            "row_labels": [
+              "Total assets"
+            ],
+            "raw": "243,197",
+            "scale": 6,
+            "period": "2023"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "balance_sheet"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; printed balance-sheet row reviewed in geometry",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-03",
+      "question": "For Apple's fiscal year ended September 30, 2023, what were total net sales?",
+      "issuer_cik": "0000320193",
+      "accession": "0000320193-23-000106",
+      "cutoff": "2023-11-04T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "revenue",
+      "period": "2023",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2023-09-30",
+          "accn": "0000320193-23-000106"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000320193-23-000106",
+            "row_labels": [
+              "Total net sales"
+            ],
+            "raw": "383,285",
+            "scale": 6,
+            "period": "2023"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "segment_table_present"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; the filing also prints a reportable-segment net-sales table whose total equals the statement row",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-04",
+      "question": "What was Apple's net income for the fiscal year ended September 30, 2023?",
+      "issuer_cik": "0000320193",
+      "accession": "0000320193-23-000106",
+      "cutoff": "2023-11-04T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "net_income",
+      "period": "2023",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "NetIncomeLoss",
+          "end": "2023-09-30",
+          "accn": "0000320193-23-000106"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000320193-23-000106",
+            "row_labels": [
+              "Net income"
+            ],
+            "raw": "96,995",
+            "scale": 6,
+            "period": "2023"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; printed income-statement row reviewed",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-05",
+      "question": "What were Apple's total assets at September 30, 2023?",
+      "issuer_cik": "0000320193",
+      "accession": "0000320193-23-000106",
+      "cutoff": "2023-11-04T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "total_assets",
+      "period": "2023",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Assets",
+          "end": "2023-09-30",
+          "accn": "0000320193-23-000106"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000320193-23-000106",
+            "row_labels": [
+              "Total assets"
+            ],
+            "raw": "352,583",
+            "scale": 6,
+            "period": "2023"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "balance_sheet"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; printed balance-sheet row reviewed",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-06",
+      "question": "For Microsoft's fiscal year ended June 30, 2019, what was total revenue?",
+      "issuer_cik": "0000789019",
+      "accession": "0001564590-19-027952",
+      "cutoff": "2019-08-03T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "revenue",
+      "period": "2019",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2019-06-30",
+          "accn": "0001564590-19-027952"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001564590-19-027952",
+            "row_labels": [
+              "Revenue",
+              "Total revenue"
+            ],
+            "raw": "125,843",
+            "scale": 6,
+            "period": "2019"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "june_fiscal_year"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; product/service subtotals and segment totals must not be substituted",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-07",
+      "question": "What was Microsoft's operating income for the fiscal year ended June 30, 2019?",
+      "issuer_cik": "0000789019",
+      "accession": "0001564590-19-027952",
+      "cutoff": "2019-08-03T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "operating_income",
+      "period": "2019",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "OperatingIncomeLoss",
+          "end": "2019-06-30",
+          "accn": "0001564590-19-027952"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001564590-19-027952",
+            "row_labels": [
+              "Operating income"
+            ],
+            "raw": "42,959",
+            "scale": 6,
+            "period": "2019"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; non-GAAP operating income printed elsewhere must not be substituted",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-08",
+      "question": "For PepsiCo's fiscal year ended December 28, 2019, what was net revenue?",
+      "issuer_cik": "0000077476",
+      "accession": "0000077476-20-000015",
+      "cutoff": "2020-02-15T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "revenue",
+      "period": "2019",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Revenues",
+          "end": "2019-12-28",
+          "accn": "0000077476-20-000015"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000077476-20-000015",
+            "row_labels": [
+              "Net revenue",
+              "Net Revenue"
+            ],
+            "raw": "67,161",
+            "scale": 6,
+            "period": "2019"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "fifty_three_week_year"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; division-level net revenue rows also exist and must not be substituted",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-09",
+      "question": "For Sprouts Farmers Market's fiscal year ended January 2, 2022, what were net sales?",
+      "issuer_cik": "0001575515",
+      "accession": "0000950170-22-001976",
+      "cutoff": "2022-02-26T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "revenue",
+      "period": "2022",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-01-02",
+          "accn": "0000950170-22-001976"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 3,
+        "citations": [
+          {
+            "accession": "0000950170-22-001976",
+            "row_labels": [
+              "Net sales"
+            ],
+            "raw": "6,099,869",
+            "scale": 3,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "scale_3",
+        "fiscal_label_differs_from_period_end"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; the filer calls the year ended January 2, 2022 'fiscal 2021' in several tables, so the question states the period end",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-10",
+      "question": "What were Sprouts Farmers Market's total assets at January 2, 2022?",
+      "issuer_cik": "0001575515",
+      "accession": "0000950170-22-001976",
+      "cutoff": "2022-02-26T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "total_assets",
+      "period": "2022",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Assets",
+          "end": "2022-01-02",
+          "accn": "0000950170-22-001976"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 3,
+        "citations": [
+          {
+            "accession": "0000950170-22-001976",
+            "row_labels": [
+              "Total assets"
+            ],
+            "raw": "2,923,115",
+            "scale": 3,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "scale_3",
+        "balance_sheet"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; statements printed in thousands",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-11",
+      "question": "For United Natural Foods' fiscal year ended July 30, 2022, what were net sales?",
+      "issuer_cik": "0001020859",
+      "accession": "0001020859-22-000054",
+      "cutoff": "2022-09-29T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "revenue",
+      "period": "2022",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-07-30",
+          "accn": "0001020859-22-000054"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001020859-22-000054",
+            "row_labels": [
+              "Net sales"
+            ],
+            "raw": "28,928",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "july_fiscal_year",
+        "product_mix_table"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; the in-table banner reads '(in millions)'",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-12",
+      "question": "What were Deere's total assets at October 28, 2018?",
+      "issuer_cik": "0000315189",
+      "accession": "0001047469-18-007694",
+      "cutoff": "2018-12-19T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "total_assets",
+      "period": "2018",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Assets",
+          "end": "2018-10-28",
+          "accn": "0001047469-18-007694"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001047469-18-007694",
+            "row_labels": [
+              "Total assets"
+            ],
+            "raw": "70,108.0",
+            "scale": 6,
+            "period": "2018"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "october_fiscal_year",
+        "pre_2020_layout"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; older EDGAR layout with statements in one document",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-13",
+      "question": "What was IBM's net income for the fiscal year ended December 31, 2018?",
+      "issuer_cik": "0000051143",
+      "accession": "0001047469-19-000712",
+      "cutoff": "2019-03-01T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "net_income",
+      "period": "2018",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "NetIncomeLoss",
+          "end": "2018-12-31",
+          "accn": "0001047469-19-000712"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001047469-19-000712",
+            "row_labels": [
+              "Net income"
+            ],
+            "raw": "8,728",
+            "scale": 6,
+            "period": "2018"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "statement_of_earnings"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; the statement is titled 'Consolidated Statement of Earnings', a title the baseline's statement vocabulary does not recognise",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-14",
+      "question": "For IBM's fiscal year ended December 31, 2018, what was total revenue?",
+      "issuer_cik": "0000051143",
+      "accession": "0001047469-19-000712",
+      "cutoff": "2019-03-01T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "revenue",
+      "period": "2018",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Revenues",
+          "end": "2018-12-31",
+          "accn": "0001047469-19-000712"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001047469-19-000712",
+            "row_labels": [
+              "Total revenue",
+              "Revenue"
+            ],
+            "raw": "79,591",
+            "scale": 6,
+            "period": "2018"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "statements_in_item_8_exhibit"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; the financial statements live in the Item 8 exhibit of this accession",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-15",
+      "question": "For IBM's fiscal year ended December 31, 2017, what was gross profit as originally reported, evaluated before the FY2018 filing became public?",
+      "issuer_cik": "0000051143",
+      "accession": "0001047469-18-001117",
+      "cutoff": "2018-06-01T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "gross_profit",
+      "period": "2017",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "GrossProfit",
+          "end": "2017-12-31",
+          "accn": "0001047469-18-001117"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001047469-18-001117",
+            "row_labels": [
+              "Gross profit"
+            ],
+            "raw": "36,227",
+            "scale": 6,
+            "period": "2017"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "single_vintage_visible"
+      ],
+      "review": {
+        "method": "XBRL fact filed with the FY2017 10-K; at this cutoff the restated FY2018 comparative is not yet public",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-16",
+      "question": "What were Chevron's total assets at December 31, 2021?",
+      "issuer_cik": "0000093410",
+      "accession": "0000093410-22-000019",
+      "cutoff": "2022-02-26T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "total_assets",
+      "period": "2021",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Assets",
+          "end": "2021-12-31",
+          "accn": "0000093410-22-000019"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000093410-22-000019",
+            "row_labels": [
+              "Total Assets"
+            ],
+            "raw": "239,535",
+            "scale": 6,
+            "period": "2021"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "balance_sheet"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; printed balance-sheet row reviewed",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-17",
+      "question": "For Coca-Cola's fiscal year ended December 31, 2022, what were consolidated net operating revenues?",
+      "issuer_cik": "0000021344",
+      "accession": "0000021344-23-000011",
+      "cutoff": "2023-06-30T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "revenue",
+      "period": "2022",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Revenues",
+          "end": "2022-12-31",
+          "accn": "0000021344-23-000011"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000021344-23-000011",
+            "row_labels": [
+              "Net Operating Revenues"
+            ],
+            "raw": "43,004",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "regression_merged_header"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; the flattened header row prints 2021 beside the 2022 column, which the geometry path must not repeat",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-18",
+      "question": "For 3M's fiscal year ended December 31, 2018, what were consolidated net sales?",
+      "issuer_cik": "0000066740",
+      "accession": "0001558370-19-000470",
+      "cutoff": "2024-01-01T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "revenue",
+      "period": "2018",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Revenues",
+          "end": "2018-12-31",
+          "accn": "0001558370-19-000470"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001558370-19-000470",
+            "row_labels": [
+              "Net sales"
+            ],
+            "raw": "32,765",
+            "scale": 6,
+            "period": "2018"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "regression_segment_banner"
+      ],
+      "review": {
+        "method": "XBRL fact for the filing's own accession; the filing prints the same name in a segment banner row and in the consolidated statement",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-19",
+      "question": "By what percentage did Apple's total net sales change from the fiscal year ended September 24, 2022 to the fiscal year ended September 30, 2023?",
+      "issuer_cik": "0000320193",
+      "accession": "0000320193-23-000106",
+      "cutoff": "2023-11-04T00:00:00Z",
+      "scope": "accession",
+      "operator": "percentage_change",
+      "concept": "revenue",
+      "period": "2023",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2023-09-30",
+          "accn": "0000320193-23-000106"
+        },
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-09-24",
+          "accn": "0000320193-23-000106"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2022",
+        "citations": [
+          {
+            "accession": "0000320193-23-000106",
+            "row_labels": [
+              "Total net sales"
+            ],
+            "raw": "383,285",
+            "scale": 6,
+            "period": "2023"
+          },
+          {
+            "accession": "0000320193-23-000106",
+            "row_labels": [
+              "Total net sales"
+            ],
+            "raw": "394,328",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "arithmetic"
+      ],
+      "review": {
+        "method": "both XBRL facts filed with the same accession; arithmetic recomputed exactly with the independent Fraction verifier",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-20",
+      "question": "By what percentage did Microsoft's total revenue change from the fiscal year ended June 30, 2018 to the fiscal year ended June 30, 2019?",
+      "issuer_cik": "0000789019",
+      "accession": "0001564590-19-027952",
+      "cutoff": "2019-08-03T00:00:00Z",
+      "scope": "accession",
+      "operator": "percentage_change",
+      "concept": "revenue",
+      "period": "2019",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2019-06-30",
+          "accn": "0001564590-19-027952"
+        },
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2018-06-30",
+          "accn": "0001564590-19-027952"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2018",
+        "citations": [
+          {
+            "accession": "0001564590-19-027952",
+            "row_labels": [
+              "Revenue",
+              "Total revenue"
+            ],
+            "raw": "125,843",
+            "scale": 6,
+            "period": "2019"
+          },
+          {
+            "accession": "0001564590-19-027952",
+            "row_labels": [
+              "Revenue",
+              "Total revenue"
+            ],
+            "raw": "110,360",
+            "scale": 6,
+            "period": "2018"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "arithmetic"
+      ],
+      "review": {
+        "method": "both XBRL facts filed with the same accession; arithmetic recomputed exactly",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-21",
+      "question": "What was Sprouts Farmers Market's operating margin for the fiscal year ended January 2, 2022?",
+      "issuer_cik": "0001575515",
+      "accession": "0000950170-22-001976",
+      "cutoff": "2022-02-26T00:00:00Z",
+      "scope": "accession",
+      "operator": "margin",
+      "concept": "revenue",
+      "period": "2022",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "OperatingIncomeLoss",
+          "end": "2022-01-02",
+          "accn": "0000950170-22-001976"
+        },
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-01-02",
+          "accn": "0000950170-22-001976"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 3,
+        "numerator": "operating_income",
+        "citations": [
+          {
+            "accession": "0000950170-22-001976",
+            "row_labels": [
+              "Operating income",
+              "Income from operations"
+            ],
+            "raw": "334,076",
+            "scale": 3,
+            "period": "2022"
+          },
+          {
+            "accession": "0000950170-22-001976",
+            "row_labels": [
+              "Net sales"
+            ],
+            "raw": "6,099,869",
+            "scale": 3,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "scale_3",
+        "arithmetic"
+      ],
+      "review": {
+        "method": "both XBRL facts filed with the same accession; margin recomputed exactly",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-22",
+      "question": "What was Walmart's operating margin for the fiscal year ended January 31, 2023, measured against net sales?",
+      "issuer_cik": "0000104169",
+      "accession": "0000104169-23-000020",
+      "cutoff": "2023-03-19T00:00:00Z",
+      "scope": "accession",
+      "operator": "margin",
+      "concept": "revenue",
+      "period": "2023",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "OperatingIncomeLoss",
+          "end": "2023-01-31",
+          "accn": "0000104169-23-000020"
+        },
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2023-01-31",
+          "accn": "0000104169-23-000020"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "numerator": "operating_income",
+        "citations": [
+          {
+            "accession": "0000104169-23-000020",
+            "row_labels": [
+              "Operating income"
+            ],
+            "raw": "20,428",
+            "scale": 6,
+            "period": "2023"
+          },
+          {
+            "accession": "0000104169-23-000020",
+            "row_labels": [
+              "Net sales"
+            ],
+            "raw": "605,881",
+            "scale": 6,
+            "period": "2023"
+          }
+        ]
+      },
+      "tags": [
+        "scale_6",
+        "arithmetic",
+        "net_sales_definition"
+      ],
+      "review": {
+        "method": "operating income over net sales (not total revenues, which adds membership income); both from XBRL facts of the same accession",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-23",
+      "question": "What was IBM's gross profit for the fiscal year ended December 31, 2017, evaluated after the FY2018 10-K restated the comparative?",
+      "issuer_cik": "0000051143",
+      "accession": "0001047469-19-000712",
+      "cutoff": "2019-03-01T00:00:00Z",
+      "scope": "as_of",
+      "operator": "lookup",
+      "concept": "gross_profit",
+      "period": "2017",
+      "gold_class": "conflicting_evidence",
+      "xbrl": [],
+      "expect": {
+        "outcome": "abstained",
+        "note": "Two 10-K vintages report different FY2017 gross profit: 36,227 (FY2017 10-K) and 36,943 (FY2018 10-K, restated). Both become public before this cutoff, so no single amount is supported."
+      },
+      "tags": [
+        "restatement",
+        "justified_abstention"
+      ],
+      "review": {
+        "method": "both vintages are in the SEC XBRL facts for the same period with different values; neither filing retracts the other",
+        "reviewed_at": "2026-11-23"
+      }
+    },
+    {
+      "id": "AS-24",
+      "question": "What was Chevron's gross profit for the fiscal year ended December 31, 2021?",
+      "issuer_cik": "0000093410",
+      "accession": "0000093410-22-000019",
+      "cutoff": "2022-02-26T00:00:00Z",
+      "scope": "accession",
+      "operator": "lookup",
+      "concept": "gross_profit",
+      "period": "2021",
+      "gold_class": "structurally_unanswerable",
+      "xbrl": [],
+      "expect": {
+        "outcome": "abstained",
+        "note": "Chevron's income statement has no gross profit line and no GrossProfit XBRL fact for FY2021; substituting a subtotal would be an unsupported answer."
+      },
+      "tags": [
+        "structurally_unanswerable",
+        "justified_abstention"
+      ],
+      "review": {
+        "method": "no GrossProfit fact in SEC company facts for this period and no printed row; reviewed against the statement",
+        "reviewed_at": "2026-11-23"
+      }
+    }
+  ]
+}

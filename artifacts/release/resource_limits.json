@@ -1,0 +1,88 @@
+{
+  "schema": "atlas.audit.resource_limits.v1",
+  "peak_limit_mb": 2048,
+  "summary": {
+    "pass": 8,
+    "fail": 0,
+    "not_run": 1
+  },
+  "cases": [
+    {
+      "id": "malformed_html",
+      "status": "pass",
+      "detail": "34 KB of malformed markup ingested; 0 tables, 1 units",
+      "seconds": 0.1,
+      "peak_rss_mb": 38.2,
+      "description": "broken nesting and spans in 300 tables"
+    },
+    {
+      "id": "large_financial_table",
+      "status": "pass",
+      "detail": "4,000 x 5 table (353 KB) ingested in the case budget; 1 tables, 2 units",
+      "seconds": 0.19,
+      "peak_rss_mb": 38.2,
+      "description": "4,000-row statement table"
+    },
+    {
+      "id": "oversized_document",
+      "status": "pass",
+      "detail": "typed refusal: document exceeds the ingestion limit (limit=25165824, received=31312026)",
+      "seconds": 0.05,
+      "peak_rss_mb": 96.0,
+      "description": "a 30 MB filing"
+    },
+    {
+      "id": "large_csv",
+      "status": "pass",
+      "detail": "200,000-row CSV parsed into 28 bars",
+      "seconds": 2.55,
+      "peak_rss_mb": 109.1,
+      "description": "200,000-row market CSV"
+    },
+    {
+      "id": "archive_expansion",
+      "status": "pass",
+      "detail": "16 KB zip expanding to 16 MB and a 200-entry package both refused (2/2)",
+      "seconds": 0.13,
+      "peak_rss_mb": 109.1,
+      "description": "ZIP bomb and entry-count limit"
+    },
+    {
+      "id": "repeated_invalid_requests",
+      "status": "pass",
+      "detail": "200/200 invalid requests refused with 4xx; health after load=True",
+      "seconds": 1.88,
+      "peak_rss_mb": 109.1,
+      "description": "200 concurrent invalid API requests"
+    },
+    {
+      "id": "cancellation",
+      "status": "pass",
+      "detail": "20 connections dropped mid-response; health afterwards=True",
+      "seconds": 2.53,
+      "peak_rss_mb": 109.1,
+      "description": "clients dropping mid-response"
+    },
+    {
+      "id": "concurrent_mcp",
+      "status": "pass",
+      "detail": "4/4 concurrent MCP sessions answered initialize",
+      "seconds": 0.87,
+      "peak_rss_mb": 109.1,
+      "description": "four simultaneous MCP sessions"
+    },
+    {
+      "id": "expensive_model_requests",
+      "status": "not_run",
+      "seconds": null,
+      "peak_rss_mb": 109.1,
+      "detail": "no model provider is configured in this environment; an expensive model request cannot be issued and is not claimed as tested",
+      "description": "expensive language-model request"
+    }
+  ],
+  "limitations": [
+    "Bounded audit, not a fuzzing campaign or a memory-profiler trace.",
+    "Single-process SQLite; no multi-user isolation is exercised by design.",
+    "The oversized-document case records that the work finished inside the bound; it does not establish a maximum supported filing size."
+  ]
+}

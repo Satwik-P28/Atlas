@@ -1,0 +1,111 @@
+{
+  "schema": "atlas.market_overview_benchmark.v1",
+  "generated_at": "2026-11-10T04:09:44Z",
+  "cutoff": "2024-12-31",
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+    "cpu_count": 2,
+    "sqlite": "3.45.1"
+  },
+  "methodology": {
+    "statements": "counted at Database.execute, the single primitive every read path reaches; the Phase 9.2.7 counter wrapped query/query_one/execute and counted each statement twice",
+    "cold": "first call in the process, after the database build",
+    "warm": "median and p95 of 2 consecutive calls in the same process",
+    "memory": "peak traced Python allocation of one bulk overview (tracemalloc)",
+    "parity": "the two plans must return the identical document, compared exactly"
+  },
+  "note": "Synthetic prices generated from an index; two providers on every tenth security and one revision on every twentieth. Latencies and query plans only, not market results.",
+  "tiers": [
+    {
+      "securities": 100,
+      "sessions": 260,
+      "bar_rows": 28610,
+      "database_bytes": 14843904,
+      "conflicting_sessions": 2600,
+      "revised_sessions": 10,
+      "overview_items": 100,
+      "scalar": {
+        "cold_ms": 442.87,
+        "warm": {
+          "runs": 2,
+          "median_ms": 432.66,
+          "p95_ms": 432.72,
+          "min_ms": 432.6,
+          "max_ms": 432.72
+        },
+        "statements": 1202,
+        "statements_per_item": 12.02,
+        "peak_tracemalloc_bytes": 1236387
+      },
+      "bulk": {
+        "cold_ms": 432.0,
+        "warm": {
+          "runs": 2,
+          "median_ms": 430.46,
+          "p95_ms": 433.1,
+          "min_ms": 427.83,
+          "max_ms": 433.1
+        },
+        "statements": 9,
+        "statements_per_item": 0.09,
+        "peak_tracemalloc_bytes": 956917,
+        "projection_version": "atlas.market_overview.bulk.v1"
+      },
+      "speedup": {
+        "cold_x": 1.03,
+        "warm_median_x": 1.01
+      },
+      "statement_reduction_x": 133.56,
+      "peak_memory_reduction_x": 1.29,
+      "correctness_parity": true,
+      "first_mismatch": null,
+      "sqlite_integrity": "ok"
+    },
+    {
+      "securities": 1000,
+      "sessions": 260,
+      "bar_rows": 286100,
+      "database_bytes": 142221312,
+      "conflicting_sessions": 26000,
+      "revised_sessions": 100,
+      "overview_items": 1000,
+      "scalar": {
+        "cold_ms": 4817.28,
+        "warm": {
+          "runs": 2,
+          "median_ms": 4829.63,
+          "p95_ms": 4843.84,
+          "min_ms": 4815.42,
+          "max_ms": 4843.84
+        },
+        "statements": 12002,
+        "statements_per_item": 12.0,
+        "peak_tracemalloc_bytes": 3950606
+      },
+      "bulk": {
+        "cold_ms": 4288.92,
+        "warm": {
+          "runs": 2,
+          "median_ms": 4294.3,
+          "p95_ms": 4310.23,
+          "min_ms": 4278.37,
+          "max_ms": 4310.23
+        },
+        "statements": 9,
+        "statements_per_item": 0.01,
+        "peak_tracemalloc_bytes": 5046964,
+        "projection_version": "atlas.market_overview.bulk.v1"
+      },
+      "speedup": {
+        "cold_x": 1.12,
+        "warm_median_x": 1.12
+      },
+      "statement_reduction_x": 1333.56,
+      "peak_memory_reduction_x": 0.78,
+      "correctness_parity": true,
+      "first_mismatch": null,
+      "sqlite_integrity": "ok"
+    }
+  ]
+}

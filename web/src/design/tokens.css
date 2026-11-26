@@ -1,0 +1,177 @@
+/* Atlas design tokens.
+ *
+ * Two systems, one vocabulary: surfaces, borders, text, semantic movement,
+ * spacing, density and numeric typography. Standard is light-first and
+ * comfortable; Advanced is dark-first and compact. Components never hard-code
+ * a colour, so both systems stay legible when the theme changes.
+ */
+
+:root {
+  /* Typography --------------------------------------------------------- */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --text-2xs: 10px;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-base: 13px;
+  --text-md: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 26px;
+  --leading-tight: 1.2;
+  --leading-normal: 1.45;
+
+  /* Spacing scale ------------------------------------------------------ */
+  --space-0: 0;
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 12px;
+  --space-6: 16px;
+  --space-7: 20px;
+  --space-8: 28px;
+  --space-9: 40px;
+
+  /* Density ------------------------------------------------------------ */
+  --density-row: 30px;
+  --density-control: 30px;
+  --density-pad: 10px;
+
+  /* Radius: deliberate restraint, not decoration ---------------------- */
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+  --hairline: 1px solid var(--border);
+  --divider: 1px solid var(--border);
+}
+
+/* Standard: light ------------------------------------------------------ */
+:root,
+[data-theme="light"] {
+  --bg: #f7f8fa;
+  --bg-elevated: #ffffff;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --bg-subtle: #f1f3f6;
+  --border: #dde3ea;
+  --border-strong: #c3ccd6;
+  --text: #0f1720;
+  --text-muted: #55636f;
+  --text-faint: #78858f;
+  --accent: #0b62c4;
+  --accent-soft: rgba(11, 98, 196, 0.08);
+  --positive: #12703a;
+  --positive-soft: rgba(18, 112, 58, 0.08);
+  --negative: #b42318;
+  --negative-soft: rgba(180, 35, 24, 0.08);
+  --warn: #8a5a00;
+  --warn-soft: rgba(138, 90, 0, 0.1);
+  --synthetic: #6b3fb5;
+  --chart-grid: rgba(15, 23, 32, 0.07);
+  --overlay: rgba(15, 23, 32, 0.45);
+  --shadow-panel: 0 1px 2px rgba(15, 23, 32, 0.06);
+}
+
+/* Standard: dark ------------------------------------------------------- */
+[data-theme="dark"] {
+  --bg: #0b0f14;
+  --bg-elevated: #0f151c;
+  --bg-card: #111923;
+  --bg-input: #0c1219;
+  --bg-subtle: #0d141b;
+  --border: #1e2a36;
+  --border-strong: #2b3a48;
+  --text: #e6edf3;
+  --text-muted: #93a1ae;
+  --text-faint: #6b7987;
+  --accent: #58b6e8;
+  --accent-soft: rgba(88, 182, 232, 0.12);
+  --positive: #3fb950;
+  --positive-soft: rgba(63, 185, 80, 0.12);
+  --negative: #f85149;
+  --negative-soft: rgba(248, 81, 73, 0.12);
+  --warn: #d29922;
+  --warn-soft: rgba(210, 153, 34, 0.12);
+  --synthetic: #b087f5;
+  --chart-grid: rgba(230, 237, 243, 0.07);
+  --overlay: rgba(0, 0, 0, 0.55);
+  --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Advanced: dark-first workstation ------------------------------------ */
+[data-mode="advanced"] {
+  --bg: #080b0f;
+  --bg-elevated: #10151b;
+  --bg-card: #10151b;
+  --bg-input: #0b1015;
+  --bg-subtle: #0c1116;
+  --bg-raised: #161d25;
+  --border: #27313c;
+  --border-strong: #35424f;
+  --text: #e7edf4;
+  --text-muted: #98a6b5;
+  --text-faint: #71808f;
+  --accent: #4fb3d9;
+  --accent-soft: rgba(79, 179, 217, 0.14);
+  --positive: #46b17b;
+  --positive-soft: rgba(70, 177, 123, 0.12);
+  --negative: #d96459;
+  --negative-soft: rgba(217, 100, 89, 0.12);
+  --warn: #d9a441;
+  --warn-soft: rgba(217, 164, 65, 0.12);
+  --synthetic: #9d7bea;
+  --chart-grid: rgba(231, 237, 244, 0.06);
+  --overlay: rgba(4, 6, 9, 0.7);
+  --shadow-panel: none;
+  --radius-md: 4px;
+  --density-row: 26px;
+  --density-control: 26px;
+  --density-pad: 8px;
+  --text-base: 12.5px;
+}
+
+[data-mode="advanced"][data-theme="light"] {
+  /* A light Advanced theme still exists, but the workstation defaults to dark. */
+  --bg: #eef1f4;
+  --bg-elevated: #ffffff;
+  --bg-card: #ffffff;
+  --bg-input: #f5f7f9;
+  --bg-raised: #f8fafb;
+  --border: #d7dee5;
+  --border-strong: #bcc7d1;
+  --text: #11181f;
+  --text-muted: #55626e;
+  --text-faint: #75828d;
+}
+
+/* Numeric text: tabular everywhere, never letter-spaced ----------------- */
+.num,
+.mono,
+.fin-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.fin-num { font-size: var(--text-base); text-align: right; }
+.fin-num.is-negative { color: var(--negative); }
+.fin-num.is-positive { color: var(--positive); }
+.fin-num.is-missing { color: var(--text-faint); }
+
+/* Focus visibility is part of the system, not an afterthought ---------- */
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

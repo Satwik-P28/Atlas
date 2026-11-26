@@ -1,0 +1,11 @@
+{
+  "schema": "atlas.beta_eval_results.v1",
+  "release_label": "v0.2.0-beta.1",
+  "status": "not_run",
+  "sessions": [],
+  "notes": [
+    "No external participant has run the beta protocol for this release. This file exists so the absence of results is recorded rather than implied.",
+    "The protocol, task sheet, rubric, questionnaire, defect template and consent wording are in docs/BETA_EVALUATION_PACKAGE.md; the record format is docs/beta_eval_results.schema.json.",
+    "Automated browser acceptance is not a substitute for this evaluation and is not recorded here."
+  ]
+}

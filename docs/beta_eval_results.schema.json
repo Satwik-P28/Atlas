@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "atlas.beta_eval_results.v1",
+  "title": "Atlas external beta evaluation results",
+  "description": "One document per participant session. Empty results with status not_run is the correct record when no session was held. This release records no sessions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "release_label", "status", "sessions"],
+  "properties": {
+    "schema": {"const": "atlas.beta_eval_results.v1"},
+    "release_label": {"type": "string", "examples": ["v0.2.0-beta.1"]},
+    "status": {"enum": ["not_run", "partial", "complete"]},
+    "sessions": {"type": "array", "items": {"$ref": "#/$defs/session"}},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "not_run"}}},
+      "then": {"properties": {"sessions": {"maxItems": 0}}}
+    }
+  ],
+  "$defs": {
+    "session": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "role",
+        "experience_band",
+        "seen_atlas_before",
+        "tasks",
+        "rubric",
+        "questionnaire",
+        "interventions",
+        "consent",
+        "defects"
+      ],
+      "properties": {
+        "participant_id": {"type": "string", "pattern": "^P[0-9]{2,3}$"},
+        "role": {"enum": ["analyst", "researcher", "student", "technical_non_finance", "other"]},
+        "experience_band": {"enum": ["0-2y", "3-7y", "8y+"]},
+        "seen_atlas_before": {"type": "boolean"},
+        "session_minutes": {"type": "number", "minimum": 0},
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "completed", "seconds", "notes"],
+            "properties": {
+              "id": {"enum": ["T1", "T2", "T3", "T4", "T5"]},
+              "completed": {"type": "boolean"},
+              "seconds": {"type": "number", "minimum": 0},
+              "notes": {"type": "string"}
+            }
+          }
+        },
+        "interventions": {"type": "integer", "minimum": 0},
+        "rubric": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "installation_success",
+            "time_to_first_result",
+            "evidence_location",
+            "synthetic_distinction",
+            "refusal_comprehension",
+            "reproduction",
+            "interface_coherence",
+            "perceived_utility"
+          ],
+          "properties": {
+            "installation_success": {"type": "integer", "minimum": 1, "maximum": 4},
+            "time_to_first_result": {"type": "integer", "minimum": 1, "maximum": 4},
+            "evidence_location": {"type": "integer", "minimum": 1, "maximum": 4},
+            "synthetic_distinction": {"type": "integer", "minimum": 1, "maximum": 4},
+            "refusal_comprehension": {"type": "integer", "minimum": 1, "maximum": 4},
+            "reproduction": {"type": "integer", "minimum": 1, "maximum": 4},
+            "interface_coherence": {"type": "integer", "minimum": 1, "maximum": 4},
+            "perceived_utility": {"type": "integer", "minimum": 1, "maximum": 4}
+          }
+        },
+        "questionnaire": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["likert", "free_text"],
+          "properties": {
+            "likert": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"],
+              "properties": {
+                "q1": {"type": "integer", "minimum": 1, "maximum": 5},
+                "q2": {"type": "integer", "minimum": 1, "maximum": 5},
+                "q3": {"type": "integer", "minimum": 1, "maximum": 5},
+                "q4": {"type": "integer", "minimum": 1, "maximum": 5},
+                "q5": {"type": "integer", "minimum": 1, "maximum": 5},
+                "q6": {"type": "integer", "minimum": 1, "maximum": 5},
+                "q7": {"type": "integer", "minimum": 1, "maximum": 5},
+                "q8": {"type": "integer", "minimum": 1, "maximum": 5},
+                "q9": {"type": "integer", "minimum": 1, "maximum": 5},
+                "q10": {"type": "integer", "minimum": 1, "maximum": 5}
+              }
+            },
+            "free_text": {"type": "string"}
+          }
+        },
+        "consent": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["recorded", "scope"],
+          "properties": {
+            "recorded": {"type": "boolean"},
+            "scope": {"enum": ["screen_audio", "screen_only", "notes_only"]}
+          }
+        },
+        "defects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "task", "severity", "category", "observed", "expected"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^BETA-P[0-9]{2,3}-[0-9]+$"},
+              "task": {"type": "string"},
+              "severity": {"enum": ["blocker", "major", "minor", "cosmetic"]},
+              "category": {
+                "enum": [
+                  "install",
+                  "evidence",
+                  "refusal",
+                  "data-label",
+                  "reproduction",
+                  "navigation",
+                  "documentation"
+                ]
+              },
+              "observed": {"type": "string"},
+              "expected": {"type": "string"},
+              "reproduce": {"type": "string"},
+              "evidence_ref": {"type": "string"}
+            }
+          }
+        },
+        "quotes": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "most_confusing_moment": {"type": "string"},
+            "most_valuable_capability": {"type": "string"},
+            "incorrect_belief": {"type": "string"}
+          }
+        }
+      }
+    }
+  }
+}

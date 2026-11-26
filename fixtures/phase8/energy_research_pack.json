@@ -1,0 +1,76 @@
+{
+  "applications": [
+    {
+      "application_id": "atlas.firstparty.weather-demand-ercot",
+      "path": "flagship_weather_demand.atlas",
+      "sha256": "92ab1bf753438a0f534a080697abca9c638da11521e13c1dc43700883c82227b",
+      "version": "1.0.0"
+    }
+  ],
+  "capabilities": [
+    "execute_fec_operator",
+    "render_declarative_ui"
+  ],
+  "compatibility": {
+    "maximum_exclusive": "0.4.0",
+    "minimum": "0.3.0"
+  },
+  "created_at": "2026-11-05T23:59:59Z",
+  "dependencies": {
+    "compiler": "atlas.fec.compiler.v1",
+    "operators": [
+      {
+        "name": "mul",
+        "version": "1.0.0"
+      }
+    ]
+  },
+  "kind": "declarative",
+  "license": "Apache-2.0 for pack metadata; source data retains its listed public-domain terms.",
+  "limitations": [
+    "The pack carries one explicit weather-demand application; it is not a marketplace.",
+    "It contains no real-estate, private-location, executable-plugin or collaboration component.",
+    "The application remains an association, not an identified causal effect."
+  ],
+  "name": "Energy research essentials",
+  "object_types": [
+    "weather_demand_analysis",
+    "application"
+  ],
+  "pack_id": "atlas.energy-research",
+  "publisher": {
+    "id": "atlas.first-party",
+    "name": "Atlas Quant first-party"
+  },
+  "resources": {
+    "max_package_bytes": 8388608
+  },
+  "schema": "atlas.domain_pack.v1",
+  "sources": [
+    {
+      "license": "U.S. Government public domain",
+      "redistribution": "permitted",
+      "source_id": "eia-930"
+    },
+    {
+      "license": "U.S. Government public domain",
+      "redistribution": "permitted",
+      "source_id": "noaa-ghcn"
+    }
+  ],
+  "test_vectors": [
+    {
+      "expected": {
+        "status": "reproduced",
+        "test_r2": -0.8934655019352953,
+        "test_rmse": 2956.577890101359
+      },
+      "name": "Flagship panel reproduces"
+    }
+  ],
+  "validation": {
+    "expected_status": "reproduced",
+    "mode": "package-integrity-and-runtime-reproduction"
+  },
+  "version": "1.0.0"
+}

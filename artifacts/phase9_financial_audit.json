@@ -1,0 +1,2358 @@
+{
+  "coverage": {
+    "financial_coverage_valid": 16,
+    "issuers": 20,
+    "methodology_rejected": 3,
+    "valuation_economically_supported": 17,
+    "valuation_eligible": 17,
+    "valuation_executes": 17,
+    "with_prices": 0
+  },
+  "database": "var/phase9.db",
+  "failures": [],
+  "filings": [
+    {
+      "forms": {
+        "10-K": 789,
+        "10-Q": 787
+      },
+      "non_annual_fy_facts_retained": 10,
+      "non_annual_fy_facts_sample": [
+        {
+          "concept": "eps_basic",
+          "evidence_id": "EV-2669fceb45f35465a2225530",
+          "fiscal_period": "FY",
+          "period_end": "2018-03-31",
+          "period_start": "2017-12-31"
+        },
+        {
+          "concept": "eps_basic",
+          "evidence_id": "EV-3d7d02905b6755e097321ae9",
+          "fiscal_period": "FY",
+          "period_end": "2018-03-31",
+          "period_start": "2017-12-31"
+        },
+        {
+          "concept": "eps_basic",
+          "evidence_id": "EV-46ecb976f4535d34900d634d",
+          "fiscal_period": "FY",
+          "period_end": "2018-06-30",
+          "period_start": "2018-04-01"
+        }
+      ],
+      "overlapping_facts": [
+        {
+          "accessions": 3,
+          "concept": "eps_basic",
+          "distinct_values": 3,
+          "n": 5,
+          "period_end": "2018-09-29"
+        },
+        {
+          "accessions": 3,
+          "concept": "eps_basic",
+          "distinct_values": 4,
+          "n": 5,
+          "period_end": "2019-09-28"
+        },
+        {
+          "accessions": 3,
+          "concept": "eps_diluted",
+          "distinct_values": 3,
+          "n": 5,
+          "period_end": "2018-09-29"
+        },
+        {
+          "accessions": 3,
+          "concept": "eps_diluted",
+          "distinct_values": 4,
+          "n": 5,
+          "period_end": "2019-09-28"
+        },
+        {
+          "accessions": 3,
+          "concept": "gross_profit",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2018-09-29"
+        },
+        {
+          "accessions": 3,
+          "concept": "gross_profit",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2019-09-28"
+        },
+        {
+          "accessions": 3,
+          "concept": "net_income",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2018-09-29"
+        },
+        {
+          "accessions": 3,
+          "concept": "net_income",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2019-09-28"
+        },
+        {
+          "accessions": 3,
+          "concept": "revenue",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2018-09-29"
+        },
+        {
+          "accessions": 3,
+          "concept": "revenue",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2019-09-28"
+        }
+      ],
+      "revision_kinds": {
+        "original": 1576
+      },
+      "selected_revenue_duration_days": 363.0,
+      "status": "pass",
+      "ticker": "AAPL"
+    },
+    {
+      "forms": {
+        "10-K": 504,
+        "10-Q": 760
+      },
+      "non_annual_fy_facts_retained": 0,
+      "non_annual_fy_facts_sample": [],
+      "overlapping_facts": [
+        {
+          "accessions": 2,
+          "concept": "cost_of_revenue",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "cost_of_revenue",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "cost_of_revenue",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2025-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "cost_of_revenue",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2025-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2025-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2025-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-09-30"
+        }
+      ],
+      "revision_kinds": {
+        "original": 1264
+      },
+      "selected_revenue_duration_days": 364.0,
+      "status": "pass",
+      "ticker": "GOOGL"
+    },
+    {
+      "forms": {
+        "10-K": 488,
+        "10-Q": 566
+      },
+      "non_annual_fy_facts_retained": 0,
+      "non_annual_fy_facts_sample": [],
+      "overlapping_facts": [
+        {
+          "accessions": 2,
+          "concept": "depreciation_amortization",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2023-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "depreciation_amortization",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "depreciation_amortization",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2023-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2023-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "income_tax_expense",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2023-09-30"
+        }
+      ],
+      "revision_kinds": {
+        "original": 1054
+      },
+      "selected_revenue_duration_days": 364.0,
+      "status": "pass",
+      "ticker": "XOM"
+    },
+    {
+      "forms": {
+        "10-K": 770,
+        "10-Q": 825
+      },
+      "non_annual_fy_facts_retained": 10,
+      "non_annual_fy_facts_sample": [
+        {
+          "concept": "cost_of_revenue",
+          "evidence_id": "EV-ee09e9570c5e50b08a501c73",
+          "fiscal_period": "FY",
+          "period_end": "2018-01-28",
+          "period_start": "2017-10-30"
+        },
+        {
+          "concept": "cost_of_revenue",
+          "evidence_id": "EV-2dcc1a09f8dc5a209923845f",
+          "fiscal_period": "FY",
+          "period_end": "2018-01-28",
+          "period_start": "2017-10-30"
+        },
+        {
+          "concept": "cost_of_revenue",
+          "evidence_id": "EV-303956fb15a55c509b63b2a7",
+          "fiscal_period": "FY",
+          "period_end": "2018-04-29",
+          "period_start": "2018-01-29"
+        }
+      ],
+      "overlapping_facts": [
+        {
+          "accessions": 3,
+          "concept": "cost_of_revenue",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2018-01-28"
+        },
+        {
+          "accessions": 3,
+          "concept": "cost_of_revenue",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2019-01-27"
+        },
+        {
+          "accessions": 3,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2018-01-28"
+        },
+        {
+          "accessions": 3,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2019-01-27"
+        },
+        {
+          "accessions": 3,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2018-01-28"
+        },
+        {
+          "accessions": 3,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2019-01-27"
+        },
+        {
+          "accessions": 3,
+          "concept": "gross_profit",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2018-01-28"
+        },
+        {
+          "accessions": 3,
+          "concept": "gross_profit",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2019-01-27"
+        },
+        {
+          "accessions": 3,
+          "concept": "net_income",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2018-01-28"
+        },
+        {
+          "accessions": 3,
+          "concept": "net_income",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2019-01-27"
+        }
+      ],
+      "revision_kinds": {
+        "original": 1595
+      },
+      "selected_revenue_duration_days": 363.0,
+      "status": "pass",
+      "ticker": "NVDA"
+    },
+    {
+      "forms": {
+        "10-K": 691,
+        "10-Q": 713
+      },
+      "non_annual_fy_facts_retained": 10,
+      "non_annual_fy_facts_sample": [
+        {
+          "concept": "cost_of_revenue",
+          "evidence_id": "EV-ad3f85c3dbf158b289927c46",
+          "fiscal_period": "FY",
+          "period_end": "2018-03-31",
+          "period_start": "2018-01-01"
+        },
+        {
+          "concept": "cost_of_revenue",
+          "evidence_id": "EV-03012b22bd4f5feba730977a",
+          "fiscal_period": "FY",
+          "period_end": "2018-03-31",
+          "period_start": "2018-01-01"
+        },
+        {
+          "concept": "cost_of_revenue",
+          "evidence_id": "EV-4478e5eb76185a41bf4e998b",
+          "fiscal_period": "FY",
+          "period_end": "2018-06-30",
+          "period_start": "2018-04-01"
+        }
+      ],
+      "overlapping_facts": [
+        {
+          "accessions": 3,
+          "concept": "cost_of_revenue",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2018-12-31"
+        },
+        {
+          "accessions": 3,
+          "concept": "cost_of_revenue",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2019-12-31"
+        },
+        {
+          "accessions": 3,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2018-12-31"
+        },
+        {
+          "accessions": 3,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2019-12-31"
+        },
+        {
+          "accessions": 3,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2018-12-31"
+        },
+        {
+          "accessions": 3,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2019-12-31"
+        },
+        {
+          "accessions": 3,
+          "concept": "net_income_common",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2018-12-31"
+        },
+        {
+          "accessions": 3,
+          "concept": "net_income_common",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2019-12-31"
+        },
+        {
+          "accessions": 3,
+          "concept": "revenue",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2018-12-31"
+        },
+        {
+          "accessions": 3,
+          "concept": "revenue",
+          "distinct_values": 2,
+          "n": 5,
+          "period_end": "2019-12-31"
+        }
+      ],
+      "revision_kinds": {
+        "original": 1404
+      },
+      "selected_revenue_duration_days": 364.0,
+      "status": "pass",
+      "ticker": "CAT"
+    },
+    {
+      "forms": {
+        "10-K": 437,
+        "10-Q": 483
+      },
+      "non_annual_fy_facts_retained": 0,
+      "non_annual_fy_facts_sample": [],
+      "overlapping_facts": [
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2025-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2025-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2025-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2025-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "income_tax_expense",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "income_tax_expense",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-09-30"
+        }
+      ],
+      "revision_kinds": {
+        "original": 920
+      },
+      "selected_revenue_duration_days": 364.0,
+      "status": "pass",
+      "ticker": "JPM"
+    },
+    {
+      "forms": {
+        "10-K": 409,
+        "10-K/A": 1,
+        "10-Q": 555
+      },
+      "non_annual_fy_facts_retained": 0,
+      "non_annual_fy_facts_sample": [],
+      "overlapping_facts": [
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2023-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_basic",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2025-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "eps_diluted",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2025-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "income_tax_expense",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-06-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "income_tax_expense",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2024-09-30"
+        },
+        {
+          "accessions": 2,
+          "concept": "income_tax_expense",
+          "distinct_values": 2,
+          "n": 4,
+          "period_end": "2025-06-30"
+        }
+      ],
+      "revision_kinds": {
+        "amendment": 1,
+        "original": 964
+      },
+      "selected_revenue_duration_days": null,
+      "status": "pass",
+      "ticker": "GS"
+    }
+  ],
+  "generated_at": "2026-11-05T23:28:21Z",
+  "historical_cutoff": [
+    {
+      "historical_as_of": "2020-01-01T00:00:00Z",
+      "historical_period_end": "2019-09-28",
+      "latest_evidence_available_at": "2026-11-03T13:05:15Z",
+      "latest_period_end": "2026-09-26",
+      "leaks_future_period": false,
+      "status": "pass",
+      "ticker": "AAPL"
+    },
+    {
+      "historical_as_of": "2020-01-01T00:00:00Z",
+      "historical_period_end": "2018-12-31",
+      "latest_evidence_available_at": "2026-02-05T02:56:03Z",
+      "latest_period_end": "2025-12-31",
+      "leaks_future_period": false,
+      "status": "pass",
+      "ticker": "GOOGL"
+    },
+    {
+      "historical_as_of": "2020-01-01T00:00:00Z",
+      "historical_period_end": "2018-12-31",
+      "latest_evidence_available_at": "2026-02-18T21:06:52Z",
+      "latest_period_end": "2025-12-31",
+      "leaks_future_period": false,
+      "status": "pass",
+      "ticker": "XOM"
+    },
+    {
+      "historical_as_of": "2020-01-01T00:00:00Z",
+      "historical_period_end": "2019-01-27",
+      "latest_evidence_available_at": "2026-02-25T21:42:19Z",
+      "latest_period_end": "2026-01-25",
+      "leaks_future_period": false,
+      "status": "pass",
+      "ticker": "NVDA"
+    },
+    {
+      "historical_as_of": "2020-01-01T00:00:00Z",
+      "historical_period_end": "2018-12-31",
+      "latest_evidence_available_at": "2026-02-13T15:18:27Z",
+      "latest_period_end": "2025-12-31",
+      "leaks_future_period": false,
+      "status": "pass",
+      "ticker": "CAT"
+    },
+    {
+      "historical_as_of": "2020-01-01T00:00:00Z",
+      "historical_period_end": "2018-12-31",
+      "latest_evidence_available_at": "2026-02-13T21:20:00Z",
+      "latest_period_end": "2025-12-31",
+      "leaks_future_period": false,
+      "status": "pass",
+      "ticker": "JPM"
+    },
+    {
+      "historical_as_of": "2020-01-01T00:00:00Z",
+      "historical_period_end": "2018-12-31",
+      "latest_evidence_available_at": null,
+      "latest_period_end": "2025-12-31",
+      "leaks_future_period": false,
+      "status": "pass",
+      "ticker": "GS"
+    }
+  ],
+  "limitations": [
+    "The comparison is limited to one reference annual period per issuer and to the concepts whose XBRL tags are unambiguous in this fixture.",
+    "Total debt is compared as the sum of the raw debt tags present; a filer that reports debt only inside a combined line is not independently reconstructable.",
+    "Amendments are resolved by filing date in this audit; that is a policy choice, not an assertion that every restatement is economically correct.",
+    "No market prices exist in this fixture, so market-implied valuation and any price-based share-count cross-check are unavailable."
+  ],
+  "market_prices": {
+    "issuers": 20,
+    "issuers_with_bars": 0,
+    "metrics": [
+      {
+        "issuer_id": "ISS-CIK0000320193",
+        "legal_name": "Apple Inc.",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000789019",
+        "legal_name": "MICROSOFT CORP",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0001652044",
+        "legal_name": "Alphabet Inc.",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0001018724",
+        "legal_name": "AMAZON COM INC",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0001326801",
+        "legal_name": "Meta Platforms, Inc.",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0001045810",
+        "legal_name": "NVIDIA CORP",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000051143",
+        "legal_name": "INTERNATIONAL BUSINESS MACHINES CORP",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000019617",
+        "legal_name": "JPMORGAN CHASE & CO",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000886982",
+        "legal_name": "GOLDMAN SACHS GROUP INC",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000200406",
+        "legal_name": "JOHNSON & JOHNSON",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000078003",
+        "legal_name": "PFIZER INC",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000731766",
+        "legal_name": "UNITEDHEALTH GROUP INC",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000034088",
+        "legal_name": "EXXON MOBIL CORP",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000093410",
+        "legal_name": "CHEVRON CORP",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000018230",
+        "legal_name": "CATERPILLAR INC",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000315189",
+        "legal_name": "DEERE & CO",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000021344",
+        "legal_name": "COCA COLA CO",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000077476",
+        "legal_name": "PEPSICO INC",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000104169",
+        "legal_name": "Walmart Inc.",
+        "market_cap_present": false,
+        "price": null
+      },
+      {
+        "issuer_id": "ISS-CIK0000909832",
+        "legal_name": "COSTCO WHOLESALE CORP /NEW",
+        "market_cap_present": false,
+        "price": null
+      }
+    ],
+    "note": "The compact real-company fixture bundles no market prices.",
+    "status": "pass"
+  },
+  "method": "Raw SEC companyfacts JSON is re-parsed with independent fiscal-period and tag-priority logic and compared with Atlas evidence at the issuer's reference annual period. Amendments win by filing date, not by database insertion order.",
+  "package_roundtrip": {
+    "actual_outputs": {
+      "enterprise_value": 3552669510893.5947,
+      "equity_value": 3510860510893.5947,
+      "fcff": [
+        153867935656.58484,
+        177040133751.56525,
+        203702017740.24234,
+        234379127219.10797,
+        269676146978.77588
+      ],
+      "pv_explicit": 788780789986.6721,
+      "pv_terminal": 2763888720906.923,
+      "revenue_forecast": [
+        550945426303.7622,
+        633916686711.9594,
+        729383250148.4625,
+        839226883830.0295,
+        965612745288.1658
+      ],
+      "terminal_value": 4252585394665.312,
+      "value_per_share": 241.59082981479995
+    },
+    "audit_verdict": "supported",
+    "deterministic": true,
+    "execution_status": "reproduced",
+    "expected_outputs": {
+      "enterprise_value": 3552669510893.5947,
+      "equity_value": 3510860510893.5947,
+      "pv_explicit": 788780789986.6721,
+      "pv_terminal": 2763888720906.923,
+      "terminal_value": 4252585394665.312,
+      "value_per_share": 241.59082981479995
+    },
+    "findings": [],
+    "identifier": "AAPL",
+    "install_status": "installed",
+    "mismatches": {},
+    "package_id": "APKG-f2770bb1563eb77aee48",
+    "package_sha256": "02169370ba2566474fe46696e36abd17f29d9fe553c5fca319ab56d95c791c6e",
+    "report_sha256_matches": true,
+    "reproduced": true,
+    "signature_status": "unsigned",
+    "size_bytes": 32123,
+    "status": "pass"
+  },
+  "raw_comparisons": [
+    {
+      "checks": [
+        {
+          "atlas": 478834000000.0,
+          "atlas_source": {
+            "accession_number": "0000320193-26-000026",
+            "evidence_id": "EV-05305383e8585811be3aad37",
+            "form_type": "10-K",
+            "source_concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+          },
+          "difference": 0.0,
+          "name": "revenue",
+          "note": null,
+          "raw": 478834000000.0,
+          "raw_source": {
+            "accession_number": "0000320193-26-000026",
+            "days": 363,
+            "filed": "2026-11-03",
+            "form_type": "10-K",
+            "tag": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 132175000000.0,
+          "atlas_source": {
+            "accession_number": "0000320193-26-000026",
+            "evidence_id": "EV-e9886f5ea46253debeb3f605",
+            "form_type": "10-K",
+            "source_concept": "NetIncomeLoss"
+          },
+          "difference": 0.0,
+          "name": "net_income",
+          "note": null,
+          "raw": 132175000000.0,
+          "raw_source": {
+            "accession_number": "0000320193-26-000026",
+            "days": 363,
+            "filed": "2026-11-03",
+            "form_type": "10-K",
+            "tag": "us-gaap:NetIncomeLoss",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 145097000000.0,
+          "atlas_source": {
+            "accession_number": "0000320193-26-000026",
+            "evidence_id": "EV-bb580b99df7058249c6b60a6",
+            "form_type": "10-K",
+            "source_concept": "NetCashProvidedByUsedInOperatingActivities"
+          },
+          "difference": 0.0,
+          "name": "operating_cash_flow",
+          "note": null,
+          "raw": 145097000000.0,
+          "raw_source": {
+            "accession_number": "0000320193-26-000026",
+            "days": 363,
+            "filed": "2026-11-03",
+            "form_type": "10-K",
+            "tag": "us-gaap:NetCashProvidedByUsedInOperatingActivities",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 9041000000.0,
+          "atlas_source": {
+            "accession_number": "0000320193-26-000026",
+            "evidence_id": "EV-cfda9cbc15f65df2ac0a0cf3",
+            "form_type": "10-K",
+            "source_concept": "PaymentsToAcquirePropertyPlantAndEquipment"
+          },
+          "difference": 0.0,
+          "name": "capex",
+          "note": "capex is compared as a magnitude",
+          "raw": 9041000000.0,
+          "raw_source": {
+            "accession_number": "0000320193-26-000026",
+            "days": 363,
+            "filed": "2026-11-03",
+            "form_type": "10-K",
+            "tag": "us-gaap:PaymentsToAcquirePropertyPlantAndEquipment",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 14532259000.0,
+          "atlas_source": {
+            "accession_number": "0000320193-26-000026",
+            "evidence_id": "EV-b5f5525af2b05f94a8d10b85",
+            "form_type": "10-K",
+            "source_concept": "CommonStockSharesOutstanding"
+          },
+          "difference": 0.0,
+          "name": "shares_outstanding",
+          "note": null,
+          "raw": 14532259000.0,
+          "raw_source": {
+            "accession_number": "0000320193-26-000026",
+            "filed": "2026-11-03",
+            "form_type": "10-K",
+            "tag": "us-gaap:CommonStockSharesOutstanding",
+            "unit": null
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 14720306000.0,
+          "name": "weighted_average_shares_diluted",
+          "raw": null,
+          "reason": "raw SEC payload has no annual observation for this period",
+          "status": "unavailable"
+        },
+        {
+          "atlas": 78114000000.0,
+          "atlas_source": {
+            "evidence_ids": [
+              "EV-38562432764e5f4a961715e9",
+              "EV-94e1a20379285264925b0887"
+            ],
+            "formula": "sum of reported long-term and short-term debt evidence"
+          },
+          "difference": 0.0,
+          "name": "total_debt",
+          "note": null,
+          "raw": 78114000000.0,
+          "raw_source": {
+            "components": [
+              68208000000.0,
+              9906000000.0
+            ],
+            "tags": [
+              "us-gaap:LongTermDebtNoncurrent",
+              "us-gaap:LongTermDebtCurrent"
+            ]
+          },
+          "status": "pass"
+        }
+      ],
+      "failures": [],
+      "issuer_id": "ISS-CIK0000320193",
+      "legal_name": "Apple Inc.",
+      "period_end": "2026-09-26",
+      "sic": "3571",
+      "status": "pass",
+      "ticker": "AAPL"
+    },
+    {
+      "checks": [
+        {
+          "atlas": 402836000000.0,
+          "atlas_source": {
+            "accession_number": "0001652044-26-000018",
+            "evidence_id": "EV-5da39d34048c5aebbe664bdb",
+            "form_type": "10-K",
+            "source_concept": "Revenues"
+          },
+          "difference": 0.0,
+          "name": "revenue",
+          "note": null,
+          "raw": 402836000000.0,
+          "raw_source": {
+            "accession_number": "0001652044-26-000018",
+            "days": 364,
+            "filed": "2026-02-05",
+            "form_type": "10-K",
+            "tag": "us-gaap:Revenues",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 132170000000.0,
+          "atlas_source": {
+            "accession_number": "0001652044-26-000018",
+            "evidence_id": "EV-b4bcf1e9ffa35e58a138ecc9",
+            "form_type": "10-K",
+            "source_concept": "NetIncomeLoss"
+          },
+          "difference": 0.0,
+          "name": "net_income",
+          "note": null,
+          "raw": 132170000000.0,
+          "raw_source": {
+            "accession_number": "0001652044-26-000018",
+            "days": 364,
+            "filed": "2026-02-05",
+            "form_type": "10-K",
+            "tag": "us-gaap:NetIncomeLoss",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 164713000000.0,
+          "atlas_source": {
+            "accession_number": "0001652044-26-000018",
+            "evidence_id": "EV-561e4c53813e5dd29908ccd8",
+            "form_type": "10-K",
+            "source_concept": "NetCashProvidedByUsedInOperatingActivities"
+          },
+          "difference": 0.0,
+          "name": "operating_cash_flow",
+          "note": null,
+          "raw": 164713000000.0,
+          "raw_source": {
+            "accession_number": "0001652044-26-000018",
+            "days": 364,
+            "filed": "2026-02-05",
+            "form_type": "10-K",
+            "tag": "us-gaap:NetCashProvidedByUsedInOperatingActivities",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 91447000000.0,
+          "atlas_source": {
+            "accession_number": "0001652044-26-000018",
+            "evidence_id": "EV-88ecca3a00fa50ab9741e366",
+            "form_type": "10-K",
+            "source_concept": "PaymentsToAcquirePropertyPlantAndEquipment"
+          },
+          "difference": 0.0,
+          "name": "capex",
+          "note": "capex is compared as a magnitude",
+          "raw": 91447000000.0,
+          "raw_source": {
+            "accession_number": "0001652044-26-000018",
+            "days": 364,
+            "filed": "2026-02-05",
+            "form_type": "10-K",
+            "tag": "us-gaap:PaymentsToAcquirePropertyPlantAndEquipment",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 12088000000.0,
+          "atlas_source": {
+            "accession_number": "0001652044-26-000084",
+            "evidence_id": "EV-a80e98fd028b577ab66e9d7d",
+            "form_type": "10-Q",
+            "source_concept": "CommonStockSharesOutstanding"
+          },
+          "difference": 0.0,
+          "name": "shares_outstanding",
+          "note": null,
+          "raw": 12088000000.0,
+          "raw_source": {
+            "accession_number": "0001652044-26-000018",
+            "filed": "2026-02-05",
+            "form_type": "10-K",
+            "tag": "us-gaap:CommonStockSharesOutstanding",
+            "unit": null
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 12230000000.0,
+          "name": "weighted_average_shares_diluted",
+          "raw": null,
+          "reason": "raw SEC payload has no annual observation for this period",
+          "status": "unavailable"
+        },
+        {
+          "atlas": 48543000000.0,
+          "atlas_source": {
+            "evidence_ids": [
+              "EV-d44adc62ef8c546dbe25459b",
+              "EV-23aac96f7efa52f7a728ff69"
+            ],
+            "formula": "sum of reported long-term and short-term debt evidence"
+          },
+          "difference": 0.0,
+          "name": "total_debt",
+          "note": null,
+          "raw": 48543000000.0,
+          "raw_source": {
+            "components": [
+              46547000000.0,
+              1996000000.0
+            ],
+            "tags": [
+              "us-gaap:LongTermDebtNoncurrent",
+              "us-gaap:LongTermDebtCurrent"
+            ]
+          },
+          "status": "pass"
+        }
+      ],
+      "failures": [],
+      "issuer_id": "ISS-CIK0001652044",
+      "legal_name": "Alphabet Inc.",
+      "period_end": "2025-12-31",
+      "sic": "7370",
+      "status": "pass",
+      "ticker": "GOOGL"
+    },
+    {
+      "checks": [
+        {
+          "atlas": 332238000000.0,
+          "atlas_source": {
+            "accession_number": "0000034088-26-000045",
+            "evidence_id": "EV-28e230629089557798b77c70",
+            "form_type": "10-K",
+            "source_concept": "Revenues"
+          },
+          "difference": 0.0,
+          "name": "revenue",
+          "note": null,
+          "raw": 332238000000.0,
+          "raw_source": {
+            "accession_number": "0000034088-26-000045",
+            "days": 364,
+            "filed": "2026-02-18",
+            "form_type": "10-K",
+            "tag": "us-gaap:Revenues",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 28844000000.0,
+          "atlas_source": {
+            "accession_number": "0000034088-26-000045",
+            "evidence_id": "EV-ce22d228c8d254d29a77b083",
+            "form_type": "10-K",
+            "source_concept": "NetIncomeLoss"
+          },
+          "difference": 0.0,
+          "name": "net_income",
+          "note": null,
+          "raw": 28844000000.0,
+          "raw_source": {
+            "accession_number": "0000034088-26-000045",
+            "days": 364,
+            "filed": "2026-02-18",
+            "form_type": "10-K",
+            "tag": "us-gaap:NetIncomeLoss",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 51970000000.0,
+          "atlas_source": {
+            "accession_number": "0000034088-26-000045",
+            "evidence_id": "EV-76b6b779a9b35f0787c30246",
+            "form_type": "10-K",
+            "source_concept": "NetCashProvidedByUsedInOperatingActivities"
+          },
+          "difference": 0.0,
+          "name": "operating_cash_flow",
+          "note": null,
+          "raw": 51970000000.0,
+          "raw_source": {
+            "accession_number": "0000034088-26-000045",
+            "days": 364,
+            "filed": "2026-02-18",
+            "form_type": "10-K",
+            "tag": "us-gaap:NetCashProvidedByUsedInOperatingActivities",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 28358000000.0,
+          "atlas_source": {
+            "accession_number": "0000034088-26-000045",
+            "evidence_id": "EV-45a93a04633f5a56939d2647",
+            "form_type": "10-K",
+            "source_concept": "PaymentsToAcquirePropertyPlantAndEquipment"
+          },
+          "difference": 0.0,
+          "name": "capex",
+          "note": "capex is compared as a magnitude",
+          "raw": 28358000000.0,
+          "raw_source": {
+            "accession_number": "0000034088-26-000045",
+            "days": 364,
+            "filed": "2026-02-18",
+            "form_type": "10-K",
+            "tag": "us-gaap:PaymentsToAcquirePropertyPlantAndEquipment",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 4179000000.0,
+          "atlas_source": {
+            "accession_number": "0000034088-26-000067",
+            "evidence_id": "EV-ab566a9ca75c522db9f81117",
+            "form_type": "10-Q",
+            "source_concept": "CommonStockSharesOutstanding"
+          },
+          "difference": 0.0,
+          "name": "shares_outstanding",
+          "note": null,
+          "raw": 4179000000.0,
+          "raw_source": {
+            "accession_number": "0000034088-26-000045",
+            "filed": "2026-02-18",
+            "form_type": "10-K",
+            "tag": "us-gaap:CommonStockSharesOutstanding",
+            "unit": null
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": null,
+          "name": "weighted_average_shares_diluted",
+          "raw": null,
+          "reason": "raw SEC payload has no annual observation for this period",
+          "status": "unavailable"
+        },
+        {
+          "atlas": 6200000000.0,
+          "atlas_source": {
+            "evidence_ids": [
+              "EV-32413f5dfb7a59298cb2994f"
+            ],
+            "formula": "sum of reported long-term and short-term debt evidence"
+          },
+          "difference": 0.0,
+          "name": "total_debt",
+          "note": null,
+          "raw": 6200000000.0,
+          "raw_source": {
+            "components": [
+              6200000000.0
+            ],
+            "tags": [
+              "us-gaap:LongTermDebtCurrent"
+            ]
+          },
+          "status": "pass"
+        }
+      ],
+      "failures": [],
+      "issuer_id": "ISS-CIK0000034088",
+      "legal_name": "EXXON MOBIL CORP",
+      "period_end": "2025-12-31",
+      "sic": "2911",
+      "status": "pass",
+      "ticker": "XOM"
+    },
+    {
+      "checks": [
+        {
+          "atlas": 215938000000.0,
+          "atlas_source": {
+            "accession_number": "0001045810-26-000021",
+            "evidence_id": "EV-8aa29101ad1a5d78af66e5d5",
+            "form_type": "10-K",
+            "source_concept": "Revenues"
+          },
+          "difference": 0.0,
+          "name": "revenue",
+          "note": null,
+          "raw": 215938000000.0,
+          "raw_source": {
+            "accession_number": "0001045810-26-000021",
+            "days": 363,
+            "filed": "2026-02-25",
+            "form_type": "10-K",
+            "tag": "us-gaap:Revenues",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 120067000000.0,
+          "atlas_source": {
+            "accession_number": "0001045810-26-000021",
+            "evidence_id": "EV-f5526ccc54f5533eac67955e",
+            "form_type": "10-K",
+            "source_concept": "NetIncomeLoss"
+          },
+          "difference": 0.0,
+          "name": "net_income",
+          "note": null,
+          "raw": 120067000000.0,
+          "raw_source": {
+            "accession_number": "0001045810-26-000021",
+            "days": 363,
+            "filed": "2026-02-25",
+            "form_type": "10-K",
+            "tag": "us-gaap:NetIncomeLoss",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 102718000000.0,
+          "atlas_source": {
+            "accession_number": "0001045810-26-000021",
+            "evidence_id": "EV-c3ca9fb1c74e5c3b806f63d5",
+            "form_type": "10-K",
+            "source_concept": "NetCashProvidedByUsedInOperatingActivities"
+          },
+          "difference": 0.0,
+          "name": "operating_cash_flow",
+          "note": null,
+          "raw": 102718000000.0,
+          "raw_source": {
+            "accession_number": "0001045810-26-000021",
+            "days": 363,
+            "filed": "2026-02-25",
+            "form_type": "10-K",
+            "tag": "us-gaap:NetCashProvidedByUsedInOperatingActivities",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 6042000000.0,
+          "atlas_source": {
+            "accession_number": "0001045810-26-000021",
+            "evidence_id": "EV-2a7fadba05935454827ab432",
+            "form_type": "10-K",
+            "source_concept": "PaymentsToAcquireProductiveAssets"
+          },
+          "difference": 0.0,
+          "name": "capex",
+          "note": "capex is compared as a magnitude",
+          "raw": 6042000000.0,
+          "raw_source": {
+            "accession_number": "0001045810-26-000021",
+            "days": 363,
+            "filed": "2026-02-25",
+            "form_type": "10-K",
+            "tag": "us-gaap:PaymentsToAcquireProductiveAssets",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 24304000000.0,
+          "atlas_source": {
+            "accession_number": "0001045810-26-000021",
+            "evidence_id": "EV-cf1f5d8348a35d4589495078",
+            "form_type": "10-K",
+            "source_concept": "CommonStockSharesOutstanding"
+          },
+          "difference": 0.0,
+          "name": "shares_outstanding",
+          "note": null,
+          "raw": 24304000000.0,
+          "raw_source": {
+            "accession_number": "0001045810-26-000021",
+            "filed": "2026-02-25",
+            "form_type": "10-K",
+            "tag": "us-gaap:CommonStockSharesOutstanding",
+            "unit": null
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 24514000000.0,
+          "name": "weighted_average_shares_diluted",
+          "raw": null,
+          "reason": "raw SEC payload has no annual observation for this period",
+          "status": "unavailable"
+        },
+        {
+          "atlas": 8468000000.0,
+          "atlas_source": {
+            "evidence_ids": [
+              "EV-755f4428bd8e5d45b3cfe9ef",
+              "EV-0e5019057432519ab1c162aa"
+            ],
+            "formula": "sum of reported long-term and short-term debt evidence"
+          },
+          "difference": 0.0,
+          "name": "total_debt",
+          "note": null,
+          "raw": 8468000000.0,
+          "raw_source": {
+            "components": [
+              7469000000.0,
+              999000000.0
+            ],
+            "tags": [
+              "us-gaap:LongTermDebtNoncurrent",
+              "us-gaap:LongTermDebtCurrent"
+            ]
+          },
+          "status": "pass"
+        }
+      ],
+      "failures": [],
+      "issuer_id": "ISS-CIK0001045810",
+      "legal_name": "NVIDIA CORP",
+      "period_end": "2026-01-25",
+      "sic": "3674",
+      "status": "pass",
+      "ticker": "NVDA"
+    },
+    {
+      "checks": [
+        {
+          "atlas": 67589000000.0,
+          "atlas_source": {
+            "accession_number": "0000018230-26-000008",
+            "evidence_id": "EV-e5e8f279e4885027b25892a2",
+            "form_type": "10-K",
+            "source_concept": "Revenues"
+          },
+          "difference": 0.0,
+          "name": "revenue",
+          "note": null,
+          "raw": 67589000000.0,
+          "raw_source": {
+            "accession_number": "0000018230-26-000008",
+            "days": 364,
+            "filed": "2026-02-13",
+            "form_type": "10-K",
+            "tag": "us-gaap:Revenues",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 8882000000.0,
+          "name": "net_income",
+          "raw": null,
+          "reason": "raw SEC payload has no annual observation for this period",
+          "status": "unavailable"
+        },
+        {
+          "atlas": 11739000000.0,
+          "atlas_source": {
+            "accession_number": "0000018230-26-000008",
+            "evidence_id": "EV-698edbe23d5659aa8abc17a9",
+            "form_type": "10-K",
+            "source_concept": "NetCashProvidedByUsedInOperatingActivities"
+          },
+          "difference": 0.0,
+          "name": "operating_cash_flow",
+          "note": null,
+          "raw": 11739000000.0,
+          "raw_source": {
+            "accession_number": "0000018230-26-000008",
+            "days": 364,
+            "filed": "2026-02-13",
+            "form_type": "10-K",
+            "tag": "us-gaap:NetCashProvidedByUsedInOperatingActivities",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 2821000000.0,
+          "atlas_source": {
+            "accession_number": "0000018230-26-000008",
+            "evidence_id": "EV-6f8af178857d5f8893f3e3ab",
+            "form_type": "10-K",
+            "source_concept": "PaymentsToAcquirePropertyPlantAndEquipment"
+          },
+          "difference": 0.0,
+          "name": "capex",
+          "note": "capex is compared as a magnitude",
+          "raw": 2821000000.0,
+          "raw_source": {
+            "accession_number": "0000018230-26-000008",
+            "days": 364,
+            "filed": "2026-02-13",
+            "form_type": "10-K",
+            "tag": "us-gaap:PaymentsToAcquirePropertyPlantAndEquipment",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 465300000.0,
+          "atlas_source": {
+            "accession_number": "0000018230-26-000008",
+            "evidence_id": "EV-4017e85b2ab354d4bfa0a624",
+            "form_type": "10-K",
+            "source_concept": "CommonStockSharesOutstanding"
+          },
+          "difference": 0.0,
+          "name": "shares_outstanding",
+          "note": null,
+          "raw": 465300000.0,
+          "raw_source": {
+            "accession_number": "0000018230-26-000008",
+            "filed": "2026-02-13",
+            "form_type": "10-K",
+            "tag": "us-gaap:CommonStockSharesOutstanding",
+            "unit": null
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 472300000.0,
+          "name": "weighted_average_shares_diluted",
+          "raw": null,
+          "reason": "raw SEC payload has no annual observation for this period",
+          "status": "unavailable"
+        },
+        {
+          "atlas": 36210000000.0,
+          "atlas_source": {
+            "evidence_ids": [
+              "EV-5078158afe7e5245a164ce65",
+              "EV-5da648df69ca5297bd766b35"
+            ],
+            "formula": "sum of reported long-term and short-term debt evidence"
+          },
+          "difference": 0.0,
+          "name": "total_debt",
+          "note": null,
+          "raw": 36210000000.0,
+          "raw_source": {
+            "components": [
+              30696000000.0,
+              5514000000.0
+            ],
+            "tags": [
+              "us-gaap:LongTermDebtNoncurrent",
+              "us-gaap:ShortTermBorrowings"
+            ]
+          },
+          "status": "pass"
+        }
+      ],
+      "failures": [],
+      "issuer_id": "ISS-CIK0000018230",
+      "legal_name": "CATERPILLAR INC",
+      "period_end": "2025-12-31",
+      "sic": "3531",
+      "status": "pass",
+      "ticker": "CAT"
+    },
+    {
+      "checks": [
+        {
+          "atlas": 182447000000.0,
+          "atlas_source": {
+            "accession_number": "0001628280-26-008131",
+            "evidence_id": "EV-f484790e837b5a588f2fcd7e",
+            "form_type": "10-K",
+            "source_concept": "Revenues"
+          },
+          "difference": 0.0,
+          "name": "revenue",
+          "note": null,
+          "raw": 182447000000.0,
+          "raw_source": {
+            "accession_number": "0001628280-26-008131",
+            "days": 364,
+            "filed": "2026-02-13",
+            "form_type": "10-K",
+            "tag": "us-gaap:Revenues",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 57048000000.0,
+          "atlas_source": {
+            "accession_number": "0001628280-26-008131",
+            "evidence_id": "EV-7fd1885a23e2593e8087350c",
+            "form_type": "10-K",
+            "source_concept": "NetIncomeLoss"
+          },
+          "difference": 0.0,
+          "name": "net_income",
+          "note": null,
+          "raw": 57048000000.0,
+          "raw_source": {
+            "accession_number": "0001628280-26-008131",
+            "days": 364,
+            "filed": "2026-02-13",
+            "form_type": "10-K",
+            "tag": "us-gaap:NetIncomeLoss",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": -147782000000.0,
+          "atlas_source": {
+            "accession_number": "0001628280-26-008131",
+            "evidence_id": "EV-ca5c0a5e0be850208a4e84f7",
+            "form_type": "10-K",
+            "source_concept": "NetCashProvidedByUsedInOperatingActivities"
+          },
+          "difference": 0.0,
+          "name": "operating_cash_flow",
+          "note": null,
+          "raw": -147782000000.0,
+          "raw_source": {
+            "accession_number": "0001628280-26-008131",
+            "days": 364,
+            "filed": "2026-02-13",
+            "form_type": "10-K",
+            "tag": "us-gaap:NetCashProvidedByUsedInOperatingActivities",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": null,
+          "name": "capex",
+          "raw": null,
+          "reason": "raw SEC payload has no annual observation for this period",
+          "status": "unavailable"
+        },
+        {
+          "atlas": 2696200000.0,
+          "atlas_source": {
+            "accession_number": "0001628280-26-008131",
+            "evidence_id": "EV-42c6fad07d7a5ebdaad352e2",
+            "form_type": "10-K",
+            "source_concept": "CommonStockSharesOutstanding"
+          },
+          "difference": 0.0,
+          "name": "shares_outstanding",
+          "note": null,
+          "raw": 2696200000.0,
+          "raw_source": {
+            "accession_number": "0001628280-26-008131",
+            "filed": "2026-02-13",
+            "form_type": "10-K",
+            "tag": "us-gaap:CommonStockSharesOutstanding",
+            "unit": null
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 2781500000.0,
+          "name": "weighted_average_shares_diluted",
+          "raw": null,
+          "reason": "raw SEC payload has no annual observation for this period",
+          "status": "unavailable"
+        },
+        {
+          "atlas": 64776000000.0,
+          "atlas_source": {
+            "evidence_ids": [
+              "EV-cb6ee386b60957f6accc76f8"
+            ],
+            "formula": "sum of reported long-term and short-term debt evidence"
+          },
+          "difference": 0.0,
+          "name": "total_debt",
+          "note": null,
+          "raw": 64776000000.0,
+          "raw_source": {
+            "components": [
+              64776000000.0
+            ],
+            "tags": [
+              "us-gaap:ShortTermBorrowings"
+            ]
+          },
+          "status": "pass"
+        }
+      ],
+      "failures": [],
+      "issuer_id": "ISS-CIK0000019617",
+      "legal_name": "JPMORGAN CHASE & CO",
+      "period_end": "2025-12-31",
+      "sic": "6021",
+      "status": "pass",
+      "ticker": "JPM"
+    },
+    {
+      "checks": [
+        {
+          "atlas": null,
+          "name": "revenue",
+          "raw": null,
+          "reason": "raw SEC payload has no annual observation for this period",
+          "status": "unavailable"
+        },
+        {
+          "atlas": 17176000000.0,
+          "atlas_source": {
+            "accession_number": "0000886982-26-000091",
+            "evidence_id": "EV-2288c1cc46495b63b6d10906",
+            "form_type": "10-K",
+            "source_concept": "NetIncomeLoss"
+          },
+          "difference": 0.0,
+          "name": "net_income",
+          "note": null,
+          "raw": 17176000000.0,
+          "raw_source": {
+            "accession_number": "0000886982-26-000091",
+            "days": 364,
+            "filed": "2026-02-25",
+            "form_type": "10-K",
+            "tag": "us-gaap:NetIncomeLoss",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": -45154000000.0,
+          "atlas_source": {
+            "accession_number": "0000886982-26-000091",
+            "evidence_id": "EV-084f2b98ce855ea89d0a0c53",
+            "form_type": "10-K",
+            "source_concept": "NetCashProvidedByUsedInOperatingActivities"
+          },
+          "difference": 0.0,
+          "name": "operating_cash_flow",
+          "note": null,
+          "raw": -45154000000.0,
+          "raw_source": {
+            "accession_number": "0000886982-26-000091",
+            "days": 364,
+            "filed": "2026-02-25",
+            "form_type": "10-K",
+            "tag": "us-gaap:NetCashProvidedByUsedInOperatingActivities",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 2064000000.0,
+          "atlas_source": {
+            "accession_number": "0000886982-26-000091",
+            "evidence_id": "EV-d59a964fba0c5e42bc005efa",
+            "form_type": "10-K",
+            "source_concept": "PaymentsToAcquirePropertyPlantAndEquipment"
+          },
+          "difference": 0.0,
+          "name": "capex",
+          "note": "capex is compared as a magnitude",
+          "raw": 2064000000.0,
+          "raw_source": {
+            "accession_number": "0000886982-26-000091",
+            "days": 364,
+            "filed": "2026-02-25",
+            "form_type": "10-K",
+            "tag": "us-gaap:PaymentsToAcquirePropertyPlantAndEquipment",
+            "unit": "USD"
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 296476742.0,
+          "atlas_source": {
+            "accession_number": "0000886982-26-000532",
+            "evidence_id": "EV-7fe2eb1b694557fd9e4aa3d1",
+            "form_type": "10-Q",
+            "source_concept": "CommonStockSharesOutstanding"
+          },
+          "difference": 0.0,
+          "name": "shares_outstanding",
+          "note": null,
+          "raw": 296476742.0,
+          "raw_source": {
+            "accession_number": "0000886982-26-000091",
+            "filed": "2026-02-25",
+            "form_type": "10-K",
+            "tag": "us-gaap:CommonStockSharesOutstanding",
+            "unit": null
+          },
+          "status": "pass"
+        },
+        {
+          "atlas": 317600000.0,
+          "name": "weighted_average_shares_diluted",
+          "raw": null,
+          "reason": "raw SEC payload has no annual observation for this period",
+          "status": "unavailable"
+        }
+      ],
+      "failures": [],
+      "issuer_id": "ISS-CIK0000886982",
+      "legal_name": "GOLDMAN SACHS GROUP INC",
+      "period_end": "2025-12-31",
+      "sic": "6211",
+      "status": "pass",
+      "ticker": "GS"
+    }
+  ],
+  "readiness": [
+    {
+      "audit_verdict": "supported",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [],
+      "issuer_id": "ISS-CIK0001652044",
+      "legal_name": "Alphabet Inc.",
+      "reason": null,
+      "sic": "7370",
+      "status": "supported",
+      "ticker": "GOOGL",
+      "valuation_executes": true,
+      "value_per_share": 54.74644692627205
+    },
+    {
+      "audit_verdict": "supported_with_findings",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [
+        "liabilities"
+      ],
+      "financial_coverage_valid": false,
+      "financial_institution": false,
+      "flags": [
+        "negative_enterprise_value",
+        "negative_equity_value",
+        "negative_fcff"
+      ],
+      "issuer_id": "ISS-CIK0001018724",
+      "legal_name": "AMAZON COM INC",
+      "reason": null,
+      "sic": "5961",
+      "status": "supported",
+      "ticker": "AMZN",
+      "valuation_executes": true,
+      "value_per_share": -90.62303011774831
+    },
+    {
+      "audit_verdict": "supported",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [],
+      "issuer_id": "ISS-CIK0000320193",
+      "legal_name": "Apple Inc.",
+      "reason": null,
+      "sic": "3571",
+      "status": "supported",
+      "ticker": "AAPL",
+      "valuation_executes": true,
+      "value_per_share": 241.59082981479995
+    },
+    {
+      "audit_verdict": "supported",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [],
+      "issuer_id": "ISS-CIK0000018230",
+      "legal_name": "CATERPILLAR INC",
+      "reason": null,
+      "sic": "3531",
+      "status": "supported",
+      "ticker": "CAT",
+      "valuation_executes": true,
+      "value_per_share": 259.74913295116147
+    },
+    {
+      "audit_verdict": "supported_with_findings",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [
+        "share_denominator_fallback"
+      ],
+      "issuer_id": "ISS-CIK0000093410",
+      "legal_name": "CHEVRON CORP",
+      "reason": null,
+      "sic": "2911",
+      "status": "supported",
+      "ticker": "CVX",
+      "valuation_executes": true,
+      "value_per_share": 78.07723734298969
+    },
+    {
+      "audit_verdict": "supported_with_findings",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [
+        "liabilities"
+      ],
+      "financial_coverage_valid": false,
+      "financial_institution": false,
+      "flags": [
+        "share_denominator_fallback"
+      ],
+      "issuer_id": "ISS-CIK0000021344",
+      "legal_name": "COCA COLA CO",
+      "reason": null,
+      "sic": "2080",
+      "status": "supported",
+      "ticker": "KO",
+      "valuation_executes": true,
+      "value_per_share": 39.9586726930819
+    },
+    {
+      "audit_verdict": "supported",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [],
+      "issuer_id": "ISS-CIK0000909832",
+      "legal_name": "COSTCO WHOLESALE CORP /NEW",
+      "reason": null,
+      "sic": "5331",
+      "status": "supported",
+      "ticker": "COST",
+      "valuation_executes": true,
+      "value_per_share": 737.2564202674364
+    },
+    {
+      "audit_verdict": "supported",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [],
+      "issuer_id": "ISS-CIK0000315189",
+      "legal_name": "DEERE & CO",
+      "reason": null,
+      "sic": "3523",
+      "status": "supported",
+      "ticker": "DE",
+      "valuation_executes": true,
+      "value_per_share": 214.67659721289291
+    },
+    {
+      "audit_verdict": "supported",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [],
+      "issuer_id": "ISS-CIK0000034088",
+      "legal_name": "EXXON MOBIL CORP",
+      "reason": null,
+      "sic": "2911",
+      "status": "supported",
+      "ticker": "XOM",
+      "valuation_executes": true,
+      "value_per_share": 67.85801132564056
+    },
+    {
+      "audit_verdict": null,
+      "economically_supported": false,
+      "eligibility": "unsupported_methodology",
+      "financial_coverage_missing": [
+        "revenue"
+      ],
+      "financial_coverage_valid": false,
+      "financial_institution": true,
+      "flags": [],
+      "issuer_id": "ISS-CIK0000886982",
+      "legal_name": "GOLDMAN SACHS GROUP INC",
+      "reason": "SIC 6211 identifies a bank, insurer, broker or other financial institution. An unlevered free-cash-flow-to-firm DCF is not an economically valid model here: debt and deposits are operating inputs, interest expense is an operating cost, and free cash flow to the firm is not defined the way it is for a non-financial operating company. Atlas does not substitute an equity DCF, dividend discount model or residual income model because none of those is implemented and independently validated in this release.",
+      "sic": "6211",
+      "status": "unsupported_methodology",
+      "ticker": "GS",
+      "valuation_executes": false,
+      "value_per_share": null
+    },
+    {
+      "audit_verdict": "supported",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [],
+      "issuer_id": "ISS-CIK0000051143",
+      "legal_name": "INTERNATIONAL BUSINESS MACHINES CORP",
+      "reason": null,
+      "sic": "3570",
+      "status": "supported",
+      "ticker": "IBM",
+      "valuation_executes": true,
+      "value_per_share": 148.31451640234596
+    },
+    {
+      "audit_verdict": "supported_with_findings",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [
+        "share_denominator_fallback"
+      ],
+      "issuer_id": "ISS-CIK0000200406",
+      "legal_name": "JOHNSON & JOHNSON",
+      "reason": null,
+      "sic": "2834",
+      "status": "supported",
+      "ticker": "JNJ",
+      "valuation_executes": true,
+      "value_per_share": 63.8601966145214
+    },
+    {
+      "audit_verdict": null,
+      "economically_supported": false,
+      "eligibility": "unsupported_methodology",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": true,
+      "flags": [],
+      "issuer_id": "ISS-CIK0000019617",
+      "legal_name": "JPMORGAN CHASE & CO",
+      "reason": "SIC 6021 identifies a bank, insurer, broker or other financial institution. An unlevered free-cash-flow-to-firm DCF is not an economically valid model here: debt and deposits are operating inputs, interest expense is an operating cost, and free cash flow to the firm is not defined the way it is for a non-financial operating company. Atlas does not substitute an equity DCF, dividend discount model or residual income model because none of those is implemented and independently validated in this release.",
+      "sic": "6021",
+      "status": "unsupported_methodology",
+      "ticker": "JPM",
+      "valuation_executes": false,
+      "value_per_share": null
+    },
+    {
+      "audit_verdict": "supported_with_findings",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [
+        "share_denominator_fallback"
+      ],
+      "issuer_id": "ISS-CIK0001326801",
+      "legal_name": "Meta Platforms, Inc.",
+      "reason": null,
+      "sic": "7370",
+      "status": "supported",
+      "ticker": "META",
+      "valuation_executes": true,
+      "value_per_share": 37.46142566012887
+    },
+    {
+      "audit_verdict": "supported",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [],
+      "issuer_id": "ISS-CIK0000789019",
+      "legal_name": "MICROSOFT CORP",
+      "reason": null,
+      "sic": "7372",
+      "status": "supported",
+      "ticker": "MSFT",
+      "valuation_executes": true,
+      "value_per_share": 72.92251785878764
+    },
+    {
+      "audit_verdict": "supported",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [],
+      "issuer_id": "ISS-CIK0001045810",
+      "legal_name": "NVIDIA CORP",
+      "reason": null,
+      "sic": "3674",
+      "status": "supported",
+      "ticker": "NVDA",
+      "valuation_executes": true,
+      "value_per_share": 201.52232924424715
+    },
+    {
+      "audit_verdict": "supported_with_findings",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [
+        "share_denominator_fallback"
+      ],
+      "issuer_id": "ISS-CIK0000077476",
+      "legal_name": "PEPSICO INC",
+      "reason": null,
+      "sic": "2080",
+      "status": "supported",
+      "ticker": "PEP",
+      "valuation_executes": true,
+      "value_per_share": 66.12388085248868
+    },
+    {
+      "audit_verdict": "supported_with_findings",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": false,
+      "flags": [
+        "share_denominator_fallback"
+      ],
+      "issuer_id": "ISS-CIK0000078003",
+      "legal_name": "PFIZER INC",
+      "reason": null,
+      "sic": "2834",
+      "status": "supported",
+      "ticker": "PFE",
+      "valuation_executes": true,
+      "value_per_share": 5.7061481560641445
+    },
+    {
+      "audit_verdict": null,
+      "economically_supported": false,
+      "eligibility": "unsupported_methodology",
+      "financial_coverage_missing": [],
+      "financial_coverage_valid": true,
+      "financial_institution": true,
+      "flags": [],
+      "issuer_id": "ISS-CIK0000731766",
+      "legal_name": "UNITEDHEALTH GROUP INC",
+      "reason": "SIC 6324 identifies a bank, insurer, broker or other financial institution. An unlevered free-cash-flow-to-firm DCF is not an economically valid model here: debt and deposits are operating inputs, interest expense is an operating cost, and free cash flow to the firm is not defined the way it is for a non-financial operating company. Atlas does not substitute an equity DCF, dividend discount model or residual income model because none of those is implemented and independently validated in this release.",
+      "sic": "6324",
+      "status": "unsupported_methodology",
+      "ticker": "UNH",
+      "valuation_executes": false,
+      "value_per_share": null
+    },
+    {
+      "audit_verdict": "supported_with_findings",
+      "economically_supported": true,
+      "eligibility": "eligible",
+      "financial_coverage_missing": [
+        "liabilities"
+      ],
+      "financial_coverage_valid": false,
+      "financial_institution": false,
+      "flags": [
+        "share_denominator_fallback"
+      ],
+      "issuer_id": "ISS-CIK0000104169",
+      "legal_name": "Walmart Inc.",
+      "reason": null,
+      "sic": "5331",
+      "status": "supported",
+      "ticker": "WMT",
+      "valuation_executes": true,
+      "value_per_share": 49.65820759623597
+    }
+  ],
+  "schema": "atlas.phase9.financial_audit.v1",
+  "share_denominator": [
+    {
+      "basis": "period_end_share_count",
+      "denominator": 14532259000.0,
+      "expected_basis": "period_end_share_count",
+      "point_in_time": 14532259000.0,
+      "status": "pass",
+      "ticker": "AAPL",
+      "weighted_average_diluted": 14720306000.0
+    },
+    {
+      "basis": "period_end_share_count",
+      "denominator": 12088000000.0,
+      "expected_basis": "period_end_share_count",
+      "point_in_time": 12088000000.0,
+      "status": "pass",
+      "ticker": "GOOGL",
+      "weighted_average_diluted": 12230000000.0
+    },
+    {
+      "basis": "period_end_share_count",
+      "denominator": 4179000000.0,
+      "expected_basis": "period_end_share_count",
+      "point_in_time": 4179000000.0,
+      "status": "pass",
+      "ticker": "XOM",
+      "weighted_average_diluted": null
+    },
+    {
+      "basis": "period_end_share_count",
+      "denominator": 24304000000.0,
+      "expected_basis": "period_end_share_count",
+      "point_in_time": 24304000000.0,
+      "status": "pass",
+      "ticker": "NVDA",
+      "weighted_average_diluted": 24514000000.0
+    },
+    {
+      "basis": "period_end_share_count",
+      "denominator": 465300000.0,
+      "expected_basis": "period_end_share_count",
+      "point_in_time": 465300000.0,
+      "status": "pass",
+      "ticker": "CAT",
+      "weighted_average_diluted": 472300000.0
+    },
+    {
+      "basis": "period_end_share_count",
+      "denominator": 2696200000.0,
+      "expected_basis": "period_end_share_count",
+      "point_in_time": 2696200000.0,
+      "status": "pass",
+      "ticker": "JPM",
+      "weighted_average_diluted": 2781500000.0
+    },
+    {
+      "basis": null,
+      "denominator": null,
+      "expected_basis": "period_end_share_count",
+      "point_in_time": 296476742.0,
+      "reason": "no reported revenue, so no valuation defaults exist to audit",
+      "status": "unavailable",
+      "ticker": "GS",
+      "weighted_average_diluted": 317600000.0
+    }
+  ],
+  "status": "pass"
+}

@@ -1,0 +1,187 @@
+{
+  "cik": 1999999,
+  "entityName": "Atlas Synthetic Restatement Corp",
+  "facts": {
+    "us-gaap": {
+      "RevenueFromContractWithCustomerExcludingAssessedTax": {
+        "label": "Revenue from Contract with Customer, Excluding Assessed Tax",
+        "units": {
+          "USD": [
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "val": 100000000,
+              "accn": "0001999999-24-000004",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-01",
+              "frame": "CY2024Q1"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "val": 90000000,
+              "accn": "0001999999-24-000009",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q/A",
+              "filed": "2024-08-15",
+              "frame": "CY2024Q1"
+            }
+          ],
+          "EUR": [
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "val": 92500000,
+              "accn": "0001999999-24-000004",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-01"
+            }
+          ],
+          "shares": [
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "val": 25000000,
+              "accn": "0001999999-24-000004",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-01"
+            }
+          ]
+        }
+      },
+      "NetIncomeLoss": {
+        "label": "Net Income (Loss) Attributable to Parent",
+        "units": {
+          "USD": [
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "val": 20000000,
+              "accn": "0001999999-24-000004",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-01"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "val": 18000000,
+              "accn": "0001999999-24-000009",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q/A",
+              "filed": "2024-08-15"
+            }
+          ]
+        }
+      },
+      "Assets": {
+        "label": "Assets",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 500000000,
+              "accn": "0001999999-24-000004",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-01"
+            }
+          ]
+        }
+      },
+      "PaymentsToAcquirePropertyPlantAndEquipment": {
+        "label": "Payments to Acquire Property, Plant, and Equipment",
+        "units": {
+          "USD": [
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "val": 5000000,
+              "accn": "0001999999-24-000004",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-01"
+            }
+          ]
+        }
+      },
+      "NetCashProvidedByUsedInOperatingActivities": {
+        "label": "Net Cash Provided by (Used in) Operating Activities",
+        "units": {
+          "USD": [
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "val": 30000000,
+              "accn": "0001999999-24-000004",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-01"
+            }
+          ]
+        }
+      },
+      "LongTermDebtNoncurrent": {
+        "label": "Long-term Debt, Excluding Current Maturities",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 150000000,
+              "accn": "0001999999-24-000004",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-01"
+            }
+          ]
+        }
+      },
+      "LongTermDebtCurrent": {
+        "label": "Long-term Debt, Current Maturities",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 10000000,
+              "accn": "0001999999-24-000004",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-01"
+            }
+          ]
+        }
+      },
+      "EarningsPerShareDiluted": {
+        "label": "Earnings Per Share, Diluted",
+        "units": {
+          "USD/shares": [
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "val": 0.42,
+              "accn": "0001999999-24-000004",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-01"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "hardware": {
+    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "cpu": "19/01",
+    "cpu_count": 2,
+    "memory_gb": 3.8,
+    "storage": "local filesystem, SQLite WAL, synchronous=FULL"
+  },
+  "benchmarks": {
+    "sec_ingest_companyfacts": {
+      "median_ms": 4387.12,
+      "min_ms": 4363.44,
+      "max_ms": 4406.8,
+      "repeats": 3
+    },
+    "statement_query_4_concepts": {
+      "median_ms": 22.85,
+      "min_ms": 22.38,
+      "max_ms": 23.57,
+      "repeats": 5
+    },
+    "selection_python_all_concepts": {
+      "median_ms": 154.63,
+      "min_ms": 151.04,
+      "max_ms": 171.0,
+      "repeats": 5
+    },
+    "selection_sql_all_concepts": {
+      "median_ms": 235.81,
+      "min_ms": 234.49,
+      "max_ms": 248.34,
+      "repeats": 5
+    },
+    "selection_python_four_concepts": {
+      "median_ms": 22.37,
+      "min_ms": 22.2,
+      "max_ms": 22.58,
+      "repeats": 5
+    },
+    "selection_sql_four_concepts": {
+      "median_ms": 35.34,
+      "min_ms": 35.08,
+      "max_ms": 35.84,
+      "repeats": 5
+    },
+    "history_single_concept": {
+      "median_ms": 2.26,
+      "min_ms": 2.22,
+      "max_ms": 2.27,
+      "repeats": 5
+    },
+    "provenance_traversal": {
+      "median_ms": 0.15,
+      "min_ms": 0.15,
+      "max_ms": 0.18,
+      "repeats": 5
+    },
+    "market_bar_load_1250": {
+      "median_ms": 40.24,
+      "min_ms": 40.24,
+      "max_ms": 40.24,
+      "repeats": 1
+    },
+    "multi_year_bar_query": {
+      "median_ms": 11.08,
+      "min_ms": 10.95,
+      "max_ms": 11.42,
+      "repeats": 5
+    },
+    "entity_resolution_500_tickers": {
+      "median_ms": 10.12,
+      "min_ms": 10.12,
+      "max_ms": 10.12,
+      "repeats": 1
+    }
+  },
+  "datasets": {
+    "sec_facts_ingested": 5737,
+    "filings": 1001,
+    "filings_in_payload": 1001,
+    "bars": 1250,
+    "securities": 501
+  }
+}

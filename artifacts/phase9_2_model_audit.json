@@ -1,0 +1,162 @@
+{
+  "checks": [
+    {
+      "detail": "2024 10-K: PreferredStockIncludingAdditionalPaidInCapitalNetOfDiscount = 20,050,000,000 USD",
+      "name": "JPM SEC preferred stock",
+      "passed": true
+    },
+    {
+      "detail": "2024 10-K: 344,758,000,000 total equity - 20,050,000,000 preferred = 324708000000 common",
+      "name": "JPM SEC common equity",
+      "passed": true
+    },
+    {
+      "detail": "2024 10-K: PreferredStockValue = 13,253,000,000 USD",
+      "name": "GS SEC preferred stock",
+      "passed": true
+    },
+    {
+      "detail": "2024 10-K: 121,996,000,000 total equity - 13,253,000,000 preferred = 108743000000 common",
+      "name": "GS SEC common equity",
+      "passed": true
+    },
+    {
+      "detail": "both bank models use SEC total equity less the same-period SEC preferred-stock fact",
+      "name": "model starts on SEC common equity",
+      "passed": true
+    },
+    {
+      "detail": "period-end common equity / period-end common shares",
+      "name": "book value per common share",
+      "passed": true
+    },
+    {
+      "detail": "average common equity uses the prior and current SEC year-end common equity; the ending-equity ratio is labelled separately",
+      "name": "common earnings and average-equity ROE",
+      "passed": true
+    },
+    {
+      "detail": "JPM SEC GAAP total equity and preferred stock equal the FR Y-9C reported amounts in dollars for 2024-12-31; the model uses only the SEC series",
+      "name": "SEC and FR Y-9C reconciliation",
+      "passed": true
+    },
+    {
+      "detail": "opening + net income - distributions = closing",
+      "name": "book-value roll-forward",
+      "passed": true
+    },
+    {
+      "detail": "payout applied to net income in the reference schedule",
+      "name": "distribution treatment",
+      "passed": true
+    },
+    {
+      "detail": "reference PV 122945752656.4176528398436464679490",
+      "name": "residual-income present value",
+      "passed": true
+    },
+    {
+      "detail": "reference PV terminal 378937323877.5820347744328054432074",
+      "name": "terminal residual value",
+      "passed": true
+    },
+    {
+      "detail": "reference equity 826591076533.9996876142764519111564",
+      "name": "equity value bridge",
+      "passed": true
+    },
+    {
+      "detail": "value falls as cost of equity rises at fixed ROE",
+      "name": "cost-of-equity sensitivity direction",
+      "passed": true
+    },
+    {
+      "detail": "value rises with ROE at fixed cost of equity",
+      "name": "ROE sensitivity direction",
+      "passed": true
+    },
+    {
+      "detail": "EQ - INTAN on the subsidiary; never divided by parent shares",
+      "name": "tangible equity adjustment",
+      "passed": true
+    },
+    {
+      "detail": "reported total risk-based ratio preserved, not recomputed without RWA",
+      "name": "capital ratio reconciliation",
+      "passed": true
+    },
+    {
+      "detail": "NIM lies between zero and reported interest income; FDIC omits interest expense in the latest record, so no identity is asserted",
+      "name": "net interest income bounds",
+      "passed": true
+    },
+    {
+      "detail": "subsidiary stress applies annualized NII shock and 21% tax; reported allowance ratio uses a broader loan base and is not asserted as an identity",
+      "name": "credit-loss and NII stress arithmetic",
+      "passed": true
+    },
+    {
+      "detail": "GAAP equity/assets is labelled as such and is not compared with a Tier 1 leverage minimum",
+      "name": "regulatory leverage identity is not imputed",
+      "passed": true
+    },
+    {
+      "detail": "no premium or claims fields are invented when the fixture lacks them",
+      "name": "insurance premium and claims arithmetic",
+      "passed": true
+    },
+    {
+      "detail": "value per share = EPS x justified multiple",
+      "name": "insurance operating margin identity",
+      "passed": true
+    },
+    {
+      "detail": "equity value / period-end share count",
+      "name": "equity value per share",
+      "passed": true
+    },
+    {
+      "detail": "not evaluated: no authorised market observation is stored, so no implied cost of equity is claimed",
+      "name": "market-implied cost of equity",
+      "passed": true
+    },
+    {
+      "detail": "each observation carries an id, source and period; retrieval time is stored in provenance",
+      "name": "historical source timing preserved",
+      "passed": true
+    },
+    {
+      "detail": "no authorised observation is stored: the analysis reports unavailability instead of substituting a synthetic or latest quote",
+      "name": "market-price cutoff safety",
+      "passed": true
+    },
+    {
+      "detail": "mixed consolidation bases raise instead of aggregating",
+      "name": "parent/subsidiary conflation rejected",
+      "passed": true
+    },
+    {
+      "detail": "different period ends raise instead of forming a ratio",
+      "name": "incompatible reporting periods rejected",
+      "passed": true
+    },
+    {
+      "detail": "independent recomputation from the packaged snapshot and assumptions",
+      "name": "research package reproduction",
+      "passed": true
+    }
+  ],
+  "counts": {
+    "passed": 29,
+    "total": 29
+  },
+  "database": "var/phase9.db",
+  "independent_reference": "Decimal arithmetic implemented in this script; production operators are not called for reference values.",
+  "limitations": [
+    "Parent goodwill and intangibles are not mapped, so no parent tangible book per share is audited.",
+    "Preferred stock is a GAAP balance-sheet amount; it is not regulatory CET1 capital.",
+    "No external valuation report or analyst estimate is available; economic review remains unrecorded."
+  ],
+  "schema": "atlas.phase9_2.audit.v1",
+  "status": "pass"
+}

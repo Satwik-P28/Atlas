@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use Atlas in research, cite this release. Apache-2.0 licenses Atlas-authored software; it does not license third-party data or dependencies."
+title: "Atlas: The Evidence-First Financial Research Operating System"
+version: "0.2.0-beta.1"
+date-released: "2026-11-26"
+license: Apache-2.0
+url: "https://github.com/Satwik-P28/Atlas"
+repository-code: "https://github.com/Satwik-P28/Atlas"
+abstract: >-
+  Atlas connects financial questions to exact SEC source evidence, typed computations and independent
+  verification, and refuses ambiguous or unsupported questions with structured reasons. It provides a
+  point-in-time evidence kernel, a financial-economic compiler, geometry-aware answer resolution,
+  declarative research application packages and a local research terminal.
+keywords:
+  - financial research
+  - SEC EDGAR
+  - evidence grounding
+  - point-in-time data
+  - reproducibility
+  - abstention
+  - financial statement analysis
+authors:
+  - family-names: "Peddireddi"
+    given-names: "Satwik"
+    affiliation: "Independent research project"
+preferred-citation:
+  type: software
+  title: "Atlas: The Evidence-First Financial Research Operating System"
+  version: "0.2.0-beta.1"
+  year: 2026
+  license: Apache-2.0
+  url: "https://github.com/Satwik-P28/Atlas"

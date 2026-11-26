@@ -1,0 +1,82 @@
+{
+  "created_at": "2026-11-05T20:11:53Z",
+  "data_class": "observed_public_archive_no_vintage",
+  "notes": [
+    "The fixture is derived only; raw source archives remain in ignored var/phase7/raw.",
+    "Both sources are U.S. Government works treated as public domain; attribution and source URLs are retained.",
+    "Weather is an observation, not a forecast. The same-day relationship is an association unless a defensible identification design is supplied."
+  ],
+  "panel": {
+    "end": "2023-12-31",
+    "frequency": "daily",
+    "geography": "ERCOT balancing authority / Dallas-Fort Worth, Texas",
+    "path": "weather_demand_2023.csv",
+    "rows": 365,
+    "sha256": "987feb4933df29c119d5d2d9f1f5e49c1439fe9d10c33e899a78179e0963314f",
+    "start": "2023-01-01",
+    "timezone_note": "EIA Data Date is the local operating day; NOAA DATE is the station local observation day."
+  },
+  "schema": "atlas.economic.fixture.v1",
+  "sources": [
+    {
+      "files": [
+        "EIA930_BALANCE_2023_Jan_Jun.csv",
+        "EIA930_BALANCE_2023_Jul_Dec.csv"
+      ],
+      "limitations": [
+        "balanced/submitted data may reflect operator corrections after the operating day",
+        "the current bulk archive is not an as-issued historical vintage",
+        "hourly demand is not a settlement-grade revenue-meter record"
+      ],
+      "name": "U.S. Energy Information Administration Form EIA-930",
+      "redistribution": "permitted",
+      "rights": "U.S. Government public domain",
+      "sha256": [
+        "a0e14e9c07ab4cc1de3e384c7be890b0c61d9de3fe04ad3ae5ec739f1f35ec1b",
+        "c719fc1b513eec8982ce209b6e3173fc64b2d0d243f83d3bf0d8d1adf6222de2"
+      ],
+      "source_id": "eia-930",
+      "transform": "ERCO hourly Demand (MW) aggregated to daily mean, peak, minimum and summed MWh; DST days retain their actual 23/24/25 hourly observations.",
+      "urls": [
+        "https://www.eia.gov/electricity/gridmonitor/sixMonthFiles/EIA930_BALANCE_2023_Jan_Jun.csv",
+        "https://www.eia.gov/electricity/gridmonitor/sixMonthFiles/EIA930_BALANCE_2023_Jul_Dec.csv"
+      ]
+    },
+    {
+      "files": [
+        "USW00013960.csv",
+        "USW00003971.csv"
+      ],
+      "limitations": [
+        "a point station is not an area-weighted temperature for the whole ERCOT footprint",
+        "quality-controlled archive values are not a historical forecast",
+        "the current archive does not establish the exact data publicly available on each historical date"
+      ],
+      "name": "NOAA NCEI Global Historical Climatology Network Daily",
+      "redistribution": "permitted",
+      "rights": "U.S. Government public domain",
+      "sha256": [
+        "bbcefba60eac10db08157b0f08504ea9535c79dd29284e21def97e5969fe877e",
+        "8b8648725973194193a2f8d895a0cc1a8f212af1a61071ff93a16f9757e17ffc"
+      ],
+      "source_id": "noaa-ghcn",
+      "transform": "TMAX/TMIN tenths of degrees Celsius converted to Celsius; daily mean is the arithmetic mean of TMAX and TMIN; no infilling.",
+      "urls": [
+        "https://www.ncei.noaa.gov/data/global-historical-climatology-network-daily/access/USW00013960.csv",
+        "https://www.ncei.noaa.gov/data/global-historical-climatology-network-daily/access/USW00003971.csv"
+      ]
+    }
+  ],
+  "stations": [
+    {
+      "id": "USW00013960",
+      "name": "Dallas/Fort Worth International Airport",
+      "role": "primary weather station"
+    },
+    {
+      "id": "USW00003971",
+      "name": "Dallas Redbird Airport",
+      "role": "independent comparison station"
+    }
+  ]
+}

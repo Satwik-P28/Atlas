@@ -1,0 +1,114 @@
+{
+  "engine": "chromium",
+  "base": "http://127.0.0.1:3101",
+  "generated_at": "2026-11-25T20:57:01.545Z",
+  "pass": 21,
+  "fail": 0,
+  "results": [
+    {
+      "id": "shell_renders",
+      "status": "pass",
+      "detail": "the workstation shell renders with its research navigation — 12 rail sections"
+    },
+    {
+      "id": "answer_resolves",
+      "status": "pass",
+      "detail": "a financial question resolves to one verified cell — value 21,690 is shown with its citation"
+    },
+    {
+      "id": "certificate_builds_and_verifies",
+      "status": "pass",
+      "detail": "the certificate is built and independently verified — verification output rendered"
+    },
+    {
+      "id": "certificate_downloads",
+      "status": "pass",
+      "detail": "the certificate downloads as JSON — certificate json: atlas-certificate-CELL-216ce96bc903fc8b.json (saved)"
+    },
+    {
+      "id": "refusal_is_explained",
+      "status": "pass",
+      "detail": "a period with no evidence is refused, not approximated — REFUSED"
+    },
+    {
+      "id": "comparison_runs",
+      "status": "pass",
+      "detail": "company comparison returns a comparable view or stated findings — 37 lines of comparison output"
+    },
+    {
+      "id": "data_onboarding",
+      "status": "pass",
+      "detail": "the data page lists sources and onboarding state — 48 lines"
+    },
+    {
+      "id": "palette_opens_with_focus",
+      "status": "pass",
+      "detail": "the command palette opens with the keyboard and takes focus — input.palette-input"
+    },
+    {
+      "id": "palette_refuses_unknown",
+      "status": "pass",
+      "detail": "an unknown symbol is refused inside the palette — Atlas has no instrument “ZZZZ”."
+    },
+    {
+      "id": "palette_escape_returns_focus",
+      "status": "pass",
+      "detail": "Escape closes the palette and restores focus to the page — palette closed, focus outside it"
+    },
+    {
+      "id": "evidence_inspector",
+      "status": "pass",
+      "detail": "a statement cell opens the evidence inspector with provenance — value 365817000000 USD"
+    },
+    {
+      "id": "keyboard_reaches_controls",
+      "status": "pass",
+      "detail": "keyboard focus reaches interactive controls with a visible focus ring — a \"∑Quant\" outline=rgb(11, 15, 20) 0px 0px 0px 2px, rgb(88, 182, 232) 0px 0px 0px 4px"
+    },
+    {
+      "id": "equity_memo_pdf",
+      "status": "pass",
+      "detail": "valuation, memo, and a PDF export download end to end — pdf: research-memo-URO-MEM-02bb39a3464f.pdf (saved)"
+    },
+    {
+      "id": "viewport_1440_900_home",
+      "status": "pass",
+      "detail": "1440x900: / renders without horizontal overflow — no overflow"
+    },
+    {
+      "id": "viewport_1440_900_answers",
+      "status": "pass",
+      "detail": "1440x900: /answers renders without horizontal overflow — no overflow"
+    },
+    {
+      "id": "viewport_1440_900_workstation",
+      "status": "pass",
+      "detail": "1440x900: /workstation renders without horizontal overflow — no overflow"
+    },
+    {
+      "id": "viewport_390_844_home",
+      "status": "pass",
+      "detail": "390x844: / renders without horizontal overflow — no overflow"
+    },
+    {
+      "id": "viewport_390_844_answers",
+      "status": "pass",
+      "detail": "390x844: /answers renders without horizontal overflow — no overflow"
+    },
+    {
+      "id": "viewport_390_844_workstation",
+      "status": "pass",
+      "detail": "390x844: /workstation renders without horizontal overflow — no overflow"
+    },
+    {
+      "id": "console_clean",
+      "status": "pass",
+      "detail": "no console errors (1 expected 422 refusals)"
+    },
+    {
+      "id": "requests_clean",
+      "status": "pass",
+      "detail": "no failed requests"
+    }
+  ]
+}

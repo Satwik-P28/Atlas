@@ -1,0 +1,283 @@
+{
+  "bomFormat": "CycloneDX",
+  "components": [
+    {
+      "name": "annotated-doc",
+      "type": "library",
+      "version": "0.0.7"
+    },
+    {
+      "name": "annotated-types",
+      "type": "library",
+      "version": "0.8.0"
+    },
+    {
+      "name": "anyio",
+      "type": "library",
+      "version": "4.16.0"
+    },
+    {
+      "name": "atlas-quant",
+      "type": "library",
+      "version": "0.2.0b1"
+    },
+    {
+      "name": "atlas-quant",
+      "type": "library",
+      "version": "0.2.0b1"
+    },
+    {
+      "name": "build",
+      "type": "library",
+      "version": "1.6.1"
+    },
+    {
+      "name": "certifi",
+      "type": "library",
+      "version": "2026.11.20"
+    },
+    {
+      "name": "cffi",
+      "type": "library",
+      "version": "2.1.1"
+    },
+    {
+      "name": "clarabel",
+      "type": "library",
+      "version": "0.11.1"
+    },
+    {
+      "name": "click",
+      "type": "library",
+      "version": "8.5.1"
+    },
+    {
+      "name": "cloudpickle",
+      "type": "library",
+      "version": "3.1.3"
+    },
+    {
+      "name": "fastapi",
+      "type": "library",
+      "version": "0.165.0"
+    },
+    {
+      "name": "h11",
+      "type": "library",
+      "version": "0.16.0"
+    },
+    {
+      "name": "httpcore",
+      "type": "library",
+      "version": "1.0.9"
+    },
+    {
+      "name": "httptools",
+      "type": "library",
+      "version": "0.9.0"
+    },
+    {
+      "name": "httpx",
+      "type": "library",
+      "version": "0.28.1"
+    },
+    {
+      "name": "hypothesis",
+      "type": "library",
+      "version": "6.170.17"
+    },
+    {
+      "name": "idna",
+      "type": "library",
+      "version": "3.20"
+    },
+    {
+      "name": "iniconfig",
+      "type": "library",
+      "version": "2.3.1"
+    },
+    {
+      "name": "Jinja2",
+      "type": "library",
+      "version": "3.1.6"
+    },
+    {
+      "name": "joblib",
+      "type": "library",
+      "version": "1.6.0"
+    },
+    {
+      "name": "MarkupSafe",
+      "type": "library",
+      "version": "3.0.4"
+    },
+    {
+      "name": "narwhals",
+      "type": "library",
+      "version": "2.29.0"
+    },
+    {
+      "name": "numpy",
+      "type": "library",
+      "version": "2.5.5"
+    },
+    {
+      "name": "opentelemetry-api",
+      "type": "library",
+      "version": "1.45.2"
+    },
+    {
+      "name": "osqp",
+      "type": "library",
+      "version": "1.1.3"
+    },
+    {
+      "name": "packaging",
+      "type": "library",
+      "version": "26.4"
+    },
+    {
+      "name": "pip",
+      "type": "library",
+      "version": "26.3"
+    },
+    {
+      "name": "pluggy",
+      "type": "library",
+      "version": "1.7.0"
+    },
+    {
+      "name": "pyarrow",
+      "type": "library",
+      "version": "26.0.1"
+    },
+    {
+      "name": "pycparser",
+      "type": "library",
+      "version": "3.12"
+    },
+    {
+      "name": "pydantic",
+      "type": "library",
+      "version": "2.14.4"
+    },
+    {
+      "name": "pydantic_core",
+      "type": "library",
+      "version": "2.50.5"
+    },
+    {
+      "name": "Pygments",
+      "type": "library",
+      "version": "2.21.0"
+    },
+    {
+      "name": "pyproject_hooks",
+      "type": "library",
+      "version": "1.3.3"
+    },
+    {
+      "name": "pytest",
+      "type": "library",
+      "version": "9.2.0"
+    },
+    {
+      "name": "python-dotenv",
+      "type": "library",
+      "version": "1.2.4"
+    },
+    {
+      "name": "PyYAML",
+      "type": "library",
+      "version": "6.0.4"
+    },
+    {
+      "name": "scikit-learn",
+      "type": "library",
+      "version": "1.9.1"
+    },
+    {
+      "name": "scipy",
+      "type": "library",
+      "version": "1.18.1"
+    },
+    {
+      "name": "setuptools",
+      "type": "library",
+      "version": "84.2.1"
+    },
+    {
+      "name": "sortedcontainers",
+      "type": "library",
+      "version": "2.4.0"
+    },
+    {
+      "name": "starlette",
+      "type": "library",
+      "version": "1.10.0"
+    },
+    {
+      "name": "threadpoolctl",
+      "type": "library",
+      "version": "3.8.0"
+    },
+    {
+      "name": "typing-inspection",
+      "type": "library",
+      "version": "0.4.5"
+    },
+    {
+      "name": "typing_extensions",
+      "type": "library",
+      "version": "4.16.0"
+    },
+    {
+      "name": "tzdata",
+      "type": "library",
+      "version": "2026.6"
+    },
+    {
+      "name": "uvicorn",
+      "type": "library",
+      "version": "0.54.0"
+    },
+    {
+      "name": "uvloop",
+      "type": "library",
+      "version": "0.23.0"
+    },
+    {
+      "name": "watchfiles",
+      "type": "library",
+      "version": "1.3.0"
+    },
+    {
+      "name": "websockets",
+      "type": "library",
+      "version": "17.4"
+    }
+  ],
+  "metadata": {
+    "component": {
+      "name": "atlas-quant",
+      "type": "application"
+    },
+    "properties": [
+      {
+        "name": "atlas:revision",
+        "value": "d649fcc9d6f4173b59e574e8a25439444f21ef21"
+      },
+      {
+        "name": "atlas:dirty_worktree",
+        "value": "true"
+      },
+      {
+        "name": "atlas:phase8_package",
+        "value": "fixtures/phase8/flagship_weather_demand.atlas"
+      }
+    ]
+  },
+  "serialNumber": "urn:atlas:sha256:8bca2d528e6507a9906096930c82f35b",
+  "specVersion": "1.5",
+  "version": 1
+}

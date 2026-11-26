@@ -1,0 +1,131 @@
+{
+  "analysis_plan": {
+    "clustering": "issuer-level table; questions from one filing are never treated as independent observations",
+    "dev_separation": "development results are never pooled with holdout results",
+    "primary": "paired comparison of combined exact-answer correctness per question, both arms on the same questions",
+    "reporting": "one run, all results preserved unfiltered: failures, refusals, false answers, citation failures and unsupported answers. No performance gate may censor the first run.",
+    "timing": "cold build per arm, warm per-question latency, and cold cost amortised over the scored questions; timing is environment-specific and reported separately from correctness",
+    "uncertainty": "issuer-cluster bootstrap (2000 resamples, seed 20261123) of the paired exact-rate difference, plus an exact sign test on discordant pairs"
+  },
+  "code": {
+    "scripts/answer_semantics_holdout_evaluate.py": "116009148b4c5a9f1f5d15eb1aecb48805dcf0b63dc568c4634dd56a8341263b",
+    "scripts/answer_semantics_holdout_freeze.py": "1b214a71b26e97650e7d3fad55b6adeac963e6c89d7e9119496931b3d63ff531",
+    "src/atlas/research/answer_semantics.py": "53c2f4d6e5c1aba55cd90e71aa933fbdaf3f7942a055fde416cfbe11c2afde24",
+    "src/atlas/research/financial_answers.py": "1e2c0a9200ace44475d11031b352947a63ad9caf8947c4a78342bea642ab0742",
+    "src/atlas/research/financial_concepts.py": "515393dddb2f9bc72d859380a71046b267d4bb7537410f1d307b110a55c5932b",
+    "src/atlas/research/financial_verification.py": "239b2c3d4ade12ab0adff518b18fa6348c5de247e136dc219a7cfcef6b3cfcd1",
+    "src/atlas/research/geometry_resolution.py": "14db3a1d6327114ad1ad432b1a6a443063c3427d47b6b7cb7502dd4c0f6bf938",
+    "src/atlas/research/holdout.py": "49d9d1d3428fe18fe9d30d0a8ff29e069ba1ae819c4fef8f7b550d0c60549de6",
+    "src/atlas/research/knowledge.py": "833ab0d173b9d636ec01e8c52c58c68622179a4596d917ec8942312a6a0ad799",
+    "src/atlas/research/table_cells.py": "e6bc49fb15475149b5a3fb504e2cecf5db4860af3a2240e0625f64482a3c3a70",
+    "src/atlas/research/table_geometry.py": "71de18aeb6a78d8493b6e51f92faf04394e618e8b8a26a49a285915ec13d36a0"
+  },
+  "code_commit": "886e47f51e7d8f2d0b0c3a18575738096f13d5b9",
+  "counts": {
+    "abstention": 7,
+    "accessions": 12,
+    "answerable": 47,
+    "arithmetic": 12,
+    "issuers": 12,
+    "ledger_attempted": 63,
+    "ledger_not_scored": 9,
+    "ledger_scored": 54,
+    "lookups": 35,
+    "questions": 54
+  },
+  "created_at": "2026-11-23T21:16:14Z",
+  "evaluation_version": "10.0.2",
+  "freeze_rules": {
+    "no_tuning": "no resolver change, question change or alias addition may follow the run and still be called a holdout",
+    "one_run": "the first scored run is executed once on this cohort; its artifact is preserved",
+    "post_freeze_change": "any change to a frozen input or to resolution code makes this cohort a development set",
+    "verification": "scripts/answer_semantics_holdout_evaluate.py calls --check and refuses to run on drift"
+  },
+  "gold_digest": "9a3695a9a5dc9494679cefa0ebfd5ef5c10de29a471176700e445081c77deba7",
+  "inputs": {
+    "artifacts/answer_semantics/holdout_source_manifest.json": "1f7f4a80e0746a611800a22f8c19ac9f796120ac14af1011f947ed3c26288836",
+    "fixtures/answer_semantics/holdout_corpus.json": "ec9e27a5d5300ce98c715b02ba292efd725a5505437ebbd965312dc0a0b4c0bb",
+    "fixtures/answer_semantics/holdout_facts.json": "c73a9c05f3ae3f6c396d4584e67e0fb29b25e976c76cca4cad50bc69c785852a",
+    "fixtures/answer_semantics/holdout_ledger.json": "0926c5582f7460c71e5cc2064c6e605a831c0f193cbd2b3f424b6bf1cbfcc9ec",
+    "fixtures/answer_semantics/holdout_plan.json": "125311361e60160ec157af783ac8eed640f8f28816246048c8085f18dab8001d",
+    "fixtures/answer_semantics/holdout_protocol.json": "31b925068562525b68eb1feca2afaa67516bd5c2762185f85e437e0ea44bb5a6",
+    "fixtures/answer_semantics/holdout_questions.json": "2349fe989955eff85ae30074378b598a4039269ab29bbddb982849e4a65fc224",
+    "fixtures/answer_semantics/holdout_universe.json": "64f1a2effec749e1d1e33474b8e9b8ae230c5f44519731a9a0a731acc0cedde9",
+    "scripts/answer_semantics_holdout_author_gold.py": "566ade165268b3829e505eda8f480f191307a2b4311dba1b2900ce11cbd40ef1"
+  },
+  "metrics": {
+    "abstention_denominator": "questions whose gold class is conflicting_evidence or structurally_unanswerable",
+    "answer_precision": "combined correct / answered",
+    "answerable_denominator": "questions whose gold class is xbrl_verified after exclusions",
+    "citation_accuracy": "answered answerable questions whose cited accession, row label and raw text match gold / answered",
+    "citation_failures": "numerically right but cited accession, row or raw text wrong",
+    "combined_exact_rate": "numerical and citation and source all correct / answerable",
+    "coverage": "answered / answerable",
+    "false_confident_answers": "answered answerable questions with a wrong amount, period or unit",
+    "justified_abstention": "a refusal on an abstention question for a conflict or absent evidence",
+    "numerical_accuracy": "answered answerable questions with matching amount, period and unit / answerable",
+    "period_header_confirmation": "the citation's column label names the period it is used for",
+    "source_accuracy": "answered answerable questions whose cited accession is the gold accession / answered",
+    "unsupported_answers": "an answered response on an abstention question"
+  },
+  "protocol_version": "holdout-1.1",
+  "purpose": "Preregistration of the first prospective answer-semantics evaluation. Written after the gold commit and before either resolver is run on the cohort.",
+  "reissue": {
+    "previous": {
+      "code_commit": "8da226922ca0fd0674a18263b1466ded76b65b39",
+      "created_at": "2026-11-23T21:15:34Z",
+      "gold_digest": "979fcf6a24925c1dafbbe4a3bac184d32f6e542d9284967f881490ad41d2363b"
+    },
+    "reason": "document rights label rejected by the importer before any resolver ran; corrected to the existing user_responsibility class",
+    "statement": "Reissued before any score existed: the superseded record was aborted during ingestion and neither resolver had run on a holdout question."
+  },
+  "reviewer_limitations": {
+    "mitigations": [
+      "every question records the printed cell, the printed header and the XBRL fact so a reviewer can re-check it without trusting the author",
+      "printed/XBRL disagreement is excluded rather than reconciled",
+      "the question-selection rule is committed before any label exists"
+    ],
+    "reviewers": 1,
+    "statement": "Gold is single-author reviewed against two independent authorities (printed cells and same-accession XBRL facts). No second human annotator is available; this is not independent human annotation and is reported as such."
+  },
+  "schema": "atlas.answer_semantics.holdout_freeze.v1",
+  "selection": {
+    "accessions": [
+      "0000018230-23-000011",
+      "0000019617-23-000231",
+      "0000050863-23-000006",
+      "0001564590-22-023675",
+      "0001090727-23-000006",
+      "0000006951-22-000043",
+      "0001018724-23-000004",
+      "0001744489-22-000213",
+      "0000012927-23-000007",
+      "0001628280-23-004026",
+      "0000950170-22-012762",
+      "0000060667-22-000038"
+    ],
+    "changed_after_freeze": false,
+    "plan_commitment": "073f690d6e3346dd1703a1e3a2483beaa004a2cbad35cb7e14012cb7486cb20e",
+    "seed": "atlas-answer-semantics-holdout-2026-11",
+    "selection_rule": "Rank every candidate below by sha256(seed + '/' + cik) as a hex string and take the first selection_count candidates that filed a 10-K with a period of report in target_fiscal_year. Candidates are the issuers listed here, which excludes every development issuer in corpus.json. The rule, seed and universe are committed before any resolver is run on the selected filings; changing any of them after seeing resolver output voids the holdout."
+  },
+  "source_bytes": {
+    "filings": 12,
+    "sha256": {
+      "0000006951-22-000043": "6f9de188dfec752b46598decf3834e971c1ee4ee0107a3bc595d5e9b0c60da1d",
+      "0000012927-23-000007": "cd5b833fc2c2b03391d16cf5490c5453f4360e4603f98948473312e68342140b",
+      "0000018230-23-000011": "c1e4707c51d6150818bdb11ad11a56db34ddbd411d4a185e1bd182f55f6853f8",
+      "0000019617-23-000231": "046cf471f046c156056d1d3a9a0aa6f1f22cfd03028def4fefc6a029537480a2",
+      "0000050863-23-000006": "16ffbebcc12c80698de524ba42e54ca19a441174d37be0da47fdfd55a95c8818",
+      "0000060667-22-000038": "907e7e260cfa18af6b0c625333b979b991424e0e7d00045d1a245b3d74cca297",
+      "0000950170-22-012762": "e65273e9ad9bab61c24af439ddd44911ffd2940d981d658b1e9f7045d3a9b4f6",
+      "0001018724-23-000004": "f9a4d97b5feb623b414cff7d953946efcf772ef8325a97a22b29bfa07bbb02fc",
+      "0001090727-23-000006": "f5d0633fe2a5d5d4e21319556feebc6675c2579daa8cf57bf7ba9acdfb6698bd",
+      "0001564590-22-023675": "7c34d742eb38eb8bdc0460cda4ff324b04ab305ab0d98410dfc39baf97854115",
+      "0001628280-23-004026": "1ade636092858cac0a6e69852e7a390a0c926b2b0bbb7633edaa7127b72c7f75",
+      "0001744489-22-000213": "977a65219cd372ce04288a0adbbd1ec7eae05dfdef56d64d645e8c5df6d71663"
+    },
+    "xbrl_digest": "f25251c436e135930c834648c28f3729ed02860117c174132ff07e331df8fd72"
+  },
+  "status": "frozen_awaiting_first_run"
+}

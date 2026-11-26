@@ -1,0 +1,49 @@
+{
+  "schema": "atlas.market_fixture.manifest.v2",
+  "synthetic": true,
+  "contains_vendor_data": false,
+  "source": "Atlas synthetic market fixture generator (hand-authored, deterministic)",
+  "retrieved_at": null,
+  "licence": "Apache-2.0 (Atlas project-authored fixtures). This is a copyright licence, not a public-domain dedication and not permission to treat synthetic values as observations.",
+  "redistribution": "project_authored",
+  "authorization_basis": "Project-authored synthetic values; not derived from any vendor feed and not presented as observed market data.",
+  "adjustment_semantics": "unadjusted",
+  "series": [
+    {
+      "ticker": "ATLS",
+      "security_name": "Atlas Synthetic Markets Corp",
+      "rows": 10,
+      "first": "2024-12-02",
+      "last": "2024-12-13",
+      "path": "fixtures/market/synthetic_prices.csv",
+      "synthetic": true
+    }
+  ],
+  "documents": [
+    {
+      "path": "fixtures/market/synthetic_daily_bars.json",
+      "shape": "vendor-shaped TIME_SERIES_DAILY payload for parser tests",
+      "synthetic": true
+    },
+    {
+      "path": "fixtures/market/synthetic_splits.json",
+      "shape": "vendor-shaped SPLITS payload for parser tests",
+      "synthetic": true
+    },
+    {
+      "path": "fixtures/market/synthetic_dividends.json",
+      "shape": "vendor-shaped DIVIDENDS payload for parser tests",
+      "synthetic": true
+    },
+    {
+      "path": "fixtures/market/aapl_split_bars.csv",
+      "shape": "eight bars around a 4:1 split",
+      "synthetic": true
+    }
+  ],
+  "note": "These values are deterministic and synthetic. They are safe to redistribute because Atlas authored them, and they must never be described, labelled or exported as real market observations. Users who hold a licensed feed import their own files; see scripts/import_phase9_2_prices.py. Rights metadata separates the copyright licence (Apache-2.0) from the redistribution class (project_authored).",
+  "historical_note": "Earlier revisions of this repository tracked Nasdaq quote-history CSVs and Alpha Vantage demo responses. Those records were restricted vendor data and have been removed from the tracked tree. They remain reachable in Git history; see docs/DATA_RIGHTS_AUDIT.md.",
+  "copyright_licence": "Apache-2.0",
+  "copyright_holder": "Atlas project authors",
+  "rights_note": "Project authorship plus a permissive copyright licence is classified as project_authored, which is exportable. It is deliberately not labelled public_domain: Atlas has not dedicated these files to the public domain."
+}

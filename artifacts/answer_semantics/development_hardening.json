@@ -1,0 +1,2352 @@
+{
+  "build_ms": {
+    "baseline_flattened_cells": 2323.158,
+    "geometry_tables": 18916.326
+  },
+  "corpus_digest": "5419fd9fa3cba6d2f9dd9e569ea4aaa6b9aa65360819484f3bbbe9b0cf2af933",
+  "evaluation_version": "10.0.2",
+  "gold": {
+    "AS-01": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000104169-23-000020",
+          "end": "2023-01-31",
+          "fp": "FY",
+          "fy": 2023,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "605881000000"
+        }
+      ],
+      "value_display": "605881000000",
+      "value_exact": "605881000000"
+    },
+    "AS-02": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000104169-23-000020",
+          "end": "2023-01-31",
+          "fp": "FY",
+          "fy": 2023,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Assets",
+          "unit": "USD",
+          "value": "243197000000"
+        }
+      ],
+      "value_display": "243197000000",
+      "value_exact": "243197000000"
+    },
+    "AS-03": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000320193-23-000106",
+          "end": "2023-09-30",
+          "fp": "FY",
+          "fy": 2023,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "383285000000"
+        }
+      ],
+      "value_display": "383285000000",
+      "value_exact": "383285000000"
+    },
+    "AS-04": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000320193-23-000106",
+          "end": "2023-09-30",
+          "fp": "FY",
+          "fy": 2023,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "NetIncomeLoss",
+          "unit": "USD",
+          "value": "96995000000"
+        }
+      ],
+      "value_display": "96995000000",
+      "value_exact": "96995000000"
+    },
+    "AS-05": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000320193-23-000106",
+          "end": "2023-09-30",
+          "fp": "FY",
+          "fy": 2023,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Assets",
+          "unit": "USD",
+          "value": "352583000000"
+        }
+      ],
+      "value_display": "352583000000",
+      "value_exact": "352583000000"
+    },
+    "AS-06": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001564590-19-027952",
+          "end": "2019-06-30",
+          "fp": "FY",
+          "fy": 2019,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "125843000000"
+        }
+      ],
+      "value_display": "125843000000",
+      "value_exact": "125843000000"
+    },
+    "AS-07": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001564590-19-027952",
+          "end": "2019-06-30",
+          "fp": "FY",
+          "fy": 2019,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "OperatingIncomeLoss",
+          "unit": "USD",
+          "value": "42959000000"
+        }
+      ],
+      "value_display": "42959000000",
+      "value_exact": "42959000000"
+    },
+    "AS-08": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000077476-20-000015",
+          "end": "2019-12-28",
+          "fp": "FY",
+          "fy": 2019,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "67161000000"
+        }
+      ],
+      "value_display": "67161000000",
+      "value_exact": "67161000000"
+    },
+    "AS-09": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000950170-22-001976",
+          "end": "2022-01-02",
+          "fp": "FY",
+          "fy": 2021,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "6099869000"
+        }
+      ],
+      "value_display": "6099869000",
+      "value_exact": "6099869000"
+    },
+    "AS-10": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000950170-22-001976",
+          "end": "2022-01-02",
+          "fp": "FY",
+          "fy": 2021,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Assets",
+          "unit": "USD",
+          "value": "2923115000"
+        }
+      ],
+      "value_display": "2923115000",
+      "value_exact": "2923115000"
+    },
+    "AS-11": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001020859-22-000054",
+          "end": "2022-07-30",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "28928000000"
+        }
+      ],
+      "value_display": "28928000000",
+      "value_exact": "28928000000"
+    },
+    "AS-12": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001047469-18-007694",
+          "end": "2018-10-28",
+          "fp": "FY",
+          "fy": 2018,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Assets",
+          "unit": "USD",
+          "value": "70108000000"
+        }
+      ],
+      "value_display": "70108000000",
+      "value_exact": "70108000000"
+    },
+    "AS-13": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001047469-19-000712",
+          "end": "2018-12-31",
+          "fp": "FY",
+          "fy": 2018,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "NetIncomeLoss",
+          "unit": "USD",
+          "value": "8728000000"
+        }
+      ],
+      "value_display": "8728000000",
+      "value_exact": "8728000000"
+    },
+    "AS-14": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001047469-19-000712",
+          "end": "2018-12-31",
+          "fp": "FY",
+          "fy": 2018,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "79591000000"
+        }
+      ],
+      "value_display": "79591000000",
+      "value_exact": "79591000000"
+    },
+    "AS-15": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001047469-18-001117",
+          "end": "2017-12-31",
+          "fp": "FY",
+          "fy": 2017,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "GrossProfit",
+          "unit": "USD",
+          "value": "36227000000"
+        }
+      ],
+      "value_display": "36227000000",
+      "value_exact": "36227000000"
+    },
+    "AS-16": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000093410-22-000019",
+          "end": "2021-12-31",
+          "fp": "FY",
+          "fy": 2021,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Assets",
+          "unit": "USD",
+          "value": "239535000000"
+        }
+      ],
+      "value_display": "239535000000",
+      "value_exact": "239535000000"
+    },
+    "AS-17": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000021344-23-000011",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "43004000000"
+        }
+      ],
+      "value_display": "43004000000",
+      "value_exact": "43004000000"
+    },
+    "AS-18": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001558370-19-000470",
+          "end": "2018-12-31",
+          "fp": "FY",
+          "fy": 2018,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "32765000000"
+        }
+      ],
+      "value_display": "32765000000",
+      "value_exact": "32765000000"
+    },
+    "AS-19": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000320193-23-000106",
+          "end": "2023-09-30",
+          "fp": "FY",
+          "fy": 2023,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "383285000000"
+        },
+        {
+          "accn": "0000320193-23-000106",
+          "end": "2022-09-24",
+          "fp": "FY",
+          "fy": 2023,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "394328000000"
+        }
+      ],
+      "value_display": "-2.80",
+      "value_exact": "-276075/98582"
+    },
+    "AS-20": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001564590-19-027952",
+          "end": "2019-06-30",
+          "fp": "FY",
+          "fy": 2019,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "125843000000"
+        },
+        {
+          "accn": "0001564590-19-027952",
+          "end": "2018-06-30",
+          "fp": "FY",
+          "fy": 2019,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "110360000000"
+        }
+      ],
+      "value_display": "14.03",
+      "value_exact": "77415/5518"
+    },
+    "AS-21": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000950170-22-001976",
+          "end": "2022-01-02",
+          "fp": "FY",
+          "fy": 2021,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "OperatingIncomeLoss",
+          "unit": "USD",
+          "value": "334076000"
+        },
+        {
+          "accn": "0000950170-22-001976",
+          "end": "2022-01-02",
+          "fp": "FY",
+          "fy": 2021,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "6099869000"
+        }
+      ],
+      "value_display": "5.48",
+      "value_exact": "33407600/6099869"
+    },
+    "AS-22": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000104169-23-000020",
+          "end": "2023-01-31",
+          "fp": "FY",
+          "fy": 2023,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "OperatingIncomeLoss",
+          "unit": "USD",
+          "value": "20428000000"
+        },
+        {
+          "accn": "0000104169-23-000020",
+          "end": "2023-01-31",
+          "fp": "FY",
+          "fy": 2023,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "605881000000"
+        }
+      ],
+      "value_display": "3.37",
+      "value_exact": "2042800/605881"
+    },
+    "AS-23": {
+      "class": "conflicting_evidence",
+      "inputs": [],
+      "note": "Two 10-K vintages report different FY2017 gross profit: 36,227 (FY2017 10-K) and 36,943 (FY2018 10-K, restated). Both become public before this cutoff, so no single amount is supported."
+    },
+    "AS-24": {
+      "class": "structurally_unanswerable",
+      "inputs": [],
+      "note": "Chevron's income statement has no gross profit line and no GrossProfit XBRL fact for FY2021; substituting a subtotal would be an unsupported answer."
+    }
+  },
+  "metrics": {
+    "baseline": {
+      "abstention_questions": 2,
+      "answer_precision": 1.0,
+      "answerable": 22,
+      "answerable_abstentions": 2,
+      "answered": 20,
+      "citation_accuracy": 1.0,
+      "citation_failures": 0,
+      "correct": 20,
+      "evidence_missing": 0,
+      "exact_answer_rate": 0.9091,
+      "excluded_questions": 0,
+      "false_answer_rate": 0.0,
+      "false_answers": 0,
+      "justified_abstention_rate": 1.0,
+      "justified_abstentions": 2,
+      "latency_ms": {
+        "median": 84.976,
+        "p95": 354.456
+      },
+      "numerical_accuracy": 0.9091,
+      "period_accuracy": 1.0,
+      "period_header_confirmed": 0.05,
+      "resolution_failures": 2,
+      "runner_errors": 0,
+      "scored_questions": 24,
+      "source_accuracy": 1.0,
+      "unit_accuracy": 1.0,
+      "unjustified_abstentions": 0,
+      "unsupported_confident_answers": 0
+    },
+    "geometry": {
+      "abstention_questions": 2,
+      "answer_precision": 1.0,
+      "answerable": 22,
+      "answerable_abstentions": 0,
+      "answered": 22,
+      "citation_accuracy": 1.0,
+      "citation_failures": 0,
+      "correct": 22,
+      "evidence_missing": 0,
+      "exact_answer_rate": 1.0,
+      "excluded_questions": 0,
+      "false_answer_rate": 0.0,
+      "false_answers": 0,
+      "justified_abstention_rate": 1.0,
+      "justified_abstentions": 2,
+      "latency_ms": {
+        "median": 87.346,
+        "p95": 171.535
+      },
+      "numerical_accuracy": 1.0,
+      "period_accuracy": 1.0,
+      "period_header_confirmed": 1.0,
+      "resolution_failures": 0,
+      "runner_errors": 0,
+      "scored_questions": 24,
+      "source_accuracy": 1.0,
+      "unit_accuracy": 1.0,
+      "unjustified_abstentions": 0,
+      "unsupported_confident_answers": 0
+    }
+  },
+  "questions": 24,
+  "results": [
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 165.134,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000104169-23-000020",
+        "citations": [
+          {
+            "accession": "0000104169-23-000020",
+            "column_label": "",
+            "period": "2023",
+            "raw": "605,881",
+            "row_label": "Net sales",
+            "scale": 6
+          }
+        ],
+        "period": "2023",
+        "scale": 6,
+        "value_display": "605881.00",
+        "value_economic": "605881000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "january_fiscal_year"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 90.52,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000104169-23-000020",
+        "citations": [
+          {
+            "accession": "0000104169-23-000020",
+            "column_label": "Fiscal Years Ended January 31, \u00b7 2023",
+            "document_sha256": "dd3becefe457bc63a947eacd9638d91cd92d58b7e64ed62808474602d13aefb2",
+            "entity_scope": "consolidated",
+            "period": "2023",
+            "raw": "605,881",
+            "row_label": "Net sales",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "aad4e06714f41983d6e657c59ed399c1734bf636653d7e4188e2e9bc5e7cb7ed",
+            "table_index": 49
+          }
+        ],
+        "period": "2023",
+        "scale": 6,
+        "value_display": "605881",
+        "value_economic": "605881000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "january_fiscal_year"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 6.416,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000104169-23-000020",
+        "citations": [
+          {
+            "accession": "0000104169-23-000020",
+            "column_label": "",
+            "period": "2023",
+            "raw": "243,197",
+            "row_label": "Total assets",
+            "scale": 6
+          }
+        ],
+        "period": "2023",
+        "scale": 6,
+        "value_display": "243197.00",
+        "value_economic": "243197000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "balance_sheet"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 12.881,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000104169-23-000020",
+        "citations": [
+          {
+            "accession": "0000104169-23-000020",
+            "column_label": "As of January 31, \u00b7 2023",
+            "document_sha256": "dd3becefe457bc63a947eacd9638d91cd92d58b7e64ed62808474602d13aefb2",
+            "entity_scope": "consolidated",
+            "period": "2023",
+            "raw": "243,197",
+            "row_label": "Total assets",
+            "scale": 6,
+            "statement_family": "balance_sheet",
+            "table_digest": "e4eca37d2e9b9f82cd80926d229b49be0579864ff14ae6b574e8a6a36e9ab7e2",
+            "table_index": 51
+          }
+        ],
+        "period": "2023",
+        "scale": 6,
+        "value_display": "243197",
+        "value_economic": "243197000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "balance_sheet"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 100.207,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000320193-23-000106",
+        "citations": [
+          {
+            "accession": "0000320193-23-000106",
+            "column_label": "2022",
+            "period": "2023",
+            "raw": "383,285",
+            "row_label": "Total net sales",
+            "scale": 6
+          }
+        ],
+        "period": "2023",
+        "scale": 6,
+        "value_display": "383285.00",
+        "value_economic": "383285000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "segment_table_present"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 53.015,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000320193-23-000106",
+        "citations": [
+          {
+            "accession": "0000320193-23-000106",
+            "column_label": "Years ended \u00b7 September 30,2023",
+            "document_sha256": "48408b6d783672e888403d9ddf70ed47b290d821b133d9f711f058ba7349df33",
+            "entity_scope": "consolidated",
+            "period": "2023",
+            "raw": "383,285",
+            "row_label": "Total net sales",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "60113d18072c4412ac63adb60a7a98823bfe87886ca36f28fa86669408d4d952",
+            "table_index": 14
+          }
+        ],
+        "period": "2023",
+        "scale": 6,
+        "value_display": "383285",
+        "value_economic": "383285000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "segment_table_present"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 11.864,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000320193-23-000106",
+        "citations": [
+          {
+            "accession": "0000320193-23-000106",
+            "column_label": "",
+            "period": "2023",
+            "raw": "96,995",
+            "row_label": "Net income",
+            "scale": 6
+          }
+        ],
+        "period": "2023",
+        "scale": 6,
+        "value_display": "96995.00",
+        "value_economic": "96995000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 25.006,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000320193-23-000106",
+        "citations": [
+          {
+            "accession": "0000320193-23-000106",
+            "column_label": "Years ended \u00b7 September 30,2023",
+            "document_sha256": "48408b6d783672e888403d9ddf70ed47b290d821b133d9f711f058ba7349df33",
+            "entity_scope": "consolidated",
+            "period": "2023",
+            "raw": "96,995",
+            "row_label": "Net income",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "60113d18072c4412ac63adb60a7a98823bfe87886ca36f28fa86669408d4d952",
+            "table_index": 14
+          }
+        ],
+        "period": "2023",
+        "scale": 6,
+        "value_display": "96995",
+        "value_economic": "96995000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 2.48,
+      "gold_class": "xbrl_verified",
+      "id": "AS-05",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "runner": "baseline",
+      "status": "resolution_failure",
+      "tags": [
+        "scale_6",
+        "balance_sheet"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 7.076,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-05",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000320193-23-000106",
+        "citations": [
+          {
+            "accession": "0000320193-23-000106",
+            "column_label": "September 30,2023",
+            "document_sha256": "48408b6d783672e888403d9ddf70ed47b290d821b133d9f711f058ba7349df33",
+            "entity_scope": "consolidated",
+            "period": "2023",
+            "raw": "352,583",
+            "row_label": "Total assets",
+            "scale": 6,
+            "statement_family": "balance_sheet",
+            "table_digest": "fdf4b84880d003d1ad855adff46c35799dfe559c9aed565376e582354b7b5e7d",
+            "table_index": 16
+          }
+        ],
+        "period": "2023",
+        "scale": 6,
+        "value_display": "352583",
+        "value_economic": "352583000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "balance_sheet"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 193.148,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-06",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-19-027952",
+        "citations": [
+          {
+            "accession": "0001564590-19-027952",
+            "column_label": "",
+            "period": "2019",
+            "raw": "125,843",
+            "row_label": "Total revenue",
+            "scale": 6
+          }
+        ],
+        "period": "2019",
+        "scale": 6,
+        "value_display": "125843.00",
+        "value_economic": "125843000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "june_fiscal_year"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 87.346,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-06",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-19-027952",
+        "citations": [
+          {
+            "accession": "0001564590-19-027952",
+            "column_label": "2019",
+            "document_sha256": "2036769275f5315b2a1e60dc44e5b6cae5053d9d7b6eb593115d234e486d346a",
+            "entity_scope": "unknown",
+            "period": "2019",
+            "raw": "125,843",
+            "row_label": "Revenue",
+            "scale": 6,
+            "statement_family": null,
+            "table_digest": "cb58d4f87afc85c7981ff2b35b53254ec99225c28fd9e0a91956409f85233497",
+            "table_index": 66
+          }
+        ],
+        "period": "2019",
+        "scale": 6,
+        "value_display": "125843",
+        "value_economic": "125843000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "june_fiscal_year"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 13.646,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-07",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-19-027952",
+        "citations": [
+          {
+            "accession": "0001564590-19-027952",
+            "column_label": "",
+            "period": "2019",
+            "raw": "42,959",
+            "row_label": "Operating income",
+            "scale": 6
+          }
+        ],
+        "period": "2019",
+        "scale": 6,
+        "value_display": "42959.00",
+        "value_economic": "42959000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 44.411,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-07",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-19-027952",
+        "citations": [
+          {
+            "accession": "0001564590-19-027952",
+            "column_label": "2019",
+            "document_sha256": "2036769275f5315b2a1e60dc44e5b6cae5053d9d7b6eb593115d234e486d346a",
+            "entity_scope": "unknown",
+            "period": "2019",
+            "raw": "42,959",
+            "row_label": "Operating income",
+            "scale": 6,
+            "statement_family": null,
+            "table_digest": "1a4202eb8449f21930c5a4f1c09b4582289103fc405a034b7ac5ce20902246fc",
+            "table_index": 134
+          }
+        ],
+        "period": "2019",
+        "scale": 6,
+        "value_display": "42959",
+        "value_economic": "42959000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 354.456,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-08",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000077476-20-000015",
+        "citations": [
+          {
+            "accession": "0000077476-20-000015",
+            "column_label": "",
+            "period": "2019",
+            "raw": "67,161",
+            "row_label": "Net Revenue",
+            "scale": 6
+          }
+        ],
+        "period": "2019",
+        "scale": 6,
+        "value_display": "67161.00",
+        "value_economic": "67161000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "fifty_three_week_year"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 137.125,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-08",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000077476-20-000015",
+        "citations": [
+          {
+            "accession": "0000077476-20-000015",
+            "column_label": "2019",
+            "document_sha256": "447db03d806178b1cf3e4e0cd91370e3aa0e97648e23f10fc610214938ac4a89",
+            "entity_scope": "consolidated",
+            "period": "2019",
+            "raw": "67,161",
+            "row_label": "Net Revenue",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "56a27093b81339d8e3e1567bb291ee8684ade5fae0cac38121f2bd53a5899b0b",
+            "table_index": 117
+          }
+        ],
+        "period": "2019",
+        "scale": 6,
+        "value_display": "67161",
+        "value_economic": "67161000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "fifty_three_week_year"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 84.976,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-09",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-001976",
+        "citations": [
+          {
+            "accession": "0000950170-22-001976",
+            "column_label": "January 3, 2021",
+            "period": "2022",
+            "raw": "6,099,869",
+            "row_label": "Net sales",
+            "scale": 3
+          }
+        ],
+        "period": "2022",
+        "scale": 3,
+        "value_display": "6099869.00",
+        "value_economic": "6099869000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_3",
+        "fiscal_label_differs_from_period_end"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 59.479,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-09",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-001976",
+        "citations": [
+          {
+            "accession": "0000950170-22-001976",
+            "column_label": "Year Ended \u00b7 January 2,2022",
+            "document_sha256": "169a391eb3078ba0ee8e0d92655d2ccc02093ae03df44cc0512568b9f751005b",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "6,099,869",
+            "row_label": "Net sales",
+            "scale": 3,
+            "statement_family": "income",
+            "table_digest": "031ae93915f240944d7fd0ab93eb077032e26138430669cc4f66cccf0f9aa762",
+            "table_index": 26
+          }
+        ],
+        "period": "2022",
+        "scale": 3,
+        "value_display": "6099869",
+        "value_economic": "6099869000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_3",
+        "fiscal_label_differs_from_period_end"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 1.983,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-10",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-001976",
+        "citations": [
+          {
+            "accession": "0000950170-22-001976",
+            "column_label": "January 3, 2021",
+            "period": "2022",
+            "raw": "2,923,115",
+            "row_label": "Total assets",
+            "scale": 3
+          }
+        ],
+        "period": "2022",
+        "scale": 3,
+        "value_display": "2923115.00",
+        "value_economic": "2923115000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_3",
+        "balance_sheet"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 8.664,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-10",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-001976",
+        "citations": [
+          {
+            "accession": "0000950170-22-001976",
+            "column_label": "January 2,2022",
+            "document_sha256": "169a391eb3078ba0ee8e0d92655d2ccc02093ae03df44cc0512568b9f751005b",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "2,923,115",
+            "row_label": "Total assets",
+            "scale": 3,
+            "statement_family": "balance_sheet",
+            "table_digest": "e9ea3e7017479d3341dbdd7a6a24bd4eb1b464b591522ed4bc19b0daf5463cdb",
+            "table_index": 25
+          }
+        ],
+        "period": "2022",
+        "scale": 3,
+        "value_display": "2923115",
+        "value_economic": "2923115000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_3",
+        "balance_sheet"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 167.904,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-11",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001020859-22-000054",
+        "citations": [
+          {
+            "accession": "0001020859-22-000054",
+            "column_label": "July 31, 2021 (52 weeks)",
+            "period": "2022",
+            "raw": "28,928",
+            "row_label": "Net sales",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "28928.00",
+        "value_economic": "28928000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "july_fiscal_year",
+        "product_mix_table"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 92.67,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-11",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001020859-22-000054",
+        "citations": [
+          {
+            "accession": "0001020859-22-000054",
+            "column_label": "Fiscal Year Ended \u00b7 July 30, 2022(52 weeks)",
+            "document_sha256": "29616ef651c5ec30c5fe6e70ec842e8dc51a6c1bb9f1ce60289d0a7c7bc885be",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "28,928",
+            "row_label": "Net sales",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "a9979a63642b73253dd7a576cb32ba2f4ea1332191b4023ef4511f5ea5868d70",
+            "table_index": 19
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "28928",
+        "value_economic": "28928000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "july_fiscal_year",
+        "product_mix_table"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 340.602,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-12",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001047469-18-007694",
+        "citations": [
+          {
+            "accession": "0001047469-18-007694",
+            "column_label": "",
+            "period": "2018",
+            "raw": "70,108.0",
+            "row_label": "Total Assets",
+            "scale": 6
+          }
+        ],
+        "period": "2018",
+        "scale": 6,
+        "value_display": "70108.00",
+        "value_economic": "70108000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "october_fiscal_year",
+        "pre_2020_layout"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 29.382,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-12",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001047469-18-007694",
+        "citations": [
+          {
+            "accession": "0001047469-18-007694",
+            "column_label": "2018",
+            "document_sha256": "5c84fe5aa7cdc77d4d1677d1528171e1444f6238bd213e75cf65e94c6c903b3e",
+            "entity_scope": "consolidated",
+            "period": "2018",
+            "raw": "70,108.0",
+            "row_label": "Total Assets",
+            "scale": 6,
+            "statement_family": "balance_sheet",
+            "table_digest": "9d270db8460ed5a9820cb6ec367e8d3f01fbe86d2e287a5f558aa32fc59bc522",
+            "table_index": 24
+          }
+        ],
+        "period": "2018",
+        "scale": 6,
+        "value_display": "70108",
+        "value_economic": "70108000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "october_fiscal_year",
+        "pre_2020_layout"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 570.859,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-13",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001047469-19-000712",
+        "citations": [
+          {
+            "accession": "0001047469-19-000712",
+            "column_label": "",
+            "period": "2018",
+            "raw": "8,728",
+            "row_label": "Net income",
+            "scale": 6
+          }
+        ],
+        "period": "2018",
+        "scale": 6,
+        "value_display": "8728.00",
+        "value_economic": "8728000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "statement_of_earnings"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 140.058,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-13",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001047469-19-000712",
+        "citations": [
+          {
+            "accession": "0001047469-19-000712",
+            "column_label": "2018",
+            "document_sha256": "dfdddaea81077839d7c24f7d49cb0171bcabb734e8ea1d3a2cd1651c438a34f4",
+            "entity_scope": "consolidated",
+            "period": "2018",
+            "raw": "8,728",
+            "row_label": "Net income",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "9827d27a1504e532bab08716a79c72a5e605a19a850b09aeccb0382cb6ae4e26",
+            "table_index": 77
+          }
+        ],
+        "period": "2018",
+        "scale": 6,
+        "value_display": "8728",
+        "value_economic": "8728000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "statement_of_earnings"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": "conflicting_row_values",
+      "elapsed_ms": 67.154,
+      "gold_class": "xbrl_verified",
+      "id": "AS-14",
+      "outcome": "abstained",
+      "reason": "concept_resolution:ambiguous",
+      "runner": "baseline",
+      "status": "resolution_failure",
+      "tags": [
+        "scale_6",
+        "statements_in_item_8_exhibit"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 300.752,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-14",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001047469-19-000712",
+        "citations": [
+          {
+            "accession": "0001047469-19-000712",
+            "column_label": "2018",
+            "document_sha256": "dfdddaea81077839d7c24f7d49cb0171bcabb734e8ea1d3a2cd1651c438a34f4",
+            "entity_scope": "consolidated",
+            "period": "2018",
+            "raw": "79,591",
+            "row_label": "Total revenue",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "9827d27a1504e532bab08716a79c72a5e605a19a850b09aeccb0382cb6ae4e26",
+            "table_index": 77
+          }
+        ],
+        "period": "2018",
+        "scale": 6,
+        "value_display": "79591",
+        "value_economic": "79591000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "statements_in_item_8_exhibit"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 272.548,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-15",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001047469-18-001117",
+        "citations": [
+          {
+            "accession": "0001047469-18-001117",
+            "column_label": "2017",
+            "period": "2017",
+            "raw": "36,227",
+            "row_label": "Gross profit",
+            "scale": 6
+          }
+        ],
+        "period": "2017",
+        "scale": 6,
+        "value_display": "36227.00",
+        "value_economic": "36227000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "single_vintage_visible"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 76.557,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-15",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001047469-18-001117",
+        "citations": [
+          {
+            "accession": "0001047469-18-001117",
+            "column_label": "2017",
+            "document_sha256": "12c0d3269a4a5242039f2981624e9fdc634f6879da0f59d7dbc9009fbeb8b56f",
+            "entity_scope": "consolidated",
+            "period": "2017",
+            "raw": "36,227",
+            "row_label": "Gross profit",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "0b8308e7be737f731913cd6c4301fde46b4ff4627ef9456925737bfb103f38aa",
+            "table_index": 70
+          }
+        ],
+        "period": "2017",
+        "scale": 6,
+        "value_display": "36227",
+        "value_economic": "36227000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "single_vintage_visible"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 229.389,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-16",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000093410-22-000019",
+        "citations": [
+          {
+            "accession": "0000093410-22-000019",
+            "column_label": "2020",
+            "period": "2021",
+            "raw": "239,535",
+            "row_label": "Total Assets",
+            "scale": 6
+          }
+        ],
+        "period": "2021",
+        "scale": 6,
+        "value_display": "239535.00",
+        "value_economic": "239535000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "balance_sheet"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 30.842,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-16",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000093410-22-000019",
+        "citations": [
+          {
+            "accession": "0000093410-22-000019",
+            "column_label": "At December 31 \u00b7 2021",
+            "document_sha256": "302097411a92d9fac48708debaecb4334ff91b836dcec1e400fc69fdfb8a6d5e",
+            "entity_scope": "consolidated",
+            "period": "2021",
+            "raw": "239,535",
+            "row_label": "Total Assets",
+            "scale": 6,
+            "statement_family": "balance_sheet",
+            "table_digest": "519cae3e37ae2bc569aeb4f8bfa3efea7e9be0fb31777421c21eae11b8771f19",
+            "table_index": 53
+          }
+        ],
+        "period": "2021",
+        "scale": 6,
+        "value_display": "239535",
+        "value_economic": "239535000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "balance_sheet"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 223.732,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-17",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000021344-23-000011",
+        "citations": [
+          {
+            "accession": "0000021344-23-000011",
+            "column_label": "2021",
+            "period": "2022",
+            "raw": "43,004",
+            "row_label": "Net Operating Revenues",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "43004.00",
+        "value_economic": "43004000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "regression_merged_header"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 141.034,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-17",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000021344-23-000011",
+        "citations": [
+          {
+            "accession": "0000021344-23-000011",
+            "column_label": "2022",
+            "document_sha256": "a7ddecf01024c339254eb3f4a7270ff4b10900a69eab6cdfe165e0608f168a71",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "43,004",
+            "row_label": "Net Operating Revenues",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "4caeef024c0997f021a7400672afc85f824320d83b2bc9ebd3efad53aa1a3ebb",
+            "table_index": 26
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "43004",
+        "value_economic": "43004000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "regression_merged_header"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 286.224,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-18",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001558370-19-000470",
+        "citations": [
+          {
+            "accession": "0001558370-19-000470",
+            "column_label": "",
+            "period": "2018",
+            "raw": "32,765",
+            "row_label": "Net sales",
+            "scale": 6
+          }
+        ],
+        "period": "2018",
+        "scale": 6,
+        "value_display": "32765.00",
+        "value_economic": "32765000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "regression_segment_banner"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 156.028,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-18",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001558370-19-000470",
+        "citations": [
+          {
+            "accession": "0001558370-19-000470",
+            "column_label": "2018",
+            "document_sha256": "937de80e73569267f2d9715b03858d51b483fb94e09c185ae70991d20f444121",
+            "entity_scope": "consolidated",
+            "period": "2018",
+            "raw": "32,765",
+            "row_label": "Net sales",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "aed910344ee02db8309743868a94fe55489a7b3777342b9a17190a4695dda78c",
+            "table_index": 170
+          }
+        ],
+        "period": "2018",
+        "scale": 6,
+        "value_display": "32765",
+        "value_economic": "32765000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "regression_segment_banner"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 42.136,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-19",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000320193-23-000106",
+        "citations": [
+          {
+            "accession": "0000320193-23-000106",
+            "column_label": "2022",
+            "period": "2023",
+            "raw": "383,285",
+            "row_label": "Total net sales",
+            "scale": 6
+          },
+          {
+            "accession": "0000320193-23-000106",
+            "column_label": "",
+            "period": "2022",
+            "raw": "394,328",
+            "row_label": "Total net sales",
+            "scale": 6
+          }
+        ],
+        "period": "2023 vs 2022",
+        "scale": 6,
+        "value_display": "-2.80",
+        "value_economic": null
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "arithmetic"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 105.641,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-19",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000320193-23-000106",
+        "citations": [
+          {
+            "accession": "0000320193-23-000106",
+            "column_label": "Years ended \u00b7 September 30,2023",
+            "period": "2023",
+            "raw": "383,285",
+            "row_label": "Total net sales",
+            "scale": 6,
+            "table_digest": "60113d18072c4412ac63adb60a7a98823bfe87886ca36f28fa86669408d4d952"
+          },
+          {
+            "accession": "0000320193-23-000106",
+            "column_label": "Years ended \u00b7 September 24,2022",
+            "period": "2022",
+            "raw": "394,328",
+            "row_label": "Total net sales",
+            "scale": 6,
+            "table_digest": "60113d18072c4412ac63adb60a7a98823bfe87886ca36f28fa86669408d4d952"
+          }
+        ],
+        "period": "2023",
+        "scale": 6,
+        "value_display": "-2.80",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "arithmetic"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 67.727,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-20",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-19-027952",
+        "citations": [
+          {
+            "accession": "0001564590-19-027952",
+            "column_label": "",
+            "period": "2019",
+            "raw": "125,843",
+            "row_label": "Total revenue",
+            "scale": 6
+          },
+          {
+            "accession": "0001564590-19-027952",
+            "column_label": "",
+            "period": "2018",
+            "raw": "110,360",
+            "row_label": "Total revenue",
+            "scale": 6
+          }
+        ],
+        "period": "2019 vs 2018",
+        "scale": 6,
+        "value_display": "14.03",
+        "value_economic": null
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "arithmetic"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 171.535,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-20",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-19-027952",
+        "citations": [
+          {
+            "accession": "0001564590-19-027952",
+            "column_label": "2019",
+            "period": "2019",
+            "raw": "125,843",
+            "row_label": "Revenue",
+            "scale": 6,
+            "table_digest": "cb58d4f87afc85c7981ff2b35b53254ec99225c28fd9e0a91956409f85233497"
+          },
+          {
+            "accession": "0001564590-19-027952",
+            "column_label": "2018",
+            "period": "2018",
+            "raw": "110,360",
+            "row_label": "Revenue",
+            "scale": 6,
+            "table_digest": "cb58d4f87afc85c7981ff2b35b53254ec99225c28fd9e0a91956409f85233497"
+          }
+        ],
+        "period": "2019",
+        "scale": 6,
+        "value_display": "14.03",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "arithmetic"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 15.011,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-21",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-001976",
+        "citations": [
+          {
+            "accession": "0000950170-22-001976",
+            "column_label": "January 3, 2021",
+            "period": "2022",
+            "raw": "334,076",
+            "row_label": "Income from operations",
+            "scale": 3
+          },
+          {
+            "accession": "0000950170-22-001976",
+            "column_label": "January 3, 2021",
+            "period": "2022",
+            "raw": "6,099,869",
+            "row_label": "Net sales",
+            "scale": 3
+          }
+        ],
+        "period": "2022",
+        "scale": 3,
+        "value_display": "5.48",
+        "value_economic": null
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_3",
+        "arithmetic"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 81.035,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-21",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-001976",
+        "citations": [
+          {
+            "accession": "0000950170-22-001976",
+            "column_label": "Year Ended \u00b7 January 2,2022",
+            "period": "2022",
+            "raw": "334,076",
+            "row_label": "Income from operations",
+            "scale": 3,
+            "table_digest": "031ae93915f240944d7fd0ab93eb077032e26138430669cc4f66cccf0f9aa762"
+          },
+          {
+            "accession": "0000950170-22-001976",
+            "column_label": "Year Ended \u00b7 January 2,2022",
+            "period": "2022",
+            "raw": "6,099,869",
+            "row_label": "Net sales",
+            "scale": 3,
+            "table_digest": "031ae93915f240944d7fd0ab93eb077032e26138430669cc4f66cccf0f9aa762"
+          }
+        ],
+        "period": "2022",
+        "scale": 3,
+        "value_display": "5.48",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_3",
+        "arithmetic"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 59.18,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "AS-22",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000104169-23-000020",
+        "citations": [
+          {
+            "accession": "0000104169-23-000020",
+            "column_label": "",
+            "period": "2023",
+            "raw": "20,428",
+            "row_label": "Operating income",
+            "scale": 6
+          },
+          {
+            "accession": "0000104169-23-000020",
+            "column_label": "",
+            "period": "2023",
+            "raw": "605,881",
+            "row_label": "Net sales",
+            "scale": 6
+          }
+        ],
+        "period": "2023",
+        "scale": 6,
+        "value_display": "3.37",
+        "value_economic": null
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "arithmetic",
+        "net_sales_definition"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 126.761,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "AS-22",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000104169-23-000020",
+        "citations": [
+          {
+            "accession": "0000104169-23-000020",
+            "column_label": "Fiscal Years Ended January 31, \u00b7 2023",
+            "period": "2023",
+            "raw": "20,428",
+            "row_label": "Operating income",
+            "scale": 6,
+            "table_digest": "aad4e06714f41983d6e657c59ed399c1734bf636653d7e4188e2e9bc5e7cb7ed"
+          },
+          {
+            "accession": "0000104169-23-000020",
+            "column_label": "Fiscal Years Ended January 31, \u00b7 2023",
+            "period": "2023",
+            "raw": "605,881",
+            "row_label": "Net sales",
+            "scale": 6,
+            "table_digest": "aad4e06714f41983d6e657c59ed399c1734bf636653d7e4188e2e9bc5e7cb7ed"
+          }
+        ],
+        "period": "2023",
+        "scale": 6,
+        "value_display": "3.37",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "scale_6",
+        "arithmetic",
+        "net_sales_definition"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": true,
+      "detail": "multiple_filings_disagree",
+      "elapsed_ms": 33.347,
+      "gold_class": "conflicting_evidence",
+      "id": "AS-23",
+      "outcome": "abstained",
+      "reason": "concept_resolution:vintage_conflict",
+      "runner": "baseline",
+      "status": "justified_abstention",
+      "tags": [
+        "restatement",
+        "justified_abstention"
+      ]
+    },
+    {
+      "correct": true,
+      "detail": "conflicting_row_values",
+      "elapsed_ms": 154.195,
+      "gold_class": "conflicting_evidence",
+      "id": "AS-23",
+      "outcome": "abstained",
+      "reason": "geometry:ambiguous:conflicting_row_values",
+      "runner": "geometry",
+      "status": "justified_abstention",
+      "tags": [
+        "restatement",
+        "justified_abstention"
+      ]
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 14.159,
+      "gold_class": "structurally_unanswerable",
+      "id": "AS-24",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "runner": "baseline",
+      "status": "justified_abstention",
+      "tags": [
+        "structurally_unanswerable",
+        "justified_abstention"
+      ]
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 53.197,
+      "gold_class": "structurally_unanswerable",
+      "id": "AS-24",
+      "outcome": "abstained",
+      "reason": "geometry:not_found:no_candidate_row",
+      "runner": "geometry",
+      "status": "justified_abstention",
+      "tags": [
+        "structurally_unanswerable",
+        "justified_abstention"
+      ]
+    }
+  ],
+  "schema": "atlas.answer_semantics.evaluation.v1"
+}

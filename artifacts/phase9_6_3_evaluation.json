@@ -1,0 +1,141 @@
+{
+  "attempted": 6,
+  "categories": {
+    "narrative": {
+      "eligible": 34,
+      "unsupported": 34
+    },
+    "numeric_arithmetic": {
+      "arithmetic_operand_mapping_not_evaluated": 18,
+      "eligible": 32,
+      "unsupported": 32
+    },
+    "numeric_direct": {
+      "abstained:ambiguous": 2,
+      "abstained:not_found": 2,
+      "answered": 2,
+      "attempted": 6,
+      "cell_localized": 1,
+      "concept_resolved": 2,
+      "correct": 1,
+      "eligible": 19,
+      "incorrect": 1,
+      "unsupported": 13
+    },
+    "yes_no": {
+      "eligible": 27,
+      "unsupported": 27
+    }
+  },
+  "counts": {
+    "abstained": 4,
+    "answered": 2,
+    "cell_localized": 1,
+    "citation_failures": 0,
+    "concept_resolved": 2,
+    "correct": 1,
+    "incorrect": 1,
+    "negatives": 36,
+    "period_failures": 0,
+    "positives": 1,
+    "unsupported": 106
+  },
+  "environment": {
+    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "exclusion_count": 38,
+  "gates": {
+    "abstention_precision": true,
+    "answer_correctness": false,
+    "cell_localization": true,
+    "citation_integrity": true,
+    "concept_resolution": true,
+    "false_assertions": true
+  },
+  "historical_results_preserved": [
+    "phase9_6_evaluation.json",
+    "phase9_6_1_evaluation.json",
+    "phase9_6_2_evaluation.json"
+  ],
+  "limitations": [
+    "No XBRL fact table exists in this corpus, so concept identity is lexical plus statement/segment context, not XBRL-verified.",
+    "FinanceBench annotations are PDF evidence spans; they cannot be aligned to SEC HTML coordinates, so table-level annotation alignment is not evaluated.",
+    "The abstention negatives are deterministic constructions, not a human-reviewed holdout; no untouched mixed holdout was established.",
+    "Correctness among answered cases and correct-over-all-attempted are reported separately; neither is a substitute for the other."
+  ],
+  "methodology_version": "9.6.3",
+  "metrics": {
+    "abstention_precision": 0.9167,
+    "abstention_recall": 1.0,
+    "answer_correctness_among_answered": 0.5,
+    "answer_coverage": 0.3333,
+    "cell_localization_rate": 0.5,
+    "citation_integrity": 1.0,
+    "concept_resolution_rate": 0.3333,
+    "correct_over_all_attempted": 0.1667,
+    "document_recall@5": 0.9732,
+    "false_abstention_rate": 0.0,
+    "false_assertion_rate": 0.0833,
+    "period_failure_rate": 0.0,
+    "value_coincidence_rate": 0.1667
+  },
+  "preregistration": {
+    "abstention": "constructed corpus negatives: wrong year, undisclosed metric, and pre-filing cutoff",
+    "answer_correctness": "the answer engine must return the reference value for the resolved row label and period",
+    "cell_localization": "the resolved cell for the question's concept and period must carry the reference value at its stated scale",
+    "concept_resolution": "question text must map to one registered concept via an alias; aliases are candidates, not proof",
+    "declared_before_run": true
+  },
+  "question_count": 112,
+  "schema": "atlas.phase9_6_3.evaluation.v1",
+  "supersedes": null,
+  "tables": {
+    "all_table_verified_rate": 0.62,
+    "cells_by_kind": {
+      "financial": 43144,
+      "non_financial": 2980,
+      "unknown": 4420
+    },
+    "financial_verified_rate": 0.6651,
+    "tables_by_kind": {
+      "financial": 1221,
+      "non_financial": 62,
+      "unknown": 1867
+    },
+    "unresolved_reasons": {
+      "dash_not_zero": 3870,
+      "duplicate_row_label": 4520,
+      "empty_cell": 606,
+      "merged_period_header": 843,
+      "unparseable": 9366
+    },
+    "verified_by_kind": {
+      "financial": 28693,
+      "non_financial": 1609,
+      "unknown": 1037
+    }
+  },
+  "thresholds": {
+    "abstention_precision": 0.8,
+    "answer_correctness": 0.8,
+    "cell_localization_rate": 0.2,
+    "citation_integrity": 1.0,
+    "concept_resolution_rate": 0.3,
+    "false_assertion_rate": 0.1
+  },
+  "uncertainty": {
+    "answer_correctness_among_answered": [
+      0.0945,
+      0.9055
+    ],
+    "cell_localization_rate": [
+      0.0945,
+      0.9055
+    ],
+    "concept_resolution_rate": [
+      0.0968,
+      0.7
+    ]
+  }
+}

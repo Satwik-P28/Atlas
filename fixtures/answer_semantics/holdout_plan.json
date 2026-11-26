@@ -1,0 +1,164 @@
+{
+  "schema": "atlas.answer_semantics.holdout_plan.v1",
+  "status": "selected_not_yet_ingested",
+  "frozen_at": "2026-11-23T19:43:52Z",
+  "seed": "atlas-answer-semantics-holdout-2026-11",
+  "target_fiscal_year": 2022,
+  "selection_rule": "Rank every candidate below by sha256(seed + '/' + cik) as a hex string and take the first selection_count candidates that filed a 10-K with a period of report in target_fiscal_year. Candidates are the issuers listed here, which excludes every development issuer in corpus.json. The rule, seed and universe are committed before any resolver is run on the selected filings; changing any of them after seeing resolver output voids the holdout.",
+  "excluded_development_ciks": [
+    "0000104169",
+    "0000320193",
+    "0000789019",
+    "0000077476",
+    "0000051143",
+    "0001575515",
+    "0001020859",
+    "0000315189",
+    "0000093410",
+    "0000021344",
+    "0000066740"
+  ],
+  "candidates_considered": 40,
+  "filings": [
+    {
+      "cik": "0000018230",
+      "issuer": "Caterpillar Inc",
+      "accession": "0000018230-23-000011",
+      "period_of_report": "2022-12-31",
+      "filed_date": "2023-02-15",
+      "acceptance_time": "2023-02-15T15:27:56.000Z",
+      "primary_document": "cat-20221231.htm",
+      "url": "https://www.sec.gov/Archives/edgar/data/18230/000001823023000011/cat-20221231.htm",
+      "rank": "06aa575e9e440bc1"
+    },
+    {
+      "cik": "0000019617",
+      "issuer": "JPMorgan Chase & Co",
+      "accession": "0000019617-23-000231",
+      "period_of_report": "2022-12-31",
+      "filed_date": "2023-02-21",
+      "acceptance_time": "2023-02-21T21:13:55.000Z",
+      "primary_document": "jpm-20221231.htm",
+      "url": "https://www.sec.gov/Archives/edgar/data/19617/000001961723000231/jpm-20221231.htm",
+      "rank": "0a78208035df0267"
+    },
+    {
+      "cik": "0000050863",
+      "issuer": "Intel Corp",
+      "accession": "0000050863-23-000006",
+      "period_of_report": "2022-12-31",
+      "filed_date": "2023-01-27",
+      "acceptance_time": "2023-01-26T23:31:20.000Z",
+      "primary_document": "intc-20221231.htm",
+      "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086323000006/intc-20221231.htm",
+      "rank": "1e2f7b726ef2163d"
+    },
+    {
+      "cik": "0001341439",
+      "issuer": "Oracle Corp",
+      "accession": "0001564590-22-023675",
+      "period_of_report": "2022-05-31",
+      "filed_date": "2022-06-21",
+      "acceptance_time": "2022-06-21T12:04:37.000Z",
+      "primary_document": "orcl-10k_20220531.htm",
+      "url": "https://www.sec.gov/Archives/edgar/data/1341439/000156459022023675/orcl-10k_20220531.htm",
+      "rank": "2496ed19a8e5e49b"
+    },
+    {
+      "cik": "0001090727",
+      "issuer": "United Parcel Service Inc",
+      "accession": "0001090727-23-000006",
+      "period_of_report": "2022-12-31",
+      "filed_date": "2023-02-21",
+      "acceptance_time": "2023-02-21T11:16:30.000Z",
+      "primary_document": "ups-20221231.htm",
+      "url": "https://www.sec.gov/Archives/edgar/data/1090727/000109072723000006/ups-20221231.htm",
+      "rank": "2702494d8aa015c9"
+    },
+    {
+      "cik": "0000006951",
+      "issuer": "Applied Materials Inc",
+      "accession": "0000006951-22-000043",
+      "period_of_report": "2022-10-30",
+      "filed_date": "2022-12-16",
+      "acceptance_time": "2022-12-16T21:50:05.000Z",
+      "primary_document": "amat-20221030.htm",
+      "url": "https://www.sec.gov/Archives/edgar/data/6951/000000695122000043/amat-20221030.htm",
+      "rank": "372a8939fe588c99"
+    },
+    {
+      "cik": "0001018724",
+      "issuer": "Amazon.com Inc",
+      "accession": "0001018724-23-000004",
+      "period_of_report": "2022-12-31",
+      "filed_date": "2023-02-03",
+      "acceptance_time": "2023-02-02T23:27:34.000Z",
+      "primary_document": "amzn-20221231.htm",
+      "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872423000004/amzn-20221231.htm",
+      "rank": "418bd9d42011e538"
+    },
+    {
+      "cik": "0001744489",
+      "issuer": "Walt Disney Co",
+      "accession": "0001744489-22-000213",
+      "period_of_report": "2022-10-01",
+      "filed_date": "2022-11-29",
+      "acceptance_time": "2022-11-29T22:03:15.000Z",
+      "primary_document": "dis-20221001.htm",
+      "url": "https://www.sec.gov/Archives/edgar/data/1744489/000174448922000213/dis-20221001.htm",
+      "rank": "4193c0af450cbfb5"
+    },
+    {
+      "cik": "0000012927",
+      "issuer": "Boeing Co",
+      "accession": "0000012927-23-000007",
+      "period_of_report": "2022-12-31",
+      "filed_date": "2023-01-27",
+      "acceptance_time": "2023-01-27T19:26:33.000Z",
+      "primary_document": "ba-20221231.htm",
+      "url": "https://www.sec.gov/Archives/edgar/data/12927/000001292723000007/ba-20221231.htm",
+      "rank": "45b398cdf9c0d3a0"
+    },
+    {
+      "cik": "0000001800",
+      "issuer": "Abbott Laboratories",
+      "accession": "0001628280-23-004026",
+      "period_of_report": "2022-12-31",
+      "filed_date": "2023-02-17",
+      "acceptance_time": "2023-02-17T21:09:44.000Z",
+      "primary_document": "abt-20221231.htm",
+      "url": "https://www.sec.gov/Archives/edgar/data/1800/000162828023004026/abt-20221231.htm",
+      "rank": "4aa82100cc480eb1"
+    },
+    {
+      "cik": "0001048911",
+      "issuer": "FedEx Corp",
+      "accession": "0000950170-22-012762",
+      "period_of_report": "2022-05-31",
+      "filed_date": "2022-07-18",
+      "acceptance_time": "2022-07-18T20:16:49.000Z",
+      "primary_document": "fdx-20220531.htm",
+      "url": "https://www.sec.gov/Archives/edgar/data/1048911/000095017022012762/fdx-20220531.htm",
+      "rank": "4e64ee09d22d3212"
+    },
+    {
+      "cik": "0000060667",
+      "issuer": "Lowe's Companies Inc",
+      "accession": "0000060667-22-000038",
+      "period_of_report": "2022-01-28",
+      "filed_date": "2022-03-21",
+      "acceptance_time": "2022-03-21T20:47:51.000Z",
+      "primary_document": "low-20220128.htm",
+      "url": "https://www.sec.gov/Archives/edgar/data/60667/000006066722000038/low-20220128.htm",
+      "rank": "50d7af5c78af1748"
+    }
+  ],
+  "commitment": "073f690d6e3346dd1703a1e3a2483beaa004a2cbad35cb7e14012cb7486cb20e",
+  "protocol": {
+    "authoring": "Questions are written from printed statement geometry and SEC XBRL company facts only. No resolver, evaluation harness or answer artifact may be run against these filings before the gold file is frozen.",
+    "gold": "Each question records the printed cell (accession, row, column, raw text, scale, period) and the same-accession XBRL fact; disagreement is recorded as gold_inconsistent and excluded, never repaired.",
+    "freeze": "Gold and the question set are hashed and committed before the first scoring run; that hash is the preregistration.",
+    "reporting": "One scoring run is reported in full, including false answers, citation failures and refusals. Changing the protocol, questions or gold after the run makes the cohort a development set."
+  },
+  "instructions": "Run scripts/answer_semantics_holdout_select.py only to re-freeze a changed universe/seed/rule; ingesting and scoring this cohort is a separate, later milestone."
+}

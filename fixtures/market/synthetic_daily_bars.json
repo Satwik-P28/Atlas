@@ -1,0 +1,83 @@
+{
+  "Meta Data": {
+    "1. Information": "Atlas synthetic daily bars (generated, not observed)",
+    "2. Symbol": "ATLS",
+    "3. Last Refreshed": "2024-12-13",
+    "4. Output Size": "Compact",
+    "5. Time Zone": "US/Eastern",
+    "6. Synthetic": "true",
+    "7. Note": "Deterministic fixture authored by the Atlas project for parser and pipeline tests. These values are NOT real market observations and must never be described as such."
+  },
+  "Time Series (Daily)": {
+    "2024-12-02": {
+      "1. open": "100.00",
+      "2. high": "101.00",
+      "3. low": "99.00",
+      "4. close": "100.50",
+      "5. volume": "1000000"
+    },
+    "2024-12-03": {
+      "1. open": "100.50",
+      "2. high": "102.00",
+      "3. low": "100.00",
+      "4. close": "101.50",
+      "5. volume": "1010000"
+    },
+    "2024-12-04": {
+      "1. open": "101.50",
+      "2. high": "103.00",
+      "3. low": "101.00",
+      "4. close": "102.50",
+      "5. volume": "1020000"
+    },
+    "2024-12-05": {
+      "1. open": "102.50",
+      "2. high": "104.00",
+      "3. low": "102.00",
+      "4. close": "103.50",
+      "5. volume": "1030000"
+    },
+    "2024-12-06": {
+      "1. open": "103.50",
+      "2. high": "105.00",
+      "3. low": "103.00",
+      "4. close": "104.50",
+      "5. volume": "1040000"
+    },
+    "2024-12-09": {
+      "1. open": "52.25",
+      "2. high": "53.00",
+      "3. low": "52.00",
+      "4. close": "52.75",
+      "5. volume": "2000000"
+    },
+    "2024-12-10": {
+      "1. open": "52.75",
+      "2. high": "53.50",
+      "3. low": "52.50",
+      "4. close": "53.25",
+      "5. volume": "2060000"
+    },
+    "2024-12-11": {
+      "1. open": "53.25",
+      "2. high": "54.00",
+      "3. low": "53.00",
+      "4. close": "53.75",
+      "5. volume": "2120000"
+    },
+    "2024-12-12": {
+      "1. open": "53.75",
+      "2. high": "54.50",
+      "3. low": "53.50",
+      "4. close": "54.25",
+      "5. volume": "2180000"
+    },
+    "2024-12-13": {
+      "1. open": "54.25",
+      "2. high": "55.00",
+      "3. low": "54.00",
+      "4. close": "54.75",
+      "5. volume": "2240000"
+    }
+  }
+}

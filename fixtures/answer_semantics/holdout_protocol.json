@@ -1,0 +1,146 @@
+{
+  "schema": "atlas.answer_semantics.holdout_protocol.v1",
+  "version": "holdout-1.1",
+  "authored": "2026-11-23",
+  "authored_before_gold": true,
+  "status": "selection_and_question_rule_committed_before_any_label",
+  "purpose": "First prospective out-of-sample answer-semantics evaluation. The twelve filings are fixed by holdout_plan.json; this file fixes how questions are chosen, how gold is written, how the single run is scored and how uncertainty is reported. It is committed before any gold label exists, so the labels cannot be chosen to suit either arm.",
+  "cohort": {
+    "plan": "fixtures/answer_semantics/holdout_plan.json",
+    "universe": "fixtures/answer_semantics/holdout_universe.json",
+    "selection_commitment": "073f690d6e3346dd1703a1e3a2483beaa004a2cbad35cb7e14012cb7486cb20e",
+    "seed": "atlas-answer-semantics-holdout-2026-11",
+    "selection_rule": "Unchanged from holdout_plan.json. The selection keys on the calendar year of the period of report, so a late-January/spring year end may be labelled with the prior fiscal year by its issuer; every question therefore states the period end date rather than an issuer fiscal-year label.",
+    "change_policy": "No issuer, accession, seed or rule change is permitted. A selection change voids the cohort and requires a new untouched one."
+  },
+  "independence": {
+    "authoring_inputs": [
+      "the archived filing bytes (printed financial statements and their tables)",
+      "SEC XBRL company facts for the same CIK, filtered to the same accession, period end and USD unit",
+      "SEC submissions metadata for accession, filing date and acceptance time"
+    ],
+    "prohibited_before_freeze": [
+      "running GeometryResolver, FinancialAnswerEngine, ConceptResolver or scripts/answer_semantics_evaluate.py against these twelve filings",
+      "using any resolver-predicted cell, table index, score or candidate list to author or select a label",
+      "changing a question, label, alias or resolver rule after seeing a score"
+    ],
+    "statement_extraction": "scripts/answer_semantics_holdout_inspect.py is a dependency-free HTML table dumper: it prints literal cells and colspan markers and chooses nothing. It imports no Atlas module."
+  },
+  "question_selection": {
+    "unit": "one filing from holdout_plan.json, processed in plan order",
+    "substantive_slots": [
+      {
+        "slot": 1,
+        "operator": "lookup",
+        "concept": "revenue",
+        "eligible_when": "the consolidated statement of operations prints a revenue/net-sales total row for the filing's own period and the same accession carries a USD XBRL revenue fact (Revenues, SalesRevenueNet or RevenueFromContractWithCustomerExcludingAssessedTax) for that period end"
+      },
+      {
+        "slot": 2,
+        "operator": "lookup",
+        "concept": "net_income",
+        "eligible_when": "the consolidated statement prints exactly one net income/earnings row for the period, that row's printed amount is non-negative, and the accession carries a NetIncomeLoss USD fact for that period end; otherwise the slot becomes a total_assets lookup"
+      },
+      {
+        "slot": 3,
+        "operator": "lookup",
+        "concept_priority": [
+          "gross_profit",
+          "operating_income",
+          "total_assets"
+        ],
+        "eligible_when": "the first concept in the priority list whose consolidated statement row exists for the period and whose same-accession USD XBRL fact exists for that period end"
+      }
+    ],
+    "arithmetic_slot": {
+      "slot": 4,
+      "operator": "percentage_change",
+      "concept": "revenue",
+      "eligible_when": "the slot-1 revenue row prints the immediately preceding fiscal year in the same table and the same accession carries a USD revenue fact for that prior period end",
+      "wording": "By what percentage did <issuer's printed revenue wording> change from the fiscal year ended <prior period end> to the fiscal year ended <current period end>?"
+    },
+    "abstention_slot": {
+      "slot": 5,
+      "operator": "lookup",
+      "concept": "gross_profit",
+      "eligible_when": "slot 3 did not select gross profit because neither the printed statements nor the same-accession USD XBRL facts contain gross profit for the period",
+      "expected_outcome": "abstained",
+      "gold_class": "structurally_unanswerable",
+      "policy": "Exactly one probe per qualifying filing. Absence is the evidence; no case is invented to reach a quota."
+    },
+    "eligibility_limits": {
+      "printed_value_sign": "a slot needs a non-negative printed cell. A parenthesised printed loss is recorded in the ledger as not_scored_negative_print and the slot falls through to the next concept in its own priority order; the round-trip rule in gold_contract parses an unsigned printed amount, so a parenthesised cell cannot corroborate a fact without a special case that would change the gold contract mid-authoring",
+      "single_row": "a slot needs exactly one consolidated row for the concept and period. If the statement prints two different rows that both answer the concept (for example 'Net income' and 'Net income attributable to the parent'), the slot is recorded in the ledger as not_scored_definitional_ambiguity and falls through rather than choosing one definition on the author's judgement",
+      "fall_through_recorded": "every fall-through and every probe that was not generated is recorded in holdout_ledger.json with the printed evidence that caused it"
+    },
+    "targets": {
+      "per_filing_minimum_substantive": 2,
+      "substantive_target": 36,
+      "note": "Slots 1-3 give three substantive questions per filing (36). Slot 4 adds one arithmetic question per eligible filing and slot 5 one genuine abstention probe per qualifying filing; both are reported separately and never used to replace a substantive slot."
+    },
+    "wording_rules": [
+      "state the entity, the concept in the words the statement prints, and the period end date",
+      "never mention a row label, column header, table number, scale banner, tag, accession or resolver concept key in the question text",
+      "identical text is used for both arms; no arm-specific phrasing",
+      "arithmetic questions name both period ends and the measured quantity"
+    ],
+    "prohibited": [
+      "selecting or dropping a question after seeing either arm's output",
+      "replacing an eligible question with a different one because it looks harder or easier",
+      "authoring a label from a resolver's answer, a segment subtotal, a pro-forma table or a non-consolidated schedule"
+    ]
+  },
+  "cutoff_rule": "availability_time = acceptance_time + 900 s (SEC publication lag already used by Atlas); query cutoff = acceptance_time + 2 days. Both are recorded per filing in the source manifest.",
+  "gold_contract": {
+    "printed": "accession, statement title, printed row label, printed column header, raw printed text, printed scale exponent",
+    "xbrl": "tag, end, accn, unit and value from the same accession",
+    "agreement": "the printed raw value times its scale must equal the XBRL value exactly; otherwise the question is gold_inconsistent and excluded from every denominator, never repaired",
+    "derived": "percentage change recomputed exactly from the two XBRL values with the Fraction verifier; both operands must share accession, unit and scale",
+    "abstention": "structurally_unanswerable requires that neither the statements nor the accession's XBRL facts carry the concept"
+  },
+  "metrics": {
+    "answerable_denominator": "questions whose gold class is xbrl_verified after exclusions",
+    "abstention_denominator": "questions whose gold class is conflicting_evidence or structurally_unanswerable",
+    "numerical_accuracy": "answered answerable questions with matching amount, period and unit / answerable",
+    "citation_accuracy": "answered answerable questions whose cited accession, row label and raw text match gold / answered",
+    "source_accuracy": "answered answerable questions whose cited accession is the gold accession / answered",
+    "combined_exact_rate": "numerical and citation and source all correct / answerable",
+    "answer_precision": "combined correct / answered",
+    "coverage": "answered / answerable",
+    "false_confident_answers": "answered answerable questions with a wrong amount, period or unit",
+    "citation_failures": "numerically right but cited accession, row or raw text wrong",
+    "unsupported_answers": "an answered response on an abstention question",
+    "justified_abstention": "a refusal on an abstention question for a conflict or absent evidence",
+    "period_header_confirmation": "the citation's column label names the period it is used for"
+  },
+  "analysis_plan": {
+    "primary": "paired comparison of combined exact-answer correctness per question, both arms on the same questions",
+    "clustering": "issuer-level table; questions from one filing are never treated as independent observations",
+    "uncertainty": "issuer-cluster bootstrap (2000 resamples, seed 20261123) of the paired exact-rate difference, plus an exact sign test on discordant pairs",
+    "timing": "cold build per arm, warm per-question latency, and cold cost amortised over the scored questions; timing is environment-specific and reported separately from correctness",
+    "reporting": "one run, all results preserved unfiltered: failures, refusals, false answers, citation failures and unsupported answers. No performance gate may censor the first run.",
+    "dev_separation": "development results are never pooled with holdout results"
+  },
+  "freeze": {
+    "mechanism": "SHA-256 over canonical JSON (sorted keys, compact separators) of protocol, questions, facts, ledger, corpus and source manifest, plus a SHA-256 of every frozen file and of the resolver code files",
+    "record": "fixtures/answer_semantics/holdout_freeze.json, written after the gold commit exists and while the working tree is clean",
+    "gate": "the scoring script refuses to run unless the freeze file matches the working tree, the tree is clean, the frozen files match their committed blobs, and the code hashes match",
+    "post_freeze_rule": "any change to a frozen input or to resolver code after the first scored run makes this cohort a development set; a new confirmation requires a new untouched cohort"
+  },
+  "reviewer_limitations": {
+    "reviewers": 1,
+    "statement": "Gold is single-author reviewed against two independent authorities (printed cells and same-accession XBRL facts). No second human annotator is available; this is not independent human annotation and is reported as such.",
+    "mitigations": [
+      "every question records the printed cell, the printed header and the XBRL fact so a reviewer can re-check it without trusting the author",
+      "printed/XBRL disagreement is excluded rather than reconciled",
+      "the question-selection rule is committed before any label exists"
+    ]
+  },
+  "revisions": [
+    {
+      "version": "holdout-1.0",
+      "status": "superseded_before_any_score",
+      "detail": "The first ingestion attempt aborted with ValidationError: the document rights label 'sec_edgar_access_and_reuse' is not in Atlas's closed redistribution vocabulary, so the importer failed closed. No resolver ran, no question was scored and no artifact was written. The label was corrected to the existing 'user_responsibility' class (Atlas asserts no redistribution grant; the operator must comply with SEC terms) and the preregistration was reissued as holdout-1.1 before scoring."
+    }
+  ]
+}

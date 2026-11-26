@@ -1,0 +1,47 @@
+name: Bug report
+description: Something is wrong — a wrong value, a crash, a broken page
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not paste licensed filings, vendor data or credentials. Describe the filing instead
+        (form type, period, statement, row label) and how you obtained it.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The value, refusal or error you saw, exactly as shown.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and why
+      description: Cite the filing location if the expected answer is a different cell.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. atlas demo
+        2. Answer certificates → company … → concept … → period …
+        3. Build certificate
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version and platform
+      placeholder: v0.2.0-beta.1, macOS 15, Python 3.12
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where did it happen
+      options: [Browser UI, HTTP API, CLI, MCP server, PDF/JSON export, Installation]
+    validations:
+      required: true

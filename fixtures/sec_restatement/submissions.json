@@ -1,0 +1,42 @@
+{
+  "cik": 1999999,
+  "name": "Atlas Synthetic Restatement Corp",
+  "entityType": "operating",
+  "sic": "7372",
+  "sicDescription": "Services-Prepackaged Software",
+  "fiscalYearEnd": "1231",
+  "tickers": ["ATLR"],
+  "exchanges": ["Nasdaq"],
+  "formerNames": [],
+  "filings": {
+    "recent": {
+      "accessionNumber": [
+        "0001999999-24-000004",
+        "0001999999-24-000009"
+      ],
+      "filingDate": [
+        "2024-05-01",
+        "2024-08-15"
+      ],
+      "acceptanceDateTime": [
+        "2024-05-01T16:05:12.000Z",
+        "2024-08-15T20:31:44.000Z"
+      ],
+      "form": [
+        "10-Q",
+        "10-Q/A"
+      ],
+      "reportDate": [
+        "2024-03-31",
+        "2024-03-31"
+      ],
+      "primaryDocument": [
+        "atlr-20240331.htm",
+        "atlr-20240331x10qa.htm"
+      ],
+      "isXBRL": [1, 1],
+      "isInlineXBRL": [1, 1]
+    },
+    "files": []
+  }
+}

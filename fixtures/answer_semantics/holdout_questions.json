@@ -1,0 +1,3172 @@
+{
+  "schema": "atlas.answer_semantics.holdout_questions.v1",
+  "description": "Prospective holdout questions authored from printed statement cells and same-accession SEC XBRL facts before any resolver ran on these filings. Every question is accession-scoped; the cohort contains no as-of multi-filing question.",
+  "protocol": "fixtures/answer_semantics/holdout_protocol.json",
+  "period_convention": "period is the calendar year of the fiscal period end, not the issuer's fiscal-year label; every question text states the period end date.",
+  "reviewer": "single author, two independent authorities per cell",
+  "counts": {
+    "questions": 54,
+    "answerable": 47,
+    "abstention": 7,
+    "lookups": 35,
+    "arithmetic": 12,
+    "printed_xbrl_pairs_checked": 59
+  },
+  "questions": [
+    {
+      "id": "H-8230-01",
+      "issuer_cik": "0000018230",
+      "accession": "0000018230-23-000011",
+      "cutoff": "2023-02-17T15:27:56Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Supplemental Data for Results of Operations (consolidated columns)",
+          "row_labels": [
+            "Total sales and revenues"
+          ],
+          "raw": "59,427",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(Millions of dollars)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "For Caterpillar's fiscal year ended December 31, 2022, what was consolidated revenue?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Revenues",
+          "end": "2022-12-31",
+          "accn": "0000018230-23-000011"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000018230-23-000011",
+            "row_labels": [
+              "Total sales and revenues"
+            ],
+            "raw": "59,427",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "id": "H-8230-02",
+      "issuer_cik": "0000018230",
+      "accession": "0000018230-23-000011",
+      "cutoff": "2023-02-17T15:27:56Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Supplemental Data for Results of Operations (consolidated columns)",
+          "row_labels": [
+            "Total sales and revenues"
+          ],
+          "raw": "59,427",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(Millions of dollars)",
+          "period_end": "2022-12-31",
+          "prior_column_header": "2021",
+          "prior_raw": "50,971"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "computation": {
+          "numerator_printed": "59,427",
+          "denominator_printed": "50,971",
+          "exact_fraction_times_100": "845600/50971",
+          "display_two_dp": "16.59",
+          "operands_share": "accession, USD unit, scale exponent 6"
+        }
+      },
+      "question": "By what percentage did Caterpillar's consolidated revenue change from the fiscal year ended December 31, 2021 to the fiscal year ended December 31, 2022?",
+      "operator": "percentage_change",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Revenues",
+          "end": "2022-12-31",
+          "accn": "0000018230-23-000011"
+        },
+        {
+          "tag": "Revenues",
+          "end": "2021-12-31",
+          "accn": "0000018230-23-000011"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2021",
+        "citations": [
+          {
+            "accession": "0000018230-23-000011",
+            "row_labels": [
+              "Total sales and revenues"
+            ],
+            "raw": "59,427",
+            "scale": 6,
+            "period": "2022"
+          },
+          {
+            "accession": "0000018230-23-000011",
+            "row_labels": [
+              "Total sales and revenues"
+            ],
+            "raw": "50,971",
+            "scale": 6,
+            "period": "2021"
+          }
+        ]
+      },
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "id": "H-8230-03",
+      "issuer_cik": "0000018230",
+      "accession": "0000018230-23-000011",
+      "cutoff": "2023-02-17T15:27:56Z",
+      "scope": "accession",
+      "concept": "total_assets",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Balance Sheets",
+          "row_labels": [
+            "Total assets"
+          ],
+          "raw": "81,943",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(Millions of dollars)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What were Caterpillar's total assets at December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Assets",
+          "end": "2022-12-31",
+          "accn": "0000018230-23-000011"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000018230-23-000011",
+            "row_labels": [
+              "Total assets"
+            ],
+            "raw": "81,943",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "total_assets"
+      ]
+    },
+    {
+      "id": "H-8230-04",
+      "issuer_cik": "0000018230",
+      "accession": "0000018230-23-000011",
+      "cutoff": "2023-02-17T15:27:56Z",
+      "scope": "accession",
+      "concept": "operating_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Supplemental Data for Results of Operations (consolidated columns)",
+          "row_labels": [
+            "Operating profit"
+          ],
+          "raw": "7,904",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(Millions of dollars)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was Caterpillar's operating income for the fiscal year ended December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "OperatingIncomeLoss",
+          "end": "2022-12-31",
+          "accn": "0000018230-23-000011"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000018230-23-000011",
+            "row_labels": [
+              "Operating profit"
+            ],
+            "raw": "7,904",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "operating_income"
+      ]
+    },
+    {
+      "id": "H-8230-05",
+      "issuer_cik": "0000018230",
+      "accession": "0000018230-23-000011",
+      "cutoff": "2023-02-17T15:27:56Z",
+      "scope": "accession",
+      "concept": "gross_profit",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Supplemental Data for Results of Operations (consolidated columns)",
+          "row_labels": null,
+          "raw": null,
+          "column_header": null,
+          "scale_exponent": 6,
+          "scale_banner": "(Millions of dollars)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "absence_evidence": {
+          "printed_gross_profit_rows": 0,
+          "xbrl_gross_profit_facts": 0
+        }
+      },
+      "question": "What was Caterpillar's gross profit for the fiscal year ended December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "structurally_unanswerable",
+      "xbrl": [],
+      "expect": {
+        "outcome": "abstained",
+        "note": "Neither the printed statements nor the accession's XBRL facts report gross profit; Caterpillar prints sales, operating costs and operating profit."
+      },
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "id": "H-9617-01",
+      "issuer_cik": "0000019617",
+      "accession": "0000019617-23-000231",
+      "cutoff": "2023-02-23T21:13:55Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated statements of income (revenue section)",
+          "row_labels": [
+            "Total net revenue"
+          ],
+          "raw": "128,695",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "For JPMorgan Chase's fiscal year ended December 31, 2022, what was consolidated revenue?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Revenues",
+          "end": "2022-12-31",
+          "accn": "0000019617-23-000231"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000019617-23-000231",
+            "row_labels": [
+              "Total net revenue"
+            ],
+            "raw": "128,695",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "id": "H-9617-02",
+      "issuer_cik": "0000019617",
+      "accession": "0000019617-23-000231",
+      "cutoff": "2023-02-23T21:13:55Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated statements of income (revenue section)",
+          "row_labels": [
+            "Total net revenue"
+          ],
+          "raw": "128,695",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-12-31",
+          "prior_column_header": "2021",
+          "prior_raw": "121,649"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "computation": {
+          "numerator_printed": "128,695",
+          "denominator_printed": "121,649",
+          "exact_fraction_times_100": "704600/121649",
+          "display_two_dp": "5.79",
+          "operands_share": "accession, USD unit, scale exponent 6"
+        }
+      },
+      "question": "By what percentage did JPMorgan Chase's consolidated revenue change from the fiscal year ended December 31, 2021 to the fiscal year ended December 31, 2022?",
+      "operator": "percentage_change",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Revenues",
+          "end": "2022-12-31",
+          "accn": "0000019617-23-000231"
+        },
+        {
+          "tag": "Revenues",
+          "end": "2021-12-31",
+          "accn": "0000019617-23-000231"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2021",
+        "citations": [
+          {
+            "accession": "0000019617-23-000231",
+            "row_labels": [
+              "Total net revenue"
+            ],
+            "raw": "128,695",
+            "scale": 6,
+            "period": "2022"
+          },
+          {
+            "accession": "0000019617-23-000231",
+            "row_labels": [
+              "Total net revenue"
+            ],
+            "raw": "121,649",
+            "scale": 6,
+            "period": "2021"
+          }
+        ]
+      },
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "id": "H-9617-03",
+      "issuer_cik": "0000019617",
+      "accession": "0000019617-23-000231",
+      "cutoff": "2023-02-23T21:13:55Z",
+      "scope": "accession",
+      "concept": "net_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated statements of income (revenue section)",
+          "row_labels": [
+            "Net income"
+          ],
+          "raw": "37,676",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was JPMorgan Chase's net income for the fiscal year ended December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "NetIncomeLoss",
+          "end": "2022-12-31",
+          "accn": "0000019617-23-000231"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000019617-23-000231",
+            "row_labels": [
+              "Net income"
+            ],
+            "raw": "37,676",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "net_income"
+      ]
+    },
+    {
+      "id": "H-9617-04",
+      "issuer_cik": "0000019617",
+      "accession": "0000019617-23-000231",
+      "cutoff": "2023-02-23T21:13:55Z",
+      "scope": "accession",
+      "concept": "total_assets",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated balance sheets",
+          "row_labels": [
+            "Total assets"
+          ],
+          "raw": "3,665,743",
+          "column_header": "December 31, 2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What were JPMorgan Chase's total assets at December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Assets",
+          "end": "2022-12-31",
+          "accn": "0000019617-23-000231"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000019617-23-000231",
+            "row_labels": [
+              "Total assets"
+            ],
+            "raw": "3,665,743",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "total_assets"
+      ]
+    },
+    {
+      "id": "H-9617-05",
+      "issuer_cik": "0000019617",
+      "accession": "0000019617-23-000231",
+      "cutoff": "2023-02-23T21:13:55Z",
+      "scope": "accession",
+      "concept": "gross_profit",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated statements of income (revenue section)",
+          "row_labels": null,
+          "raw": null,
+          "column_header": null,
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "absence_evidence": {
+          "printed_gross_profit_rows": 0,
+          "xbrl_gross_profit_facts": 0
+        }
+      },
+      "question": "What was JPMorgan Chase's gross profit for the fiscal year ended December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "structurally_unanswerable",
+      "xbrl": [],
+      "expect": {
+        "outcome": "abstained",
+        "note": "A bank holding company statement reports net interest income, noninterest revenue and provision for credit losses; it prints no gross-profit subtotal and the accession carries no GrossProfit fact."
+      },
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "id": "H-0863-01",
+      "issuer_cik": "0000050863",
+      "accession": "0000050863-23-000006",
+      "cutoff": "2023-01-28T23:31:20Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Net revenue"
+          ],
+          "raw": "63,054",
+          "column_header": "Dec 31, 2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In Millions, Except Per Share Amounts)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "For Intel's fiscal year ended December 31, 2022, what was consolidated revenue?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-12-31",
+          "accn": "0000050863-23-000006"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000050863-23-000006",
+            "row_labels": [
+              "Net revenue"
+            ],
+            "raw": "63,054",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "id": "H-0863-02",
+      "issuer_cik": "0000050863",
+      "accession": "0000050863-23-000006",
+      "cutoff": "2023-01-28T23:31:20Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Net revenue"
+          ],
+          "raw": "63,054",
+          "column_header": "Dec 31, 2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In Millions, Except Per Share Amounts)",
+          "period_end": "2022-12-31",
+          "prior_column_header": "Dec 25, 2021",
+          "prior_raw": "79,024"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "computation": {
+          "numerator_printed": "63,054",
+          "denominator_printed": "79,024",
+          "exact_fraction_times_100": "-199625/9878",
+          "display_two_dp": "-20.21",
+          "operands_share": "accession, USD unit, scale exponent 6"
+        }
+      },
+      "question": "By what percentage did Intel's consolidated revenue change from the fiscal year ended December 25, 2021 to the fiscal year ended December 31, 2022?",
+      "operator": "percentage_change",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-12-31",
+          "accn": "0000050863-23-000006"
+        },
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2021-12-25",
+          "accn": "0000050863-23-000006"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2021",
+        "citations": [
+          {
+            "accession": "0000050863-23-000006",
+            "row_labels": [
+              "Net revenue"
+            ],
+            "raw": "63,054",
+            "scale": 6,
+            "period": "2022"
+          },
+          {
+            "accession": "0000050863-23-000006",
+            "row_labels": [
+              "Net revenue"
+            ],
+            "raw": "79,024",
+            "scale": 6,
+            "period": "2021"
+          }
+        ]
+      },
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "id": "H-0863-03",
+      "issuer_cik": "0000050863",
+      "accession": "0000050863-23-000006",
+      "cutoff": "2023-01-28T23:31:20Z",
+      "scope": "accession",
+      "concept": "total_assets",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Balance Sheets",
+          "row_labels": [
+            "Total assets"
+          ],
+          "raw": "182,103",
+          "column_header": "Dec 31, 2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In Millions, Except Per Share Amounts)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What were Intel's total assets at December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Assets",
+          "end": "2022-12-31",
+          "accn": "0000050863-23-000006"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000050863-23-000006",
+            "row_labels": [
+              "Total assets"
+            ],
+            "raw": "182,103",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "total_assets"
+      ]
+    },
+    {
+      "id": "H-0863-04",
+      "issuer_cik": "0000050863",
+      "accession": "0000050863-23-000006",
+      "cutoff": "2023-01-28T23:31:20Z",
+      "scope": "accession",
+      "concept": "gross_profit",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Gross margin"
+          ],
+          "raw": "26,866",
+          "column_header": "Dec 31, 2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In Millions, Except Per Share Amounts)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was Intel's gross profit for the fiscal year ended December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "GrossProfit",
+          "end": "2022-12-31",
+          "accn": "0000050863-23-000006"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000050863-23-000006",
+            "row_labels": [
+              "Gross margin"
+            ],
+            "raw": "26,866",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "gross_profit"
+      ]
+    },
+    {
+      "id": "H-1439-01",
+      "issuer_cik": "0001341439",
+      "accession": "0001564590-22-023675",
+      "cutoff": "2022-06-23T12:04:37Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Total revenues"
+          ],
+          "raw": "42,440",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-05-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "For Oracle's fiscal year ended May 31, 2022, what was consolidated revenue?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-05-31",
+          "accn": "0001564590-22-023675"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001564590-22-023675",
+            "row_labels": [
+              "Total revenues"
+            ],
+            "raw": "42,440",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "id": "H-1439-02",
+      "issuer_cik": "0001341439",
+      "accession": "0001564590-22-023675",
+      "cutoff": "2022-06-23T12:04:37Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Total revenues"
+          ],
+          "raw": "42,440",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-05-31",
+          "prior_column_header": "2021",
+          "prior_raw": "40,479"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "computation": {
+          "numerator_printed": "42,440",
+          "denominator_printed": "40,479",
+          "exact_fraction_times_100": "196100/40479",
+          "display_two_dp": "4.84",
+          "operands_share": "accession, USD unit, scale exponent 6"
+        }
+      },
+      "question": "By what percentage did Oracle's consolidated revenue change from the fiscal year ended May 31, 2021 to the fiscal year ended May 31, 2022?",
+      "operator": "percentage_change",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-05-31",
+          "accn": "0001564590-22-023675"
+        },
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2021-05-31",
+          "accn": "0001564590-22-023675"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2021",
+        "citations": [
+          {
+            "accession": "0001564590-22-023675",
+            "row_labels": [
+              "Total revenues"
+            ],
+            "raw": "42,440",
+            "scale": 6,
+            "period": "2022"
+          },
+          {
+            "accession": "0001564590-22-023675",
+            "row_labels": [
+              "Total revenues"
+            ],
+            "raw": "40,479",
+            "scale": 6,
+            "period": "2021"
+          }
+        ]
+      },
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "id": "H-1439-03",
+      "issuer_cik": "0001341439",
+      "accession": "0001564590-22-023675",
+      "cutoff": "2022-06-23T12:04:37Z",
+      "scope": "accession",
+      "concept": "net_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Net income"
+          ],
+          "raw": "6,717",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-05-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was Oracle's net income for the fiscal year ended May 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "NetIncomeLoss",
+          "end": "2022-05-31",
+          "accn": "0001564590-22-023675"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001564590-22-023675",
+            "row_labels": [
+              "Net income"
+            ],
+            "raw": "6,717",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "net_income"
+      ]
+    },
+    {
+      "id": "H-1439-04",
+      "issuer_cik": "0001341439",
+      "accession": "0001564590-22-023675",
+      "cutoff": "2022-06-23T12:04:37Z",
+      "scope": "accession",
+      "concept": "operating_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Operating income"
+          ],
+          "raw": "10,926",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-05-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was Oracle's operating income for the fiscal year ended May 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "OperatingIncomeLoss",
+          "end": "2022-05-31",
+          "accn": "0001564590-22-023675"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001564590-22-023675",
+            "row_labels": [
+              "Operating income"
+            ],
+            "raw": "10,926",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "operating_income"
+      ]
+    },
+    {
+      "id": "H-1439-05",
+      "issuer_cik": "0001341439",
+      "accession": "0001564590-22-023675",
+      "cutoff": "2022-06-23T12:04:37Z",
+      "scope": "accession",
+      "concept": "gross_profit",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": null,
+          "raw": null,
+          "column_header": null,
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-05-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "absence_evidence": {
+          "printed_gross_profit_rows": 0,
+          "xbrl_gross_profit_facts": 0
+        }
+      },
+      "question": "What was Oracle's gross profit for the fiscal year ended May 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "structurally_unanswerable",
+      "xbrl": [],
+      "expect": {
+        "outcome": "abstained",
+        "note": "Oracle's statement of operations runs from total revenues straight to total operating expenses and operating income; no gross-profit row is printed and the accession carries no GrossProfit fact."
+      },
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "id": "H-0727-01",
+      "issuer_cik": "0001090727",
+      "accession": "0001090727-23-000006",
+      "cutoff": "2023-02-23T11:16:30Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": [
+            "Revenue"
+          ],
+          "raw": "100,338",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share amounts)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "For UPS's fiscal year ended December 31, 2022, what was consolidated revenue?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-12-31",
+          "accn": "0001090727-23-000006"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001090727-23-000006",
+            "row_labels": [
+              "Revenue"
+            ],
+            "raw": "100,338",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "id": "H-0727-02",
+      "issuer_cik": "0001090727",
+      "accession": "0001090727-23-000006",
+      "cutoff": "2023-02-23T11:16:30Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": [
+            "Revenue"
+          ],
+          "raw": "100,338",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share amounts)",
+          "period_end": "2022-12-31",
+          "prior_column_header": "2021",
+          "prior_raw": "97,287"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "computation": {
+          "numerator_printed": "100,338",
+          "denominator_printed": "97,287",
+          "exact_fraction_times_100": "101700/32429",
+          "display_two_dp": "3.14",
+          "operands_share": "accession, USD unit, scale exponent 6"
+        }
+      },
+      "question": "By what percentage did UPS's consolidated revenue change from the fiscal year ended December 31, 2021 to the fiscal year ended December 31, 2022?",
+      "operator": "percentage_change",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-12-31",
+          "accn": "0001090727-23-000006"
+        },
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2021-12-31",
+          "accn": "0001090727-23-000006"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2021",
+        "citations": [
+          {
+            "accession": "0001090727-23-000006",
+            "row_labels": [
+              "Revenue"
+            ],
+            "raw": "100,338",
+            "scale": 6,
+            "period": "2022"
+          },
+          {
+            "accession": "0001090727-23-000006",
+            "row_labels": [
+              "Revenue"
+            ],
+            "raw": "97,287",
+            "scale": 6,
+            "period": "2021"
+          }
+        ]
+      },
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "id": "H-0727-03",
+      "issuer_cik": "0001090727",
+      "accession": "0001090727-23-000006",
+      "cutoff": "2023-02-23T11:16:30Z",
+      "scope": "accession",
+      "concept": "net_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": [
+            "Net income"
+          ],
+          "raw": "11,548",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share amounts)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was UPS's net income for the fiscal year ended December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "NetIncomeLoss",
+          "end": "2022-12-31",
+          "accn": "0001090727-23-000006"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001090727-23-000006",
+            "row_labels": [
+              "Net income"
+            ],
+            "raw": "11,548",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "net_income"
+      ]
+    },
+    {
+      "id": "H-0727-04",
+      "issuer_cik": "0001090727",
+      "accession": "0001090727-23-000006",
+      "cutoff": "2023-02-23T11:16:30Z",
+      "scope": "accession",
+      "concept": "operating_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": [
+            "Operating profit"
+          ],
+          "raw": "13,094",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share amounts)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was UPS's operating income for the fiscal year ended December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "OperatingIncomeLoss",
+          "end": "2022-12-31",
+          "accn": "0001090727-23-000006"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001090727-23-000006",
+            "row_labels": [
+              "Operating profit"
+            ],
+            "raw": "13,094",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "operating_income"
+      ]
+    },
+    {
+      "id": "H-0727-05",
+      "issuer_cik": "0001090727",
+      "accession": "0001090727-23-000006",
+      "cutoff": "2023-02-23T11:16:30Z",
+      "scope": "accession",
+      "concept": "gross_profit",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": null,
+          "raw": null,
+          "column_header": null,
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share amounts)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "absence_evidence": {
+          "printed_gross_profit_rows": 0,
+          "xbrl_gross_profit_facts": 0
+        }
+      },
+      "question": "What was UPS's gross profit for the fiscal year ended December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "structurally_unanswerable",
+      "xbrl": [],
+      "expect": {
+        "outcome": "abstained",
+        "note": "UPS prints revenue, operating expenses and operating profit; it prints no gross-profit subtotal and the accession carries no GrossProfit fact."
+      },
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "id": "H-6951-01",
+      "issuer_cik": "0000006951",
+      "accession": "0000006951-22-000043",
+      "cutoff": "2022-12-18T21:50:05Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Net sales"
+          ],
+          "raw": "25,785",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In millions, except per share amounts and percentages)",
+          "period_end": "2022-10-30"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "For Applied Materials's fiscal year ended October 30, 2022, what was consolidated revenue?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-10-30",
+          "accn": "0000006951-22-000043"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000006951-22-000043",
+            "row_labels": [
+              "Net sales"
+            ],
+            "raw": "25,785",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "id": "H-6951-02",
+      "issuer_cik": "0000006951",
+      "accession": "0000006951-22-000043",
+      "cutoff": "2022-12-18T21:50:05Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Net sales"
+          ],
+          "raw": "25,785",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In millions, except per share amounts and percentages)",
+          "period_end": "2022-10-30",
+          "prior_column_header": "2021",
+          "prior_raw": "23,063"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "computation": {
+          "numerator_printed": "25,785",
+          "denominator_printed": "23,063",
+          "exact_fraction_times_100": "272200/23063",
+          "display_two_dp": "11.80",
+          "operands_share": "accession, USD unit, scale exponent 6"
+        }
+      },
+      "question": "By what percentage did Applied Materials's consolidated revenue change from the fiscal year ended October 31, 2021 to the fiscal year ended October 30, 2022?",
+      "operator": "percentage_change",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-10-30",
+          "accn": "0000006951-22-000043"
+        },
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2021-10-31",
+          "accn": "0000006951-22-000043"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2021",
+        "citations": [
+          {
+            "accession": "0000006951-22-000043",
+            "row_labels": [
+              "Net sales"
+            ],
+            "raw": "25,785",
+            "scale": 6,
+            "period": "2022"
+          },
+          {
+            "accession": "0000006951-22-000043",
+            "row_labels": [
+              "Net sales"
+            ],
+            "raw": "23,063",
+            "scale": 6,
+            "period": "2021"
+          }
+        ]
+      },
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "id": "H-6951-03",
+      "issuer_cik": "0000006951",
+      "accession": "0000006951-22-000043",
+      "cutoff": "2022-12-18T21:50:05Z",
+      "scope": "accession",
+      "concept": "net_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Net income"
+          ],
+          "raw": "6,525",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In millions, except per share amounts and percentages)",
+          "period_end": "2022-10-30"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was Applied Materials's net income for the fiscal year ended October 30, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "NetIncomeLoss",
+          "end": "2022-10-30",
+          "accn": "0000006951-22-000043"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000006951-22-000043",
+            "row_labels": [
+              "Net income"
+            ],
+            "raw": "6,525",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "net_income"
+      ]
+    },
+    {
+      "id": "H-6951-04",
+      "issuer_cik": "0000006951",
+      "accession": "0000006951-22-000043",
+      "cutoff": "2022-12-18T21:50:05Z",
+      "scope": "accession",
+      "concept": "gross_profit",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Gross profit"
+          ],
+          "raw": "11,993",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In millions, except per share amounts and percentages)",
+          "period_end": "2022-10-30"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was Applied Materials's gross profit for the fiscal year ended October 30, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "GrossProfit",
+          "end": "2022-10-30",
+          "accn": "0000006951-22-000043"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000006951-22-000043",
+            "row_labels": [
+              "Gross profit"
+            ],
+            "raw": "11,993",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "gross_profit"
+      ]
+    },
+    {
+      "id": "H-8724-01",
+      "issuer_cik": "0001018724",
+      "accession": "0001018724-23-000004",
+      "cutoff": "2023-02-04T23:27:34Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Total net sales"
+          ],
+          "raw": "513,983",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "For Amazon's fiscal year ended December 31, 2022, what was consolidated revenue?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-12-31",
+          "accn": "0001018724-23-000004"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001018724-23-000004",
+            "row_labels": [
+              "Total net sales"
+            ],
+            "raw": "513,983",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "id": "H-8724-02",
+      "issuer_cik": "0001018724",
+      "accession": "0001018724-23-000004",
+      "cutoff": "2023-02-04T23:27:34Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Total net sales"
+          ],
+          "raw": "513,983",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-12-31",
+          "prior_column_header": "2021",
+          "prior_raw": "469,822"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "computation": {
+          "numerator_printed": "513,983",
+          "denominator_printed": "469,822",
+          "exact_fraction_times_100": "2208050/234911",
+          "display_two_dp": "9.40",
+          "operands_share": "accession, USD unit, scale exponent 6"
+        }
+      },
+      "question": "By what percentage did Amazon's consolidated revenue change from the fiscal year ended December 31, 2021 to the fiscal year ended December 31, 2022?",
+      "operator": "percentage_change",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-12-31",
+          "accn": "0001018724-23-000004"
+        },
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2021-12-31",
+          "accn": "0001018724-23-000004"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2021",
+        "citations": [
+          {
+            "accession": "0001018724-23-000004",
+            "row_labels": [
+              "Total net sales"
+            ],
+            "raw": "513,983",
+            "scale": 6,
+            "period": "2022"
+          },
+          {
+            "accession": "0001018724-23-000004",
+            "row_labels": [
+              "Total net sales"
+            ],
+            "raw": "469,822",
+            "scale": 6,
+            "period": "2021"
+          }
+        ]
+      },
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "id": "H-8724-03",
+      "issuer_cik": "0001018724",
+      "accession": "0001018724-23-000004",
+      "cutoff": "2023-02-04T23:27:34Z",
+      "scope": "accession",
+      "concept": "total_assets",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Balance Sheets",
+          "row_labels": [
+            "Total assets"
+          ],
+          "raw": "462,675",
+          "column_header": "December 31, 2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What were Amazon's total assets at December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Assets",
+          "end": "2022-12-31",
+          "accn": "0001018724-23-000004"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001018724-23-000004",
+            "row_labels": [
+              "Total assets"
+            ],
+            "raw": "462,675",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "total_assets"
+      ]
+    },
+    {
+      "id": "H-8724-04",
+      "issuer_cik": "0001018724",
+      "accession": "0001018724-23-000004",
+      "cutoff": "2023-02-04T23:27:34Z",
+      "scope": "accession",
+      "concept": "operating_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Operating income"
+          ],
+          "raw": "12,248",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was Amazon's operating income for the fiscal year ended December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "OperatingIncomeLoss",
+          "end": "2022-12-31",
+          "accn": "0001018724-23-000004"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001018724-23-000004",
+            "row_labels": [
+              "Operating income"
+            ],
+            "raw": "12,248",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "operating_income"
+      ]
+    },
+    {
+      "id": "H-4489-01",
+      "issuer_cik": "0001744489",
+      "accession": "0001744489-22-000213",
+      "cutoff": "2022-12-01T22:03:15Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": [
+            "Total revenues"
+          ],
+          "raw": "82,722",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-10-01"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "For Disney's fiscal year ended October 1, 2022, what was consolidated revenue?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Revenues",
+          "end": "2022-10-01",
+          "accn": "0001744489-22-000213"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001744489-22-000213",
+            "row_labels": [
+              "Total revenues"
+            ],
+            "raw": "82,722",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "id": "H-4489-02",
+      "issuer_cik": "0001744489",
+      "accession": "0001744489-22-000213",
+      "cutoff": "2022-12-01T22:03:15Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": [
+            "Total revenues"
+          ],
+          "raw": "82,722",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-10-01",
+          "prior_column_header": "2021",
+          "prior_raw": "67,418"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "computation": {
+          "numerator_printed": "82,722",
+          "denominator_printed": "67,418",
+          "exact_fraction_times_100": "765200/33709",
+          "display_two_dp": "22.70",
+          "operands_share": "accession, USD unit, scale exponent 6"
+        }
+      },
+      "question": "By what percentage did Disney's consolidated revenue change from the fiscal year ended October 2, 2021 to the fiscal year ended October 1, 2022?",
+      "operator": "percentage_change",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Revenues",
+          "end": "2022-10-01",
+          "accn": "0001744489-22-000213"
+        },
+        {
+          "tag": "Revenues",
+          "end": "2021-10-02",
+          "accn": "0001744489-22-000213"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2021",
+        "citations": [
+          {
+            "accession": "0001744489-22-000213",
+            "row_labels": [
+              "Total revenues"
+            ],
+            "raw": "82,722",
+            "scale": 6,
+            "period": "2022"
+          },
+          {
+            "accession": "0001744489-22-000213",
+            "row_labels": [
+              "Total revenues"
+            ],
+            "raw": "67,418",
+            "scale": 6,
+            "period": "2021"
+          }
+        ]
+      },
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "id": "H-4489-03",
+      "issuer_cik": "0001744489",
+      "accession": "0001744489-22-000213",
+      "cutoff": "2022-12-01T22:03:15Z",
+      "scope": "accession",
+      "concept": "net_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": [
+            "Net income attributable to Disney",
+            "Net income (loss) attributable to The Walt Disney Company (Disney)"
+          ],
+          "raw": "3,145",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-10-01"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was Disney's net income for the fiscal year ended October 1, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "NetIncomeLoss",
+          "end": "2022-10-01",
+          "accn": "0001744489-22-000213"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001744489-22-000213",
+            "row_labels": [
+              "Net income attributable to Disney",
+              "Net income (loss) attributable to The Walt Disney Company (Disney)"
+            ],
+            "raw": "3,145",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "net_income"
+      ]
+    },
+    {
+      "id": "H-4489-04",
+      "issuer_cik": "0001744489",
+      "accession": "0001744489-22-000213",
+      "cutoff": "2022-12-01T22:03:15Z",
+      "scope": "accession",
+      "concept": "total_assets",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Balance Sheets",
+          "row_labels": [
+            "Total assets"
+          ],
+          "raw": "203,631",
+          "column_header": "October 1, 2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-10-01"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What were Disney's total assets at October 1, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Assets",
+          "end": "2022-10-01",
+          "accn": "0001744489-22-000213"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001744489-22-000213",
+            "row_labels": [
+              "Total assets"
+            ],
+            "raw": "203,631",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "total_assets"
+      ]
+    },
+    {
+      "id": "H-4489-05",
+      "issuer_cik": "0001744489",
+      "accession": "0001744489-22-000213",
+      "cutoff": "2022-12-01T22:03:15Z",
+      "scope": "accession",
+      "concept": "gross_profit",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": null,
+          "raw": null,
+          "column_header": null,
+          "scale_exponent": 6,
+          "scale_banner": "(in millions, except per share data)",
+          "period_end": "2022-10-01"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "absence_evidence": {
+          "printed_gross_profit_rows": 0,
+          "xbrl_gross_profit_facts": 0
+        }
+      },
+      "question": "What was Disney's gross profit for the fiscal year ended October 1, 2022?",
+      "operator": "lookup",
+      "gold_class": "structurally_unanswerable",
+      "xbrl": [],
+      "expect": {
+        "outcome": "abstained",
+        "note": "Disney's statement of income deducts costs and expenses from total revenues and reports segment operating income in a separate reconciliation; the statement prints no gross-profit row and the accession carries no GrossProfit fact."
+      },
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "id": "H-2927-01",
+      "issuer_cik": "0000012927",
+      "accession": "0000012927-23-000007",
+      "cutoff": "2023-01-29T19:26:33Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Total revenues"
+          ],
+          "raw": "66,608",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(Dollars in millions, except per share data)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "For Boeing's fiscal year ended December 31, 2022, what was consolidated revenue?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Revenues",
+          "end": "2022-12-31",
+          "accn": "0000012927-23-000007"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000012927-23-000007",
+            "row_labels": [
+              "Total revenues"
+            ],
+            "raw": "66,608",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "id": "H-2927-02",
+      "issuer_cik": "0000012927",
+      "accession": "0000012927-23-000007",
+      "cutoff": "2023-01-29T19:26:33Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Operations",
+          "row_labels": [
+            "Total revenues"
+          ],
+          "raw": "66,608",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(Dollars in millions, except per share data)",
+          "period_end": "2022-12-31",
+          "prior_column_header": "2021",
+          "prior_raw": "62,286"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "computation": {
+          "numerator_printed": "66,608",
+          "denominator_printed": "62,286",
+          "exact_fraction_times_100": "216100/31143",
+          "display_two_dp": "6.94",
+          "operands_share": "accession, USD unit, scale exponent 6"
+        }
+      },
+      "question": "By what percentage did Boeing's consolidated revenue change from the fiscal year ended December 31, 2021 to the fiscal year ended December 31, 2022?",
+      "operator": "percentage_change",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Revenues",
+          "end": "2022-12-31",
+          "accn": "0000012927-23-000007"
+        },
+        {
+          "tag": "Revenues",
+          "end": "2021-12-31",
+          "accn": "0000012927-23-000007"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2021",
+        "citations": [
+          {
+            "accession": "0000012927-23-000007",
+            "row_labels": [
+              "Total revenues"
+            ],
+            "raw": "66,608",
+            "scale": 6,
+            "period": "2022"
+          },
+          {
+            "accession": "0000012927-23-000007",
+            "row_labels": [
+              "Total revenues"
+            ],
+            "raw": "62,286",
+            "scale": 6,
+            "period": "2021"
+          }
+        ]
+      },
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "id": "H-2927-03",
+      "issuer_cik": "0000012927",
+      "accession": "0000012927-23-000007",
+      "cutoff": "2023-01-29T19:26:33Z",
+      "scope": "accession",
+      "concept": "total_assets",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Balance Sheets",
+          "row_labels": [
+            "Total assets"
+          ],
+          "raw": "137,100",
+          "column_header": "December 31, 2022",
+          "scale_exponent": 6,
+          "scale_banner": "(Dollars in millions, except per share data)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What were Boeing's total assets at December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Assets",
+          "end": "2022-12-31",
+          "accn": "0000012927-23-000007"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000012927-23-000007",
+            "row_labels": [
+              "Total assets"
+            ],
+            "raw": "137,100",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "total_assets"
+      ]
+    },
+    {
+      "id": "H-1800-01",
+      "issuer_cik": "0000001800",
+      "accession": "0001628280-23-004026",
+      "cutoff": "2023-02-19T21:09:44Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Earnings",
+          "row_labels": [
+            "Net Sales"
+          ],
+          "raw": "43,653",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions except per share data)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "For Abbott's fiscal year ended December 31, 2022, what was consolidated revenue?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-12-31",
+          "accn": "0001628280-23-004026"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001628280-23-004026",
+            "row_labels": [
+              "Net Sales"
+            ],
+            "raw": "43,653",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "id": "H-1800-02",
+      "issuer_cik": "0000001800",
+      "accession": "0001628280-23-004026",
+      "cutoff": "2023-02-19T21:09:44Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Earnings",
+          "row_labels": [
+            "Net Sales"
+          ],
+          "raw": "43,653",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions except per share data)",
+          "period_end": "2022-12-31",
+          "prior_column_header": "2021",
+          "prior_raw": "43,075"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "computation": {
+          "numerator_printed": "43,653",
+          "denominator_printed": "43,075",
+          "exact_fraction_times_100": "2312/1723",
+          "display_two_dp": "1.34",
+          "operands_share": "accession, USD unit, scale exponent 6"
+        }
+      },
+      "question": "By what percentage did Abbott's consolidated revenue change from the fiscal year ended December 31, 2021 to the fiscal year ended December 31, 2022?",
+      "operator": "percentage_change",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-12-31",
+          "accn": "0001628280-23-004026"
+        },
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2021-12-31",
+          "accn": "0001628280-23-004026"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2021",
+        "citations": [
+          {
+            "accession": "0001628280-23-004026",
+            "row_labels": [
+              "Net Sales"
+            ],
+            "raw": "43,653",
+            "scale": 6,
+            "period": "2022"
+          },
+          {
+            "accession": "0001628280-23-004026",
+            "row_labels": [
+              "Net Sales"
+            ],
+            "raw": "43,075",
+            "scale": 6,
+            "period": "2021"
+          }
+        ]
+      },
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "id": "H-1800-03",
+      "issuer_cik": "0000001800",
+      "accession": "0001628280-23-004026",
+      "cutoff": "2023-02-19T21:09:44Z",
+      "scope": "accession",
+      "concept": "net_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Earnings",
+          "row_labels": [
+            "Net Earnings"
+          ],
+          "raw": "6,933",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions except per share data)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was Abbott's net income for the fiscal year ended December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "NetIncomeLoss",
+          "end": "2022-12-31",
+          "accn": "0001628280-23-004026"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001628280-23-004026",
+            "row_labels": [
+              "Net Earnings"
+            ],
+            "raw": "6,933",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "net_income"
+      ]
+    },
+    {
+      "id": "H-1800-04",
+      "issuer_cik": "0000001800",
+      "accession": "0001628280-23-004026",
+      "cutoff": "2023-02-19T21:09:44Z",
+      "scope": "accession",
+      "concept": "total_assets",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Balance Sheet",
+          "row_labels": [
+            "Total assets"
+          ],
+          "raw": "74,438",
+          "column_header": "December 31, 2022",
+          "scale_exponent": 6,
+          "scale_banner": "(in millions except per share data)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What were Abbott's total assets at December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "Assets",
+          "end": "2022-12-31",
+          "accn": "0001628280-23-004026"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0001628280-23-004026",
+            "row_labels": [
+              "Total assets"
+            ],
+            "raw": "74,438",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "total_assets"
+      ]
+    },
+    {
+      "id": "H-1800-05",
+      "issuer_cik": "0000001800",
+      "accession": "0001628280-23-004026",
+      "cutoff": "2023-02-19T21:09:44Z",
+      "scope": "accession",
+      "concept": "gross_profit",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Earnings",
+          "row_labels": null,
+          "raw": null,
+          "column_header": null,
+          "scale_exponent": 6,
+          "scale_banner": "(in millions except per share data)",
+          "period_end": "2022-12-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "absence_evidence": {
+          "printed_gross_profit_rows": 0,
+          "xbrl_gross_profit_facts": 0
+        }
+      },
+      "question": "What was Abbott's gross profit for the fiscal year ended December 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "structurally_unanswerable",
+      "xbrl": [],
+      "expect": {
+        "outcome": "abstained",
+        "note": "Abbott's consolidated statement of earnings prints net sales, cost of products sold and operating earnings; gross profit appears only as a percentage in narrative, with no amount row and no GrossProfit fact."
+      },
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "id": "H-8911-01",
+      "issuer_cik": "0001048911",
+      "accession": "0000950170-22-012762",
+      "cutoff": "2022-07-20T20:16:49Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": [
+            "REVENUE"
+          ],
+          "raw": "93,512",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In millions)",
+          "period_end": "2022-05-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "For FedEx's fiscal year ended May 31, 2022, what was consolidated revenue?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-05-31",
+          "accn": "0000950170-22-012762"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000950170-22-012762",
+            "row_labels": [
+              "REVENUE"
+            ],
+            "raw": "93,512",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "id": "H-8911-02",
+      "issuer_cik": "0001048911",
+      "accession": "0000950170-22-012762",
+      "cutoff": "2022-07-20T20:16:49Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": [
+            "REVENUE"
+          ],
+          "raw": "93,512",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In millions)",
+          "period_end": "2022-05-31",
+          "prior_column_header": "2021",
+          "prior_raw": "83,959"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "computation": {
+          "numerator_printed": "93,512",
+          "denominator_printed": "83,959",
+          "exact_fraction_times_100": "955300/83959",
+          "display_two_dp": "11.38",
+          "operands_share": "accession, USD unit, scale exponent 6"
+        }
+      },
+      "question": "By what percentage did FedEx's consolidated revenue change from the fiscal year ended May 31, 2021 to the fiscal year ended May 31, 2022?",
+      "operator": "percentage_change",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-05-31",
+          "accn": "0000950170-22-012762"
+        },
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2021-05-31",
+          "accn": "0000950170-22-012762"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2021",
+        "citations": [
+          {
+            "accession": "0000950170-22-012762",
+            "row_labels": [
+              "REVENUE"
+            ],
+            "raw": "93,512",
+            "scale": 6,
+            "period": "2022"
+          },
+          {
+            "accession": "0000950170-22-012762",
+            "row_labels": [
+              "REVENUE"
+            ],
+            "raw": "83,959",
+            "scale": 6,
+            "period": "2021"
+          }
+        ]
+      },
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "id": "H-8911-03",
+      "issuer_cik": "0001048911",
+      "accession": "0000950170-22-012762",
+      "cutoff": "2022-07-20T20:16:49Z",
+      "scope": "accession",
+      "concept": "net_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": [
+            "NET INCOME"
+          ],
+          "raw": "3,826",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In millions)",
+          "period_end": "2022-05-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was FedEx's net income for the fiscal year ended May 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "NetIncomeLoss",
+          "end": "2022-05-31",
+          "accn": "0000950170-22-012762"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000950170-22-012762",
+            "row_labels": [
+              "NET INCOME"
+            ],
+            "raw": "3,826",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "net_income"
+      ]
+    },
+    {
+      "id": "H-8911-04",
+      "issuer_cik": "0001048911",
+      "accession": "0000950170-22-012762",
+      "cutoff": "2022-07-20T20:16:49Z",
+      "scope": "accession",
+      "concept": "operating_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": [
+            "OPERATING INCOME"
+          ],
+          "raw": "6,245",
+          "column_header": "2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In millions)",
+          "period_end": "2022-05-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was FedEx's operating income for the fiscal year ended May 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "OperatingIncomeLoss",
+          "end": "2022-05-31",
+          "accn": "0000950170-22-012762"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000950170-22-012762",
+            "row_labels": [
+              "OPERATING INCOME"
+            ],
+            "raw": "6,245",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "operating_income"
+      ]
+    },
+    {
+      "id": "H-8911-05",
+      "issuer_cik": "0001048911",
+      "accession": "0000950170-22-012762",
+      "cutoff": "2022-07-20T20:16:49Z",
+      "scope": "accession",
+      "concept": "gross_profit",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Income",
+          "row_labels": null,
+          "raw": null,
+          "column_header": null,
+          "scale_exponent": 6,
+          "scale_banner": "(In millions)",
+          "period_end": "2022-05-31"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "absence_evidence": {
+          "printed_gross_profit_rows": 0,
+          "xbrl_gross_profit_facts": 0
+        }
+      },
+      "question": "What was FedEx's gross profit for the fiscal year ended May 31, 2022?",
+      "operator": "lookup",
+      "gold_class": "structurally_unanswerable",
+      "xbrl": [],
+      "expect": {
+        "outcome": "abstained",
+        "note": "FedEx's statement of income goes from revenue to operating expenses and operating income; no gross-profit row is printed and the accession carries no GrossProfit fact."
+      },
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "id": "H-0667-01",
+      "issuer_cik": "0000060667",
+      "accession": "0000060667-22-000038",
+      "cutoff": "2022-03-23T20:47:51Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Earnings",
+          "row_labels": [
+            "Net sales"
+          ],
+          "raw": "96,250",
+          "column_header": "January 28, 2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In millions, except per share data)",
+          "period_end": "2022-01-28"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "For Lowe's's fiscal year ended January 28, 2022, what was consolidated revenue?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-01-28",
+          "accn": "0000060667-22-000038"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000060667-22-000038",
+            "row_labels": [
+              "Net sales"
+            ],
+            "raw": "96,250",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "id": "H-0667-02",
+      "issuer_cik": "0000060667",
+      "accession": "0000060667-22-000038",
+      "cutoff": "2022-03-23T20:47:51Z",
+      "scope": "accession",
+      "concept": "revenue",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Earnings",
+          "row_labels": [
+            "Net sales"
+          ],
+          "raw": "96,250",
+          "column_header": "January 28, 2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In millions, except per share data)",
+          "period_end": "2022-01-28",
+          "prior_column_header": "January 29, 2021",
+          "prior_raw": "89,597"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/",
+        "computation": {
+          "numerator_printed": "96,250",
+          "denominator_printed": "89,597",
+          "exact_fraction_times_100": "665300/89597",
+          "display_two_dp": "7.43",
+          "operands_share": "accession, USD unit, scale exponent 6"
+        }
+      },
+      "question": "By what percentage did Lowe's's consolidated revenue change from the fiscal year ended January 29, 2021 to the fiscal year ended January 28, 2022?",
+      "operator": "percentage_change",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2022-01-28",
+          "accn": "0000060667-22-000038"
+        },
+        {
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "end": "2021-01-29",
+          "accn": "0000060667-22-000038"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "prior_period": "2021",
+        "citations": [
+          {
+            "accession": "0000060667-22-000038",
+            "row_labels": [
+              "Net sales"
+            ],
+            "raw": "96,250",
+            "scale": 6,
+            "period": "2022"
+          },
+          {
+            "accession": "0000060667-22-000038",
+            "row_labels": [
+              "Net sales"
+            ],
+            "raw": "89,597",
+            "scale": 6,
+            "period": "2021"
+          }
+        ]
+      },
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "id": "H-0667-03",
+      "issuer_cik": "0000060667",
+      "accession": "0000060667-22-000038",
+      "cutoff": "2022-03-23T20:47:51Z",
+      "scope": "accession",
+      "concept": "net_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Earnings",
+          "row_labels": [
+            "Net earnings"
+          ],
+          "raw": "8,442",
+          "column_header": "January 28, 2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In millions, except per share data)",
+          "period_end": "2022-01-28"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was Lowe's's net income for the fiscal year ended January 28, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "NetIncomeLoss",
+          "end": "2022-01-28",
+          "accn": "0000060667-22-000038"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000060667-22-000038",
+            "row_labels": [
+              "Net earnings"
+            ],
+            "raw": "8,442",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "net_income"
+      ]
+    },
+    {
+      "id": "H-0667-04",
+      "issuer_cik": "0000060667",
+      "accession": "0000060667-22-000038",
+      "cutoff": "2022-03-23T20:47:51Z",
+      "scope": "accession",
+      "concept": "operating_income",
+      "period": "2022",
+      "review": {
+        "method": "printed statement cell read with an independent table dumper; corroborated by the SEC XBRL fact filed with the same accession",
+        "reviewers": 1,
+        "reviewed_at": "2026-11-23",
+        "printed": {
+          "statement": "Consolidated Statements of Earnings",
+          "row_labels": [
+            "Operating income"
+          ],
+          "raw": "12,093",
+          "column_header": "January 28, 2022",
+          "scale_exponent": 6,
+          "scale_banner": "(In millions, except per share data)",
+          "period_end": "2022-01-28"
+        },
+        "xbrl_provenance": "https://data.sec.gov/api/xbrl/companyfacts/"
+      },
+      "question": "What was Lowe's's operating income for the fiscal year ended January 28, 2022?",
+      "operator": "lookup",
+      "gold_class": "xbrl_verified",
+      "xbrl": [
+        {
+          "tag": "OperatingIncomeLoss",
+          "end": "2022-01-28",
+          "accn": "0000060667-22-000038"
+        }
+      ],
+      "expect": {
+        "outcome": "answered",
+        "scale": 6,
+        "citations": [
+          {
+            "accession": "0000060667-22-000038",
+            "row_labels": [
+              "Operating income"
+            ],
+            "raw": "12,093",
+            "scale": 6,
+            "period": "2022"
+          }
+        ]
+      },
+      "tags": [
+        "lookup",
+        "operating_income"
+      ]
+    }
+  ]
+}

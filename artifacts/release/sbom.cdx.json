@@ -1,0 +1,386 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:de5dde5f-9fba-f46b-7504-4a9ebed0b1e7",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-11-26T19:27:13Z",
+    "tools": [
+      {
+        "vendor": "Atlas",
+        "name": "scripts/build_sbom.py",
+        "version": "10.5"
+      }
+    ],
+    "component": {
+      "type": "application",
+      "name": "atlas_quant",
+      "version": "36c7ee8e0986",
+      "purl": "pkg:pypi/atlas-quant@0.2.0b1",
+      "properties": [
+        {
+          "name": "atlas:source_commit",
+          "value": "36c7ee8e09862dd9bcea6d1927a72650a7308937"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0d546263fc66288b1d3d5adc9ac9a6d6d332073f52df32910429deb10e917dac"
+        }
+      ]
+    },
+    "properties": [
+      {
+        "name": "atlas:wheel_filename",
+        "value": "atlas_quant-0.2.0b1-py3-none-any.whl"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "clarabel",
+      "version": "0.11.1",
+      "purl": "pkg:pypi/clarabel@0.11.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "cookie",
+      "version": "1.1.1",
+      "purl": "pkg:npm/cookie@1.1.1",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "atlas:bundled_in_frontend",
+          "value": "true"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "fancy-canvas",
+      "version": "2.1.0",
+      "purl": "pkg:npm/fancy-canvas@2.1.0",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "atlas:bundled_in_frontend",
+          "value": "true"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "fastapi",
+      "version": "0.165.0",
+      "purl": "pkg:pypi/fastapi@0.165.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "httpx",
+      "version": "0.29.0",
+      "purl": "pkg:pypi/httpx@0.29.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "hypothesis",
+      "version": "6.170.17",
+      "purl": "pkg:pypi/hypothesis@6.170.17",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MPL-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "lightweight-charts",
+      "version": "5.2.1",
+      "purl": "pkg:npm/lightweight-charts@5.2.1",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "atlas:bundled_in_frontend",
+          "value": "true"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "numpy",
+      "version": "2.5.5",
+      "purl": "pkg:pypi/numpy@2.5.5",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "osqp",
+      "version": "1.1.3",
+      "purl": "pkg:pypi/osqp@1.1.3",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pyarrow",
+      "version": "26.0.1",
+      "purl": "pkg:pypi/pyarrow@26.0.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "react",
+      "version": "19.3.1",
+      "purl": "pkg:npm/react@19.3.1",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "atlas:bundled_in_frontend",
+          "value": "true"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "react-dom",
+      "version": "19.3.1",
+      "purl": "pkg:npm/react-dom@19.3.1",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "atlas:bundled_in_frontend",
+          "value": "true"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "react-router",
+      "version": "7.18.5",
+      "purl": "pkg:npm/react-router@7.18.5",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "atlas:bundled_in_frontend",
+          "value": "true"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "react-router-dom",
+      "version": "7.18.5",
+      "purl": "pkg:npm/react-router-dom@7.18.5",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "atlas:bundled_in_frontend",
+          "value": "true"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "scheduler",
+      "version": "0.28.0",
+      "purl": "pkg:npm/scheduler@0.28.0",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "atlas:bundled_in_frontend",
+          "value": "true"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "scikit-learn",
+      "version": "1.9.1",
+      "purl": "pkg:pypi/scikit-learn@1.9.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "scipy",
+      "version": "1.18.1",
+      "purl": "pkg:pypi/scipy@1.18.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "Copyright (c) 2001-2002 Enthought, Inc. 2003, SciPy Developers.\n All rights reserved.\n\n Redistribution and use in sou..."
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "set-cookie-parser",
+      "version": "2.7.3",
+      "purl": "pkg:npm/set-cookie-parser@2.7.3",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "atlas:bundled_in_frontend",
+          "value": "true"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "tzdata",
+      "version": "2026.6",
+      "purl": "pkg:pypi/tzdata@2026.6",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "uvicorn",
+      "version": "0.54.0",
+      "purl": "pkg:pypi/uvicorn@0.54.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "BSD-3-Clause"
+          }
+        }
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "name": "atlas:scope_note",
+      "value": "Python runtime dependencies and frontend packages bundled into the wheel; development-only npm packages are omitted because they do not ship."
+    },
+    {
+      "name": "atlas:licence_note",
+      "value": "Licences are as declared by each package; this SBOM grants no rights."
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "generated_at": "2026-11-04T19:54:27Z",
+  "python": "3.12.3",
+  "notes": [
+    "Disposable in-memory databases; one security per issuer; 180 calendar days of synthetic bars.",
+    "No financial facts are inserted, so screener time measures read-model and kernel overhead, not evidence selection.",
+    "Cold company list clears the process cache first; cached is the median of repeated runs."
+  ],
+  "results": [
+    {
+      "issuers": 5,
+      "securities": 5,
+      "bars": 640,
+      "build_ms": 36.6,
+      "companies_cold_ms": 1.1,
+      "companies_cached_ms": 0.1,
+      "screener_ms": 1.5,
+      "screen_rows": 5,
+      "market_startup_ms": 4.9,
+      "market_bar_rows": 128,
+      "db_bytes": 786432
+    },
+    {
+      "issuers": 25,
+      "securities": 25,
+      "bars": 3200,
+      "build_ms": 140.0,
+      "companies_cold_ms": 2.5,
+      "companies_cached_ms": 0.1,
+      "screener_ms": 4.6,
+      "screen_rows": 25,
+      "market_startup_ms": 3.7,
+      "market_bar_rows": 128,
+      "db_bytes": 2297856
+    },
+    {
+      "issuers": 100,
+      "securities": 100,
+      "bars": 12800,
+      "build_ms": 628.4,
+      "companies_cold_ms": 9.6,
+      "companies_cached_ms": 0.1,
+      "screener_ms": 19.7,
+      "screen_rows": 100,
+      "market_startup_ms": 3.6,
+      "market_bar_rows": 128,
+      "db_bytes": 8007680
+    },
+    {
+      "issuers": 300,
+      "securities": 300,
+      "bars": 38400,
+      "build_ms": 1961.9,
+      "companies_cold_ms": 30.5,
+      "companies_cached_ms": 0.2,
+      "screener_ms": 84.6,
+      "screen_rows": 300,
+      "market_startup_ms": 3.5,
+      "market_bar_rows": 128,
+      "db_bytes": 23326720
+    }
+  ]
+}

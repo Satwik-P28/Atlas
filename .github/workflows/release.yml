@@ -1,0 +1,96 @@
+name: Release to PyPI
+
+# Publishes to PyPI the wheel and sdist that are attached to a published GitHub release.
+#
+# It deliberately does not rebuild: the artifacts attached to the release are the certified bytes
+# (hashed in docs/RELEASE_GATES.json). The job downloads them, refuses to continue unless both
+# match the recorded SHA-256, and only then uploads with PyPI trusted publishing (OIDC), so no API
+# token is stored anywhere.
+#
+# One-time setup, documented in docs/PUBLIC_RELEASE_HANDOVER.md §7:
+#   * PyPI -> Account -> Publishing -> add a pending publisher for project atlas-quant
+#     (owner Satwik-P28, repository Atlas, workflow release.yml, environment pypi)
+#   * a GitHub environment named "pypi" (no secrets required)
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing release tag whose assets should be published to PyPI"
+        required: true
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Verify release assets and upload to PyPI
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/atlas-quant/
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Resolve the release tag
+        id: release
+        env:
+          EVENT_TAG: ${{ github.event.release.tag_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          tag="${INPUT_TAG:-$EVENT_TAG}"
+          if [ -z "$tag" ]; then echo "no release tag supplied" >&2; exit 2; fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Download the certified release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          mkdir -p release-assets pypi-dist
+          gh release download "$TAG" \
+            --pattern 'atlas_quant-*.whl' \
+            --pattern 'atlas_quant-*.tar.gz' \
+            --dir release-assets
+          ls -l release-assets
+
+      - name: Refuse to publish bytes that differ from the certification record
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, pathlib, sys
+          record = json.loads(pathlib.Path("docs/RELEASE_GATES.json").read_text())
+          expected = {
+              pathlib.Path(record["artifacts"]["wheel"]["path"]).name:
+                  record["artifacts"]["wheel"]["sha256"],
+              pathlib.Path(record["artifacts"]["sdist"]["path"]).name:
+                  record["artifacts"]["sdist"]["sha256"],
+          }
+          assets = {p.name: p for p in pathlib.Path("release-assets").iterdir() if p.is_file()}
+          failures = []
+          for name, digest in expected.items():
+              path = assets.get(name)
+              if path is None:
+                  failures.append(f"missing release asset: {name}")
+                  continue
+              actual = hashlib.sha256(path.read_bytes()).hexdigest()
+              if actual != digest:
+                  failures.append(f"{name}: expected {digest}, downloaded {actual}")
+              else:
+                  print(f"ok {name} {digest}")
+          if failures:
+              print("\n".join(failures), file=sys.stderr)
+              sys.exit(1)
+          for name in expected:
+              pathlib.Path("release-assets", name).rename(pathlib.Path("pypi-dist", name))
+          PY
+          ls -l pypi-dist
+
+      - name: Publish to PyPI (trusted publishing)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: pypi-dist

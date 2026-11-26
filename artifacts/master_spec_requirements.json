@@ -1,0 +1,1413 @@
+{
+  "schema": "atlas.master_spec_requirements.v1",
+  "specification": {
+    "path": "ATLAS_MASTER_SPEC.md",
+    "version": "3.2.0",
+    "date": "2026-11-11",
+    "bytes": 357970,
+    "sha256": "6ab1a00569a29830deda050c44eaa93dc0f65081be53966ed2a6d00b164447e2",
+    "sections": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61
+    ],
+    "status": "received_integrity_verified",
+    "integrity_verified_at": "2026-11-11",
+    "verified_by": "scripts/verify_master_spec.py"
+  },
+  "generated_at": "2026-11-11",
+  "verification_commit": "8b094eb7434b75d461bf32543290fdfb47c21639",
+  "status_vocabulary": [
+    "vision_only",
+    "implemented_unverified",
+    "prototype_verified",
+    "implemented_verified",
+    "production_eligible",
+    "deprecated_or_invalidated"
+  ],
+  "status_meanings": {
+    "vision_only": "Specified, no verified implementation. Also used for normative charter and process sections that are not capabilities.",
+    "implemented_unverified": "Code exists but no executed acceptance evidence was found at this revision.",
+    "prototype_verified": "Runs controlled fixtures and tests in this repository; insufficient production proof.",
+    "implemented_verified": "Exercised by repository tests against the stated acceptance cases at this revision.",
+    "production_eligible": "Passed security, correctness, rights, performance and operating gates for a named scope. Not claimed for any requirement.",
+    "deprecated_or_invalidated": "Superseded, disabled or failed a required contract."
+  },
+  "requirements": [
+    {
+      "requirement_id": "MS3-01",
+      "spec_version": "3.2.0",
+      "section": 1,
+      "section_title": "Mission, positioning, and the standard of success",
+      "requirement": "Provide the most capable open, locally runnable, programmable financial research environment, with a free core whose mathematics, methods and interfaces are not artificially paywalled.",
+      "subsystem": "Platform charter",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "README.md states the open-core position.",
+      "unimplemented_dependencies": "A standing goal, not a testable capability; conformance is measured through Sections 5-61.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-02",
+      "spec_version": "3.2.0",
+      "section": 2,
+      "section_title": "Product model: Eight integrated systems, one experience",
+      "requirement": "Keep the eight original systems as one product on one evidence substrate rather than eight separate tools.",
+      "subsystem": "Platform architecture",
+      "source_modules": [
+        "atlas/terminal",
+        "atlas/evidence",
+        "atlas/fec",
+        "atlas/research",
+        "atlas/economic",
+        "atlas/applications"
+      ],
+      "tests": [
+        "tests/test_terminal_api.py",
+        "tests/test_fec.py",
+        "tests/test_phase8_applications.py"
+      ],
+      "implementation_evidence": "Six of the eight systems have running code and tests.",
+      "unimplemented_dependencies": "Atlas Intelligence and OSINT exist only as partial or absent systems.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-03",
+      "spec_version": "3.2.0",
+      "section": 3,
+      "section_title": "Interface: almost limitless depth with minimal visible clutter",
+      "requirement": "Restrict principal navigation to Explore, Studio, Lab and Monitor while exposing depth progressively.",
+      "subsystem": "Frontend",
+      "source_modules": [
+        "web/src"
+      ],
+      "tests": [],
+      "implementation_evidence": "The React terminal exposes the four root spaces with linked workspaces.",
+      "unimplemented_dependencies": "Studio, Lab and Monitor are thin; depth exists mainly for the terminal surface.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-04",
+      "spec_version": "3.2.0",
+      "section": 4,
+      "section_title": "Replaceability and competition",
+      "requirement": "Benchmark against professional terminals on capability and openness instead of copying them, and publish comparative evidence.",
+      "subsystem": "Strategy",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "README.md documents positioning.",
+      "unimplemented_dependencies": "No independent competitive benchmark has been executed.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "low",
+      "priority": "P4",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-05",
+      "spec_version": "3.2.0",
+      "section": 5,
+      "section_title": "Architecture: the unified financial computing substrate",
+      "requirement": "One adaptive-workspace substrate beneath the four spaces, with universal research objects, a compiler and one evidence kernel.",
+      "subsystem": "Platform architecture",
+      "source_modules": [
+        "atlas/core",
+        "atlas/evidence",
+        "atlas/fec",
+        "atlas/storage"
+      ],
+      "tests": [
+        "tests/test_core.py",
+        "tests/test_evidence.py",
+        "tests/test_fec.py"
+      ],
+      "implementation_evidence": "Identity, evidence kernel, compiler subset and SQLite storage exist and are tested.",
+      "unimplemented_dependencies": "Adaptive workspace and cross-surface object layer are partial.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-06",
+      "spec_version": "3.2.0",
+      "section": 6,
+      "section_title": "Universal Research Object System (UROS)",
+      "requirement": "Give every research asset a stable identity, type, version, lineage, permissions, time semantics and interface contract.",
+      "subsystem": "Research objects",
+      "source_modules": [
+        "atlas/research/objects.py",
+        "atlas/fec/compiler.py"
+      ],
+      "tests": [
+        "tests/test_phase21_research.py",
+        "tests/test_properties.py",
+        "tests/test_phase9_3_research_memo.py"
+      ],
+      "implementation_evidence": "Versioned research objects with manifests and lineage exist for research and application paths; the `memo` kind was added in Phase 9.3 with immutable versions.",
+      "unimplemented_dependencies": "Portfolio, order and instrument objects are not implemented; the memo kind is the first professional artefact.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P1",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-07",
+      "spec_version": "3.2.0",
+      "section": 7,
+      "section_title": "Data Fabric, Temporal Evidence Kernel, and source quality",
+      "requirement": "Preserve the point-in-time evidence kernel and entity master with immutable records, availability semantics and source quality.",
+      "subsystem": "Evidence",
+      "source_modules": [
+        "atlas/evidence/kernel.py",
+        "atlas/evidence/model.py",
+        "atlas/ingestion",
+        "atlas/storage/db.py"
+      ],
+      "tests": [
+        "tests/test_evidence.py",
+        "tests/test_history.py",
+        "tests/test_phase9_2_migrations.py"
+      ],
+      "implementation_evidence": "Reference database holds 26,440 evidence records; differential Python/SQL selection test passes.",
+      "unimplemented_dependencies": "Cross-source quality scoring is partial (Section 54).",
+      "status": "implemented_verified",
+      "internally_partial": false,
+      "severity": "high",
+      "priority": "P1",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-08",
+      "spec_version": "3.2.0",
+      "section": 8,
+      "section_title": "Financial-Economic Ontology and entity graph",
+      "requirement": "Distinguish Event, Outcome, Contract, ResolutionRule and Forecast, and never infer payoff equivalence from titles.",
+      "subsystem": "Ontology",
+      "source_modules": [
+        "atlas/entities/master.py",
+        "docs/EVENT_AND_CLAIM_ONTOLOGY.md"
+      ],
+      "tests": [
+        "tests/test_entities.py",
+        "tests/test_multi_issuer.py"
+      ],
+      "implementation_evidence": "Issuer/security/listing/ticker identity with ambiguity refusal is implemented and tested.",
+      "unimplemented_dependencies": "Event, contract and forecast objects exist only as written contracts.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-09",
+      "spec_version": "3.2.0",
+      "section": 9,
+      "section_title": "Data Rights Engine and sustainable open-source economics",
+      "requirement": "Require a rights manifest for every dataset and artefact, and fail closed when redistribution is unknown or restricted.",
+      "subsystem": "Data rights",
+      "source_modules": [
+        "atlas/research/rights.py",
+        "atlas/applications/rights.py",
+        "atlas/storage/sources.py"
+      ],
+      "tests": [
+        "tests/test_phase9_2_3_acceptance.py",
+        "tests/test_phase9_2_2_data_rights_fixtures.py"
+      ],
+      "implementation_evidence": "Rights violations are refused by tests; restricted sources are labelled as restricted.",
+      "unimplemented_dependencies": "Rights-aware query planning across all feeds is partial.",
+      "status": "implemented_verified",
+      "internally_partial": false,
+      "severity": "critical",
+      "priority": "P1",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-10",
+      "spec_version": "3.2.0",
+      "section": 10,
+      "section_title": "Financial-Economic Compiler: the central original engineering asset",
+      "requirement": "Compile typed financial equations, model graphs and scenarios into well-typed, evidence-aware plans with an IR.",
+      "subsystem": "Compiler",
+      "source_modules": [
+        "atlas/fec"
+      ],
+      "tests": [
+        "tests/test_fec.py",
+        "tests/test_phase9_1_models.py"
+      ],
+      "implementation_evidence": "Allowlisted operators, versioned graphs and refusal on contract mismatch are tested.",
+      "unimplemented_dependencies": "Parsing frontends, dependency planning and optimisation passes are partial.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-11",
+      "spec_version": "3.2.0",
+      "section": 11,
+      "section_title": "Universal Execution Runtime and storage/compute architecture",
+      "requirement": "Coordinate compatible compute engines while holding identity, job, provenance and artefact contracts constant.",
+      "subsystem": "Runtime",
+      "source_modules": [
+        "atlas/storage",
+        "atlas/learning/service.py"
+      ],
+      "tests": [
+        "tests/test_phase6_learning.py",
+        "tests/test_storage.py"
+      ],
+      "implementation_evidence": "SQLite/NumPy execution with recorded jobs exists.",
+      "unimplemented_dependencies": "No multi-engine scheduler, job queue or distributed execution.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-12",
+      "spec_version": "3.2.0",
+      "section": 12,
+      "section_title": "Model Forge: unrestricted model creativity with enforced contracts",
+      "requirement": "Support configure, compose, code and invent authoring paths with enforced typing and reproducibility.",
+      "subsystem": "Models",
+      "source_modules": [
+        "atlas/fec",
+        "docs/MODEL_FORGE.md",
+        "docs/MODEL_REGISTRY.md"
+      ],
+      "tests": [
+        "tests/test_phase9_1_models.py"
+      ],
+      "implementation_evidence": "Registered models and versioned graphs execute with declared coverage.",
+      "unimplemented_dependencies": "Visual authoring and an invention sandbox are absent.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-13",
+      "spec_version": "3.2.0",
+      "section": 13,
+      "section_title": "Quant Lab, Alpha Foundry, and historical strategy simulation",
+      "requirement": "Provide three simulation fidelities with mandatory timing, cost and survivorship disclosures.",
+      "subsystem": "Quant research",
+      "source_modules": [
+        "atlas/learning",
+        "docs/BACKTEST_ENGINE_EVALUATION.md"
+      ],
+      "tests": [
+        "tests/test_phase6_learning.py",
+        "tests/test_phase4_quant.py"
+      ],
+      "implementation_evidence": "Walk-forward experiments with leakage guards and audit records are tested.",
+      "unimplemented_dependencies": "Full backtest accounting (cash, positions, costs) is not implemented.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-14",
+      "spec_version": "3.2.0",
+      "section": 14,
+      "section_title": "Institutional valuation, fixed income, derivatives, and portfolio risk",
+      "requirement": "Deliver company models, fixed income, derivatives and portfolio risk to an institutional standard.",
+      "subsystem": "Institutional finance",
+      "source_modules": [
+        "atlas/finance",
+        "atlas/institutional",
+        "atlas/research/equity.py"
+      ],
+      "tests": [
+        "tests/test_phase9_equity.py",
+        "tests/test_phase9_2_institutions.py",
+        "tests/test_phase9_1_models.py"
+      ],
+      "implementation_evidence": "Bank residual income v2/v3 pass independent audits 29/29 and 16/16; DCF component checks pass.",
+      "unimplemented_dependencies": "Fixed income, derivatives and portfolio risk are unimplemented.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "critical",
+      "priority": "P1",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-15",
+      "spec_version": "3.2.0",
+      "section": 15,
+      "section_title": "Atlas Intelligence: a real brain, not a mandatory chatbot",
+      "requirement": "Provide optional language reasoning, statistical and neural learning, experiment planning and user context as separate services.",
+      "subsystem": "Intelligence",
+      "source_modules": [
+        "atlas/learning"
+      ],
+      "tests": [
+        "tests/test_phase6_learning.py"
+      ],
+      "implementation_evidence": "Model selection, calibration and audit records run offline.",
+      "unimplemented_dependencies": "Research planner, meta-learning and contextual services are absent; no LLM integration.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-16",
+      "spec_version": "3.2.0",
+      "section": 16,
+      "section_title": "Global OSINT, news intelligence, and the Economic Reality Engine",
+      "requirement": "Answer financial questions about real economic systems from legally usable sources, separating observed from inferred claims.",
+      "subsystem": "OSINT",
+      "source_modules": [
+        "docs/OSINT_SOURCE_REGISTRY.md",
+        "docs/ECONOMIC_SENTINEL.md"
+      ],
+      "tests": [],
+      "implementation_evidence": "Only the Phase 7 energy/weather case study exists as a thin economic slice.",
+      "unimplemented_dependencies": "No OSINT ingestion, entity linking or claim labelling.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-17",
+      "spec_version": "3.2.0",
+      "section": 17,
+      "section_title": "Research Operating System, Time Capsule, and Sentinel",
+      "requirement": "Make each investigation a durable versioned project with hypotheses, evidence, methods and a replayable time capsule.",
+      "subsystem": "Research OS",
+      "source_modules": [
+        "atlas/evidence/kernel.py",
+        "atlas/research"
+      ],
+      "tests": [
+        "tests/test_history.py",
+        "tests/test_phase9_2_3_acceptance.py"
+      ],
+      "implementation_evidence": "Information cutoffs, as-of selection and observation replay are implemented and tested.",
+      "unimplemented_dependencies": "Project lifecycle objects, Sentinel monitoring and Time Capsule export are partial.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-18",
+      "spec_version": "3.2.0",
+      "section": 18,
+      "section_title": "Financial Application Compiler and plugin ecosystem",
+      "requirement": "Compile typed application specifications into interfaces that reuse the same objects, evidence and permissions.",
+      "subsystem": "Applications",
+      "source_modules": [
+        "atlas/applications"
+      ],
+      "tests": [
+        "tests/test_phase8_applications.py",
+        "tests/test_packaging_contract.py"
+      ],
+      "implementation_evidence": "Declarative packages build, install, execute, fork and reproduce from a clean install.",
+      "unimplemented_dependencies": "The Intent-to-Workspace frontend and a third-party plugin sandbox are absent.",
+      "status": "implemented_verified",
+      "internally_partial": false,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-19",
+      "spec_version": "3.2.0",
+      "section": 19,
+      "section_title": "API, SDK, scripting, and extension contracts",
+      "requirement": "Expose a documented stable API for discovery, evidence, market and fundamental data, metrics, models and applications.",
+      "subsystem": "API",
+      "source_modules": [
+        "atlas/terminal/api.py",
+        "atlas/terminal/routes/market.py",
+        "docs/APPLICATION_SDK.md"
+      ],
+      "tests": [
+        "tests/test_terminal_api.py",
+        "tests/test_phase9_2_7_market_series.py"
+      ],
+      "implementation_evidence": "Typed FastAPI surface with stable operation ids, error envelopes and a saved OpenAPI baseline.",
+      "unimplemented_dependencies": "No published SDK, scripting bridge or extension packaging.",
+      "status": "implemented_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-20",
+      "spec_version": "3.2.0",
+      "section": 20,
+      "section_title": "Security, privacy, safety, and operational governance",
+      "requirement": "Enforce local-first operation, bounded request bodies and compressed responses, and explicit authorisation for connected actions.",
+      "subsystem": "Security",
+      "source_modules": [
+        "atlas/terminal/api.py",
+        "atlas/applications/contracts.py"
+      ],
+      "tests": [
+        "tests/test_release_security_9_2_5.py",
+        "tests/test_sec_transport_limits.py"
+      ],
+      "implementation_evidence": "Body limits, archive bounds and zip-bomb defences are tested.",
+      "unimplemented_dependencies": "No multi-tenant isolation, audit log or secrets management; operation remains loopback-only.",
+      "status": "implemented_verified",
+      "internally_partial": true,
+      "severity": "critical",
+      "priority": "P1",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-21",
+      "spec_version": "3.2.0",
+      "section": 21,
+      "section_title": "Stack evolution and implementation discipline",
+      "requirement": "Treat prior phase reports as agent-reported until independently audited and keep one canonical architecture.",
+      "subsystem": "Engineering process",
+      "source_modules": [
+        "docs"
+      ],
+      "tests": [
+        "tests/test_acceptance.py",
+        "tests/test_dependencies.py"
+      ],
+      "implementation_evidence": "Phase acceptance documents record verification limits; dependency contract tests pass.",
+      "unimplemented_dependencies": "No open gap recorded.",
+      "status": "implemented_verified",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-22",
+      "spec_version": "3.2.0",
+      "section": 22,
+      "section_title": "Institutional Capability Benchmark (ICB)",
+      "requirement": "Measure institutional claims in a public ICB suite with declared data rights, hardware and independent baselines.",
+      "subsystem": "Benchmarks",
+      "source_modules": [
+        "docs/ICB_EXECUTION.md",
+        "docs/BENCHMARKS.md"
+      ],
+      "tests": [
+        "scripts/benchmark_phase9_2.py",
+        "scripts/benchmark_market_overview.py"
+      ],
+      "implementation_evidence": "Repository benchmarks and audits exist and are reproducible for their declared scope.",
+      "unimplemented_dependencies": "Most ICB suites have never been executed; see artifacts/icb_registry.json.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P1",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-23",
+      "spec_version": "3.2.0",
+      "section": 23,
+      "section_title": "Development roadmap, priorities, and release gates",
+      "requirement": "Stage the roadmap by dependency order with explicit release gates rather than calendar promises.",
+      "subsystem": "Roadmap",
+      "source_modules": [
+        "docs/MASTER_SPEC_V3_PRIORITY_ROADMAP.md"
+      ],
+      "tests": [],
+      "implementation_evidence": "Phase 9.2.x acceptance documents record gates and blockers.",
+      "unimplemented_dependencies": "No specification-aligned roadmap existed before this checkpoint.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "high",
+      "priority": "P0",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-24",
+      "spec_version": "3.2.0",
+      "section": 24,
+      "section_title": "Architecture decision record and contribution governance",
+      "requirement": "Require an ADR covering problem, alternatives, licensing, correctness, benchmark, decision and reversibility.",
+      "subsystem": "Governance",
+      "source_modules": [
+        "docs/adr"
+      ],
+      "tests": [
+        "tests/test_dependencies.py"
+      ],
+      "implementation_evidence": "ADRs 0001-0003 exist for storage, identity and analytics.",
+      "unimplemented_dependencies": "No formal review or maintainer process.",
+      "status": "implemented_verified",
+      "internally_partial": false,
+      "severity": "low",
+      "priority": "P4",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-25",
+      "spec_version": "3.2.0",
+      "section": 25,
+      "section_title": "Strategic risks and mitigation",
+      "requirement": "Maintain a risk register (licensed data, dependency fragility, over-claiming) with mitigations.",
+      "subsystem": "Risk",
+      "source_modules": [
+        "docs/DATA_RIGHTS_AND_DISTRIBUTION.md"
+      ],
+      "tests": [],
+      "implementation_evidence": "Risk themes appear in distribution and beta documentation.",
+      "unimplemented_dependencies": "No consolidated, maintained risk register.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-26",
+      "spec_version": "3.2.0",
+      "section": 26,
+      "section_title": "Canonical end-to-end research demonstrations",
+      "requirement": "Demonstrate a fundamental underwrite end to end: filings, statements, assumptions, scenarios, provenance and a saved thesis.",
+      "subsystem": "Product workflow",
+      "source_modules": [
+        "atlas/research/equity.py",
+        "atlas/terminal"
+      ],
+      "tests": [
+        "tests/test_phase9_equity.py",
+        "tests/test_phase9_2_4_acceptance.py"
+      ],
+      "implementation_evidence": "Valuation and provenance steps run against SEC fixtures and are browser-tested for desktop.",
+      "unimplemented_dependencies": "Evidence reconciliation and narrative retrieval in Demonstration A are missing.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P1",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-27",
+      "spec_version": "3.2.0",
+      "section": 27,
+      "section_title": "Research source and software inventory",
+      "requirement": "Treat candidate repositories as evaluation candidates until licence, maintenance and security are verified.",
+      "subsystem": "Dependencies",
+      "source_modules": [
+        "docs/ATLAS_NEXT_PHASE_DEPENDENCIES.md"
+      ],
+      "tests": [],
+      "implementation_evidence": "A prose dependency evaluation document exists.",
+      "unimplemented_dependencies": "No machine-checked licence registry (Section 58).",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "low",
+      "priority": "P4",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-28",
+      "spec_version": "3.2.0",
+      "section": 28,
+      "section_title": "Instructions for all future Atlas engineering agents",
+      "requirement": "Read the specification and inspect the working tree before planning, and never fabricate implementation status.",
+      "subsystem": "Engineering process",
+      "source_modules": [
+        "docs/MASTER_SPEC_GATE.md",
+        "docs/PHASE9_2_8_ACCEPTANCE.md"
+      ],
+      "tests": [],
+      "implementation_evidence": "Status vocabulary and evidence discipline applied here.",
+      "unimplemented_dependencies": "No open gap recorded.",
+      "status": "implemented_verified",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-29",
+      "spec_version": "3.2.0",
+      "section": 29,
+      "section_title": "Expansion decision and domain boundaries",
+      "requirement": "Remain financial-first while making the substrate event-aware, probabilistic and decision-capable.",
+      "subsystem": "Strategy",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "Only the specification defines this boundary.",
+      "unimplemented_dependencies": "No event-market capability exists.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "low",
+      "priority": "P4",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-30",
+      "spec_version": "3.2.0",
+      "section": 30,
+      "section_title": "Universal Event and Probability Engine",
+      "requirement": "Provide reusable probability machinery with domain-specific evidence, calibration and settlement semantics.",
+      "subsystem": "Events",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "None.",
+      "unimplemented_dependencies": "No event, contract or settlement implementation.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-31",
+      "spec_version": "3.2.0",
+      "section": 31,
+      "section_title": "Causal, decision, and opportunity intelligence",
+      "requirement": "Distinguish observed relations, mechanism hypotheses and identified causal claims with estimands and null results.",
+      "subsystem": "Causal research",
+      "source_modules": [
+        "docs/CAUSAL_RESEARCH.md"
+      ],
+      "tests": [],
+      "implementation_evidence": "Design document only.",
+      "unimplemented_dependencies": "No causal estimation code.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-32",
+      "spec_version": "3.2.0",
+      "section": 32,
+      "section_title": "Domain packs, implementation gates, and event benchmarks",
+      "requirement": "Package additional domains as optional packs on the shared substrate with their own gates and ICB-11..18.",
+      "subsystem": "Domain packs",
+      "source_modules": [
+        "atlas/applications",
+        "docs/DOMAIN_PACK_SPEC.md"
+      ],
+      "tests": [
+        "tests/test_phase8_applications.py"
+      ],
+      "implementation_evidence": "A domain pack ships, installs and executes on the unchanged substrate.",
+      "unimplemented_dependencies": "Event-domain packs and ICB-11..18 are not implemented.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-33",
+      "spec_version": "3.2.0",
+      "section": 33,
+      "section_title": "Atlas Real Estate Investment Intelligence",
+      "requirement": "Underwrite property, lease and debt cash flows with evidence-backed assumptions, separating facts from model outputs.",
+      "subsystem": "Real estate",
+      "source_modules": [
+        "docs/DOMAIN_PACK_SPEC.md"
+      ],
+      "tests": [],
+      "implementation_evidence": "Specification only.",
+      "unimplemented_dependencies": "No real estate ontology, lease model or geographic joins.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "low",
+      "priority": "P4",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-34",
+      "spec_version": "3.2.0",
+      "section": 34,
+      "section_title": "Platform constitution: the universal financial operating system",
+      "requirement": "Serve novice and specialist users with one adaptive system rather than separate products.",
+      "subsystem": "Charter",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "Positioning only.",
+      "unimplemented_dependencies": "No conformance mechanism defined.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "low",
+      "priority": "P4",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-35",
+      "spec_version": "3.2.0",
+      "section": 35,
+      "section_title": "Users, complete jobs and adoption-critical workflows",
+      "requirement": "Deliver complete role-based jobs (investor, analyst, quant, banker, advisor) with finished deliverables.",
+      "subsystem": "Product",
+      "source_modules": [
+        "docs/ATLAS_BETA_USER_TEST_PLAN.md"
+      ],
+      "tests": [],
+      "implementation_evidence": "A role matrix and beta plan exist.",
+      "unimplemented_dependencies": "No role-complete workflow has been demonstrated end to end.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-36",
+      "spec_version": "3.2.0",
+      "section": 36,
+      "section_title": "Universal investment model library and coverage contracts",
+      "requirement": "Maintain a registry of models, strategies and indicators with kind, coverage, provenance and status.",
+      "subsystem": "Model registry",
+      "source_modules": [
+        "atlas/fec",
+        "docs/MODEL_REGISTRY.md"
+      ],
+      "tests": [
+        "tests/test_phase9_1_models.py"
+      ],
+      "implementation_evidence": "Registered models execute with declared coverage; DCF and bank residual income are audited.",
+      "unimplemented_dependencies": "The catalogue covers a small fraction of the specified model families.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-37",
+      "spec_version": "3.2.0",
+      "section": 37,
+      "section_title": "Model composition, invention and computational research",
+      "requirement": "Make every compatible model a node in a nested, versioned, callable graph with typed contracts.",
+      "subsystem": "Model composition",
+      "source_modules": [
+        "atlas/fec"
+      ],
+      "tests": [
+        "tests/test_fec.py",
+        "tests/test_phase9_1_models.py"
+      ],
+      "implementation_evidence": "Nested versioned graphs execute with schema checks and refusal on mismatch.",
+      "unimplemented_dependencies": "Tournament, invention sandbox and model search are absent.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-38",
+      "spec_version": "3.2.0",
+      "section": 38,
+      "section_title": "Global financial terminal and market intelligence",
+      "requirement": "Provide instrument-aware search, charting, screening and comparison with correct time, source and rights status.",
+      "subsystem": "Market terminal",
+      "source_modules": [
+        "atlas/terminal/read_models.py",
+        "atlas/terminal/market_projection.py",
+        "atlas/market"
+      ],
+      "tests": [
+        "tests/test_phase9_2_8_bulk_overview.py",
+        "tests/test_phase9_2_7_market_series.py",
+        "tests/test_terminal_api.py"
+      ],
+      "implementation_evidence": "Canonical series contract with provider identity, revisions, rights and a bounded overview projection.",
+      "unimplemented_dependencies": "Only listed equities with daily bars are covered; no funds, FX, options or live feeds.",
+      "status": "implemented_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P1",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-39",
+      "spec_version": "3.2.0",
+      "section": 39,
+      "section_title": "Equity, fundamental, accounting and research desk",
+      "requirement": "Create a financial statement graph with restatements, segments, leases and derived metrics carrying evidence ids.",
+      "subsystem": "Fundamentals",
+      "source_modules": [
+        "atlas/evidence",
+        "atlas/finance",
+        "atlas/terminal/read_models.py"
+      ],
+      "tests": [
+        "tests/test_phase9_equity.py",
+        "tests/test_reconcile.py",
+        "tests/test_phase9_3_research_memo.py"
+      ],
+      "implementation_evidence": "SEC XBRL statements, restatement handling and derived metrics with provenance are tested; Phase 9.3 adds claim-level verification, a memo artefact and exports.",
+      "unimplemented_dependencies": "Segments, leaks and accounting-policy notes are absent; memo export is Markdown/HTML/JSON only.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P1",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-40",
+      "spec_version": "3.2.0",
+      "section": 40,
+      "section_title": "Quantitative trading, strategy science and execution research",
+      "requirement": "Support strategy families with point-in-time validation, cost-aware backtesting and execution research.",
+      "subsystem": "Quant research",
+      "source_modules": [
+        "atlas/learning",
+        "atlas/quant"
+      ],
+      "tests": [
+        "tests/test_phase6_learning.py",
+        "tests/test_phase4_quant.py"
+      ],
+      "implementation_evidence": "Walk-forward experiments with as-of data and audit are tested.",
+      "unimplemented_dependencies": "No execution simulation, transaction-cost model or broker integration.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-41",
+      "spec_version": "3.2.0",
+      "section": 41,
+      "section_title": "Institutional portfolio management, risk and operations",
+      "requirement": "Provide positions, cash, orders, cost basis, FX, benchmarks and risk with correct accounting.",
+      "subsystem": "Portfolio operations",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "None.",
+      "unimplemented_dependencies": "No position, order or portfolio accounting implementation.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-42",
+      "spec_version": "3.2.0",
+      "section": 42,
+      "section_title": "Investment banking and transaction intelligence",
+      "requirement": "Deliver comps, precedents, three-statement forecasts, debt schedules and merger consequences with provenance.",
+      "subsystem": "Investment banking",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "None.",
+      "unimplemented_dependencies": "No banking workflow beyond the bank valuation model.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-43",
+      "spec_version": "3.2.0",
+      "section": 43,
+      "section_title": "Venture capital, private equity, private credit and fund intelligence",
+      "requirement": "Model private company identity, cap tables, financing events and fund economics.",
+      "subsystem": "Private markets",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "None.",
+      "unimplemented_dependencies": "No private-market data model or fund mathematics.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P4",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-44",
+      "spec_version": "3.2.0",
+      "section": 44,
+      "section_title": "Personal finance, wealth and consumer decision support",
+      "requirement": "Help a user understand flows, holdings and risks and how choices change outcomes without unsupported guarantees.",
+      "subsystem": "Consumer",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "None.",
+      "unimplemented_dependencies": "No accounts, planning or consent model.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-45",
+      "spec_version": "3.2.0",
+      "section": 45,
+      "section_title": "Adaptive experience, human factors and professional workflow design",
+      "requirement": "Keep four permanent root spaces and adapt depth to skill without changing the mathematics.",
+      "subsystem": "UX",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "Navigation exists; adaptivity does not.",
+      "unimplemented_dependencies": "No progressive disclosure or accessibility certification.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-46",
+      "spec_version": "3.2.0",
+      "section": 46,
+      "section_title": "Quant Stack compatibility and migration contract",
+      "requirement": "Reconstruct the user's existing Quant Stack workflows and migrate them with declared differences.",
+      "subsystem": "Migration",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "None.",
+      "unimplemented_dependencies": "No importer, compatibility fixture or parity report.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-47",
+      "spec_version": "3.2.0",
+      "section": 47,
+      "section_title": "Enterprise, institutions, connectivity and deliverable interoperability",
+      "requirement": "Support spreadsheet, notebook and document interchange with audited calculation parity.",
+      "subsystem": "Interoperability",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "None.",
+      "unimplemented_dependencies": "No Excel or notebook export.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-48",
+      "spec_version": "3.2.0",
+      "section": 48,
+      "section_title": "Release strategy, external benchmarks and ecosystem growth",
+      "requirement": "Sequence depth before catalogue inflation and add ICB-21..32 with evidence criteria.",
+      "subsystem": "Release",
+      "source_modules": [
+        "PHASE9_2_FINAL_ACCEPTANCE.md"
+      ],
+      "tests": [],
+      "implementation_evidence": "Release gates are documented for Phase 9.2.x only.",
+      "unimplemented_dependencies": "No external benchmark programme; ICB-21..32 have not been executed.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-49",
+      "spec_version": "3.2.0",
+      "section": 49,
+      "section_title": "Financial Knowledge Engine: unified, evidence-preserving retrieval",
+      "requirement": "Provide retrieval and evidence assembly with historical resolution, factual grounding and explicit abstention.",
+      "subsystem": "Knowledge engine",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "None.",
+      "unimplemented_dependencies": "No retrieval layer; the integration contract is docs/RESEARCH_AND_COMPRESSION_INTEGRATION.md.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-50",
+      "spec_version": "3.2.0",
+      "section": 50,
+      "section_title": "Compression, CDG and evidence-preserving data research",
+      "requirement": "Research representations that reduce total bytes and cost while preserving exact source reconstruction.",
+      "subsystem": "Compression research",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "None; hypotheses only.",
+      "unimplemented_dependencies": "No encoder, corpus or reconstruction test.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-51",
+      "spec_version": "3.2.0",
+      "section": 51,
+      "section_title": "Intent-to-Research Compiler and adaptive workflows",
+      "requirement": "Translate a goal into an editable, typed, permission-aware research plan.",
+      "subsystem": "Intent compiler",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "None.",
+      "unimplemented_dependencies": "No planner, plan schema or permission checking.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-52",
+      "spec_version": "3.2.0",
+      "section": 52,
+      "section_title": "Research Integrity Engine: evidence, mathematics and decisions",
+      "requirement": "Unify evidence, computational, statistical and decision checks into explicit findings, never a single trust score.",
+      "subsystem": "Integrity",
+      "source_modules": [
+        "atlas/research/validation.py",
+        "docs/MODEL_AUDITOR.md",
+        "scripts/audit_phase9_2_models.py"
+      ],
+      "tests": [
+        "tests/test_phase9_2_1_market_integrity.py",
+        "tests/test_phase9_1_models.py"
+      ],
+      "implementation_evidence": "Phase 9.3 adds `atlas.research_integrity.v1`: evidence, computational, statistical and decision dimensions reported separately per memo, with named failures and no trust score.",
+      "unimplemented_dependencies": "Statistical integrity is `not_applicable` because no empirical forecast evaluation exists; no section-level acceptance.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P1",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-53",
+      "spec_version": "3.2.0",
+      "section": 53,
+      "section_title": "Atlas Resource Optimization Engine: the industrial engineering core",
+      "requirement": "Select compute, data, retrieval and storage policies under explicit resource and correctness constraints.",
+      "subsystem": "Resource optimization",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "None.",
+      "unimplemented_dependencies": "No policy engine or cost model.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-54",
+      "spec_version": "3.2.0",
+      "section": 54,
+      "section_title": "Data Coverage, Integrity and Service Health Center",
+      "requirement": "Report for every displayed number what Atlas can observe, how fresh it is and where the gaps are.",
+      "subsystem": "Data health",
+      "source_modules": [
+        "atlas/terminal/read_models.py",
+        "atlas/storage/quality.py"
+      ],
+      "tests": [
+        "tests/test_phase9_2_2_market_observations.py",
+        "tests/test_phase9_2_8_bulk_overview.py"
+      ],
+      "implementation_evidence": "Source status, synthetic labelling, missing-session counts and coverage blocks are surfaced; the memo states coverage and rights as disclosure claims.",
+      "unimplemented_dependencies": "No unified coverage, freshness and conflict dashboard; no historical universe reporting.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "high",
+      "priority": "P2",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-55",
+      "spec_version": "3.2.0",
+      "section": 55,
+      "section_title": "Model Experience System and adaptive human-computer interaction",
+      "requirement": "Present one model through synchronized visual, equation, table and code views without separate implementations.",
+      "subsystem": "Model UX",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "None.",
+      "unimplemented_dependencies": "No synchronized multi-view editor.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P4",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-56",
+      "spec_version": "3.2.0",
+      "section": 56,
+      "section_title": "Workflow Portability, Migration and Professional Deliverables",
+      "requirement": "Let users import and export professional workflows and artefacts without silent differences.",
+      "subsystem": "Portability",
+      "source_modules": [
+        "atlas/research/memo.py"
+      ],
+      "tests": [
+        "tests/test_phase9_3_research_memo.py"
+      ],
+      "implementation_evidence": "Application packages and evidence-grounded memos are portable (Markdown/HTML/JSON with a hashed manifest); spreadsheets and notebooks are not.",
+      "unimplemented_dependencies": "No spreadsheet, notebook or document import; no PDF renderer.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-57",
+      "spec_version": "3.2.0",
+      "section": 57,
+      "section_title": "ResearchOS scientific program for AI, RAG, compression and IE",
+      "requirement": "Produce academically defensible research with pre-registered, replicated evaluations and published negative results.",
+      "subsystem": "Research programme",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "None.",
+      "unimplemented_dependencies": "No experiment protocol, corpus or replication study.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "medium",
+      "priority": "P3",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-58",
+      "spec_version": "3.2.0",
+      "section": 58,
+      "section_title": "Open-source integration and dependency evaluation registry",
+      "requirement": "Maintain a machine-checked registry of candidate integrations with licence, maintenance and security status.",
+      "subsystem": "Dependencies",
+      "source_modules": [
+        "docs/ATLAS_NEXT_PHASE_DEPENDENCIES.md"
+      ],
+      "tests": [],
+      "implementation_evidence": "A prose evaluation document exists.",
+      "unimplemented_dependencies": "No machine-readable registry or licence gate.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "low",
+      "priority": "P4",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-59",
+      "spec_version": "3.2.0",
+      "section": 59,
+      "section_title": "Product delivery sequence and cross-domain user adoption",
+      "requirement": "Deliver one complete flagship workflow from company selection through evidence, model, scenarios, export, thesis and monitoring (Section 59.1).",
+      "subsystem": "Delivery",
+      "source_modules": [
+        "atlas/terminal",
+        "atlas/research/equity.py",
+        "atlas/applications"
+      ],
+      "tests": [
+        "tests/test_phase9_equity.py",
+        "tests/test_phase9_2_4_acceptance.py"
+      ],
+      "implementation_evidence": "Company, statements, model, scenarios, provenance, saved workspace, verified memo, export and deterministic change detection run end to end; see docs/PHASE9_3_RESEARCH_MEMO_ACCEPTANCE.md.",
+      "unimplemented_dependencies": "Narrative evidence retrieval, scheduled monitoring and notification delivery are missing; no licensed price feed.",
+      "status": "prototype_verified",
+      "internally_partial": true,
+      "severity": "critical",
+      "priority": "P0",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-60",
+      "spec_version": "3.2.0",
+      "section": 60,
+      "section_title": "New Institutional Capability Benchmarks and acceptance matrix",
+      "requirement": "Add ICB-33..48 with reproducible fixtures, independent baselines, negative tests and quantitative pass conditions, and publish the Section 60.2 status.",
+      "subsystem": "Benchmarks",
+      "source_modules": [
+        "artifacts/icb_registry.json",
+        "docs/INSTITUTIONAL_CAPABILITY_SCOREBOARD.md"
+      ],
+      "tests": [
+        "tests/test_phase9_2_8_master_spec_registry.py"
+      ],
+      "implementation_evidence": "ICB-01..48 registry built with statuses and evidence gaps; no v3 benchmark is accepted. Phase 9.3 supplies ICB-39 and ICB-48 prerequisites without promoting either.",
+      "unimplemented_dependencies": "ICB-33..48 are specified only; ICB-48 needs an independent analyst baseline.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "high",
+      "priority": "P1",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    },
+    {
+      "requirement_id": "MS3-61",
+      "spec_version": "3.2.0",
+      "section": 61,
+      "section_title": "Final platform definition and strategic charter",
+      "requirement": "Make research more correct, accessible, reproducible and economical rather than merely adding features.",
+      "subsystem": "Charter",
+      "source_modules": [],
+      "tests": [],
+      "implementation_evidence": "Charter only.",
+      "unimplemented_dependencies": "A judgement criterion, not a testable capability.",
+      "status": "vision_only",
+      "internally_partial": false,
+      "severity": "low",
+      "priority": "P4",
+      "verification_date": "2026-11-11",
+      "commit_sha": "8b094eb7434b75d461bf32543290fdfb47c21639"
+    }
+  ]
+}

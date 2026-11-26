@@ -1,0 +1,23 @@
+{
+  "schema": "atlas.release.sanitized_archive.v1",
+  "generated_at": "2026-11-26T19:17:33Z",
+  "commit": "36c7ee8e09862dd9bcea6d1927a72650a7308937",
+  "commit_subject": "Declare the licence in package metadata and refresh the dependency inventory",
+  "archive": {
+    "path": "/workspace/chats/7c583000e3d88b493cb6695c/dist/atlas-source-HEAD-sanitized.tar.gz",
+    "sha256": "c2af8558e1ba35a8a9d9e2fd92ce37cf6af7ee88a17bf871c85580795853b186",
+    "bytes": 33900611,
+    "files": 1089
+  },
+  "excluded": [],
+  "verification": {
+    "files": 1089,
+    "excluded_present": [],
+    "clean": true
+  },
+  "history_preserved": {
+    "rewritten": false,
+    "note": "the repository, its refs and its objects are untouched. The excluded blobs remain reachable from the commits that contain them, which is why a public Git history still requires an authorised rewrite or a fresh-history branch."
+  },
+  "exit_code": 0
+}

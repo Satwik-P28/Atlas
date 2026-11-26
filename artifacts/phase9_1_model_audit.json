@@ -1,0 +1,124 @@
+{
+  "checks": [
+    {
+      "check": "bank_residual_income_equity_value",
+      "method": "independent Decimal residual-income loop",
+      "model": 760034088302.5171,
+      "passed": true,
+      "reference": 760034088302.5173,
+      "ticker": "JPM"
+    },
+    {
+      "check": "bank_residual_income_value_per_share",
+      "method": "independent Decimal residual-income loop",
+      "model": 281.89084203787445,
+      "passed": true,
+      "reference": 281.8908420378745,
+      "ticker": "JPM"
+    },
+    {
+      "check": "dcf_rejected_for_financial_institution",
+      "model": "unlevered_fcff_dcf",
+      "passed": true,
+      "ticker": "JPM"
+    },
+    {
+      "check": "contract_not_promoted_to_economic_support",
+      "model": "arithmetically_verified",
+      "passed": true,
+      "ticker": "JPM"
+    },
+    {
+      "check": "bank_residual_income_equity_value",
+      "method": "independent Decimal residual-income loop",
+      "model": 175725268658.74786,
+      "passed": true,
+      "reference": 175725268658.74786,
+      "ticker": "GS"
+    },
+    {
+      "check": "bank_residual_income_value_per_share",
+      "method": "independent Decimal residual-income loop",
+      "model": 592.7118177072651,
+      "passed": true,
+      "reference": 592.7118177072651,
+      "ticker": "GS"
+    },
+    {
+      "check": "dcf_rejected_for_financial_institution",
+      "model": "unlevered_fcff_dcf",
+      "passed": true,
+      "ticker": "GS"
+    },
+    {
+      "check": "contract_not_promoted_to_economic_support",
+      "model": "arithmetically_verified",
+      "passed": true,
+      "ticker": "GS"
+    },
+    {
+      "check": "insurer_justified_pe",
+      "method": "independent justified-earnings identity",
+      "model": 7.28,
+      "passed": true,
+      "reference": 7.28,
+      "ticker": "UNH"
+    },
+    {
+      "check": "insurer_value_per_share",
+      "method": "independent justified-earnings identity",
+      "model": 96.3144,
+      "passed": true,
+      "reference": 96.3144,
+      "ticker": "UNH"
+    },
+    {
+      "check": "insurer_partial_disclosure",
+      "model": true,
+      "passed": true,
+      "ticker": "UNH"
+    },
+    {
+      "check": "negative_dcf_preserved",
+      "model": -90.62303011774831,
+      "passed": true,
+      "ticker": "AMZN"
+    },
+    {
+      "check": "package_deterministic",
+      "model": "91b29e60d146f536",
+      "passed": true,
+      "ticker": "JPM"
+    },
+    {
+      "check": "package_replays_from_clean_db",
+      "model": "reproduced",
+      "passed": true,
+      "ticker": "JPM"
+    },
+    {
+      "check": "package_deterministic",
+      "model": "058b42e21f652022",
+      "passed": true,
+      "ticker": "UNH"
+    },
+    {
+      "check": "package_replays_from_clean_db",
+      "model": "reproduced",
+      "passed": true,
+      "ticker": "UNH"
+    }
+  ],
+  "counts": {
+    "passed": 16,
+    "total": 16
+  },
+  "db": "var/phase9.db",
+  "limits": [
+    "The bank and insurer reference implementations share the same documented inputs; agreement proves arithmetic, not the economic validity of the assumptions.",
+    "Call Report, FDIC and CMS data are not joined; only consolidated SEC facts are used.",
+    "No market prices are bundled, so price-based and reverse-DCF checks are unavailable for this universe."
+  ],
+  "schema": "atlas.phase9_1.model_audit.v1",
+  "status": "pass"
+}

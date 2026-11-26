@@ -1,0 +1,396 @@
+name: CI
+
+on:
+  push:
+    # The answer-semantics milestone is a stacked draft PR based on PR #1, not main. This one
+    # branch is listed so its head gets real hosted checks without retargeting the PR.
+    # Each listed branch is a stacked research line that needs real hosted checks without
+    # retargeting its pull request; release/v0.2.0-beta.1 is the integration candidate.
+    branches: [main, freebuff/41a4fd2abe41a6515dc8d5bb, focus/answer-semantics,
+               holdout/answer-semantics-prospective, focus/financial-answer-hardening-v1,
+               release/v0.2.0-beta.1, integration/phase10.3,
+               release/v0.2.0-beta.1-final, release/v0.2.0-closeout]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  backend:
+    name: Backend tests and audits
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # The answer-semantics archive audit reads frozen inputs and code at the commits they
+      # name, so a depth-1 checkout has nothing to verify against.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install backend dependencies
+        run: python -m pip install -e '.[dev,terminal,learning,columnar,optimization]'
+      - name: Compile sources
+        run: python -m compileall -q src scripts tests
+      - name: Run backend suite
+        run: python -m pytest
+      - name: Build deterministic reference database
+        run: |
+          python scripts/build_phase9_db.py --db var/phase9.db --force
+          python scripts/fetch_phase9_2_regulatory.py --db var/phase9.db
+          python scripts/import_fr_y9c.py --db var/phase9.db --cik 19617 --entity REG-JPM-PARENT --retrieved-at 2026-11-06T20:00:00Z
+          python scripts/import_phase9_2_prices.py --db var/phase9.db
+      - name: Independent financial audit
+        run: python scripts/audit_phase9_2_models.py --db var/phase9.db --out artifacts/phase9_2_model_audit.json
+      - name: Independent Phase 9.1 audit
+        run: python scripts/audit_phase9_1_models.py --db var/phase9.db --out artifacts/phase9_1_model_audit.json
+      - name: Portability of the committed fixtures
+        run: python scripts/verify_distributable_fixtures.py
+
+  frontend:
+    name: Frontend test, typecheck and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install frontend dependencies
+        run: npm ci
+      - name: Unit tests
+        run: npm test -- --run
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Production build
+        run: npm run build
+
+  database-integrity:
+    name: Database migration integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e '.[dev]'
+      - name: Verify core runtime dependency imports
+        run: python -c "import numpy; from atlas.applications.contracts import read_package; from atlas.economic.model import run_weather_demand"
+      - name: Declared dependencies are sufficient for this job
+        run: python -m pytest tests/test_packaging_contract.py tests/test_phase9_2_migrations.py tests/test_storage.py
+      - name: No generated packaging metadata is tracked
+        run: |
+          tracked=$(git ls-files '*.egg-info/*')
+          if [ -n "$tracked" ]; then
+            echo "generated packaging metadata is tracked:"; echo "$tracked"; exit 1
+          fi
+          echo "no generated packaging metadata is tracked"
+
+  research-integrity:
+    name: Research, market-evidence and rights integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e '.[dev,terminal]'
+      - name: Verify research import contracts
+        run: python -c "import numpy; from atlas.applications.contracts import read_package; from atlas.economic.model import run_weather_demand"
+      - name: Provider conflict, rights, ticker identity and bank arithmetic
+        run: >-
+          python -m pytest
+          tests/test_phase9_2_1_market_integrity.py
+          tests/test_phase9_2_2_market_observations.py
+          tests/test_phase9_2_2_data_rights_fixtures.py
+          tests/test_phase9_2_3_acceptance.py
+          tests/test_phase9_2_4_acceptance.py
+          tests/test_packaging_contract.py
+          tests/test_release_security_9_2_5.py
+          tests/test_phase9_2_6_market_contract.py
+          tests/test_phase9_2_7_market_series.py
+          tests/test_sec_transport_limits.py
+          tests/test_phase9_2_institutions.py
+          tests/test_phase9_2_migrations.py
+          tests/test_phase9_1_models.py
+      - name: Deterministic application reproduction
+        run: python scripts/reproduce_phase9_2.py
+      - name: No restricted market data is tracked
+        run: |
+          python - <<'PY'
+          import pathlib, sys
+          banned = ("nasdaq_", "alphavantage")
+          hits = [p.as_posix() for p in pathlib.Path("fixtures").rglob("*")
+                  if p.is_file() and any(token in p.name for token in banned)]
+          if hits:
+              print("restricted vendor market fixtures are tracked:", hits)
+              sys.exit(1)
+          print("no restricted vendor market fixtures are tracked")
+          PY
+
+  distributable-fixtures:
+    name: Clean-checkout reproducibility (committed fixtures only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e '.[dev,terminal]'
+      - name: Build the demo database from committed fixtures only
+        run: python scripts/build_terminal_db.py --db var/atlas.db --force
+      - name: Verify the distributable fixture contract
+        run: python scripts/verify_distributable_fixtures.py --require-demo-db
+      - name: Export and reproduce a research package on a second clean database
+        run: python scripts/verify_clean_install.py --demo-db var/atlas.db
+
+  browser-e2e:
+    name: Browser acceptance (Playwright, Ubuntu runner)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ATLAS_BASE: http://127.0.0.1:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install backend and frontend dependencies
+        run: |
+          python -m pip install -e '.[dev,terminal]'
+          cd web && npm ci
+      - name: Provision the reference database from committed fixtures
+        run: |
+          python scripts/build_phase9_db.py --db var/phase9.db --force
+          python scripts/fetch_phase9_2_regulatory.py --db var/phase9.db
+          python scripts/import_fr_y9c.py --db var/phase9.db --cik 19617 --entity REG-JPM-PARENT --retrieved-at 2026-11-06T20:00:00Z
+          python scripts/import_phase9_2_prices.py --db var/phase9.db
+          python scripts/build_terminal_db.py --db var/atlas.db --force
+          python scripts/verify_distributable_fixtures.py --require-demo-db
+      - name: Build the terminal
+        run: cd web && npm run build
+      - name: Install Chromium
+        run: cd web && npx playwright install --with-deps chromium
+      - name: Start the API and static terminal
+        run: |
+          python -m atlas.cli --db var/phase9.db serve --port 3000 > /tmp/atlas-serve.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3000/api/health > /dev/null; then
+              echo "server ready after ${attempt}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "server did not become ready"; cat /tmp/atlas-serve.log; exit 1
+      - name: Scenario A - real JPM evidence without a bundled market price
+        run: |
+          cd web
+          node e2e/phase9_2_jpm.mjs 2>&1 | tee /tmp/phase9_2_jpm_browser.log
+      - name: Scenario B - synthetic ATLS market data, provenance and pin replay
+        run: |
+          cd web
+          node e2e/phase9_2_market.mjs 2>&1 | tee /tmp/phase9_2_market_browser.log
+      - name: Upload browser artifacts and server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-evidence
+          path: |
+            artifacts/phase9_2_jpm_browser.json
+            artifacts/phase9_2_market_browser.json
+            artifacts/phase9_2_jpm_failure.png
+            artifacts/phase9_2_market_failure.png
+            artifacts/phase9_2_jpm_mobile.png
+            artifacts/phase9_2_market_mobile.png
+            artifacts/phase9_2_jpm_desktop.png
+            artifacts/phase9_2_market_desktop.png
+            /tmp/phase9_2_jpm_browser.log
+            /tmp/phase9_2_market_browser.log
+            /tmp/atlas-serve.log
+          if-no-files-found: warn
+
+  # Cross-platform distribution certification. Most of this repository's checks run on
+  # Linux; a wheel is only genuinely usable if it installs and runs where users are.
+  # The wheel is built once (the same py3-none-any artifact users download) and every
+  # runner installs that artifact, so this certifies the shipped bytes rather than four
+  # separate builds that could differ.
+  wheel-build:
+    name: Build the release wheel and sdist
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Build the frontend for the wheel
+        working-directory: web
+        run: |
+          npm ci
+          npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install the build toolchain
+        run: python -m pip install -e '.[dev]'
+      - name: Build the wheel and sdist
+        run: python scripts/build_release_artifacts.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-dists
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
+            dist/SHA256SUMS
+          if-no-files-found: error
+
+  wheel-install:
+    name: Packaged wheel (${{ matrix.os }}, Python ${{ matrix.python }})
+    needs: wheel-build
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, python: "3.12" }
+          - { os: windows-latest, python: "3.12" }
+          - { os: macos-latest, python: "3.12" }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-dists
+          path: release-dists
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Verify the checksums of the shipped artifact
+        shell: bash
+        run: |
+          # The artifact layout depends on how upload-artifact roots the globs, so locate
+          # the manifest instead of assuming a directory name. Then check the sums.
+          find release-dists -maxdepth 3 -type f | sort
+          sums=$(find release-dists -name SHA256SUMS -print -quit)
+          test -n "$sums"
+          cd "$(dirname "$sums")"
+          sha256sum -c SHA256SUMS 2>/dev/null || shasum -a 256 -c SHA256SUMS
+      - name: Install the packaged wheel into a fresh environment and exercise it
+        run: >-
+          python scripts/verify_packaged_install.py
+          --dist release-dists
+          --out release-dists/packaged_install-${{ matrix.os }}-${{ matrix.python }}.json
+      - name: Show why certification failed
+        if: failure()
+        shell: bash
+        run: |
+          python - <<'PYEOF'
+          import glob, json, re
+          for path in glob.glob("release-dists/**/packaged_install-*.json", recursive=True):
+              report = json.load(open(path, encoding="utf-8"))
+              print(json.dumps(report, indent=2)[:4000])
+              for step in report.get("steps", []):
+                  if step.get("ok"):
+                      continue
+                  detail = (step.get("stderr_tail") or "").strip().splitlines()
+                  last = " / ".join(line.strip() for line in detail[-4:])[:900]
+                  print(f"::error title={step.get('step')}::{last or 'no stderr'}")
+          PYEOF
+      - name: Upload the certification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: packaged-install-${{ matrix.os }}-${{ matrix.python }}
+          path: release-dists/packaged_install-*.json
+          if-no-files-found: warn
+
+  # The flagship journey is certified on Chromium, which is required to pass. Firefox and
+  # WebKit are attempted on the same runner with their system dependencies installed; a
+  # failure there is reported but does not block the release, because no compatibility claim is
+  # made for an engine that has not passed. The report of each attempt is uploaded either way.
+  browser_certification:
+    name: Certification journey (${{ matrix.engine }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: ${{ matrix.engine != 'chromium' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, firefox, webkit]
+    env:
+      ATLAS_BASE: http://127.0.0.1:3000
+      ATLAS_ENGINE: ${{ matrix.engine }}
+      ATLAS_SHOTS: browser-shots
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install backend and frontend dependencies
+        run: |
+          python -m pip install -e '.[dev,terminal]'
+          cd web && npm ci
+      - name: Provision the demo database from committed fixtures
+        run: python -m atlas.cli --db var/demo.db demo
+      - name: Build the terminal
+        run: cd web && npm run build
+      - name: Install ${{ matrix.engine }} with its system dependencies
+        run: cd web && npx playwright install --with-deps ${{ matrix.engine }}
+      - name: Start the API and static terminal
+        run: |
+          python -m atlas.cli --db var/demo.db serve --port 3000 > /tmp/atlas-serve.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3000/api/health > /dev/null; then
+              echo "server ready after ${attempt}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "server did not become ready"; cat /tmp/atlas-serve.log; exit 1
+      - name: Run the certification journey
+        run: node web/e2e/phase10_5_certification.mjs 2>&1 | tee /tmp/journey.log
+      - name: Upload the journey report and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: journey-${{ matrix.engine }}
+          path: |
+            artifacts/browser/phase10_5_${{ matrix.engine }}.json
+            browser-shots/**
+          if-no-files-found: warn

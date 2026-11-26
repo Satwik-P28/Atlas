@@ -1,0 +1,265 @@
+{
+  "schema": "atlas.release.gates.v2",
+  "release_label": "v0.2.0-beta.1",
+  "package_version": "0.2.0b1",
+  "phase": "10.7 final publication",
+  "branch": "release/v0.2.0-closeout",
+  "base_commit": "fd207c84fa5465201dfbbd901c473417312965b3",
+  "base_ci_run": "45705018400",
+  "candidate_commit": "36c7ee8e09862dd9bcea6d1927a72650a7308937",
+  "evaluated_at_utc": "2026-11-26",
+  "states": [
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "NOT RUN",
+    "NOT APPLICABLE"
+  ],
+  "engineering_gates": [
+    {
+      "id": "financial_correctness",
+      "name": "Financial correctness",
+      "state": "PASS",
+      "evidence": "Real filing on the release commit (Apple FY2026 10-K, accession 0000320193-26-000026): 45/45 acceptance steps. The answer is 478,834 million; the cited cell's column label '2026' equals the resolved period, citation_quality 'exact'; segment rows recompute to the table's own total and the certificate is independently verified. Seven adversarial period-alignment tests cover currency separator columns, Change columns, shifted and multi-level headers, a header that cannot cover its values, and the API's 422 citation_period_conflict refusal. Offline synthetic acceptance 30/30.",
+      "command": "ATLAS_SEC_USER_AGENT=\"...\" .venv/bin/python scripts/accept_real_filing_phase10_5.py; .venv/bin/python scripts/accept_phase10_4.py"
+    },
+    {
+      "id": "historical_integrity",
+      "name": "Historical / point-in-time integrity",
+      "state": "PASS",
+      "evidence": "Availability is reported with precision (unknown/date/exact) and modelled bounds are labelled as bounds; cutoffs exclude rather than back-fill. The real-filing acceptance asserts precision=unknown, estimated=true and the exact note text on the release commit.",
+      "command": ".venv/bin/python scripts/accept_real_filing_phase10_5.py --step availability"
+    },
+    {
+      "id": "security",
+      "name": "Security audit of the candidate",
+      "state": "PASS",
+      "evidence": "SQL inventory: 49 interpolated statements, all classified in docs/SECURITY_SQL_INTERPOLATION.json (21 placeholders_only, 24 review, 4 structure_named) and reviewed in docs/SECURITY_SQL_REVIEW.md; each of the four structure splices is controlled by an enum, a module constant or the _SAFE_IDENTIFIER guard, with 9 adversarial tests. Bounded resource audit on the release commit: 8 pass, 0 fail, 1 not run (expensive model request, no provider configured); a 31.3 MB filing is refused at the 24 MiB ingestion limit, a ZIP bomb and a 200-entry package are refused, 200 consecutive invalid requests are all 4xx with the server healthy afterwards, 20 dropped connections leave the server healthy, and 4 concurrent MCP sessions answer initialize. Dependency scan clean across Python (65 packages) and npm (0 findings). No credential or secret shape in the tree.",
+      "command": ".venv/bin/python scripts/audit_sql_interpolation.py; .venv/bin/python scripts/audit_resource_limits.py; .venv/bin/python scripts/scan_dependencies.py"
+    },
+    {
+      "id": "packaged_installation",
+      "name": "Packaged installation",
+      "state": "PASS",
+      "evidence": "scripts/verify_packaged_install.py installed the distributed wheel (sha256 0d546263...) into a fresh virtualenv with PYTHONPATH removed and ran init, doctor, demo, serve/api/health and the MCP handshake: all six steps pass. The wheel carries the built terminal and the demonstration fixtures, so no checkout and no Node.js are needed.",
+      "command": ".venv/bin/python scripts/verify_packaged_install.py --dist dist"
+    },
+    {
+      "id": "flagship_workflow",
+      "name": "Flagship workflow on real data",
+      "state": "PASS",
+      "evidence": "Apple FY2026 10-K journey on the release commit: selection, live sync, ingestion, statements, narrative evidence, answer, exact cell citation, certificate, independent recomputation, availability handling, valuation, scenario, justified refusal on comparison, memo, PDF, structured export, export verification, MCP agreement, and reproduction on a second installation.",
+      "command": "ATLAS_SEC_USER_AGENT=\"...\" .venv/bin/python scripts/accept_real_filing_phase10_5.py"
+    },
+    {
+      "id": "research_reproducibility",
+      "name": "Research reproducibility",
+      "state": "PASS",
+      "evidence": "A second, freshly initialised installation reproduced the value (478834), the source-table hash (616af41f...) and the document hash (f5480847...) exactly; memo exports carry x-atlas-content-sha256 and the PDF text contains 34/34 numeric claims.",
+      "command": ".venv/bin/python scripts/accept_real_filing_phase10_5.py (real_reproduction step)"
+    },
+    {
+      "id": "artifact_integrity",
+      "name": "Artifact integrity",
+      "state": "PASS",
+      "evidence": "Wheel, sdist and sanitized source snapshot were each built twice from commit 36c7ee8 into separate directories and compared: byte-identical (member timestamps stamped at the commit time, PAX headers and gzip mtime cleared, fixed compression levels). sha256sum -c artifacts/release/SHA256SUMS passes for all four published assets. The post-licence artifacts carry License-Expression: Apache-2.0 and the three licence documents in dist-info/licenses. Checksums are hashes, not signatures or attestations.",
+      "command": ".venv/bin/python scripts/build_release_artifacts.py; (cd dist && sha256sum -c SHA256SUMS)"
+    },
+    {
+      "id": "documentation_accuracy",
+      "name": "Documentation accuracy",
+      "state": "PASS",
+      "evidence": "README, RELEASE_NOTES, QUICKSTART, known limitations, platform matrix and handover state measured numbers and name what was not tested (independent human evaluation, external usability, adoption, commercial MCP client, browsers beyond the journey). The release notes and README report the licence as applied and still state that publication itself is pending.",
+      "command": "review of README.md, RELEASE_NOTES.md, docs/QUICKSTART.md, docs/KNOWN_LIMITATIONS.md, docs/PLATFORM_MATRIX.md, docs/PUBLIC_RELEASE_HANDOVER.md"
+    },
+    {
+      "id": "mcp_interoperability",
+      "name": "MCP interoperability with an independent SDK",
+      "state": "PASS",
+      "evidence": "tests/test_mcp_sdk_interop.py (official mcp Python SDK): initialize, negotiation, 14-tool discovery, typed call with structured content and full citation, invalid enum as a protocol error, missing evidence as a typed not_found result, read-only mutation refusal, clean shutdown. The real-filing acceptance additionally asserts MCP and API agree on 478834. No commercial client was tested and none is claimed.",
+      "command": ".venv/bin/python -m pytest -o addopts='' -q tests/test_mcp_sdk_interop.py"
+    },
+    {
+      "id": "browser_certification",
+      "name": "Browser certification",
+      "state": "PASS",
+      "evidence": "Chromium 21/21 locally (artifacts/browser/phase10_5_chromium.json), including the evidence inspector and the memo start that used to fail; both were product defects (a sticky label column covering every value cell, and a memo save returning 422 for unchanged content) and are fixed. Hosted CI run 45883811438 on the release commit ran the same journey on Chromium, Firefox and WebKit and all three certification jobs succeeded.",
+      "command": "ATLAS_ENGINE=chromium node web/e2e/phase10_5_certification.mjs"
+    },
+    {
+      "id": "performance",
+      "name": "Performance validation",
+      "state": "PASS",
+      "evidence": "Phase 10.4 baselines unchanged; the bounded resource audit measured 4,000-row table 0.19 s, 200,000-row CSV 2.55 s, peak RSS 109 MB across the suite, cancellation of 20 mid-response connections, and no case left the server unresponsive.",
+      "command": ".venv/bin/python scripts/audit_resource_limits.py"
+    }
+  ],
+  "distribution_gates": [
+    {
+      "id": "data_redistribution_rights",
+      "name": "Data redistribution rights",
+      "state": "PASS",
+      "evidence": "The current tree, the wheel, the sdist (`dist/atlas_quant-0.2.0b1.tar.gz`) and the sanitized source snapshot contain no restricted vendor data (sanitized snapshot excludes 0 paths, 1,089 files). Every tracked data path has a rights entry in docs/DATA_RIGHTS_INVENTORY.json. The restricted Nasdaq/Alpha Vantage files are recorded as not_permitted and are absent from every artifact.",
+      "command": ".venv/bin/python scripts/audit_distribution.py; .venv/bin/python scripts/build_sanitized_archive.py --commit 36c7ee8"
+    },
+    {
+      "id": "historical_exposure_remediation",
+      "name": "Historical exposure remediation",
+      "state": "BLOCKED",
+      "evidence": "A verified clean-history candidate exists at .release/clean-history (single commit 8e3da8f, 1,089 files, 1,185 objects, provenance docs/PROVENANCE_MAPPING.json, restricted reachable 0, all five self-checks PASS). Executing the remediation needs GitHub administrative rights this environment does not hold: rename Satwik-P28/Atlas to Satwik-P28/Atlas-development, make it private, create Satwik-P28/Atlas, push the candidate, tag it. The exact sequence and backup step are in docs/PUBLIC_RELEASE_HANDOVER.md; the name Atlas-development was confirmed free (HTTP 404) on 2026-11-26.",
+      "command": ".venv/bin/python scripts/build_clean_history_candidate.py --commit 36c7ee8"
+    },
+    {
+      "id": "software_licensing",
+      "name": "Software licensing",
+      "state": "PASS",
+      "evidence": "Apache-2.0 applied with Copyright 2026 Satwik Peddireddi: root LICENSE is the verbatim 11,358-byte canonical text (sha256 cfc7749b...), NOTICE and THIRD_PARTY_NOTICES.md are effective, pyproject declares license = \"Apache-2.0\" with license-files, and the built wheel reports License-Expression: Apache-2.0 with all three documents in dist-info/licenses. Ownership verification and the one open maintainer confirmation (employer/sponsor claim) are recorded in licenses/AUTHORIZATION-RECORD.md.",
+      "command": ".venv/bin/python -m pytest -o addopts='' -q tests/test_release_safety.py; unzip -p dist/atlas_quant-0.2.0b1-py3-none-any.whl atlas_quant-0.2.0b1.dist-info/METADATA | grep License"
+    },
+    {
+      "id": "third_party_notices",
+      "name": "Third-party notices",
+      "state": "PASS",
+      "evidence": "THIRD_PARTY_NOTICES.md at the root reproduces the obligations for 11 Python dependencies and 9 bundled npm packages (0 missing licence metadata) and states that data is not covered; it ships inside the wheel and sdist. docs/DEPENDENCY_LICENSES.json is regenerated against the release commit; docs/THIRD_PARTY_ATTRIBUTION.md explains the MPL-2.0 file-level obligation if a future bundle introduces one.",
+      "command": ".venv/bin/python scripts/inventory_dependency_licenses.py"
+    },
+    {
+      "id": "authorized_publication_destination",
+      "name": "Authorised publication destination",
+      "state": "BLOCKED",
+      "evidence": "The maintainer authorised Satwik-P28/Atlas as the public distribution repository and Satwik-P28/Atlas-development as the private archive. Execution needs GitHub administrative credentials (repository rename, visibility change, repository creation, release creation, Pages enablement) that this environment does not have: no gh CLI, no token, and the git remote helper only pushes an existing branch. Nothing was published; the prepared assets and the exact command sequence are in docs/PUBLIC_RELEASE_HANDOVER.md.",
+      "command": "see docs/PUBLIC_RELEASE_HANDOVER.md sections 2-6"
+    }
+  ],
+  "validation_milestones": [
+    {
+      "id": "independent_human_evaluation",
+      "name": "Independent human research evaluation",
+      "state": "NOT RUN",
+      "evidence": "No independent evaluators have been recruited. Existing answer-semantics research remains labelled development / post-holdout development. No release claim depends on it.",
+      "command": "docs/launch/BETA_PROGRAM.md"
+    },
+    {
+      "id": "external_usability",
+      "name": "External usability evaluation",
+      "state": "NOT RUN",
+      "evidence": "Invitation-preview package and raw-results schema prepared; zero participants; no fabricated results.",
+      "command": "docs/launch/BETA_PROGRAM.md"
+    },
+    {
+      "id": "adoption",
+      "name": "Adoption",
+      "state": "NOT RUN",
+      "evidence": "No public release exists yet, so no adoption can exist.",
+      "command": "n/a"
+    },
+    {
+      "id": "external_contributions",
+      "name": "External contributions",
+      "state": "NOT APPLICABLE",
+      "evidence": "No third-party contributor commits exist in this repository; CONTRIBUTING.md describes the process for when a public repository accepts contributions.",
+      "command": "n/a"
+    }
+  ],
+  "artifacts": {
+    "note": "Built from candidate_commit 36c7ee8 with a clean working tree, after the Apache-2.0 grant was applied. Pre-licence hashes (wheel 7d3c28c7..., sdist 132c83d1...) are superseded and must not be published. Two builds of this commit are byte-identical with the same interpreter, setuptools and zlib; checksums, not the commit alone, identify the distributed file. Checksums are not signatures or attestations.",
+    "wheel": {
+      "path": "dist/atlas_quant-0.2.0b1-py3-none-any.whl",
+      "bytes": 1436906,
+      "sha256": "0d546263fc66288b1d3d5adc9ac9a6d6d332073f52df32910429deb10e917dac"
+    },
+    "sdist": {
+      "path": "dist/atlas_quant-0.2.0b1.tar.gz",
+      "bytes": 1543875,
+      "sha256": "aa29c862ffc731a4cf7b447874396617c48b568f544bfb4f58fe58b066564fe8"
+    },
+    "sanitized_source": {
+      "path": "dist/atlas-source-HEAD-sanitized.tar.gz",
+      "bytes": 33900611,
+      "sha256": "c2af8558e1ba35a8a9d9e2fd92ce37cf6af7ee88a17bf871c85580795853b186"
+    },
+    "sbom": {
+      "path": "dist/sbom.cdx.json",
+      "bytes": 8087,
+      "sha256": "b27d7c6cb9138ccb11b702565894915d9a79346bfd918df02aa1a8049dd5c892"
+    },
+    "license_text": {
+      "path": "LICENSE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    "notice": {
+      "path": "NOTICE",
+      "bytes": 1221,
+      "sha256": "b501a99f25c76651f011ad83d8d03d6437957705d12388fe1bf8aec0a3d32a97"
+    },
+    "third_party_notices": {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 3912,
+      "sha256": "5c59b70a679bc01238a7cb9e3b17977d64df04103008ccc35760a9b2ae42c68c"
+    },
+    "dependency_licenses": {
+      "path": "docs/DEPENDENCY_LICENSES.json",
+      "bytes": 24285,
+      "sha256": "84e45b1bac5e2dd076089b9ad2a57064c0d52a2c50c0707f0fbbe99572b5b2ce"
+    },
+    "provenance": {
+      "path": "docs/PROVENANCE_MAPPING.json",
+      "bytes": 1160,
+      "sha256": "57015d9a705398ea76dfdd16a142211279210e7d575e36737d7ccdcac9aaa8e7"
+    },
+    "checksums": "artifacts/release/SHA256SUMS",
+    "acceptance_report": {
+      "path": "artifacts/release/acceptance_real_filing.json"
+    },
+    "packaged_install_report": {
+      "path": "artifacts/release/packaged_install.json"
+    },
+    "resource_limits_report": {
+      "path": "artifacts/release/resource_limits.json"
+    },
+    "dependency_scan_report": {
+      "path": "artifacts/release/dependency_scan.json"
+    },
+    "distribution_audit_report": {
+      "path": "artifacts/release/distribution_audit.json"
+    },
+    "provenance_mapping": {
+      "original_commit": "36c7ee8e09862dd9bcea6d1927a72650a7308937",
+      "sanitized_commit": "8e3da8fe6492",
+      "tracked_files": 1089,
+      "restricted_paths_reachable": []
+    }
+  },
+  "summary": {
+    "engineering_gates": {
+      "pass": 11
+    },
+    "distribution_gates": {
+      "pass": 3,
+      "blocked": 2
+    },
+    "validation_milestones": {
+      "not_run": 3,
+      "not_applicable": 1
+    }
+  },
+  "decision": "READY FOR PRIVATE RELEASE CANDIDATE",
+  "publication_verdict": "PUBLICATION BLOCKED — ACTION REQUIRED",
+  "decision_basis": [
+    "Every engineering gate passes on the exact artifacts built after the licence was applied: real-filing citation integrity, the full browser journey, packaged installation of the distributed wheel, MCP interoperability and reproducible artifacts.",
+    "The software licence gate now passes: Apache-2.0 is applied with a named copyright holder and travels inside the wheel and sdist, and the third-party notices are effective.",
+    "The data-rights gate passes for the distribution: no restricted vendor material exists in the tree or in any artifact, and the public source candidate has zero restricted objects reachable.",
+    "Two distribution gates remain blocked and both are GitHub administrative actions this environment cannot perform: renaming and restricting the development repository, creating and publishing the replacement public repository, creating the release, enabling Pages, and uploading to PyPI. The registry therefore keeps the private-candidate decision and records the publication verdict separately.",
+    "Validation milestones (independent human evaluation, external usability, adoption) are NOT RUN and no release claim depends on them."
+  ],
+  "maintainer_actions": [
+    "Execute docs/PUBLIC_RELEASE_HANDOVER.md sections 2-5: back up the development repository, rename it to Atlas-development, make it private, create Satwik-P28/Atlas, push the verified clean-history candidate 8e3da8f, tag v0.2.0-beta.1, and publish the prerelease with the four assets in artifacts/release/SHA256SUMS.",
+    "Enable GitHub Pages for the public repository (source: GitHub Actions) so the static landing page in docs/launch/ is served; the workflow is already committed.",
+    "Configure PyPI trusted publishing for the atlas-quant project (name confirmed unregistered on 2026-11-26) with environment 'pypi' and workflow release.yml, then push the tag so the upload runs.",
+    "Confirm that no employer, client or funding agreement claims the contributed code, as recorded in licenses/AUTHORIZATION-RECORD.md."
+  ],
+  "candidate_note": "The certified source commit. Artifacts were built from this commit with a clean working tree; the registry commit that follows is metadata-only and does not change them.",
+  "candidate_ci_run": "45883811438",
+  "candidate_ci_conclusion": "success (13/13 jobs on 1436489: backend suite and audits, frontend, database integrity, research and rights integrity, clean-checkout reproducibility, Chromium/Firefox/WebKit certification journeys, packaged wheel on ubuntu-latest, windows-latest and macos-latest, and the release wheel build)"
+}

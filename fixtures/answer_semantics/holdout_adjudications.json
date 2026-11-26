@@ -1,0 +1,44 @@
+{
+  "schema": "atlas.answer_semantics.holdout_adjudications.v1",
+  "purpose": "Append-only post-run review of frozen gold labels. Entries never rewrite the gold; each records the finding, the decision to leave the label in place, and how the score would move if it were decided the other way.",
+  "cohort": "holdout-1.1",
+  "first_run_artifact": "artifacts/answer_semantics/holdout_evaluation.json",
+  "appended_after_run": true,
+  "adjudications": [
+    {
+      "id": "A-001",
+      "question_id": "H-4489-03",
+      "issuer": "Walt Disney Co",
+      "concept": "net_income",
+      "period": "2022",
+      "frozen_gold": {"value": "3145000000", "tag": "NetIncomeLoss", "printed_label": "Net income attributable to Disney", "raw": "3,145"},
+      "observed_first_run": {"baseline": "3505", "geometry": "3505"},
+      "finding": "The statement prints both 'Net income (loss)' 3,505 and 'Net income attributable to Disney' 3,145. The gold bound the attributable figure, but the question asks for 'net income' without a definitional qualifier.",
+      "rule_applied": "The pre-gold eligibility rule falls through to the next slot when a concept has more than one consolidated row with different values (as it did for Intel). This slot should have been recorded, not scored.",
+      "decision": "Label unchanged. The slot is treated as definitionally ambiguous in sensitivity analysis only.",
+      "effect": "exclude_from_answerable",
+      "reviewer": "single-author review, post-run"
+    },
+    {
+      "id": "A-002",
+      "question_id": "H-9617-04",
+      "issuer": "JPMorgan Chase & Co",
+      "concept": "total_assets",
+      "period": "2022",
+      "frozen_gold": {"value": "3665743000000", "tag": "Assets", "printed_label": "Total assets", "raw": "3,665,743"},
+      "observed_first_run": {"baseline": "3665743", "geometry": "3665743", "printed_label": "Total assets(a)"},
+      "finding": "The printed row is 'Total assets(a)' with a footnote marker. Both arms returned the correct amount and accession; the citation check compared the label literally and recorded a citation failure for both.",
+      "rule_applied": "A footnote marker is provenance, not part of the row name.",
+      "decision": "Label unchanged. Sensitivity accepts the citation as faithful.",
+      "effect": "accept_citation",
+      "reviewer": "single-author review, post-run"
+    }
+  ],
+  "sensitivity_variants": [
+    {"id": "as_scored", "adjudications": []},
+    {"id": "disney_ambiguous", "adjudications": ["A-001"]},
+    {"id": "jpm_citation_accepted", "adjudications": ["A-002"]},
+    {"id": "both", "adjudications": ["A-001", "A-002"]}
+  ],
+  "note": "This record is informational. The historical artifact and the frozen gold are never edited."
+}

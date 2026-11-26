@@ -1,0 +1,4813 @@
+{
+  "build_ms": {
+    "baseline_flattened_cells": 2463.252,
+    "geometry_tables": 24312.53
+  },
+  "code_commit": "00905737150be4777c4b4afa5aba01ee6b1e5f41",
+  "corpus_digest": "f25251c436e135930c834648c28f3729ed02860117c174132ff07e331df8fd72",
+  "evaluation_label": "post_holdout_development",
+  "evaluation_version": "10.0.2",
+  "first_run_artifact_sha256": "06556b83ae5a6f68ed72eabfcf146e148ffcfbceb633383ea0eb77d9e0a02f15",
+  "gold": {
+    "H-0667-01": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000060667-22-000038",
+          "end": "2022-01-28",
+          "fp": "FY",
+          "fy": 2021,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "96250000000"
+        }
+      ],
+      "value_display": "96250000000",
+      "value_exact": "96250000000"
+    },
+    "H-0667-02": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000060667-22-000038",
+          "end": "2022-01-28",
+          "fp": "FY",
+          "fy": 2021,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "96250000000"
+        },
+        {
+          "accn": "0000060667-22-000038",
+          "end": "2021-01-29",
+          "fp": "FY",
+          "fy": 2021,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "89597000000"
+        }
+      ],
+      "value_display": "7.43",
+      "value_exact": "665300/89597"
+    },
+    "H-0667-03": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000060667-22-000038",
+          "end": "2022-01-28",
+          "fp": "FY",
+          "fy": 2021,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "NetIncomeLoss",
+          "unit": "USD",
+          "value": "8442000000"
+        }
+      ],
+      "value_display": "8442000000",
+      "value_exact": "8442000000"
+    },
+    "H-0667-04": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000060667-22-000038",
+          "end": "2022-01-28",
+          "fp": "FY",
+          "fy": 2021,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "OperatingIncomeLoss",
+          "unit": "USD",
+          "value": "12093000000"
+        }
+      ],
+      "value_display": "12093000000",
+      "value_exact": "12093000000"
+    },
+    "H-0727-01": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001090727-23-000006",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "100338000000"
+        }
+      ],
+      "value_display": "100338000000",
+      "value_exact": "100338000000"
+    },
+    "H-0727-02": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001090727-23-000006",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "100338000000"
+        },
+        {
+          "accn": "0001090727-23-000006",
+          "end": "2021-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "97287000000"
+        }
+      ],
+      "value_display": "3.14",
+      "value_exact": "101700/32429"
+    },
+    "H-0727-03": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001090727-23-000006",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "NetIncomeLoss",
+          "unit": "USD",
+          "value": "11548000000"
+        }
+      ],
+      "value_display": "11548000000",
+      "value_exact": "11548000000"
+    },
+    "H-0727-04": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001090727-23-000006",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "OperatingIncomeLoss",
+          "unit": "USD",
+          "value": "13094000000"
+        }
+      ],
+      "value_display": "13094000000",
+      "value_exact": "13094000000"
+    },
+    "H-0727-05": {
+      "class": "structurally_unanswerable",
+      "inputs": [],
+      "note": "UPS prints revenue, operating expenses and operating profit; it prints no gross-profit subtotal and the accession carries no GrossProfit fact."
+    },
+    "H-0863-01": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000050863-23-000006",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "63054000000"
+        }
+      ],
+      "value_display": "63054000000",
+      "value_exact": "63054000000"
+    },
+    "H-0863-02": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000050863-23-000006",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "63054000000"
+        },
+        {
+          "accn": "0000050863-23-000006",
+          "end": "2021-12-25",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "79024000000"
+        }
+      ],
+      "value_display": "-20.21",
+      "value_exact": "-199625/9878"
+    },
+    "H-0863-03": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000050863-23-000006",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Assets",
+          "unit": "USD",
+          "value": "182103000000"
+        }
+      ],
+      "value_display": "182103000000",
+      "value_exact": "182103000000"
+    },
+    "H-0863-04": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000050863-23-000006",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "GrossProfit",
+          "unit": "USD",
+          "value": "26866000000"
+        }
+      ],
+      "value_display": "26866000000",
+      "value_exact": "26866000000"
+    },
+    "H-1439-01": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001564590-22-023675",
+          "end": "2022-05-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "42440000000"
+        }
+      ],
+      "value_display": "42440000000",
+      "value_exact": "42440000000"
+    },
+    "H-1439-02": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001564590-22-023675",
+          "end": "2022-05-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "42440000000"
+        },
+        {
+          "accn": "0001564590-22-023675",
+          "end": "2021-05-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "40479000000"
+        }
+      ],
+      "value_display": "4.84",
+      "value_exact": "196100/40479"
+    },
+    "H-1439-03": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001564590-22-023675",
+          "end": "2022-05-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "NetIncomeLoss",
+          "unit": "USD",
+          "value": "6717000000"
+        }
+      ],
+      "value_display": "6717000000",
+      "value_exact": "6717000000"
+    },
+    "H-1439-04": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001564590-22-023675",
+          "end": "2022-05-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "OperatingIncomeLoss",
+          "unit": "USD",
+          "value": "10926000000"
+        }
+      ],
+      "value_display": "10926000000",
+      "value_exact": "10926000000"
+    },
+    "H-1439-05": {
+      "class": "structurally_unanswerable",
+      "inputs": [],
+      "note": "Oracle's statement of operations runs from total revenues straight to total operating expenses and operating income; no gross-profit row is printed and the accession carries no GrossProfit fact."
+    },
+    "H-1800-01": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001628280-23-004026",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "43653000000"
+        }
+      ],
+      "value_display": "43653000000",
+      "value_exact": "43653000000"
+    },
+    "H-1800-02": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001628280-23-004026",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "43653000000"
+        },
+        {
+          "accn": "0001628280-23-004026",
+          "end": "2021-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "43075000000"
+        }
+      ],
+      "value_display": "1.34",
+      "value_exact": "2312/1723"
+    },
+    "H-1800-03": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001628280-23-004026",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "NetIncomeLoss",
+          "unit": "USD",
+          "value": "6933000000"
+        }
+      ],
+      "value_display": "6933000000",
+      "value_exact": "6933000000"
+    },
+    "H-1800-04": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001628280-23-004026",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Assets",
+          "unit": "USD",
+          "value": "74438000000"
+        }
+      ],
+      "value_display": "74438000000",
+      "value_exact": "74438000000"
+    },
+    "H-1800-05": {
+      "class": "structurally_unanswerable",
+      "inputs": [],
+      "note": "Abbott's consolidated statement of earnings prints net sales, cost of products sold and operating earnings; gross profit appears only as a percentage in narrative, with no amount row and no GrossProfit fact."
+    },
+    "H-2927-01": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000012927-23-000007",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "66608000000"
+        }
+      ],
+      "value_display": "66608000000",
+      "value_exact": "66608000000"
+    },
+    "H-2927-02": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000012927-23-000007",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "66608000000"
+        },
+        {
+          "accn": "0000012927-23-000007",
+          "end": "2021-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "62286000000"
+        }
+      ],
+      "value_display": "6.94",
+      "value_exact": "216100/31143"
+    },
+    "H-2927-03": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000012927-23-000007",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Assets",
+          "unit": "USD",
+          "value": "137100000000"
+        }
+      ],
+      "value_display": "137100000000",
+      "value_exact": "137100000000"
+    },
+    "H-4489-01": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001744489-22-000213",
+          "end": "2022-10-01",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "82722000000"
+        }
+      ],
+      "value_display": "82722000000",
+      "value_exact": "82722000000"
+    },
+    "H-4489-02": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001744489-22-000213",
+          "end": "2022-10-01",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "82722000000"
+        },
+        {
+          "accn": "0001744489-22-000213",
+          "end": "2021-10-02",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "67418000000"
+        }
+      ],
+      "value_display": "22.70",
+      "value_exact": "765200/33709"
+    },
+    "H-4489-03": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001744489-22-000213",
+          "end": "2022-10-01",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "NetIncomeLoss",
+          "unit": "USD",
+          "value": "3145000000"
+        }
+      ],
+      "value_display": "3145000000",
+      "value_exact": "3145000000"
+    },
+    "H-4489-04": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001744489-22-000213",
+          "end": "2022-10-01",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Assets",
+          "unit": "USD",
+          "value": "203631000000"
+        }
+      ],
+      "value_display": "203631000000",
+      "value_exact": "203631000000"
+    },
+    "H-4489-05": {
+      "class": "structurally_unanswerable",
+      "inputs": [],
+      "note": "Disney's statement of income deducts costs and expenses from total revenues and reports segment operating income in a separate reconciliation; the statement prints no gross-profit row and the accession carries no GrossProfit fact."
+    },
+    "H-6951-01": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000006951-22-000043",
+          "end": "2022-10-30",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "25785000000"
+        }
+      ],
+      "value_display": "25785000000",
+      "value_exact": "25785000000"
+    },
+    "H-6951-02": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000006951-22-000043",
+          "end": "2022-10-30",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "25785000000"
+        },
+        {
+          "accn": "0000006951-22-000043",
+          "end": "2021-10-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "23063000000"
+        }
+      ],
+      "value_display": "11.80",
+      "value_exact": "272200/23063"
+    },
+    "H-6951-03": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000006951-22-000043",
+          "end": "2022-10-30",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "NetIncomeLoss",
+          "unit": "USD",
+          "value": "6525000000"
+        }
+      ],
+      "value_display": "6525000000",
+      "value_exact": "6525000000"
+    },
+    "H-6951-04": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000006951-22-000043",
+          "end": "2022-10-30",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "GrossProfit",
+          "unit": "USD",
+          "value": "11993000000"
+        }
+      ],
+      "value_display": "11993000000",
+      "value_exact": "11993000000"
+    },
+    "H-8230-01": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000018230-23-000011",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "59427000000"
+        }
+      ],
+      "value_display": "59427000000",
+      "value_exact": "59427000000"
+    },
+    "H-8230-02": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000018230-23-000011",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "59427000000"
+        },
+        {
+          "accn": "0000018230-23-000011",
+          "end": "2021-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "50971000000"
+        }
+      ],
+      "value_display": "16.59",
+      "value_exact": "845600/50971"
+    },
+    "H-8230-03": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000018230-23-000011",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Assets",
+          "unit": "USD",
+          "value": "81943000000"
+        }
+      ],
+      "value_display": "81943000000",
+      "value_exact": "81943000000"
+    },
+    "H-8230-04": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000018230-23-000011",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "OperatingIncomeLoss",
+          "unit": "USD",
+          "value": "7904000000"
+        }
+      ],
+      "value_display": "7904000000",
+      "value_exact": "7904000000"
+    },
+    "H-8230-05": {
+      "class": "structurally_unanswerable",
+      "inputs": [],
+      "note": "Neither the printed statements nor the accession's XBRL facts report gross profit; Caterpillar prints sales, operating costs and operating profit."
+    },
+    "H-8724-01": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001018724-23-000004",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "513983000000"
+        }
+      ],
+      "value_display": "513983000000",
+      "value_exact": "513983000000"
+    },
+    "H-8724-02": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001018724-23-000004",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "513983000000"
+        },
+        {
+          "accn": "0001018724-23-000004",
+          "end": "2021-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "469822000000"
+        }
+      ],
+      "value_display": "9.40",
+      "value_exact": "2208050/234911"
+    },
+    "H-8724-03": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001018724-23-000004",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Assets",
+          "unit": "USD",
+          "value": "462675000000"
+        }
+      ],
+      "value_display": "462675000000",
+      "value_exact": "462675000000"
+    },
+    "H-8724-04": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0001018724-23-000004",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "OperatingIncomeLoss",
+          "unit": "USD",
+          "value": "12248000000"
+        }
+      ],
+      "value_display": "12248000000",
+      "value_exact": "12248000000"
+    },
+    "H-8911-01": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000950170-22-012762",
+          "end": "2022-05-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "93512000000"
+        }
+      ],
+      "value_display": "93512000000",
+      "value_exact": "93512000000"
+    },
+    "H-8911-02": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000950170-22-012762",
+          "end": "2022-05-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "93512000000"
+        },
+        {
+          "accn": "0000950170-22-012762",
+          "end": "2021-05-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "unit": "USD",
+          "value": "83959000000"
+        }
+      ],
+      "value_display": "11.38",
+      "value_exact": "955300/83959"
+    },
+    "H-8911-03": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000950170-22-012762",
+          "end": "2022-05-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "NetIncomeLoss",
+          "unit": "USD",
+          "value": "3826000000"
+        }
+      ],
+      "value_display": "3826000000",
+      "value_exact": "3826000000"
+    },
+    "H-8911-04": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000950170-22-012762",
+          "end": "2022-05-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "OperatingIncomeLoss",
+          "unit": "USD",
+          "value": "6245000000"
+        }
+      ],
+      "value_display": "6245000000",
+      "value_exact": "6245000000"
+    },
+    "H-8911-05": {
+      "class": "structurally_unanswerable",
+      "inputs": [],
+      "note": "FedEx's statement of income goes from revenue to operating expenses and operating income; no gross-profit row is printed and the accession carries no GrossProfit fact."
+    },
+    "H-9617-01": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000019617-23-000231",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "128695000000"
+        }
+      ],
+      "value_display": "128695000000",
+      "value_exact": "128695000000"
+    },
+    "H-9617-02": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000019617-23-000231",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "128695000000"
+        },
+        {
+          "accn": "0000019617-23-000231",
+          "end": "2021-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Revenues",
+          "unit": "USD",
+          "value": "121649000000"
+        }
+      ],
+      "value_display": "5.79",
+      "value_exact": "704600/121649"
+    },
+    "H-9617-03": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000019617-23-000231",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "NetIncomeLoss",
+          "unit": "USD",
+          "value": "37676000000"
+        }
+      ],
+      "value_display": "37676000000",
+      "value_exact": "37676000000"
+    },
+    "H-9617-04": {
+      "class": "xbrl_verified",
+      "inputs": [
+        {
+          "accn": "0000019617-23-000231",
+          "end": "2022-12-31",
+          "fp": "FY",
+          "fy": 2022,
+          "source": "https://data.sec.gov/api/xbrl/companyfacts/",
+          "tag": "Assets",
+          "unit": "USD",
+          "value": "3665743000000"
+        }
+      ],
+      "value_display": "3665743000000",
+      "value_exact": "3665743000000"
+    },
+    "H-9617-05": {
+      "class": "structurally_unanswerable",
+      "inputs": [],
+      "note": "A bank holding company statement reports net interest income, noninterest revenue and provision for credit losses; it prints no gross-profit subtotal and the accession carries no GrossProfit fact."
+    }
+  },
+  "iteration": 3,
+  "label_explanation": "The twelve issuers were used for the first prospective run; this is a development regression on exposed data, not an independent confirmation.",
+  "metrics": {
+    "baseline": {
+      "abstention_questions": 7,
+      "answer_precision": 0.9459,
+      "answerable": 47,
+      "answerable_abstentions": 10,
+      "answered": 37,
+      "citation_accuracy": 0.9459,
+      "citation_failures": 2,
+      "correct": 35,
+      "evidence_missing": 0,
+      "exact_answer_rate": 0.7447,
+      "excluded_questions": 0,
+      "false_answer_rate": 0.0,
+      "false_answers": 0,
+      "justified_abstention_rate": 1.0,
+      "justified_abstentions": 7,
+      "latency_ms": {
+        "median": 27.151,
+        "p95": 243.614
+      },
+      "numerical_accuracy": 0.7872,
+      "period_accuracy": 1.0,
+      "period_header_confirmed": 0.1081,
+      "resolution_failures": 10,
+      "runner_errors": 0,
+      "scored_questions": 54,
+      "source_accuracy": 1.0,
+      "unit_accuracy": 1.0,
+      "unjustified_abstentions": 0,
+      "unsupported_confident_answers": 0
+    },
+    "geometry": {
+      "abstention_questions": 7,
+      "answer_precision": 0.9048,
+      "answerable": 47,
+      "answerable_abstentions": 5,
+      "answered": 42,
+      "citation_accuracy": 0.9048,
+      "citation_failures": 4,
+      "correct": 38,
+      "evidence_missing": 0,
+      "exact_answer_rate": 0.8085,
+      "excluded_questions": 0,
+      "false_answer_rate": 0.0,
+      "false_answers": 0,
+      "justified_abstention_rate": 1.0,
+      "justified_abstentions": 7,
+      "latency_ms": {
+        "median": 85.225,
+        "p95": 371.05
+      },
+      "numerical_accuracy": 0.8936,
+      "period_accuracy": 1.0,
+      "period_header_confirmed": 1.0,
+      "resolution_failures": 3,
+      "runner_errors": 0,
+      "scored_questions": 54,
+      "source_accuracy": 1.0,
+      "unit_accuracy": 1.0,
+      "unjustified_abstentions": 2,
+      "unsupported_confident_answers": 0
+    }
+  },
+  "note": "shape scoring + note fallback + group scope",
+  "questions": 54,
+  "results": [
+    {
+      "correct": false,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 243.614,
+      "gold_class": "xbrl_verified",
+      "id": "H-8230-01",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "runner": "baseline",
+      "status": "resolution_failure",
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 166.495,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-8230-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000018230-23-000011",
+        "citations": [
+          {
+            "accession": "0000018230-23-000011",
+            "column_label": "Caterpillar Inc. \u00b7 2022",
+            "document_sha256": "c1e4707c51d6150818bdb11ad11a56db34ddbd411d4a185e1bd182f55f6853f8",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "59,427",
+            "row_label": "Total sales and revenues",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "67bc46d7c3e0e82555a1549bb250074856c1fa23198caa473951efc3c00b902e",
+            "table_index": 29
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "59427",
+        "value_economic": "59427000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": null,
+      "elapsed_ms": 86.579,
+      "gold_class": "xbrl_verified",
+      "id": "H-8230-02",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found,not_found",
+      "runner": "baseline",
+      "status": "resolution_failure",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 323.017,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-8230-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000018230-23-000011",
+        "citations": [
+          {
+            "accession": "0000018230-23-000011",
+            "column_label": "Caterpillar Inc. \u00b7 2022",
+            "period": "2022",
+            "raw": "59,427",
+            "row_label": "Total sales and revenues",
+            "scale": 6,
+            "table_digest": "67bc46d7c3e0e82555a1549bb250074856c1fa23198caa473951efc3c00b902e"
+          },
+          {
+            "accession": "0000018230-23-000011",
+            "column_label": "Caterpillar Inc. \u00b7 2021",
+            "period": "2021",
+            "raw": "50,971",
+            "row_label": "Total sales and revenues",
+            "scale": 6,
+            "table_digest": "67bc46d7c3e0e82555a1549bb250074856c1fa23198caa473951efc3c00b902e"
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "16.59",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": "weak_alias_match",
+      "elapsed_ms": 6.604,
+      "gold_class": "xbrl_verified",
+      "id": "H-8230-03",
+      "outcome": "abstained",
+      "reason": "concept_resolution:ambiguous",
+      "runner": "baseline",
+      "status": "resolution_failure",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 23.712,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-8230-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000018230-23-000011",
+        "citations": [
+          {
+            "accession": "0000018230-23-000011",
+            "column_label": "Caterpillar Inc. \u00b7 2022",
+            "document_sha256": "c1e4707c51d6150818bdb11ad11a56db34ddbd411d4a185e1bd182f55f6853f8",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "81,943",
+            "row_label": "Total assets",
+            "scale": 6,
+            "statement_family": "balance_sheet",
+            "table_digest": "64b70331a84af443b6a458b95d7abbbf5c7aba6ed685a8c33357c1044ac07b58",
+            "table_index": 33
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "81943",
+        "value_economic": "81943000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 17.375,
+      "gold_class": "xbrl_verified",
+      "id": "H-8230-04",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "runner": "baseline",
+      "status": "resolution_failure",
+      "tags": [
+        "lookup",
+        "operating_income"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 61.21,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-8230-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000018230-23-000011",
+        "citations": [
+          {
+            "accession": "0000018230-23-000011",
+            "column_label": "Caterpillar Inc. \u00b7 2022",
+            "document_sha256": "c1e4707c51d6150818bdb11ad11a56db34ddbd411d4a185e1bd182f55f6853f8",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "7,904",
+            "row_label": "Operating profit",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "67bc46d7c3e0e82555a1549bb250074856c1fa23198caa473951efc3c00b902e",
+            "table_index": 29
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "7904",
+        "value_economic": "7904000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "operating_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 11.038,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-8230-05",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "runner": "baseline",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 38.354,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-8230-05",
+      "outcome": "abstained",
+      "reason": "geometry:not_found:no_candidate_row",
+      "runner": "geometry",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 968.784,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-9617-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000019617-23-000231",
+        "citations": [
+          {
+            "accession": "0000019617-23-000231",
+            "column_label": "2020",
+            "period": "2022",
+            "raw": "128,695",
+            "row_label": "Total net revenue",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "128695.00",
+        "value_economic": "128695000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": "conflicting_row_values",
+      "elapsed_ms": 621.223,
+      "gold_class": "xbrl_verified",
+      "id": "H-9617-01",
+      "outcome": "abstained",
+      "reason": "geometry:ambiguous:conflicting_row_values",
+      "runner": "geometry",
+      "status": "unjustified_abstention",
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 378.094,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-9617-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000019617-23-000231",
+        "citations": [
+          {
+            "accession": "0000019617-23-000231",
+            "column_label": "2020",
+            "period": "2022",
+            "raw": "128,695",
+            "row_label": "Total net revenue",
+            "scale": 6
+          },
+          {
+            "accession": "0000019617-23-000231",
+            "column_label": "",
+            "period": "2021",
+            "raw": "121,649",
+            "row_label": "Total net revenue",
+            "scale": 6
+          }
+        ],
+        "period": "2022 vs 2021",
+        "scale": 6,
+        "value_display": "5.79",
+        "value_economic": null
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": null,
+      "elapsed_ms": 1241.655,
+      "gold_class": "xbrl_verified",
+      "id": "H-9617-02",
+      "outcome": "abstained",
+      "reason": "geometry:ambiguous:conflicting_row_values,ambiguous:conflicting_row_values",
+      "runner": "geometry",
+      "status": "unjustified_abstention",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 111.166,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-9617-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000019617-23-000231",
+        "citations": [
+          {
+            "accession": "0000019617-23-000231",
+            "column_label": "",
+            "period": "2022",
+            "raw": "37,676",
+            "row_label": "Net income",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "37676.00",
+        "value_economic": "37676000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "net_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 291.624,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-9617-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000019617-23-000231",
+        "citations": [
+          {
+            "accession": "0000019617-23-000231",
+            "column_label": "2022",
+            "document_sha256": "046cf471f046c156056d1d3a9a0aa6f1f22cfd03028def4fefc6a029537480a2",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "37,676",
+            "row_label": "Net income",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "7cdfa5816d37e8f9d81abe40973936adf48dfd028b82e1c52143e30ab62a1a42",
+            "table_index": 329
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "37676",
+        "value_economic": "37676000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "net_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": false,
+      "correct": false,
+      "elapsed_ms": 27.151,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-9617-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000019617-23-000231",
+        "citations": [
+          {
+            "accession": "0000019617-23-000231",
+            "column_label": "",
+            "period": "2022",
+            "raw": "3,665,743",
+            "row_label": "Total assets (a)",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "3665743.00",
+        "value_economic": "3665743000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "citation_failure",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": false,
+      "correct": false,
+      "elapsed_ms": 88.397,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-9617-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000019617-23-000231",
+        "citations": [
+          {
+            "accession": "0000019617-23-000231",
+            "column_label": "2022",
+            "document_sha256": "046cf471f046c156056d1d3a9a0aa6f1f22cfd03028def4fefc6a029537480a2",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "3,665,743",
+            "row_label": "Total assets(a)",
+            "scale": 6,
+            "statement_family": "balance_sheet",
+            "table_digest": "44455d5ba7fe018330f497fe5af88947dff6a6bebe7b3b501fd85900473348ba",
+            "table_index": 333
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "3665743",
+        "value_economic": "3665743000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "citation_failure",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 44.529,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-9617-05",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "runner": "baseline",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 149.904,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-9617-05",
+      "outcome": "abstained",
+      "reason": "geometry:not_found:no_candidate_row",
+      "runner": "geometry",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 235.992,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-0863-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000050863-23-000006",
+        "citations": [
+          {
+            "accession": "0000050863-23-000006",
+            "column_label": "",
+            "period": "2022",
+            "raw": "63,054",
+            "row_label": "Net revenue",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "63054.00",
+        "value_economic": "63054000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 145.634,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-0863-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000050863-23-000006",
+        "citations": [
+          {
+            "accession": "0000050863-23-000006",
+            "column_label": "Dec 31, 2022",
+            "document_sha256": "16ffbebcc12c80698de524ba42e54ca19a441174d37be0da47fdfd55a95c8818",
+            "entity_scope": "unknown",
+            "period": "2022",
+            "raw": "63,054",
+            "row_label": "Net revenue",
+            "scale": 6,
+            "statement_family": null,
+            "table_digest": "e08c991030c3e519c6ddcdee45dc7e57832dff3a36c522ff1f15e3bb9672995d",
+            "table_index": 161
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "63054",
+        "value_economic": "63054000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 91.107,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-0863-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000050863-23-000006",
+        "citations": [
+          {
+            "accession": "0000050863-23-000006",
+            "column_label": "",
+            "period": "2022",
+            "raw": "63,054",
+            "row_label": "Net revenue",
+            "scale": 6
+          },
+          {
+            "accession": "0000050863-23-000006",
+            "column_label": "",
+            "period": "2021",
+            "raw": "79,024",
+            "row_label": "Net revenue",
+            "scale": 6
+          }
+        ],
+        "period": "2022 vs 2021",
+        "scale": 6,
+        "value_display": "-20.21",
+        "value_economic": null
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 289.519,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-0863-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000050863-23-000006",
+        "citations": [
+          {
+            "accession": "0000050863-23-000006",
+            "column_label": "Dec 31, 2022",
+            "period": "2022",
+            "raw": "63,054",
+            "row_label": "Net revenue",
+            "scale": 6,
+            "table_digest": "e08c991030c3e519c6ddcdee45dc7e57832dff3a36c522ff1f15e3bb9672995d"
+          },
+          {
+            "accession": "0000050863-23-000006",
+            "column_label": "Dec 25, 2021",
+            "period": "2021",
+            "raw": "79,024",
+            "row_label": "Net revenue",
+            "scale": 6,
+            "table_digest": "e08c991030c3e519c6ddcdee45dc7e57832dff3a36c522ff1f15e3bb9672995d"
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "-20.21",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 6.912,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-0863-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000050863-23-000006",
+        "citations": [
+          {
+            "accession": "0000050863-23-000006",
+            "column_label": "",
+            "period": "2022",
+            "raw": "182,103",
+            "row_label": "Total assets",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "182103.00",
+        "value_economic": "182103000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 23.555,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-0863-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000050863-23-000006",
+        "citations": [
+          {
+            "accession": "0000050863-23-000006",
+            "column_label": "Dec 31, 2022",
+            "document_sha256": "16ffbebcc12c80698de524ba42e54ca19a441174d37be0da47fdfd55a95c8818",
+            "entity_scope": "unknown",
+            "period": "2022",
+            "raw": "182,103",
+            "row_label": "Total assets",
+            "scale": 6,
+            "statement_family": null,
+            "table_digest": "5231fa318a55bb127fd2a5b2f84a653a56705ecbf9b5d97e7bf39001a66abb1f",
+            "table_index": 167
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "182103",
+        "value_economic": "182103000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 11.495,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-0863-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000050863-23-000006",
+        "citations": [
+          {
+            "accession": "0000050863-23-000006",
+            "column_label": "December 31, 2022",
+            "period": "2022",
+            "raw": "26,866",
+            "row_label": "Gross margin",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "26866.00",
+        "value_economic": "26866000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "gross_profit"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 40.604,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-0863-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000050863-23-000006",
+        "citations": [
+          {
+            "accession": "0000050863-23-000006",
+            "column_label": "Dec 31, 2022",
+            "document_sha256": "16ffbebcc12c80698de524ba42e54ca19a441174d37be0da47fdfd55a95c8818",
+            "entity_scope": "unknown",
+            "period": "2022",
+            "raw": "26,866",
+            "row_label": "Gross margin",
+            "scale": 6,
+            "statement_family": null,
+            "table_digest": "e08c991030c3e519c6ddcdee45dc7e57832dff3a36c522ff1f15e3bb9672995d",
+            "table_index": 161
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "26866",
+        "value_economic": "26866000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "gross_profit"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 272.396,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-1439-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-22-023675",
+        "citations": [
+          {
+            "accession": "0001564590-22-023675",
+            "column_label": "",
+            "period": "2022",
+            "raw": "42,440",
+            "row_label": "Total revenues",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "42440.00",
+        "value_economic": "42440000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 116.216,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-1439-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-22-023675",
+        "citations": [
+          {
+            "accession": "0001564590-22-023675",
+            "column_label": "Year Ended May 31, \u00b7 2022",
+            "document_sha256": "7c34d742eb38eb8bdc0460cda4ff324b04ab305ab0d98410dfc39baf97854115",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "42,440",
+            "row_label": "Total revenues",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "b9c5582ed8e227ee2a931b674514aa321d032b5f0078f0c514c5f9ada027ce6c",
+            "table_index": 212
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "42440",
+        "value_economic": "42440000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 56.096,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-1439-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-22-023675",
+        "citations": [
+          {
+            "accession": "0001564590-22-023675",
+            "column_label": "",
+            "period": "2022",
+            "raw": "42,440",
+            "row_label": "Total revenues",
+            "scale": 6
+          },
+          {
+            "accession": "0001564590-22-023675",
+            "column_label": "",
+            "period": "2021",
+            "raw": "40,479",
+            "row_label": "Total revenues",
+            "scale": 6
+          }
+        ],
+        "period": "2022 vs 2021",
+        "scale": 6,
+        "value_display": "4.84",
+        "value_economic": null
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 231.142,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-1439-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-22-023675",
+        "citations": [
+          {
+            "accession": "0001564590-22-023675",
+            "column_label": "Year Ended May 31, \u00b7 2022",
+            "period": "2022",
+            "raw": "42,440",
+            "row_label": "Total revenues",
+            "scale": 6,
+            "table_digest": "b9c5582ed8e227ee2a931b674514aa321d032b5f0078f0c514c5f9ada027ce6c"
+          },
+          {
+            "accession": "0001564590-22-023675",
+            "column_label": "Year Ended May 31, \u00b7 2021",
+            "period": "2021",
+            "raw": "40,479",
+            "row_label": "Total revenues",
+            "scale": 6,
+            "table_digest": "b9c5582ed8e227ee2a931b674514aa321d032b5f0078f0c514c5f9ada027ce6c"
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "4.84",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 15.582,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-1439-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-22-023675",
+        "citations": [
+          {
+            "accession": "0001564590-22-023675",
+            "column_label": "",
+            "period": "2022",
+            "raw": "6,717",
+            "row_label": "Net income",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "6717.00",
+        "value_economic": "6717000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "net_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 54.948,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-1439-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-22-023675",
+        "citations": [
+          {
+            "accession": "0001564590-22-023675",
+            "column_label": "Year Ended May 31, \u00b7 2022",
+            "document_sha256": "7c34d742eb38eb8bdc0460cda4ff324b04ab305ab0d98410dfc39baf97854115",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "6,717",
+            "row_label": "Net income",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "b9c5582ed8e227ee2a931b674514aa321d032b5f0078f0c514c5f9ada027ce6c",
+            "table_index": 212
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "6717",
+        "value_economic": "6717000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "net_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 10.687,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-1439-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-22-023675",
+        "citations": [
+          {
+            "accession": "0001564590-22-023675",
+            "column_label": "",
+            "period": "2022",
+            "raw": "10,926",
+            "row_label": "Operating income",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "10926.00",
+        "value_economic": "10926000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "operating_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 44.088,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-1439-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001564590-22-023675",
+        "citations": [
+          {
+            "accession": "0001564590-22-023675",
+            "column_label": "Year Ended May 31, \u00b7 2022",
+            "document_sha256": "7c34d742eb38eb8bdc0460cda4ff324b04ab305ab0d98410dfc39baf97854115",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "10,926",
+            "row_label": "Operating income",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "b9c5582ed8e227ee2a931b674514aa321d032b5f0078f0c514c5f9ada027ce6c",
+            "table_index": 212
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "10926",
+        "value_economic": "10926000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "operating_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 6.012,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-1439-05",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "runner": "baseline",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 27.542,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-1439-05",
+      "outcome": "abstained",
+      "reason": "geometry:not_found:no_candidate_row",
+      "runner": "geometry",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 216.955,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-0727-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001090727-23-000006",
+        "citations": [
+          {
+            "accession": "0001090727-23-000006",
+            "column_label": "2021",
+            "period": "2022",
+            "raw": "100,338",
+            "row_label": "Revenue",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "100338.00",
+        "value_economic": "100338000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 253.243,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-0727-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001090727-23-000006",
+        "citations": [
+          {
+            "accession": "0001090727-23-000006",
+            "column_label": "Years Ended December 31, \u00b7 2022",
+            "document_sha256": "f5d0633fe2a5d5d4e21319556feebc6675c2579daa8cf57bf7ba9acdfb6698bd",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "100,338",
+            "row_label": "Revenue",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "66cd624ea7914f9b750470b7e1b3cc1889963fac517ea01bcb92d3eb266b4460",
+            "table_index": 33
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "100338",
+        "value_economic": "100338000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 124.683,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-0727-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001090727-23-000006",
+        "citations": [
+          {
+            "accession": "0001090727-23-000006",
+            "column_label": "2021",
+            "period": "2022",
+            "raw": "100,338",
+            "row_label": "Revenue",
+            "scale": 6
+          },
+          {
+            "accession": "0001090727-23-000006",
+            "column_label": "",
+            "period": "2021",
+            "raw": "97,287",
+            "row_label": "Revenue",
+            "scale": 6
+          }
+        ],
+        "period": "2022 vs 2021",
+        "scale": 6,
+        "value_display": "3.14",
+        "value_economic": null
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 506.191,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-0727-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001090727-23-000006",
+        "citations": [
+          {
+            "accession": "0001090727-23-000006",
+            "column_label": "Years Ended December 31, \u00b7 2022",
+            "period": "2022",
+            "raw": "100,338",
+            "row_label": "Revenue",
+            "scale": 6,
+            "table_digest": "66cd624ea7914f9b750470b7e1b3cc1889963fac517ea01bcb92d3eb266b4460"
+          },
+          {
+            "accession": "0001090727-23-000006",
+            "column_label": "Years Ended December 31, \u00b7 2021",
+            "period": "2021",
+            "raw": "97,287",
+            "row_label": "Revenue",
+            "scale": 6,
+            "table_digest": "66cd624ea7914f9b750470b7e1b3cc1889963fac517ea01bcb92d3eb266b4460"
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "3.14",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 34.738,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-0727-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001090727-23-000006",
+        "citations": [
+          {
+            "accession": "0001090727-23-000006",
+            "column_label": "2021",
+            "period": "2022",
+            "raw": "11,548",
+            "row_label": "Net Income",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "11548.00",
+        "value_economic": "11548000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "net_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 116.27,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-0727-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001090727-23-000006",
+        "citations": [
+          {
+            "accession": "0001090727-23-000006",
+            "column_label": "Years Ended December 31, \u00b7 2022",
+            "document_sha256": "f5d0633fe2a5d5d4e21319556feebc6675c2579daa8cf57bf7ba9acdfb6698bd",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "11,548",
+            "row_label": "Net Income",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "66cd624ea7914f9b750470b7e1b3cc1889963fac517ea01bcb92d3eb266b4460",
+            "table_index": 33
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "11548",
+        "value_economic": "11548000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "net_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 22.771,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-0727-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001090727-23-000006",
+        "citations": [
+          {
+            "accession": "0001090727-23-000006",
+            "column_label": "",
+            "period": "2022",
+            "raw": "13,094",
+            "row_label": "Operating Profit",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "13094.00",
+        "value_economic": "13094000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "operating_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 97.879,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-0727-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001090727-23-000006",
+        "citations": [
+          {
+            "accession": "0001090727-23-000006",
+            "column_label": "Years Ended December 31, \u00b7 2022",
+            "document_sha256": "f5d0633fe2a5d5d4e21319556feebc6675c2579daa8cf57bf7ba9acdfb6698bd",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "13,094",
+            "row_label": "Operating Profit",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "66cd624ea7914f9b750470b7e1b3cc1889963fac517ea01bcb92d3eb266b4460",
+            "table_index": 33
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "13094",
+        "value_economic": "13094000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "operating_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 13.339,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-0727-05",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "runner": "baseline",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 57.821,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-0727-05",
+      "outcome": "abstained",
+      "reason": "geometry:not_found:no_candidate_row",
+      "runner": "geometry",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 163.795,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-6951-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000006951-22-000043",
+        "citations": [
+          {
+            "accession": "0000006951-22-000043",
+            "column_label": "",
+            "period": "2022",
+            "raw": "25,785",
+            "row_label": "Net sales",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "25785.00",
+        "value_economic": "25785000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 182.478,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-6951-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000006951-22-000043",
+        "citations": [
+          {
+            "accession": "0000006951-22-000043",
+            "column_label": "2022",
+            "document_sha256": "6f9de188dfec752b46598decf3834e971c1ee4ee0107a3bc595d5e9b0c60da1d",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "25,785",
+            "row_label": "Net sales",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "431e29ae78a031f410822d79fdd85771a4a25574f0e0296a4dbae9b7aa596ee2",
+            "table_index": 41
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "25785",
+        "value_economic": "25785000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 93.035,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-6951-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000006951-22-000043",
+        "citations": [
+          {
+            "accession": "0000006951-22-000043",
+            "column_label": "",
+            "period": "2022",
+            "raw": "25,785",
+            "row_label": "Net sales",
+            "scale": 6
+          },
+          {
+            "accession": "0000006951-22-000043",
+            "column_label": "",
+            "period": "2021",
+            "raw": "23,063",
+            "row_label": "Net sales",
+            "scale": 6
+          }
+        ],
+        "period": "2022 vs 2021",
+        "scale": 6,
+        "value_display": "11.80",
+        "value_economic": null
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 371.05,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-6951-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000006951-22-000043",
+        "citations": [
+          {
+            "accession": "0000006951-22-000043",
+            "column_label": "2022",
+            "period": "2022",
+            "raw": "25,785",
+            "row_label": "Net sales",
+            "scale": 6,
+            "table_digest": "431e29ae78a031f410822d79fdd85771a4a25574f0e0296a4dbae9b7aa596ee2"
+          },
+          {
+            "accession": "0000006951-22-000043",
+            "column_label": "2021",
+            "period": "2021",
+            "raw": "23,063",
+            "row_label": "Net sales",
+            "scale": 6,
+            "table_digest": "431e29ae78a031f410822d79fdd85771a4a25574f0e0296a4dbae9b7aa596ee2"
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "11.80",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 24.822,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-6951-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000006951-22-000043",
+        "citations": [
+          {
+            "accession": "0000006951-22-000043",
+            "column_label": "",
+            "period": "2022",
+            "raw": "6,525",
+            "row_label": "Net income",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "6525.00",
+        "value_economic": "6525000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "net_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 85.225,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-6951-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000006951-22-000043",
+        "citations": [
+          {
+            "accession": "0000006951-22-000043",
+            "column_label": "2022",
+            "document_sha256": "6f9de188dfec752b46598decf3834e971c1ee4ee0107a3bc595d5e9b0c60da1d",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "6,525",
+            "row_label": "Net income",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "431e29ae78a031f410822d79fdd85771a4a25574f0e0296a4dbae9b7aa596ee2",
+            "table_index": 41
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "6525",
+        "value_economic": "6525000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "net_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 11.323,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-6951-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000006951-22-000043",
+        "citations": [
+          {
+            "accession": "0000006951-22-000043",
+            "column_label": "2022",
+            "period": "2022",
+            "raw": "11,993",
+            "row_label": "Gross profit",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "11993.00",
+        "value_economic": "11993000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "gross_profit"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 45.261,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-6951-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000006951-22-000043",
+        "citations": [
+          {
+            "accession": "0000006951-22-000043",
+            "column_label": "2022",
+            "document_sha256": "6f9de188dfec752b46598decf3834e971c1ee4ee0107a3bc595d5e9b0c60da1d",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "11,993",
+            "row_label": "Gross profit",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "431e29ae78a031f410822d79fdd85771a4a25574f0e0296a4dbae9b7aa596ee2",
+            "table_index": 41
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "11993",
+        "value_economic": "11993000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "gross_profit"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 111.174,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-8724-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001018724-23-000004",
+        "citations": [
+          {
+            "accession": "0001018724-23-000004",
+            "column_label": "",
+            "period": "2022",
+            "raw": "513,983",
+            "row_label": "Total net sales",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "513983.00",
+        "value_economic": "513983000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 69.648,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-8724-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001018724-23-000004",
+        "citations": [
+          {
+            "accession": "0001018724-23-000004",
+            "column_label": "Year Ended December 31, \u00b7 2022",
+            "document_sha256": "f9a4d97b5feb623b414cff7d953946efcf772ef8325a97a22b29bfa07bbb02fc",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "513,983",
+            "row_label": "Total net sales",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "b8ab1da154ad69f77c4fa2db1052a18b507d26999028aab99895f02e40e4f1e2",
+            "table_index": 34
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "513983",
+        "value_economic": "513983000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 63.106,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-8724-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001018724-23-000004",
+        "citations": [
+          {
+            "accession": "0001018724-23-000004",
+            "column_label": "",
+            "period": "2022",
+            "raw": "513,983",
+            "row_label": "Total net sales",
+            "scale": 6
+          },
+          {
+            "accession": "0001018724-23-000004",
+            "column_label": "2022",
+            "period": "2021",
+            "raw": "469,822",
+            "row_label": "Total net sales",
+            "scale": 6
+          }
+        ],
+        "period": "2022 vs 2021",
+        "scale": 6,
+        "value_display": "9.40",
+        "value_economic": null
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 136.544,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-8724-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001018724-23-000004",
+        "citations": [
+          {
+            "accession": "0001018724-23-000004",
+            "column_label": "Year Ended December 31, \u00b7 2022",
+            "period": "2022",
+            "raw": "513,983",
+            "row_label": "Total net sales",
+            "scale": 6,
+            "table_digest": "b8ab1da154ad69f77c4fa2db1052a18b507d26999028aab99895f02e40e4f1e2"
+          },
+          {
+            "accession": "0001018724-23-000004",
+            "column_label": "Year Ended December 31, \u00b7 2021",
+            "period": "2021",
+            "raw": "469,822",
+            "row_label": "Total net sales",
+            "scale": 6,
+            "table_digest": "b8ab1da154ad69f77c4fa2db1052a18b507d26999028aab99895f02e40e4f1e2"
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "9.40",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 4.822,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-8724-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001018724-23-000004",
+        "citations": [
+          {
+            "accession": "0001018724-23-000004",
+            "column_label": "",
+            "period": "2022",
+            "raw": "462,675",
+            "row_label": "Total assets",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "462675.00",
+        "value_economic": "462675000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 9.96,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-8724-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001018724-23-000004",
+        "citations": [
+          {
+            "accession": "0001018724-23-000004",
+            "column_label": "December 31, \u00b7 2022",
+            "document_sha256": "f9a4d97b5feb623b414cff7d953946efcf772ef8325a97a22b29bfa07bbb02fc",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "462,675",
+            "row_label": "Total assets",
+            "scale": 6,
+            "statement_family": "balance_sheet",
+            "table_digest": "20600270adea7375c6269ae5ab15629b8bfcae9e513e2c1abe64ca2f334cb20a",
+            "table_index": 36
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "462675",
+        "value_economic": "462675000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 12.381,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-8724-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001018724-23-000004",
+        "citations": [
+          {
+            "accession": "0001018724-23-000004",
+            "column_label": "",
+            "period": "2022",
+            "raw": "12,248",
+            "row_label": "Operating income",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "12248.00",
+        "value_economic": "12248000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "operating_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 28.355,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-8724-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001018724-23-000004",
+        "citations": [
+          {
+            "accession": "0001018724-23-000004",
+            "column_label": "Year Ended December 31, \u00b7 2022",
+            "document_sha256": "f9a4d97b5feb623b414cff7d953946efcf772ef8325a97a22b29bfa07bbb02fc",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "12,248",
+            "row_label": "Operating income",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "b8ab1da154ad69f77c4fa2db1052a18b507d26999028aab99895f02e40e4f1e2",
+            "table_index": 34
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "12248",
+        "value_economic": "12248000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "operating_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": "conflicting_row_values",
+      "elapsed_ms": 210.082,
+      "gold_class": "xbrl_verified",
+      "id": "H-4489-01",
+      "outcome": "abstained",
+      "reason": "concept_resolution:ambiguous",
+      "runner": "baseline",
+      "status": "resolution_failure",
+      "tags": [
+        "lookup",
+        "revenue"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 137.678,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-4489-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001744489-22-000213",
+        "citations": [
+          {
+            "accession": "0001744489-22-000213",
+            "column_label": "2022",
+            "document_sha256": "977a65219cd372ce04288a0adbbd1ec7eae05dfdef56d64d645e8c5df6d71663",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "82,722",
+            "row_label": "Total revenues",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "267721939d8549116021b0d5fc45ec947973100f30f3f13d96e2f3b7fa442f7b",
+            "table_index": 61
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "82722",
+        "value_economic": "82722000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": null,
+      "elapsed_ms": 58.284,
+      "gold_class": "xbrl_verified",
+      "id": "H-4489-02",
+      "outcome": "abstained",
+      "reason": "concept_resolution:ambiguous,resolved",
+      "runner": "baseline",
+      "status": "resolution_failure",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 275.07,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-4489-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001744489-22-000213",
+        "citations": [
+          {
+            "accession": "0001744489-22-000213",
+            "column_label": "2022",
+            "period": "2022",
+            "raw": "82,722",
+            "row_label": "Total revenues",
+            "scale": 6,
+            "table_digest": "267721939d8549116021b0d5fc45ec947973100f30f3f13d96e2f3b7fa442f7b"
+          },
+          {
+            "accession": "0001744489-22-000213",
+            "column_label": "2021",
+            "period": "2021",
+            "raw": "67,418",
+            "row_label": "Total revenues",
+            "scale": 6,
+            "table_digest": "267721939d8549116021b0d5fc45ec947973100f30f3f13d96e2f3b7fa442f7b"
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "22.70",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": "definitional_ambiguity",
+      "elapsed_ms": 19.34,
+      "gold_class": "xbrl_verified",
+      "id": "H-4489-03",
+      "outcome": "abstained",
+      "reason": "concept_resolution:ambiguous",
+      "runner": "baseline",
+      "status": "resolution_failure",
+      "tags": [
+        "lookup",
+        "net_income"
+      ]
+    },
+    {
+      "correct": false,
+      "detail": "definitional_ambiguity",
+      "elapsed_ms": 63.063,
+      "gold_class": "xbrl_verified",
+      "id": "H-4489-03",
+      "outcome": "abstained",
+      "reason": "geometry:ambiguous:definitional_ambiguity",
+      "runner": "geometry",
+      "status": "resolution_failure",
+      "tags": [
+        "lookup",
+        "net_income"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 5.331,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-4489-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001744489-22-000213",
+        "citations": [
+          {
+            "accession": "0001744489-22-000213",
+            "column_label": "October 2, 2021",
+            "period": "2022",
+            "raw": "203,631",
+            "row_label": "Total assets",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "203631.00",
+        "value_economic": "203631000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 18.664,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-4489-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001744489-22-000213",
+        "citations": [
+          {
+            "accession": "0001744489-22-000213",
+            "column_label": "October 1,2022",
+            "document_sha256": "977a65219cd372ce04288a0adbbd1ec7eae05dfdef56d64d645e8c5df6d71663",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "203,631",
+            "row_label": "Total assets",
+            "scale": 6,
+            "statement_family": "balance_sheet",
+            "table_digest": "06a721e5c4e7175fd8149afdd42b7e56159d4819cbf945f466f108a5808b0482",
+            "table_index": 63
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "203631",
+        "value_economic": "203631000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 7.562,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-4489-05",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "runner": "baseline",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 31.186,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-4489-05",
+      "outcome": "abstained",
+      "reason": "geometry:not_found:no_candidate_row",
+      "runner": "geometry",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 171.213,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-2927-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000012927-23-000007",
+        "citations": [
+          {
+            "accession": "0000012927-23-000007",
+            "column_label": "2022",
+            "period": "2022",
+            "raw": "66,608",
+            "row_label": "Total revenues",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "66608.00",
+        "value_economic": "66608000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": false,
+      "correct": false,
+      "elapsed_ms": 120.679,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-2927-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000012927-23-000007",
+        "citations": [
+          {
+            "accession": "0000012927-23-000007",
+            "column_label": "2022",
+            "document_sha256": "cd5b833fc2c2b03391d16cf5490c5453f4360e4603f98948473312e68342140b",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "$66,608",
+            "row_label": "Revenues",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "d60e0ac6df80cf415c970e9dbde9711bfd14791207ed8a318c1de3c810fb9ec6",
+            "table_index": 10
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "66608",
+        "value_economic": "66608000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "citation_failure",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 69.272,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-2927-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000012927-23-000007",
+        "citations": [
+          {
+            "accession": "0000012927-23-000007",
+            "column_label": "2022",
+            "period": "2022",
+            "raw": "66,608",
+            "row_label": "Total revenues",
+            "scale": 6
+          },
+          {
+            "accession": "0000012927-23-000007",
+            "column_label": "",
+            "period": "2021",
+            "raw": "62,286",
+            "row_label": "Total revenues",
+            "scale": 6
+          }
+        ],
+        "period": "2022 vs 2021",
+        "scale": 6,
+        "value_display": "6.94",
+        "value_economic": null
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": false,
+      "correct": false,
+      "elapsed_ms": 235.781,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-2927-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000012927-23-000007",
+        "citations": [
+          {
+            "accession": "0000012927-23-000007",
+            "column_label": "2022",
+            "period": "2022",
+            "raw": "$66,608",
+            "row_label": "Revenues",
+            "scale": 6,
+            "table_digest": "d60e0ac6df80cf415c970e9dbde9711bfd14791207ed8a318c1de3c810fb9ec6"
+          },
+          {
+            "accession": "0000012927-23-000007",
+            "column_label": "2021",
+            "period": "2021",
+            "raw": "$62,286",
+            "row_label": "Revenues",
+            "scale": 6,
+            "table_digest": "d60e0ac6df80cf415c970e9dbde9711bfd14791207ed8a318c1de3c810fb9ec6"
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "6.94",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "citation_failure",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": false,
+      "correct": false,
+      "elapsed_ms": 5.483,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-2927-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000012927-23-000007",
+        "citations": [
+          {
+            "accession": "0000012927-23-000007",
+            "column_label": "2022",
+            "period": "2022",
+            "raw": "$ 137,100",
+            "row_label": "Total assets",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "137100.00",
+        "value_economic": "137100000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "citation_failure",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": false,
+      "correct": false,
+      "elapsed_ms": 16.989,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-2927-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000012927-23-000007",
+        "citations": [
+          {
+            "accession": "0000012927-23-000007",
+            "column_label": "2022",
+            "document_sha256": "cd5b833fc2c2b03391d16cf5490c5453f4360e4603f98948473312e68342140b",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "$137,100",
+            "row_label": "Total assets",
+            "scale": 6,
+            "statement_family": "balance_sheet",
+            "table_digest": "221f72c8008b2523bbe89f4d1ed03fb1e74215041b6834f5a77620191ebb7c59",
+            "table_index": 35
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "137100",
+        "value_economic": "137100000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "citation_failure",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 143.948,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-1800-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001628280-23-004026",
+        "citations": [
+          {
+            "accession": "0001628280-23-004026",
+            "column_label": "2021",
+            "period": "2022",
+            "raw": "43,653",
+            "row_label": "Net Sales",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "43653.00",
+        "value_economic": "43653000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 117.244,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-1800-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001628280-23-004026",
+        "citations": [
+          {
+            "accession": "0001628280-23-004026",
+            "column_label": "Year Ended December 31 \u00b7 2022",
+            "document_sha256": "1ade636092858cac0a6e69852e7a390a0c926b2b0bbb7633edaa7127b72c7f75",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "43,653",
+            "row_label": "Net Sales",
+            "scale": 6,
+            "statement_family": "note",
+            "table_digest": "6af6865bf1e2be140159edc281a4277c21b11fa9dcfc03fec566204928ce44fa",
+            "table_index": 18
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "43653",
+        "value_economic": "43653000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 79.82,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-1800-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001628280-23-004026",
+        "citations": [
+          {
+            "accession": "0001628280-23-004026",
+            "column_label": "2021",
+            "period": "2022",
+            "raw": "43,653",
+            "row_label": "Net Sales",
+            "scale": 6
+          },
+          {
+            "accession": "0001628280-23-004026",
+            "column_label": "",
+            "period": "2021",
+            "raw": "43,075",
+            "row_label": "Net Sales",
+            "scale": 6
+          }
+        ],
+        "period": "2022 vs 2021",
+        "scale": 6,
+        "value_display": "1.34",
+        "value_economic": null
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 233.876,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-1800-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001628280-23-004026",
+        "citations": [
+          {
+            "accession": "0001628280-23-004026",
+            "column_label": "Year Ended December 31 \u00b7 2022",
+            "period": "2022",
+            "raw": "43,653",
+            "row_label": "Net Sales",
+            "scale": 6,
+            "table_digest": "6af6865bf1e2be140159edc281a4277c21b11fa9dcfc03fec566204928ce44fa"
+          },
+          {
+            "accession": "0001628280-23-004026",
+            "column_label": "Year Ended December 31 \u00b7 2021",
+            "period": "2021",
+            "raw": "43,075",
+            "row_label": "Net Sales",
+            "scale": 6,
+            "table_digest": "6af6865bf1e2be140159edc281a4277c21b11fa9dcfc03fec566204928ce44fa"
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "1.34",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": "conflicting_row_values",
+      "elapsed_ms": 22.556,
+      "gold_class": "xbrl_verified",
+      "id": "H-1800-03",
+      "outcome": "abstained",
+      "reason": "concept_resolution:ambiguous",
+      "runner": "baseline",
+      "status": "resolution_failure",
+      "tags": [
+        "lookup",
+        "net_income"
+      ]
+    },
+    {
+      "correct": false,
+      "detail": "conflicting_note_values",
+      "elapsed_ms": 56.156,
+      "gold_class": "xbrl_verified",
+      "id": "H-1800-03",
+      "outcome": "abstained",
+      "reason": "geometry:ambiguous:conflicting_note_values",
+      "runner": "geometry",
+      "status": "resolution_failure",
+      "tags": [
+        "lookup",
+        "net_income"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 6.255,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-1800-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0001628280-23-004026",
+        "citations": [
+          {
+            "accession": "0001628280-23-004026",
+            "column_label": "",
+            "period": "2022",
+            "raw": "74,438",
+            "row_label": "Total Assets",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "74438.00",
+        "value_economic": "74438000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": "concept_printed_only_in_notes_or_schedules",
+      "elapsed_ms": 17.056,
+      "gold_class": "xbrl_verified",
+      "id": "H-1800-04",
+      "outcome": "abstained",
+      "reason": "geometry:statement_scope_unresolved:concept_printed_only_in_notes_or_schedules",
+      "runner": "geometry",
+      "status": "resolution_failure",
+      "tags": [
+        "lookup",
+        "total_assets"
+      ]
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 9.099,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-1800-05",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "runner": "baseline",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 26.697,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-1800-05",
+      "outcome": "abstained",
+      "reason": "geometry:not_found:no_candidate_row",
+      "runner": "geometry",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 179.057,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-8911-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-012762",
+        "citations": [
+          {
+            "accession": "0000950170-22-012762",
+            "column_label": "2021",
+            "period": "2022",
+            "raw": "93,512",
+            "row_label": "REVENUE",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "93512.00",
+        "value_economic": "93512000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 150.371,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-8911-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-012762",
+        "citations": [
+          {
+            "accession": "0000950170-22-012762",
+            "column_label": "Years ended May 31, \u00b7 2022",
+            "document_sha256": "e65273e9ad9bab61c24af439ddd44911ffd2940d981d658b1e9f7045d3a9b4f6",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "93,512",
+            "row_label": "REVENUE",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "c797d70116bb89f2c985f992a91d910e1d28c92b3bc1460e1363fbf34d49444e",
+            "table_index": 39
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "93512",
+        "value_economic": "93512000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 64.274,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-8911-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-012762",
+        "citations": [
+          {
+            "accession": "0000950170-22-012762",
+            "column_label": "2021",
+            "period": "2022",
+            "raw": "93,512",
+            "row_label": "REVENUE",
+            "scale": 6
+          },
+          {
+            "accession": "0000950170-22-012762",
+            "column_label": "",
+            "period": "2021",
+            "raw": "83,959",
+            "row_label": "REVENUE",
+            "scale": 6
+          }
+        ],
+        "period": "2022 vs 2021",
+        "scale": 6,
+        "value_display": "11.38",
+        "value_economic": null
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 300.863,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-8911-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-012762",
+        "citations": [
+          {
+            "accession": "0000950170-22-012762",
+            "column_label": "Years ended May 31, \u00b7 2022",
+            "period": "2022",
+            "raw": "93,512",
+            "row_label": "REVENUE",
+            "scale": 6,
+            "table_digest": "c797d70116bb89f2c985f992a91d910e1d28c92b3bc1460e1363fbf34d49444e"
+          },
+          {
+            "accession": "0000950170-22-012762",
+            "column_label": "Years ended May 31, \u00b7 2021",
+            "period": "2021",
+            "raw": "83,959",
+            "row_label": "REVENUE",
+            "scale": 6,
+            "table_digest": "c797d70116bb89f2c985f992a91d910e1d28c92b3bc1460e1363fbf34d49444e"
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "11.38",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 15.708,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-8911-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-012762",
+        "citations": [
+          {
+            "accession": "0000950170-22-012762",
+            "column_label": "2021",
+            "period": "2022",
+            "raw": "3,826",
+            "row_label": "NET INCOME",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "3826.00",
+        "value_economic": "3826000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "net_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 70.196,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-8911-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-012762",
+        "citations": [
+          {
+            "accession": "0000950170-22-012762",
+            "column_label": "Years ended May 31, \u00b7 2022",
+            "document_sha256": "e65273e9ad9bab61c24af439ddd44911ffd2940d981d658b1e9f7045d3a9b4f6",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "3,826",
+            "row_label": "NET INCOME",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "c797d70116bb89f2c985f992a91d910e1d28c92b3bc1460e1363fbf34d49444e",
+            "table_index": 39
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "3826",
+        "value_economic": "3826000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "net_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 10.888,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-8911-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-012762",
+        "citations": [
+          {
+            "accession": "0000950170-22-012762",
+            "column_label": "2021",
+            "period": "2022",
+            "raw": "6,245",
+            "row_label": "OPERATING INCOME",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "6245.00",
+        "value_economic": "6245000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "operating_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 58.443,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-8911-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000950170-22-012762",
+        "citations": [
+          {
+            "accession": "0000950170-22-012762",
+            "column_label": "Years ended May 31, \u00b7 2022",
+            "document_sha256": "e65273e9ad9bab61c24af439ddd44911ffd2940d981d658b1e9f7045d3a9b4f6",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "6,245",
+            "row_label": "OPERATING INCOME",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "c797d70116bb89f2c985f992a91d910e1d28c92b3bc1460e1363fbf34d49444e",
+            "table_index": 39
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "6245",
+        "value_economic": "6245000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "operating_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 6.118,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-8911-05",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "runner": "baseline",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "correct": true,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 35.762,
+      "gold_class": "structurally_unanswerable",
+      "id": "H-8911-05",
+      "outcome": "abstained",
+      "reason": "geometry:not_found:no_candidate_row",
+      "runner": "geometry",
+      "status": "justified_abstention",
+      "tags": [
+        "justified_abstention",
+        "structurally_unanswerable"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 152.209,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-0667-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000060667-22-000038",
+        "citations": [
+          {
+            "accession": "0000060667-22-000038",
+            "column_label": "",
+            "period": "2022",
+            "raw": "96,250",
+            "row_label": "Net sales",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "96250.00",
+        "value_economic": "96250000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 83.078,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-0667-01",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000060667-22-000038",
+        "citations": [
+          {
+            "accession": "0000060667-22-000038",
+            "column_label": "Fiscal Years Ended \u00b7 January 28, 2022",
+            "document_sha256": "907e7e260cfa18af6b0c625333b979b991424e0e7d00045d1a245b3d74cca297",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "96,250",
+            "row_label": "Net sales",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "229a244cf287b900e64da26313244dd2e6bb73680b9ab885393941a7b5257d0c",
+            "table_index": 65
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "96250",
+        "value_economic": "96250000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "revenue"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": null,
+      "elapsed_ms": 58.86,
+      "gold_class": "xbrl_verified",
+      "id": "H-0667-02",
+      "outcome": "abstained",
+      "reason": "unit_mismatch",
+      "runner": "baseline",
+      "status": "resolution_failure",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 164.2,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-0667-02",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000060667-22-000038",
+        "citations": [
+          {
+            "accession": "0000060667-22-000038",
+            "column_label": "Fiscal Years Ended \u00b7 January 28, 2022",
+            "period": "2022",
+            "raw": "96,250",
+            "row_label": "Net sales",
+            "scale": 6,
+            "table_digest": "229a244cf287b900e64da26313244dd2e6bb73680b9ab885393941a7b5257d0c"
+          },
+          {
+            "accession": "0000060667-22-000038",
+            "column_label": "Fiscal Years Ended \u00b7 January 29, 2021",
+            "period": "2021",
+            "raw": "89,597",
+            "row_label": "Net sales",
+            "scale": 6,
+            "table_digest": "229a244cf287b900e64da26313244dd2e6bb73680b9ab885393941a7b5257d0c"
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "7.43",
+        "value_economic": null
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "arithmetic",
+        "derived_percentage_change"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 15.659,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": false,
+      "id": "H-0667-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000060667-22-000038",
+        "citations": [
+          {
+            "accession": "0000060667-22-000038",
+            "column_label": "January 29, 2021",
+            "period": "2022",
+            "raw": "8,442",
+            "row_label": "Net earnings",
+            "scale": 6
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "8442.00",
+        "value_economic": "8442000000"
+      },
+      "runner": "baseline",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "net_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 38.727,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-0667-03",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000060667-22-000038",
+        "citations": [
+          {
+            "accession": "0000060667-22-000038",
+            "column_label": "Fiscal Years Ended \u00b7 January 28, 2022",
+            "document_sha256": "907e7e260cfa18af6b0c625333b979b991424e0e7d00045d1a245b3d74cca297",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "8,442",
+            "row_label": "Net earnings",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "229a244cf287b900e64da26313244dd2e6bb73680b9ab885393941a7b5257d0c",
+            "table_index": 65
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "8442",
+        "value_economic": "8442000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "net_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    },
+    {
+      "correct": false,
+      "detail": "no_candidate_row",
+      "elapsed_ms": 9.925,
+      "gold_class": "xbrl_verified",
+      "id": "H-0667-04",
+      "outcome": "abstained",
+      "reason": "concept_resolution:not_found",
+      "runner": "baseline",
+      "status": "resolution_failure",
+      "tags": [
+        "lookup",
+        "operating_income"
+      ]
+    },
+    {
+      "citation_ok": true,
+      "correct": true,
+      "elapsed_ms": 31.946,
+      "gold_class": "xbrl_verified",
+      "header_confirmed": true,
+      "id": "H-0667-04",
+      "numerical_ok": true,
+      "outcome": "answered",
+      "period_ok": true,
+      "reason": null,
+      "response": {
+        "accession": "0000060667-22-000038",
+        "citations": [
+          {
+            "accession": "0000060667-22-000038",
+            "column_label": "Fiscal Years Ended \u00b7 January 28, 2022",
+            "document_sha256": "907e7e260cfa18af6b0c625333b979b991424e0e7d00045d1a245b3d74cca297",
+            "entity_scope": "consolidated",
+            "period": "2022",
+            "raw": "12,093",
+            "row_label": "Operating income",
+            "scale": 6,
+            "statement_family": "income",
+            "table_digest": "229a244cf287b900e64da26313244dd2e6bb73680b9ab885393941a7b5257d0c",
+            "table_index": 65
+          }
+        ],
+        "period": "2022",
+        "scale": 6,
+        "value_display": "12093",
+        "value_economic": "12093000000"
+      },
+      "runner": "geometry",
+      "source_ok": true,
+      "status": "correct",
+      "tags": [
+        "lookup",
+        "operating_income"
+      ],
+      "unit_ok": true,
+      "value_ok": true
+    }
+  ],
+  "schema": "atlas.answer_semantics.evaluation.v1",
+  "wall_ms": 40581.275
+}

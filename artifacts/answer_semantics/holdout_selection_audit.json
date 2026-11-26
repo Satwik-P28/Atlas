@@ -1,0 +1,49 @@
+{
+  "errors": 0,
+  "findings": [
+    {
+      "code": "universe_size",
+      "detail": "40 candidates declared",
+      "evidence": {
+        "candidates": 40,
+        "selection_count": 12
+      },
+      "severity": "info"
+    },
+    {
+      "code": "fiscal_label_caveat",
+      "detail": "the selection rule uses the calendar year of the period end, not the issuer's fiscal-year label; a late-January/spring period end can be labelled with the prior fiscal year by its issuer. Questions must state the period end.",
+      "evidence": [
+        {
+          "accession": "0001564590-22-023675",
+          "issuer": "Oracle Corp",
+          "period_of_report": "2022-05-31"
+        },
+        {
+          "accession": "0000950170-22-012762",
+          "issuer": "FedEx Corp",
+          "period_of_report": "2022-05-31"
+        },
+        {
+          "accession": "0000060667-22-000038",
+          "issuer": "Lowe's Companies Inc",
+          "period_of_report": "2022-01-28"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "code": "protocol_scope",
+      "detail": "both arms receive identical accessions, question text and cutoff dates; the development corpus is a disjoint issuer set and stays development-only.",
+      "evidence": {
+        "development_ciks": 11
+      },
+      "severity": "info"
+    }
+  ],
+  "network": true,
+  "plan_commitment": "073f690d6e3346dd1703a1e3a2483beaa004a2cbad35cb7e14012cb7486cb20e",
+  "schema": "atlas.answer_semantics.holdout_selection_audit.v1",
+  "selection_changed": false,
+  "warnings": 1
+}

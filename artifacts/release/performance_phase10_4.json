@@ -1,0 +1,185 @@
+{
+  "schema": "atlas.performance.phase10_4.v1",
+  "generated_at": "2026-11-24T22:51:35Z",
+  "commit": "715124077e9430323e2bbec0d3507e9de239fe51",
+  "hardware": {
+    "cpu": "AMD EPYC 7003 (Milan)",
+    "cores": 2,
+    "memory_gib": 3.8,
+    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "sqlite": "3.45.1"
+  },
+  "dataset": {
+    "database": "atlas demo",
+    "issuers": 5,
+    "filings": 1003,
+    "evidence_rows": 6524,
+    "ingested_documents": 1,
+    "note": "the offline demonstration corpus; one parsed synthetic 10-K"
+  },
+  "measurements": [
+    {
+      "name": "offline_demonstration_build",
+      "unit": "s",
+      "samples": 1,
+      "p50": 7.224,
+      "p95": null,
+      "min": 7.224,
+      "max": 7.224,
+      "mean": 7.224,
+      "note": "cold: empty database, offline fixtures"
+    },
+    {
+      "name": "application_startup",
+      "unit": "s",
+      "samples": 1,
+      "p50": 1.094,
+      "p95": null,
+      "min": 1.094,
+      "max": 1.094,
+      "mean": 1.094,
+      "note": "process spawn to first healthy /api/health"
+    },
+    {
+      "name": "command_palette_search",
+      "unit": "ms",
+      "samples": 15,
+      "p50": 6.5155,
+      "p95": 8.3312,
+      "min": 4.1632,
+      "max": 8.5177,
+      "mean": 6.4832,
+      "samples_count": 15
+    },
+    {
+      "name": "financial_statement_retrieval",
+      "unit": "ms",
+      "samples": 15,
+      "p50": 182.1636,
+      "p95": 212.2392,
+      "min": 162.1954,
+      "max": 222.8077,
+      "mean": 187.5389
+    },
+    {
+      "name": "company_detail",
+      "unit": "ms",
+      "samples": 15,
+      "p50": 8.3397,
+      "p95": 11.0096,
+      "min": 7.4773,
+      "max": 15.0637,
+      "mean": 9.2215
+    },
+    {
+      "name": "answer_certificate",
+      "unit": "ms",
+      "samples": 5,
+      "p50": 9.7944,
+      "p95": 23.6554,
+      "min": 8.7759,
+      "max": 23.6554,
+      "mean": 12.4792
+    },
+    {
+      "name": "company_comparison",
+      "unit": "ms",
+      "samples": 5,
+      "p50": 7.8489,
+      "p95": 13.617,
+      "min": 7.65,
+      "max": 13.617,
+      "mean": 8.9533
+    },
+    {
+      "name": "dcf_valuation",
+      "unit": "ms",
+      "samples": 5,
+      "p50": 22.0439,
+      "p95": 51.0297,
+      "min": 16.8893,
+      "max": 51.0297,
+      "mean": 28.226
+    },
+    {
+      "name": "pdf_report_generation",
+      "unit": "ms",
+      "samples": 5,
+      "p50": 19.1378,
+      "p95": 32.7719,
+      "min": 16.7489,
+      "max": 32.7719,
+      "mean": 21.2491
+    },
+    {
+      "name": "machine_readable_export",
+      "unit": "ms",
+      "samples": 5,
+      "p50": 6.7217,
+      "p95": 12.2522,
+      "min": 6.2529,
+      "max": 12.2522,
+      "mean": 8.6118
+    },
+    {
+      "name": "concurrent_answers_8_way",
+      "unit": "s",
+      "samples": 24,
+      "p50": 0.0113,
+      "p95": null,
+      "min": null,
+      "max": null,
+      "mean": 0.0113,
+      "note": "24 requests over 8 threads in 0.27 s total"
+    },
+    {
+      "name": "mcp_handshake",
+      "unit": "s",
+      "samples": 1,
+      "p50": 0.188,
+      "p95": null,
+      "min": 0.188,
+      "max": 0.188,
+      "mean": 0.188
+    },
+    {
+      "name": "mcp_tool_call",
+      "unit": "ms",
+      "samples": 10,
+      "p50": 5.4803,
+      "p95": 14.4359,
+      "min": 5.0814,
+      "max": 14.4359,
+      "mean": 6.8407
+    },
+    {
+      "name": "peak_resident_memory_of_client_process",
+      "unit": "MB",
+      "samples": 1,
+      "p50": 25.9,
+      "p95": null,
+      "min": 25.9,
+      "max": 25.9,
+      "mean": 25.9,
+      "note": "this harness, not the server process"
+    },
+    {
+      "name": "database_size",
+      "unit": "MB",
+      "samples": 1,
+      "p50": 11.9,
+      "p95": null,
+      "min": 11.9,
+      "max": 11.9,
+      "mean": 11.9,
+      "note": "demonstration database after `atlas demo`"
+    }
+  ],
+  "notes": [
+    "`atlas demo` built the demonstration database in 7.22 s (exit 0); it ingests SEC payloads and parses one filing.",
+    "Percentiles are over the samples stated in each row, on one warm process unless the note says otherwise.",
+    "The historical geometry numbers (24.3 s cold / 45 ms warm / 111 ms per question) are not comparable to these rows: different workload, different machine.",
+    "No optimisation is claimed from these numbers. They are a baseline for future work, not a target that was met."
+  ]
+}

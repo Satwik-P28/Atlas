@@ -1,0 +1,47 @@
+name: Answer quality or citation problem
+description: A value looks right but is not, or its citation does not support it
+labels: ["answer-quality"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the most valuable issue type Atlas can receive. Please include the citation fields
+        from the answer card (accession, table, unit, row, column, raw text).
+  - type: input
+    id: citation
+    attributes:
+      label: Citation as shown
+      placeholder: accession 0000320193-26-000026 · table TAB-… · row "Total net sales" · raw "478,834"
+    validations:
+      required: true
+  - type: input
+    id: claimed
+    attributes:
+      label: Value Atlas returned
+    validations:
+      required: true
+  - type: input
+    id: correct
+    attributes:
+      label: Value you believe is correct, with where it appears
+    validations:
+      required: false
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category (best guess)
+      options:
+        - Wrong statement scope (segment vs consolidated)
+        - Wrong filing vintage (original vs amendment)
+        - Wrong period or column
+        - Wrong unit or scale
+        - Row label mismatch
+        - Availability/cutoff behaviour
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Supporting evidence
+      description: Quote the filing text you compared against. No licensed data, no full filings.

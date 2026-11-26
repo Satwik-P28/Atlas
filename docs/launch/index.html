@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atlas — the evidence-first financial research operating system</title>
+<meta name="description" content="Atlas answers a financial question with the exact source cell, the computation and an independent check — or refuses with a reason. Local-first, inspectable, reproducible.">
+<style>
+  :root {
+    --bg: #0b0f14; --panel: #121821; --panel-2: #172029; --line: #22303c;
+    --text: #e8eef3; --muted: #93a4b3; --accent: #58b6e8; --accent-2: #2f8fbf;
+    --warn: #e0b341; --ok: #63c98a; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  header { border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #0e141b, #0b0f14); }
+  nav { display: flex; align-items: center; gap: 20px; height: 64px; }
+  .brand { font-weight: 650; letter-spacing: .14em; font-size: 13px; text-transform: uppercase; color: var(--text); }
+  .brand span { color: var(--accent); }
+  nav .spacer { flex: 1; }
+  nav a { color: var(--muted); font-size: 14px; }
+  .hero { padding: 72px 0 48px; }
+  .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: .16em; font-size: 12px; font-weight: 600; }
+  h1 { font-size: clamp(32px, 5vw, 52px); line-height: 1.08; margin: 14px 0 18px; letter-spacing: -0.02em; }
+  .lede { color: var(--muted); font-size: clamp(17px, 2vw, 20px); max-width: 780px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .button { display: inline-block; padding: 11px 18px; border-radius: 8px; font-weight: 600; font-size: 15px; border: 1px solid var(--line); color: var(--text); background: var(--panel); }
+  .button.primary { background: var(--accent); border-color: var(--accent); color: #06121a; }
+  .button:hover { text-decoration: none; filter: brightness(1.08); }
+  .shot { margin: 40px 0 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #000; box-shadow: 0 24px 60px rgba(0,0,0,.45); }
+  .shot img { display: block; width: 100%; height: auto; }
+  .shot figcaption { padding: 10px 14px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); background: var(--panel); }
+  section { padding: 56px 0; border-top: 1px solid var(--line); }
+  h2 { font-size: 26px; letter-spacing: -0.01em; margin: 0 0 8px; }
+  .sub { color: var(--muted); margin: 0 0 26px; max-width: 780px; }
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+  .card h3 { margin: 0 0 8px; font-size: 16px; }
+  .card p { margin: 0; color: var(--muted); font-size: 14.5px; }
+  .stages { counter-reset: stage; display: grid; gap: 12px; }
+  .stage { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .stage::before { counter-increment: stage; content: counter(stage); font-family: var(--mono); color: var(--accent); font-size: 13px; padding-top: 2px; }
+  .stage strong { display: block; font-size: 15px; }
+  .stage span { color: var(--muted); font-size: 14px; }
+  pre { background: #05080b; border: 1px solid var(--line); border-radius: 10px; padding: 16px; overflow-x: auto; font-family: var(--mono); font-size: 13.5px; line-height: 1.55; }
+  code { font-family: var(--mono); font-size: 13.5px; }
+  .two { display: grid; gap: 24px; grid-template-columns: 1.1fr .9fr; align-items: start; }
+  .honest { border-left: 3px solid var(--warn); padding: 12px 0 12px 16px; color: var(--muted); }
+  .honest strong { color: var(--text); }
+  ul.clean { margin: 0; padding-left: 20px; color: var(--muted); }
+  ul.clean li { margin: 6px 0; }
+  footer { border-top: 1px solid var(--line); padding: 28px 0 48px; color: var(--muted); font-size: 14px; }
+  @media (max-width: 760px) { .two { grid-template-columns: 1fr; } .hero { padding: 44px 0 32px; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="brand">ATLAS <span>·</span> evidence-first research</div>
+      <div class="spacer"></div>
+      <a href="#how">How it works</a>
+      <a href="#proof">Proof</a>
+      <a href="#install">Install</a>
+      <a href="#limits">Limits</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <p class="eyebrow">v0.2.0-beta.1 · experimental public preview</p>
+    <h1>Financial research whose evidence, assumptions, calculations and conclusions can be inspected, challenged, verified and reproduced.</h1>
+    <p class="lede">Atlas takes a financial question and returns one verified source cell, the typed arithmetic that produced the number, and an independent check of that arithmetic — or it refuses, with a code and the evidence it considered. Everything runs on your machine, from filings you can re-download.</p>
+    <div class="cta">
+      <a class="button primary" href="#install">Install and run the offline demo</a>
+      <a class="button" href="#proof">See what was measured</a>
+    </div>
+    <figure class="shot">
+      <img src="screenshots/chromium_1440x900_answers.png" alt="Atlas answer certificate page: company, concept, period, resolved value with citation, availability badge">
+      <figcaption>An answer certificate: 21,690 gross profit resolved to one cell of one parsed table, with accession, table and unit ids, raw text, and an availability bound labelled as modelled rather than observed.</figcaption>
+    </figure>
+  </div>
+
+  <section id="how">
+    <div class="wrap">
+      <h2>A question, not a chat</h2>
+      <p class="sub">Atlas is built around deterministic resolution rather than text generation: the same question against the same data returns the same cell, the same value and the same fingerprint.</p>
+      <div class="stages">
+        <div class="stage"><div><strong>Resolve</strong><span>A closed vocabulary of financial concepts matches row labels by phrase, refuses segment totals for consolidated questions, and picks a filing whose own period is the requested year.</span></div></div>
+        <div class="stage"><div><strong>Bind</strong><span>The answer is one cell: document, table, unit, row, column, raw text, unit scale and currency. Segment-sensitive concepts are consolidated-scope only.</span></div></div>
+        <div class="stage"><div><strong>Compute</strong><span>Lookups and accepted arithmetic are compiled to an expression and evaluated by an exact-fraction engine; the formula is part of the answer.</span></div></div>
+        <div class="stage"><div><strong>Verify</strong><span>An independent verifier re-reads the pinned document bytes and recomputes the value. A certificate proves internal consistency, not economic interpretation.</span></div></div>
+        <div class="stage"><div><strong>Date</strong><span>Every observation carries a point-in-time availability bound, so moving the cutoff changes what you are allowed to see — without rewriting history.</span></div></div>
+        <div class="stage"><div><strong>Refuse</strong><span>Ambiguity, missing evidence and unavailable periods produce a typed refusal with candidates and reasons. A refusal is a result, not an error state.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap two">
+      <div>
+        <h2>What the release actually does</h2>
+        <p class="sub">Measured in the release environment, not generalized.</p>
+        <ul class="clean">
+          <li>Ingests a real 10-K (Apple FY2026, 1.65 MB) into 60 parsed tables and 728 text units in <strong>0.2 s</strong> from local bytes; answers total net sales as <strong>478,834</strong> with an independently verified certificate.</li>
+          <li>Reproduces that answer identically on a second, freshly initialised installation: same value, same source-table hash, same document hash.</li>
+          <li>Exports research memos to PDF and JSON with a content hash served alongside the bytes, and re-checks stored claims for change.</li>
+          <li>Serves the same evidence over HTTP, the CLI, and an MCP server that the official <code>mcp</code> Python SDK can discover and call.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>What it deliberately is not</h2>
+        <p class="sub">Stated on the landing page because it is stated in the product.</p>
+        <ul class="clean">
+          <li>Not a market-data terminal: no vendor prices are bundled, and none are redistributed.</li>
+          <li>Not a forecasting product: valuations are assumption-explicit models, and scenarios are labelled as analyst inputs.</li>
+          <li>Not proof of economic interpretation: a verified certificate says the number is what the filing says, not that your reading of it is right.</li>
+          <li>Not multi-user or hosted: the API is local-only and unauthenticated by design, and must not be exposed publicly.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="proof">
+    <div class="wrap">
+      <h2>Proof you can re-run</h2>
+      <p class="sub">Each claim below has a command and a committed report in the repository.</p>
+      <figure class="shot">
+        <img src="screenshots/chromium_1440x900_workstation.png" alt="Atlas workstation with statements, metrics, evidence and memos panels">
+        <figcaption>The workstation: statements, metrics, evidence inspector and saved memos in one desk, with the information cutoff visible in the header.</figcaption>
+      </figure>
+      <div class="grid" style="margin-top: 24px;">
+        <div class="card"><h3>Offline acceptance</h3><p><code>scripts/accept_phase10_4.py</code> — 30/30 steps on a bundled synthetic 10-K: answer, certificate, verify, valuation, scenarios, comparison, memo, PDF, MCP and reproduction.</p></div>
+        <div class="card"><h3>Real filing acceptance</h3><p><code>scripts/accept_real_filing_phase10_5.py</code> — 45 steps against Apple's live 10-K from SEC EDGAR, including arithmetic recomputed from the parsed table and a justified refusal.</p></div>
+        <div class="card"><h3>MCP interoperability</h3><p><code>tests/test_mcp_sdk_interop.py</code> — the official <code>mcp</code> SDK initialises, discovers 14 tools, reads structured content, and sees a typed refusal rather than a fabricated answer.</p></div>
+        <div class="card"><h3>Browser certification</h3><p><code>web/e2e/phase10_5_certification.mjs</code> — palette, certificate, refusal, comparison, onboarding, keyboard focus and mobile viewports, with screenshots committed.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wrap">
+      <h2>Install in one minute</h2>
+      <p class="sub">Python 3.12+. No Node.js, no database server, no API keys, no network for the demo.</p>
+      <pre><code>python -m venv .venv
+. .venv/bin/activate            # Windows: .venv\Scripts\activate
+pip install "atlas_quant-0.2.0b1-py3-none-any.whl[terminal]"
+atlas demo                      # builds a synthetic filing and opens the terminal
+</code></pre>
+      <p class="sub">Then, if you want a real company: <code>atlas sec sync --cik 320193 --user-agent "Your Name you@example.org"</code> followed by <code>atlas serve</code>.</p>
+      <div class="honest"><strong>Local by default.</strong> The server binds to loopback, rejects unrecognised Host headers and requires no account. Do not publish it: it is unauthenticated.</div>
+      <p class="sub">Licensed under the <a href="https://github.com/Satwik-P28/Atlas/blob/main/LICENSE">Apache License 2.0</a> (Copyright 2026 Satwik Peddireddi). The licence covers Atlas's software only: no vendor market data is bundled, and third-party data keeps its own terms. Verify a download with <code>sha256sum -c SHA256SUMS</code> before installing.</p>
+    </div>
+  </section>
+
+  <section id="limits">
+    <div class="wrap">
+      <h2>Known limitations</h2>
+      <p class="sub">The full list is in <code>docs/KNOWN_LIMITATIONS.md</code>. The ones that matter for a first look:</p>
+      <ul class="clean">
+        <li>Parsed table columns can be ambiguous when a filer puts currency symbols in their own columns; citations say so (<code>ambiguous_column_label</code>) instead of guessing.</li>
+        <li>Availability is modelled for filing-level events: it is a bound, not an observed release instant, and every result labels which it is.</li>
+        <li>Independent human evaluation and external usability testing have not been run. Nothing on this page depends on them.</li>
+        <li>No vendor market data is bundled; price-dependent features need data you supply under your own licence.</li>
+      </ul>
+      <p class="sub" style="margin-top: 22px;">Atlas is an experimental public preview for research and evaluation. It is not investment advice, not an institutional system, and makes no claim of guaranteed performance or hallucination-free output.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    Atlas: The Evidence-First Financial Research Operating System · v0.2.0-beta.1 · Apache-2.0 ·
+    <a href="https://github.com/Satwik-P28/Atlas">source</a> ·
+    <a href="../QUICKSTART.md">quickstart</a> ·
+    <a href="../RELEASE_VERIFICATION.md">verify a release</a> ·
+    <a href="../KNOWN_LIMITATIONS.md">limitations</a>
+  </div>
+</footer>
+</body>
+</html>

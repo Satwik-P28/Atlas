@@ -1,0 +1,382 @@
+{
+  "schema": "atlas.acceptance.real_filing.v1",
+  "generated_at": "2026-11-26T19:21:50Z",
+  "commit": "36c7ee8e09862dd9bcea6d1927a72650a7308937",
+  "python": "3.12.3",
+  "issuer": "Apple Inc. (CIK 0000320193)",
+  "data_source": "SEC EDGAR live acquisition; the filing HTML is not stored in the repository",
+  "summary": {
+    "pass": 45,
+    "fail": 0,
+    "not_run": 0
+  },
+  "pass": true,
+  "steps": [
+    {
+      "id": "sec_contact_identity",
+      "surface": "config",
+      "status": "pass",
+      "detail": "using the configured SEC contact identity: Atlas release certification (atalavadios136@gmail.com)",
+      "seconds": null
+    },
+    {
+      "id": "primary_init",
+      "surface": "cli",
+      "status": "pass",
+      "detail": "atlas init exit 0",
+      "seconds": null
+    },
+    {
+      "id": "sec_sync_live",
+      "surface": "cli",
+      "status": "pass",
+      "detail": "live sync exit 0 in 5.5 s: METRIC                   VALUE            \n-----------------------  -----------------\nissuer_id                ISS-CIK0000320193\nlegal_name               Apple Inc.       \nfilings ",
+      "seconds": 5.5032
+    },
+    {
+      "id": "sec_filing_selected",
+      "surface": "network",
+      "status": "pass",
+      "detail": "Apple Inc. 10-K 0000320193-26-000026 for period 2026-09-26, filed 2026-11-03, https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm",
+      "seconds": null
+    },
+    {
+      "id": "real_ingest_10k",
+      "surface": "cli+parsed",
+      "status": "pass",
+      "detail": "0000320193-26-000026 (aapl-20260926.htm, filed 2026-11-03) 1650119 bytes parsed into 60 tables / 728 units in 0.5 s",
+      "seconds": 0.5082,
+      "value": {
+        "document_id": "DOC-2e6d63d53f354e84",
+        "sha256": "f5480847e8c5394f04af46be31d9e8b1b290bc3838af3e2fb38133dd3d26aee7",
+        "bytes": 1650119,
+        "tables": 60,
+        "units": 728,
+        "availability_precision": "unknown",
+        "availability_time": "2026-11-03T13:20:15Z"
+      }
+    },
+    {
+      "id": "real_health",
+      "surface": "api",
+      "status": "pass",
+      "detail": "/api/health 200, evidence=6598, issuers=1",
+      "seconds": null
+    },
+    {
+      "id": "real_company_selection",
+      "surface": "api",
+      "status": "pass",
+      "detail": "palette returned 1 match(es); selected ISS-CIK0000320193",
+      "seconds": null
+    },
+    {
+      "id": "real_company_detail",
+      "surface": "api",
+      "status": "pass",
+      "detail": "Apple Inc.",
+      "seconds": null
+    },
+    {
+      "id": "real_statements",
+      "surface": "api",
+      "status": "pass",
+      "detail": "6 period column(s) from synced XBRL facts",
+      "seconds": null
+    },
+    {
+      "id": "real_filing_list",
+      "surface": "api",
+      "status": "pass",
+      "detail": "25 filing(s) recorded",
+      "seconds": null
+    },
+    {
+      "id": "real_narrative_evidence",
+      "surface": "api",
+      "status": "pass",
+      "detail": "1 parsed document(s); the real 10-K is present with 60 tables",
+      "seconds": null
+    },
+    {
+      "id": "real_answer",
+      "surface": "api",
+      "status": "pass",
+      "detail": "Total net sales 2026 = 478834 None from None",
+      "seconds": 0.1596,
+      "value": 478834.0
+    },
+    {
+      "id": "real_certificate_verify",
+      "surface": "api",
+      "status": "pass",
+      "detail": "independent verification: {'report': {'schema': 'atlas.research_certificate.verify.v1', 'verifier_version': '1.1.0', 'level': 'ARITHMETIC_VERIFIED', 'status': 'arithmetic_only', 'certificate_fingerprint': '",
+      "seconds": null
+    },
+    {
+      "id": "real_availability_contract",
+      "surface": "api",
+      "status": "pass",
+      "detail": "precision=unknown, estimated=True, time=2026-11-03T13:20:15Z",
+      "seconds": null
+    },
+    {
+      "id": "real_arithmetic",
+      "surface": "knowledge",
+      "status": "pass",
+      "detail": "parsed unit: segment rows sum to 478834.0; the table's own Total net sales is 478834.0; certificate 478834.0",
+      "seconds": null
+    },
+    {
+      "id": "real_citation_quality",
+      "surface": "api",
+      "status": "pass",
+      "detail": "citation quality 'exact' (column label '2026' vs resolved period '2026', agrees=True); the cited column prints the period the answer is bound to",
+      "seconds": null
+    },
+    {
+      "id": "real_valuation",
+      "surface": "api",
+      "status": "pass",
+      "detail": "DCF value per share 241.59082981479995 from synced facts",
+      "seconds": null,
+      "value": 241.59082981479995
+    },
+    {
+      "id": "real_scenario_change",
+      "surface": "api",
+      "status": "pass",
+      "detail": "wacc 0.09 -> 0.11: 241.59082981479995 -> 181.2359821699798",
+      "seconds": null
+    },
+    {
+      "id": "real_comparison_refusal",
+      "surface": "api",
+      "status": "pass",
+      "detail": "comparison refused with 2 finding(s): ['insufficient_coverage', 'partial_coverage'] (a synthetic issuer cannot be compared with a real one)",
+      "seconds": null
+    },
+    {
+      "id": "real_memo_save",
+      "surface": "api",
+      "status": "pass",
+      "detail": "saved memo URO-MEM-4c1892332e6f in 1.45 s",
+      "seconds": null
+    },
+    {
+      "id": "real_pdf_export",
+      "surface": "api",
+      "status": "pass",
+      "detail": "75953 bytes, 19687 extractable characters, manifest hash matches",
+      "seconds": null
+    },
+    {
+      "id": "real_structured_export",
+      "surface": "api",
+      "status": "pass",
+      "detail": "44 claim(s); 34/34 numeric figures appear in the PDF text",
+      "seconds": null
+    },
+    {
+      "id": "real_export_verification",
+      "surface": "api",
+      "status": "pass",
+      "detail": "change report categories ['unchanged']",
+      "seconds": null
+    },
+    {
+      "id": "real_mcp",
+      "surface": "mcp",
+      "status": "pass",
+      "detail": "MCP returned 478834.0 (outcome=answered error=None); API certificate returned 478834.0",
+      "seconds": null
+    },
+    {
+      "id": "replay_ingest_10k",
+      "surface": "cli+parsed",
+      "status": "pass",
+      "detail": "0000320193-26-000026 (aapl-20260926.htm, filed 2026-11-03) 1650119 bytes parsed into 60 tables / 728 units in 0.2 s",
+      "seconds": 0.1882,
+      "value": {
+        "document_id": "DOC-788eff6d7f804178",
+        "sha256": "f5480847e8c5394f04af46be31d9e8b1b290bc3838af3e2fb38133dd3d26aee7",
+        "bytes": 1650119,
+        "tables": 60,
+        "units": 728,
+        "availability_precision": "unknown",
+        "availability_time": "2026-11-03T13:20:15Z"
+      }
+    },
+    {
+      "id": "replay_health",
+      "surface": "api",
+      "status": "pass",
+      "detail": "/api/health 200, evidence=6598, issuers=1",
+      "seconds": null
+    },
+    {
+      "id": "replay_company_selection",
+      "surface": "api",
+      "status": "pass",
+      "detail": "palette returned 1 match(es); selected ISS-CIK0000320193",
+      "seconds": null
+    },
+    {
+      "id": "replay_company_detail",
+      "surface": "api",
+      "status": "pass",
+      "detail": "Apple Inc.",
+      "seconds": null
+    },
+    {
+      "id": "replay_statements",
+      "surface": "api",
+      "status": "pass",
+      "detail": "6 period column(s) from synced XBRL facts",
+      "seconds": null
+    },
+    {
+      "id": "replay_filing_list",
+      "surface": "api",
+      "status": "pass",
+      "detail": "25 filing(s) recorded",
+      "seconds": null
+    },
+    {
+      "id": "replay_narrative_evidence",
+      "surface": "api",
+      "status": "pass",
+      "detail": "1 parsed document(s); the real 10-K is present with 60 tables",
+      "seconds": null
+    },
+    {
+      "id": "replay_answer",
+      "surface": "api",
+      "status": "pass",
+      "detail": "Total net sales 2026 = 478834 None from None",
+      "seconds": 0.1705,
+      "value": 478834.0
+    },
+    {
+      "id": "replay_certificate_verify",
+      "surface": "api",
+      "status": "pass",
+      "detail": "independent verification: {'report': {'schema': 'atlas.research_certificate.verify.v1', 'verifier_version': '1.1.0', 'level': 'ARITHMETIC_VERIFIED', 'status': 'arithmetic_only', 'certificate_fingerprint': '",
+      "seconds": null
+    },
+    {
+      "id": "replay_availability_contract",
+      "surface": "api",
+      "status": "pass",
+      "detail": "precision=unknown, estimated=True, time=2026-11-03T13:20:15Z",
+      "seconds": null
+    },
+    {
+      "id": "replay_arithmetic",
+      "surface": "knowledge",
+      "status": "pass",
+      "detail": "parsed unit: segment rows sum to 478834.0; the table's own Total net sales is 478834.0; certificate 478834.0",
+      "seconds": null
+    },
+    {
+      "id": "replay_citation_quality",
+      "surface": "api",
+      "status": "pass",
+      "detail": "citation quality 'exact' (column label '2026' vs resolved period '2026', agrees=True); the cited column prints the period the answer is bound to",
+      "seconds": null
+    },
+    {
+      "id": "replay_valuation",
+      "surface": "api",
+      "status": "pass",
+      "detail": "DCF value per share 241.59082981479995 from synced facts",
+      "seconds": null,
+      "value": 241.59082981479995
+    },
+    {
+      "id": "replay_scenario_change",
+      "surface": "api",
+      "status": "pass",
+      "detail": "wacc 0.09 -> 0.11: 241.59082981479995 -> 181.2359821699798",
+      "seconds": null
+    },
+    {
+      "id": "replay_comparison_refusal",
+      "surface": "api",
+      "status": "pass",
+      "detail": "comparison refused with 2 finding(s): ['insufficient_coverage', 'partial_coverage'] (a synthetic issuer cannot be compared with a real one)",
+      "seconds": null
+    },
+    {
+      "id": "replay_memo_save",
+      "surface": "api",
+      "status": "pass",
+      "detail": "saved memo URO-MEM-9bdb7d634578 in 1.47 s",
+      "seconds": null
+    },
+    {
+      "id": "replay_pdf_export",
+      "surface": "api",
+      "status": "pass",
+      "detail": "75953 bytes, 19687 extractable characters, manifest hash matches",
+      "seconds": null
+    },
+    {
+      "id": "replay_structured_export",
+      "surface": "api",
+      "status": "pass",
+      "detail": "44 claim(s); 34/34 numeric figures appear in the PDF text",
+      "seconds": null
+    },
+    {
+      "id": "replay_export_verification",
+      "surface": "api",
+      "status": "pass",
+      "detail": "change report categories ['unchanged']",
+      "seconds": null
+    },
+    {
+      "id": "replay_mcp",
+      "surface": "mcp",
+      "status": "pass",
+      "detail": "MCP returned 478834.0 (outcome=answered error=None); API certificate returned 478834.0",
+      "seconds": null
+    },
+    {
+      "id": "real_reproduction",
+      "surface": "cli+api",
+      "status": "pass",
+      "detail": "second installation reproduced value/table/document hash: identical ({\"value\": \"478834\", \"table_sha256\": \"616af41fb4570fc63d8a77ae9a10a63c31cfffe08e7fa7b836be5341f12f047d\", \"document_sha256\": \"f5480847e8c5394f04af46be31d9e8b1b290bc3838af3e2fb38133dd3d26aee7\", \"issuer_id\": \"ISS-CIK00003201)",
+      "seconds": null,
+      "value": {
+        "value": "478834",
+        "table_sha256": "616af41fb4570fc63d8a77ae9a10a63c31cfffe08e7fa7b836be5341f12f047d",
+        "document_sha256": "f5480847e8c5394f04af46be31d9e8b1b290bc3838af3e2fb38133dd3d26aee7",
+        "issuer_id": "ISS-CIK0000320193",
+        "period": "2026"
+      }
+    }
+  ],
+  "primary": {
+    "value": "478834",
+    "table_sha256": "616af41fb4570fc63d8a77ae9a10a63c31cfffe08e7fa7b836be5341f12f047d",
+    "document_sha256": "f5480847e8c5394f04af46be31d9e8b1b290bc3838af3e2fb38133dd3d26aee7",
+    "issuer_id": "ISS-CIK0000320193",
+    "period": "2026"
+  },
+  "replay": {
+    "value": "478834",
+    "table_sha256": "616af41fb4570fc63d8a77ae9a10a63c31cfffe08e7fa7b836be5341f12f047d",
+    "document_sha256": "f5480847e8c5394f04af46be31d9e8b1b290bc3838af3e2fb38133dd3d26aee7",
+    "issuer_id": "ISS-CIK0000320193",
+    "period": "2026"
+  },
+  "filing": {
+    "accession": "0000320193-26-000026",
+    "document": "aapl-20260926.htm",
+    "filed_date": "2026-11-03",
+    "period_of_report": "2026-09-26",
+    "acceptance_time": "2026-11-03T13:05:15.000Z",
+    "company": "Apple Inc."
+  }
+}

@@ -1,0 +1,463 @@
+{
+  "schema": "atlas.security.sql_interpolation.v1",
+  "total": 49,
+  "summary": {
+    "placeholders_only": 21,
+    "review": 24,
+    "structure_named": 4
+  },
+  "sites": [
+    {
+      "file": "src/atlas/applications/rights.py",
+      "line": 98,
+      "sql": "SELECT source_id, name, kind, homepage, licence, redistribution, notes FROM source WHERE source_id IN () ORDER BY source_id",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/applications/service.py",
+      "line": 80,
+      "sql": "SELECT source_id, name, kind, homepage, licence, redistribution, notes FROM source WHERE source_id IN () ORDER BY source_id",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/evidence/kernel.py",
+      "line": 49,
+      "sql": "INSERT INTO evidence () VALUES ()",
+      "interpolated": [
+        "', '.join(COLUMNS)",
+        "', '.join(('?' for _ in COLUMNS))"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/evidence/kernel.py",
+      "line": 51,
+      "sql": "SELECT FROM evidence",
+      "interpolated": [
+        "', '.join(COLUMNS)"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/evidence/kernel.py",
+      "line": 619,
+      "sql": "SELECT COUNT(*) FROM evidence WHERE entity_id = ? AND IS NOT NULL AND > ?",
+      "interpolated": [
+        "column",
+        "column"
+      ],
+      "classification": "structure_named"
+    },
+    {
+      "file": "src/atlas/evidence/kernel.py",
+      "line": 715,
+      "sql": "SELECT superseded_id FROM evidence_supersession WHERE superseding_id IN ()",
+      "interpolated": [
+        "placeholders"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/evidence/kernel.py",
+      "line": 951,
+      "sql": "SELECT COUNT(*) FROM evidence",
+      "interpolated": [
+        "where"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/evidence/kernel.py",
+      "line": 955,
+      "sql": "SELECT concept, COUNT(*) AS n FROM evidence GROUP BY concept ORDER BY n DESC",
+      "interpolated": [
+        "where"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/evidence/kernel.py",
+      "line": 960,
+      "sql": "SELECT quality, COUNT(*) AS n FROM evidence GROUP BY quality",
+      "interpolated": [
+        "where"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/evidence/kernel.py",
+      "line": 965,
+      "sql": "SELECT derivation_kind, COUNT(*) AS n FROM evidence GROUP BY derivation_kind",
+      "interpolated": [
+        "where"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/evidence/kernel.py",
+      "line": 970,
+      "sql": "SELECT COUNT(*) FROM evidence availability_precision = 'unknown'",
+      "interpolated": [
+        "where",
+        "' AND' if where else ' WHERE'"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/evidence/kernel.py",
+      "line": 979,
+      "sql": "SELECT COUNT(DISTINCT accession_number) FROM evidence",
+      "interpolated": [
+        "where"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/evidence/selection_sql.py",
+      "line": 49,
+      "sql": "WITH cand AS ( SELECT , COALESCE(period_start, '') AS ps, COALESCE(period_end, '') AS pe, COALESCE(value_numeric, value_text, '') AS val, {column} AS instant, AS tier, AS qrank FROM evidence WHERE entity_id = ? AND {colu",
+      "interpolated": [
+        "_SELECT_COLUMNS",
+        "_TIER_CASE",
+        "_QUALITY_CASE"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/evidence/selection_sql.py",
+      "line": 242,
+      "sql": "SELECT , AS tier FROM evidence WHERE entity_id = ? AND concept = ? AND COALESCE(period_start,'') = ? AND COALESCE(period_end,'') = ? AND unit = ? AND = ? AND <= ?",
+      "interpolated": [
+        "_SELECT_COLUMNS",
+        "_TIER_CASE",
+        "column",
+        "column"
+      ],
+      "classification": "structure_named"
+    },
+    {
+      "file": "src/atlas/evidence/selection_sql.py",
+      "line": 154,
+      "sql": "SELECT FROM evidence WHERE evidence_id IN ()",
+      "interpolated": [
+        "_SELECT_COLUMNS",
+        "placeholders"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/mcp/tools.py",
+      "line": 479,
+      "sql": "SELECT evidence_id FROM evidence WHERE evidence_id IN ()",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/mcp/tools.py",
+      "line": 498,
+      "sql": "SELECT COUNT(*) FROM",
+      "interpolated": [
+        "table"
+      ],
+      "classification": "structure_named"
+    },
+    {
+      "file": "src/atlas/quant/simulator.py",
+      "line": 449,
+      "sql": "SELECT source_id, redistribution FROM source WHERE source_id IN ()",
+      "interpolated": [
+        "','.join(('?' for _ in source_ids))"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/research/archive.py",
+      "line": 162,
+      "sql": "SELECT DISTINCT sal.evidence_id, sa.archive_id, sa.sha256, sa.rights FROM source_archive_link sal JOIN source_archive sa ON sa.archive_id = sal.archive_id WHERE sal.evidence_id IN () ORDER BY sal.evidence_id, sa.archive_",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/research/archive.py",
+      "line": 140,
+      "sql": "SELECT source_id, COUNT(*) AS archives, MAX(sha256) AS latest_sha256 FROM source_archive WHERE source_id IN () GROUP BY source_id",
+      "interpolated": [
+        "','.join(('?' for _ in source_ids))"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/research/equity.py",
+      "line": 579,
+      "sql": "SELECT evidence_id, concept, period_start, period_end, fiscal_period, value_numeric, unit, source_concept, accession_number, form_type, availability_time, quality, derivation_kind, derivation_rule FROM evidence WHERE evi",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/research/equity.py",
+      "line": 817,
+      "sql": "SELECT MAX(availability_time) FROM evidence WHERE evidence_id IN ()",
+      "interpolated": [
+        "placeholders"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/research/equity.py",
+      "line": 1992,
+      "sql": "SELECT source_id, name, kind, homepage, licence, redistribution, notes FROM source WHERE source_id IN () ORDER BY source_id",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/research/filing_evidence.py",
+      "line": 414,
+      "sql": "SELECT document_id, accession, form_type, availability_time FROM knowledge_document WHERE ORDER BY availability_time DESC, accession LIMIT ?",
+      "interpolated": [
+        "' AND '.join(clauses)"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/research/knowledge.py",
+      "line": 685,
+      "sql": "SELECT u.unit_id, u.document_id, u.unit_kind, u.section_path, u.heading, u.body, u.char_start, u.char_end, u.sha256 AS unit_sha256, d.issuer_id, d.accession, d.form_type, d.is_amendment, d.filed_date, d.acceptance_time, ",
+      "interpolated": [
+        "' AND '.join(clauses)"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/research/knowledge.py",
+      "line": 617,
+      "sql": "SELECT document_id, issuer_id, accession, form_type, is_amendment, amends_accession, filed_date, acceptance_time, availability_time, availability_precision, period_of_report, unit_count, table_count, sha256, rights, prim",
+      "interpolated": [
+        "' AND '.join(clauses)"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/research/knowledge.py",
+      "line": 824,
+      "sql": "SELECT body FROM knowledge_unit WHERE unit_id IN ()",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/research/knowledge.py",
+      "line": 858,
+      "sql": "SELECT COUNT(DISTINCT u.unit_id) AS n FROM knowledge_fts JOIN knowledge_unit u ON u.unit_id = knowledge_fts.unit_id JOIN knowledge_document d ON d.document_id = u.document_id WHERE knowledge_fts MATCH ? AND",
+      "interpolated": [
+        "' AND '.join(clauses)"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/research/knowledge.py",
+      "line": 885,
+      "sql": "SELECT t.*, u.char_start, u.char_end, d.accession, d.availability_time, d.rights FROM knowledge_table t JOIN knowledge_unit u ON u.unit_id = t.unit_id JOIN knowledge_document d ON d.document_id = t.document_id WHERE ORDE",
+      "interpolated": [
+        "' AND '.join(clauses)"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/research/move_intelligence.py",
+      "line": 1098,
+      "sql": "with the first tradable stored session",
+      "interpolated": [
+        "tradable"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/research/objects.py",
+      "line": 293,
+      "sql": "SELECT object_id, kind, name, version, status, schema_version, content_hash, created_at, updated_at FROM research_object ORDER BY created_at DESC, object_id LIMIT ?",
+      "interpolated": [
+        "where"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/research/objects.py",
+      "line": 172,
+      "sql": "SELECT evidence_id FROM evidence WHERE evidence_id IN ()",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/research/objects.py",
+      "line": 183,
+      "sql": "SELECT object_id FROM research_object WHERE object_id IN ()",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/research/objects.py",
+      "line": 194,
+      "sql": "SELECT source_id FROM source WHERE source_id IN ()",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/storage/db.py",
+      "line": 221,
+      "sql": "SELECT COUNT(*) FROM",
+      "interpolated": [
+        "table"
+      ],
+      "classification": "structure_named"
+    },
+    {
+      "file": "src/atlas/storage/quality.py",
+      "line": 63,
+      "sql": "SELECT * FROM data_quality_issue ORDER BY detected_at DESC, issue_id",
+      "interpolated": [
+        "where"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/terminal/market_projection.py",
+      "line": 212,
+      "sql": "SELECT FROM bar b LEFT JOIN source s ON s.source_id = b.source_id WHERE b.interval = '1d' AND b.mic IN () AND b.source_id IN () AND b.ts_utc BETWEEN ? AND ? ORDER BY b.security_id, b.ts_utc, b.revision_seq",
+      "interpolated": [
+        "_SERIES_COLUMNS",
+        "_placeholders(mics)",
+        "_placeholders(providers)"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/terminal/market_projection.py",
+      "line": 238,
+      "sql": "SELECT security_id, mic, source_id FROM bar WHERE interval = '1d' AND mic IN () AND ts_utc BETWEEN ? AND ? GROUP BY security_id, mic, source_id",
+      "interpolated": [
+        "_placeholders(mics)"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/terminal/market_projection.py",
+      "line": 280,
+      "sql": "SELECT * FROM corporate_action WHERE action_type IN () ORDER BY security_id, COALESCE(ex_date, effective_date, '9999-12-31'), action_id",
+      "interpolated": [
+        "_placeholders(types)"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/terminal/market_projection.py",
+      "line": 263,
+      "sql": "SELECT mic, session_date FROM trading_session WHERE mic IN () AND session_date BETWEEN ? AND ? ORDER BY mic, session_date",
+      "interpolated": [
+        "_placeholders(mics)"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/terminal/read_models.py",
+      "line": 180,
+      "sql": "SELECT * FROM listing WHERE security_id IN () ORDER BY is_primary DESC, valid_from",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/terminal/read_models.py",
+      "line": 187,
+      "sql": "SELECT ta.ticker, ta.status, ta.confidence, ta.valid_from, ta.valid_to, l.security_id, l.mic FROM ticker_assignment ta JOIN listing l ON l.listing_id = ta.listing_id WHERE l.security_id IN () AND ta.status != 'retracted'",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/terminal/read_models.py",
+      "line": 250,
+      "sql": "SELECT * FROM security WHERE issuer_id IN () AND is_active = 1 ORDER BY issuer_id, class_designation",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/terminal/read_models.py",
+      "line": 209,
+      "sql": "SELECT security_id, COUNT(DISTINCT ts_utc) AS sessions FROM bar WHERE security_id IN () GROUP BY security_id",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/terminal/read_models.py",
+      "line": 258,
+      "sql": "SELECT entity_id, COUNT(*) AS n FROM evidence WHERE entity_id IN () GROUP BY entity_id",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/terminal/read_models.py",
+      "line": 265,
+      "sql": "SELECT issuer_id, COUNT(*) AS n FROM filing WHERE issuer_id IN () GROUP BY issuer_id",
+      "interpolated": [
+        "marks"
+      ],
+      "classification": "placeholders_only"
+    },
+    {
+      "file": "src/atlas/terminal/read_models.py",
+      "line": 1517,
+      "sql": "SELECT COUNT(*) FROM ()",
+      "interpolated": [
+        "sql"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/terminal/read_models.py",
+      "line": 1627,
+      "sql": "SELECT availability_precision, COUNT(*) AS n FROM evidence GROUP BY availability_precision",
+      "interpolated": [
+        "where"
+      ],
+      "classification": "review"
+    },
+    {
+      "file": "src/atlas/terminal/read_models.py",
+      "line": 1655,
+      "sql": "SELECT COUNT(*) FROM evidence",
+      "interpolated": [
+        "where"
+      ],
+      "classification": "review"
+    }
+  ]
+}

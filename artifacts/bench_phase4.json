@@ -1,0 +1,100 @@
+{
+  "hardware": {
+    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "python": "3.12.3",
+    "cpu_model": "19/01"
+  },
+  "dataset": {
+    "security_id": "SEC-84034a36d48e517c9e3a",
+    "sessions": 6793,
+    "first_bar": "1999-11-01T21:00:00Z",
+    "last_bar": "2026-11-03T21:00:00Z",
+    "source_ids": [
+      "alphavantage"
+    ]
+  },
+  "compiler": [
+    {
+      "nodes": 10,
+      "compile_ms_median": 0.152,
+      "compile_peak_mib": 0.02,
+      "plan_nodes": 11
+    },
+    {
+      "nodes": 100,
+      "compile_ms_median": 0.85,
+      "compile_peak_mib": 0.19,
+      "plan_nodes": 101
+    },
+    {
+      "nodes": 1000,
+      "compile_ms_median": 8.154,
+      "compile_peak_mib": 1.96,
+      "plan_nodes": 1001
+    },
+    {
+      "nodes": 1900,
+      "compile_ms_median": 16.368,
+      "compile_peak_mib": 3.7,
+      "plan_nodes": 1901
+    }
+  ],
+  "features": {
+    "definitions": 6,
+    "points": 2977,
+    "first": "2015-01-02",
+    "last": "2026-11-03",
+    "compute_ms_median": 265.619
+  },
+  "simulator": [
+    {
+      "strategy": "buy_hold",
+      "sessions": 2977,
+      "trades": 1,
+      "duration_ms": 2023.285,
+      "sessions_per_second": 1471.4,
+      "peak_mib": 19.15,
+      "total_return": 1.08604004886387,
+      "max_drawdown": -0.3526477226491054,
+      "reconciled": true,
+      "result_fingerprint": "c4c5cc64d0c64f2c"
+    },
+    {
+      "strategy": "sma_cross",
+      "sessions": 2977,
+      "trades": 50,
+      "duration_ms": 3414.107,
+      "sessions_per_second": 872.0,
+      "peak_mib": 19.15,
+      "total_return": -0.394901520103325,
+      "max_drawdown": -0.5622935593880174,
+      "reconciled": true,
+      "result_fingerprint": "1adc96c0c8f6b026"
+    },
+    {
+      "strategy": "momentum",
+      "sessions": 2977,
+      "trades": 141,
+      "duration_ms": 1977.186,
+      "sessions_per_second": 1505.7,
+      "peak_mib": 19.15,
+      "total_return": 0.16120987125171493,
+      "max_drawdown": -0.44623381322041933,
+      "reconciled": true,
+      "result_fingerprint": "43df7690b5670594"
+    },
+    {
+      "strategy": "custom_model",
+      "sessions": 2977,
+      "trades": 333,
+      "duration_ms": 4039.392,
+      "sessions_per_second": 737.0,
+      "peak_mib": 19.16,
+      "total_return": 0.24172695322306192,
+      "max_drawdown": -0.4669188118055704,
+      "reconciled": true,
+      "result_fingerprint": "cbdcfaa377ff8682"
+    }
+  ]
+}

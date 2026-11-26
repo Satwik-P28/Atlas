@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 620" width="980" height="620" role="img" aria-label="Atlas architecture: browser frontend, local terminal API, engines, SQLite store, MCP server, SEC EDGAR acquisition">
+  <style>
+    .bg { fill: #0b0f14; }
+    .box { fill: #121821; stroke: #22303c; stroke-width: 1.5; rx: 10; }
+    .accent { stroke: #58b6e8; }
+    .label { fill: #e8eef3; font: 600 15px ui-sans-serif, system-ui, sans-serif; }
+    .small { fill: #93a4b3; font: 12.5px ui-sans-serif, system-ui, sans-serif; }
+    .mono { fill: #58b6e8; font: 12px ui-monospace, monospace; }
+    .edge { stroke: #3a4d5c; stroke-width: 1.6; fill: none; marker-end: url(#arrow); }
+    .edge-dash { stroke: #3a4d5c; stroke-width: 1.4; fill: none; stroke-dasharray: 5 5; marker-end: url(#arrow); }
+    .group { fill: none; stroke: #1d2833; stroke-width: 1.5; stroke-dasharray: 4 6; rx: 14; }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3a4d5c"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="980" height="620"/>
+  <text class="label" x="28" y="36">Atlas — local-first research stack</text>
+  <text class="small" x="28" y="56">Everything below the browser runs on one machine. No hosted service, no account, no vendor feed required.</text>
+
+  <rect class="group" x="24" y="76" width="932" height="150"/>
+  <text class="small" x="40" y="98">YOUR MACHINE</text>
+
+  <rect class="box accent" x="44" y="112" width="200" height="88"/>
+  <text class="label" x="60" y="140">Browser UI</text>
+  <text class="small" x="60" y="160">React + Vite bundle,</text>
+  <text class="small" x="60" y="178">served from the wheel</text>
+
+  <rect class="box accent" x="300" y="112" width="230" height="88"/>
+  <text class="label" x="316" y="140">Terminal API</text>
+  <text class="small" x="316" y="160">FastAPI on 127.0.0.1,</text>
+  <text class="small" x="316" y="178">Host-header guarded</text>
+
+  <rect class="box" x="586" y="112" width="170" height="88"/>
+  <text class="label" x="602" y="140">MCP server</text>
+  <text class="small" x="602" y="160">stdio, 14 tools,</text>
+  <text class="small" x="602" y="178">read-only by default</text>
+
+  <rect class="box" x="800" y="112" width="136" height="88"/>
+  <text class="label" x="816" y="140">CLI</text>
+  <text class="small" x="816" y="160">atlas init / demo /</text>
+  <text class="small" x="816" y="178">sec sync / serve</text>
+
+  <path class="edge" d="M 244 156 L 296 156"/>
+  <path class="edge" d="M 530 156 L 582 156"/>
+  <path class="edge" d="M 756 156 L 796 156"/>
+
+  <rect class="group" x="24" y="250" width="932" height="196"/>
+  <text class="small" x="40" y="272">ENGINES — deterministic, testable, no model calls</text>
+
+  <rect class="box" x="44" y="288" width="206" height="70"/>
+  <text class="label" x="60" y="316">Ingestion</text>
+  <text class="small" x="60" y="336">10-K/10-Q parsing → tables, text units, digests</text>
+
+  <rect class="box" x="270" y="288" width="216" height="70"/>
+  <text class="label" x="286" y="316">Concept resolution</text>
+  <text class="small" x="286" y="336">closed vocabulary, scope and period rules</text>
+
+  <rect class="box" x="506" y="288" width="206" height="70"/>
+  <text class="label" x="522" y="316">Exact arithmetic</text>
+  <text class="small" x="522" y="336">Fraction-based FEC compiler + verifier</text>
+
+  <rect class="box" x="732" y="288" width="204" height="70"/>
+  <text class="label" x="748" y="316">Research artifacts</text>
+  <text class="small" x="748" y="336">citations, certificates, memos, PDF/JSON</text>
+
+  <rect class="box" x="44" y="372" width="434" height="56"/>
+  <text class="label" x="60" y="398">Point-in-time availability</text>
+  <text class="small" x="60" y="416">modelled bounds labelled as modelled; no back-filling</text>
+
+  <rect class="box" x="506" y="372" width="430" height="56"/>
+  <text class="label" x="522" y="398">Typed refusals</text>
+  <text class="small" x="522" y="416">codes, candidates and reasons instead of guesses</text>
+
+  <rect class="box accent" x="300" y="486" width="380" height="72"/>
+  <text class="label" x="316" y="514">SQLite store (single file)</text>
+  <text class="small" x="316" y="534">evidence, documents, claims, memos — reproducible by hash</text>
+
+  <rect class="box" x="740" y="486" width="196" height="72"/>
+  <text class="label" x="756" y="514">SEC EDGAR</text>
+  <text class="small" x="756" y="534">live fetch with your contact identity</text>
+
+  <path class="edge" d="M 415 200 L 415 284"/>
+  <path class="edge" d="M 490 358 L 490 482"/>
+  <path class="edge" d="M 838 486 L 838 200"/>
+  <text class="small" x="28" y="592">A certificate proves internal consistency and source identity, not economic interpretation. The API is unauthenticated and must stay on loopback.</text>
+</svg>

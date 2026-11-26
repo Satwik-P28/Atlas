@@ -1,0 +1,89 @@
+{
+  "retrieved_with_user_agent": "AtlasQuant/0.1 hardening@example.com",
+  "documents": [
+    {
+      "ticker": "MSFT",
+      "cik": "0000789019",
+      "url": "https://data.sec.gov/submissions/CIK0000789019.json",
+      "bytes": 185425,
+      "sha256": "5c93fe7c62627741a3bd1ff48b9ce38e68be07f03c0b452624316f68ba69b068"
+    },
+    {
+      "ticker": "MSFT",
+      "cik": "0000789019",
+      "url": "https://data.sec.gov/submissions/CIK0000789019-submissions-001.json",
+      "bytes": 308181,
+      "sha256": "bd8d4e5c30f839955b7bd56f9353207e4ed94fa9132d30a4c17c7742d87bbbfd"
+    },
+    {
+      "ticker": "MSFT",
+      "cik": "0000789019",
+      "url": "https://data.sec.gov/submissions/CIK0000789019-submissions-002.json",
+      "bytes": 239417,
+      "sha256": "257104802c65c724f571fc4138f1e106d22ad36b3e4dddeed3fbe42fbdb8c65f"
+    },
+    {
+      "ticker": "MSFT",
+      "cik": "0000789019",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+      "bytes": 4938072,
+      "sha256": "8c1903c041f5c27e86ed15f37debb1f41882b7904bba129ef9edc76478b1e8ea"
+    },
+    {
+      "ticker": "WMT",
+      "cik": "0000104169",
+      "url": "https://data.sec.gov/submissions/CIK0000104169.json",
+      "bytes": 157934,
+      "sha256": "d18cb6aabfbf0d7cac41bfcac712f314566c465d8f9a258926fd2b1598191453"
+    },
+    {
+      "ticker": "WMT",
+      "cik": "0000104169",
+      "url": "https://data.sec.gov/submissions/CIK0000104169-submissions-001.json",
+      "bytes": 312765,
+      "sha256": "acc4e8e975c54f7610354cb19fdb0575da3171c4d2e6f6f7b2c8609ae1b3378a"
+    },
+    {
+      "ticker": "WMT",
+      "cik": "0000104169",
+      "url": "https://data.sec.gov/submissions/CIK0000104169-submissions-002.json",
+      "bytes": 226645,
+      "sha256": "0dc09274dcebecf3a894feb04e4060299aaa2d491cf1eaf1a71dfbed33fe3d2f"
+    },
+    {
+      "ticker": "WMT",
+      "cik": "0000104169",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000104169.json",
+      "bytes": 3771831,
+      "sha256": "49330f98609f70fcef4054edc90bc811398a58c4bf26dc0b218d607967a8dbe4"
+    },
+    {
+      "ticker": "GOOGL",
+      "cik": "0001652044",
+      "url": "https://data.sec.gov/submissions/CIK0001652044.json",
+      "bytes": 152246,
+      "sha256": "1c5158635d2e23826239e9680f15288dc42d4cd95ff3ed4a224a4c9875363659"
+    },
+    {
+      "ticker": "GOOGL",
+      "cik": "0001652044",
+      "url": "https://data.sec.gov/submissions/CIK0001652044-submissions-001.json",
+      "bytes": 270314,
+      "sha256": "caa8aa4043f5f755bdc421820cef0172f7216081faadf070be252e9137dc1547"
+    },
+    {
+      "ticker": "GOOGL",
+      "cik": "0001652044",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+      "bytes": 3249987,
+      "sha256": "ec4a3095d634583925b5ea450db8a5ed974dc48f6f1b4f594022310bc78d4032"
+    },
+    {
+      "ticker": "AAPL",
+      "cik": "0000320193",
+      "url": "https://data.sec.gov/submissions/CIK0000320193-submissions-001.json",
+      "bytes": 206002,
+      "sha256": "c01f4199ed2a19c8ccb302597f996ac4050c13f315258301d1164b924458c502"
+    }
+  ]
+}

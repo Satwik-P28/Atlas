@@ -1,0 +1,41 @@
+{
+  "schema": "atlas.phase9_2.browser.v1",
+  "mode": "cloud_browser",
+  "base": "authenticated Cloud preview",
+  "build": {
+    "backend_schema": 13,
+    "frontend_bundle_bytes": 701093,
+    "frontend_gzip_bytes": 207270
+  },
+  "assertions": [
+    "JPM workspace renders legal name, CIK 0000019617, FR Y-9C top-tier RSSD 1039502, and FDIC certificate 628",
+    "cutoff 2025-06-30 applied; price 289.91 dated 2025-06-30; accounting period 2024-12-31",
+    "baseline common-equity value 278.04",
+    "ROE 17.0% and cost of equity 9.5% recalculated to 287.92",
+    "restricted price shows source user-market-data, unadjusted, export denied, mixed date"
+  ],
+  "values": {
+    "baseline_value_per_share": 278.04,
+    "modified_value_per_share": 287.92,
+    "baseline_full_precision": 278.0365282174257,
+    "modified_full_precision": 287.91964876590805,
+    "cutoff": "2025-06-30",
+    "price": 289.91,
+    "price_date": "2025-06-30",
+    "accounting_period_end": "2024-12-31",
+    "preferred_equity": 20050000000,
+    "book_value_common_equity": 324708000000,
+    "book_value_per_common_share": 116.0666285387475
+  },
+  "screenshot": "artifacts/phase9_2_final_desktop_jpm.png",
+  "not_run": [
+    "Full local Playwright A-J journey: Chromium 156 renderer crashes in this container after the SPA starts.",
+    "390x844 viewport rerun: the local runner could not reach the mobile phase; layout code was not changed."
+  ],
+  "known_data_gaps": [
+    {
+      "status": 422,
+      "url": "/api/economic/panel?mode=public_available"
+    }
+  ]
+}
