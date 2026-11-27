@@ -24,8 +24,8 @@ Its notes are preserved verbatim in
   fails because no such flag exists. Every install instruction now uses the accepted form:
   `atlas --db PATH init|doctor|migrate`, `atlas demo|serve|mcp --db-path PATH`. Corrected in README,
   both quickstarts, the user guide, the installation, troubleshooting and verification pages, the
-  landing page and the release runbook. `atlas doctor --json` is documented as the way to read the
-  release version.
+  landing page and the release runbook. The released version is read from `/api/health`
+  (`release_version`), `pip show atlas-quant`, or `python -c "import atlas; print(atlas.__release_label__)"`.
 - **Python requirement stated consistently.** One quickstart said 3.11 or 3.12; the package requires
   3.12+, and the page now says so and marks 3.11 unsupported.
 - **Install instructions lead with PyPI**, `pip install "atlas-quant[terminal]==0.2.0b2"`, with the
@@ -61,8 +61,9 @@ atlas serve --db-path var/atlas.db --port 8000
 ```
 
 `--db` must precede the subcommand; `demo`, `serve` and `mcp` also accept `--db-path`, which
-overrides it. There is no `--version` flag: `atlas --db var/atlas.db doctor --json` reports
-`release_version`, and `python -c "import atlas; print(atlas.__release_label__)"` prints the label.
+overrides it. There is no `--version` flag: `python -c "import atlas; print(atlas.__release_label__)"`
+prints the label, `pip show atlas-quant` prints the version, and `/api/health` returns
+`release_version`.
 
 To install the release wheel instead, download it with `SHA256SUMS` and verify before installing:
 
@@ -107,7 +108,7 @@ sign the bytes.
 | Restricted data | tree, wheel, sdist and source snapshot contain no restricted vendor material; zero of the nine exact vendor paths reachable in any ref |
 | Security | SQL interpolation inventory and structure tests unchanged; dependency scan clean; no credentials in the tree |
 | Hosted CI | run **`45921091414`** on the candidate commit: **13/13 jobs** — backend and audits, frontend, database integrity, research and rights integrity, clean-checkout reproducibility, the 21-step browser journey on Chromium, Firefox and WebKit, the packaged wheel on Ubuntu, Windows and macOS, and the release wheel build. |
-| PyPI | `0.2.0b2` published through trusted publishing, then installed from PyPI into a fresh virtualenv and exercised through the quickstart above |
+| PyPI | [`atlas-quant 0.2.0b2`](https://pypi.org/project/atlas-quant/0.2.0b2/) published through trusted publishing (run `45957861894`); PyPI serves the certified wheel (`5ea9fde5…`) and sdist (`2738f5ff…`). Installed from PyPI into a fresh Python 3.12 virtualenv and exercised through the quickstart above. |
 
 Not performed, and not claimed: independent human evaluation, external usability testing, adoption
 measurements, load testing beyond the bounded resource audit, and a commercial MCP client test.
@@ -144,7 +145,8 @@ Full detail: [platform matrix](docs/PLATFORM_MATRIX.md).
 - Comparison covers companies already in the database, one period at a time.
 - MCP is stdio-only and read-only by default; no network transport.
 - Market-data onboarding is CSV only.
-- The CLI has no `--version` flag; read `release_version` from `atlas doctor --json`.
+- The CLI has no `--version` flag; read `release_version` from `/api/health`, `pip show atlas-quant`
+  or `atlas.__release_label__`.
 
 Full list with impact and status: [KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md).
 

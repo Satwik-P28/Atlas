@@ -36,7 +36,7 @@ something is absent.
 
 ```bash
 atlas --db var/atlas.db init        # create and migrate
-atlas --db var/atlas.db doctor      # schema, integrity, foreign keys, release version
+atlas --db var/atlas.db doctor      # schema, integrity and foreign keys
 atlas --db var/atlas.db migrate     # backup, migrate and verify (use after an upgrade)
 ```
 
@@ -44,8 +44,10 @@ atlas --db var/atlas.db migrate     # backup, migrate and verify (use after an u
 `unrecognized arguments`, because `init` and `doctor` take no options of their own.
 
 `atlas doctor` exits `0` only when the schema is current, SQLite integrity is `ok` and there are no
-foreign-key violations. It reports the installed release version separately from the HTTP API
-contract version.
+foreign-key violations. The CLI has no `--version` flag: read the release version from `/api/health`
+(`release_version`), from `pip show atlas-quant`, or with
+`python -c "import atlas; print(atlas.__release_label__)"`. The HTTP API contract version is reported
+separately from the release version.
 
 ## 3. Run the offline demonstration
 

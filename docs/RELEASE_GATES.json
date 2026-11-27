@@ -69,7 +69,7 @@
       "id": "documentation_accuracy",
       "name": "Documentation accuracy",
       "state": "PASS",
-      "evidence": "Every measured number is stated; unrun validations are named as unrun. This release corrects the two CLI defects that installing the published 0.2.0b1 wheel exposed: --db is a global option and must precede the subcommand, demo/serve/mcp accept --db-path, and no --version flag exists. All install instructions, the user guide, the verification page, the landing page and the runbook were corrected; the version is consistent across the package attribute, pyproject dynamic version, web package and API health; and the unsupported Python 3.11 claim was removed.",
+      "evidence": "Every measured number is stated; unrun validations are named as unrun. This release corrects the two CLI defects that installing the published 0.2.0b1 wheel exposed: --db is a global option and must precede the subcommand, demo/serve/mcp accept --db-path, and no --version flag exists. All install instructions, the user guide, the verification page, the landing page and the runbook were corrected; the version is consistent across the package attribute, pyproject dynamic version, web package and API health; and the unsupported Python 3.11 claim was removed. A second pass against the published PyPI package found that `atlas doctor --json` does not report the release version; the instructions now name only surfaces that do (/api/health release_version, pip show atlas-quant, atlas.__release_label__).",
       "command": "review of README.md, RELEASE_NOTES.md, docs/QUICKSTART.md, docs/KNOWN_LIMITATIONS.md, docs/PLATFORM_MATRIX.md, docs/PUBLIC_RELEASE_HANDOVER.md"
     },
     {
@@ -127,7 +127,7 @@
       "id": "authorized_publication_destination",
       "name": "Authorised publication destination",
       "state": "PASS",
-      "evidence": "Published on 2026-11-26 to the authorised destination Satwik-P28/Atlas (public, default branch main, description, homepage https://satwik-p28.github.io/Atlas/ and seven topics set) with Satwik-P28/Atlas-development as the private archive. Tag v0.2.0-beta.1 was created on 807a96206177 and the release published as a prerelease, not latest: https://github.com/Satwik-P28/Atlas/releases/tag/v0.2.0-beta.1. All four assets plus SHA256SUMS were uploaded, re-downloaded and verified with sha256sum -c. GitHub Pages is enabled with build_type workflow and https://satwik-p28.github.io/Atlas/ returns HTTP 200. PyPI trusted publishing is configured: GitHub environment 'pypi' plus a pending publisher for atlas-quant (owner Satwik-P28, repository Atlas, workflow release.yml). The corrective release v0.2.0-beta.2 republished the same tree as 0.2.0b2 from candidate commit d09e6116d60b (CI run 45921091414, 13/13) through the same authorised destination and PyPI trusted publishing, leaving the v0.2.0-beta.1 release and its assets untouched.",
+      "evidence": "Published on 2026-11-26 to the authorised destination Satwik-P28/Atlas (public, default branch main, description, homepage https://satwik-p28.github.io/Atlas/ and seven topics set) with Satwik-P28/Atlas-development as the private archive. Tag v0.2.0-beta.1 was created on 807a96206177 and the release published as a prerelease, not latest: https://github.com/Satwik-P28/Atlas/releases/tag/v0.2.0-beta.1. All four assets plus SHA256SUMS were uploaded, re-downloaded and verified with sha256sum -c. GitHub Pages is enabled with build_type workflow and https://satwik-p28.github.io/Atlas/ returns HTTP 200. PyPI trusted publishing is configured: GitHub environment 'pypi' plus a pending publisher for atlas-quant (owner Satwik-P28, repository Atlas, workflow release.yml). The corrective release v0.2.0-beta.2 republished the same tree as 0.2.0b2 from candidate commit d09e6116d60b (CI run 45921091414, 13/13) through the same authorised destination and PyPI trusted publishing, leaving the v0.2.0-beta.1 release and its assets untouched. 0.2.0b2 is live on PyPI through the same trusted publisher and was installed from PyPI into a fresh virtualenv for verification.",
       "command": "gh release create v0.2.0-beta.1 ... --prerelease; gh api -X POST repos/Satwik-P28/Atlas/pages -f build_type=workflow; gh workflow run pages.yml; gh workflow run release.yml -f tag=..."
     }
   ],
@@ -255,10 +255,9 @@
     "Validation milestones (independent human evaluation, external usability, adoption) are NOT RUN and no release claim depends on them."
   ],
   "maintainer_actions": [
-    "Publish 0.2.0b2 to PyPI through the existing trusted publisher (workflow release.yml, environment pypi) and record the verified project URL. Do not describe 0.2.0b2 as available on PyPI before an upload and an install from PyPI both succeed.",
     "Send the GitHub Support removal request for cached views, including refs/pull/*, of the former public development repository. Restricting visibility did not remove copies already taken.",
     "Confirm that no employer, client or funding agreement claims the contributed code, as recorded in licenses/AUTHORIZATION-RECORD.md (still an open maintainer confirmation).",
-    "The shipped CLI has no --version flag; this release documents that instead of adding a feature."
+    "The shipped CLI has no --version flag; this release documents the surfaces that do report the release version instead of adding a feature."
   ],
   "candidate_note": "The release candidate commit. Artifacts were built from it with a clean working tree; the certification commit that follows is metadata-only.",
   "candidate_ci_run": "45921091414",
@@ -283,7 +282,9 @@
       "candidate_ci_run": "45921091414",
       "landing_page": "https://satwik-p28.github.io/Atlas/",
       "previous_release_preserved": "https://github.com/Satwik-P28/Atlas/releases/tag/v0.2.0-beta.1",
-      "pypi": "pending: see the maintainer action below; recorded only after an upload and an install verify it."
+      "pypi": "https://pypi.org/project/atlas-quant/0.2.0b2/ \u2014 uploaded by GitHub Actions trusted publishing (run 45957861894, environment pypi, no token stored). PyPI serves the certified bytes: wheel sha256 5ea9fde5... and sdist sha256 2738f5ff..., matching docs/RELEASE_GATES.json and SHA256SUMS. The project JSON API and the version page return HTTP 200.",
+      "release_workflow_run": "45957861894",
+      "verified_install": "Installed `atlas-quant[terminal]==0.2.0b2` from PyPI into a fresh Python 3.12 virtualenv and ran the documented quickstart: `atlas --db var/atlas.db init` (schema 15), `doctor` (integrity ok, 0 foreign-key violations), `demo --db-path var/demo.db` (exit 0), `serve --db-path var/atlas.db --port 8765` with /api/health reporting release_version 0.2.0b2 and the bundled frontend and command index returning 200, and an MCP `initialize` handshake. `atlas --version` fails as documented, and `import atlas` reports 0.2.0b2."
     }
   },
   "corrective_release_reason": "0.2.0b1's distribution files were deleted from PyPI and those filenames can never be reused. v0.2.0-beta.2 republishes the same tree as 0.2.0b2 and corrects the CLI documentation defects found by installing the published beta.1 wheel. No research, data, schema or feature change."

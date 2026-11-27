@@ -49,7 +49,7 @@ only: it changes `docs/` and `artifacts/release/`, neither of which is inside th
 | Repository | <https://github.com/Satwik-P28/Atlas> |
 | Release | <https://github.com/Satwik-P28/Atlas/releases/tag/v0.2.0-beta.2> |
 | Landing page | <https://satwik-p28.github.io/Atlas/> |
-| PyPI | <https://pypi.org/project/atlas-quant/0.2.0b2/> |
+| PyPI | <https://pypi.org/project/atlas-quant/0.2.0b2/> (trusted-publishing run `45957861894`) |
 | Previous release (preserved) | <https://github.com/Satwik-P28/Atlas/releases/tag/v0.2.0-beta.1> |
 | Private archive | `Satwik-P28/Atlas-development` (private) |
 
@@ -70,5 +70,6 @@ CI run identifiers, commit hashes and artifact hashes are in [RELEASE_GATES.json
 ## Known defects still open
 
 - The shipped CLI has no `--version` flag. This is documented rather than added, because this
-  release changes no functionality; `atlas doctor --json` reports `release_version`.
+  release changes no functionality; the release version is available from `/api/health`, `pip show
+  atlas-quant` and `atlas.__release_label__`.
 - `docs/KNOWN_LIMITATIONS.md` lists the research and interface limitations that remain.

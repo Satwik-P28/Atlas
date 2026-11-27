@@ -107,6 +107,8 @@ Captured from the released build on Chromium at 1440×900; the same pages at 390
 
 Requires Python 3.12+. No Node, no database server, no paid data provider, no API key.
 
+Published on PyPI as [`atlas-quant` 0.2.0b2](https://pypi.org/project/atlas-quant/0.2.0b2/).
+
 ```bash
 python -m venv .venv
 . .venv/bin/activate            # Windows: .venv\Scripts\activate

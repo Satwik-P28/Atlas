@@ -27,8 +27,9 @@ atlas --db var/atlas.db stats       # row counts per area
 ```
 
 `--db` is a global option and must be given before the subcommand. There is no `--version` flag:
-`atlas doctor --json` reports the release version (`release_version`), and
-`python -c "import atlas; print(atlas.__release_label__)"` prints the release label. Commands that
+`python -c "import atlas; print(atlas.__release_label__)"` prints the release label,
+`pip show atlas-quant` prints the installed version, and `/api/health` returns `release_version`.
+`atlas doctor` reports the database schema, not the release. Commands that
 manage their own database file (`demo`, `serve`, `mcp`) accept `--db-path` as well.
 
 `doctor` writes a JSON document (`atlas.doctor.v1`) with `--json`. It is the first thing to run when
