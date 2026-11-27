@@ -7,7 +7,7 @@ are not in the artifact; that choice is stated in the document rather than left 
 
 Usage::
 
-    .venv/bin/python scripts/build_sbom.py --wheel dist/atlas_quant-0.2.0b1-py3-none-any.whl
+    .venv/bin/python scripts/build_sbom.py --wheel dist/atlas_quant-<version>-py3-none-any.whl
 """
 
 from __future__ import annotations
@@ -37,6 +37,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--inventory", type=Path, default=ROOT / "docs" / "DEPENDENCY_LICENSES.json")
     parser.add_argument("--out", type=Path, default=ROOT / "artifacts" / "release" / "sbom.cdx.json")
     args = parser.parse_args(argv)
+
+    from atlas import __version__ as version
 
     inventory = json.loads(args.inventory.read_text())
     commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=str(ROOT),
@@ -91,7 +93,7 @@ def main(argv: list[str] | None = None) -> int:
                 "type": "application",
                 "name": "atlas_quant",
                 "version": inventory.get("commit", "")[:12] or commit[:12],
-                "purl": "pkg:pypi/atlas-quant@0.2.0b1",
+                "purl": f"pkg:pypi/atlas-quant@{version}",
                 "properties": [{"name": "atlas:source_commit", "value": commit}],
             },
         },

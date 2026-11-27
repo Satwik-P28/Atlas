@@ -8,12 +8,12 @@ means the configuration was not run. Artifacts are the post-licence build from c
 
 | Platform | Python | Artifact | Checks | Result |
 | --- | --- | --- | --- | --- |
-| Linux x86-64 | 3.12.3 | wheel `atlas_quant-0.2.0b1` | install into clean venv, `init`, `doctor`, `demo`, `serve` health, MCP handshake (`scripts/verify_packaged_install.py`) | **PASS** (2026-11-26, this build) |
+| Linux x86-64 | 3.12.3 | wheel `atlas_quant-0.2.0b2` | install into clean venv, `init`, `doctor`, `demo`, `serve` health, MCP handshake (`scripts/verify_packaged_install.py`) | **PASS** (2026-11-26, this build) |
 | Linux x86-64 | 3.12.3 | wheel | full real-SEC journey, 45/45 steps | **PASS** (2026-11-26) |
 | Ubuntu (GitHub runner) | 3.12 | wheel built in CI | packaged-wheel job in hosted CI | **PASS** (run `45883811438`) |
 | Windows (GitHub runner) | 3.12 | wheel built in CI | packaged-wheel job in hosted CI | **PASS** (run `45883811438`) |
 | macOS (GitHub runner) | 3.12 | wheel built in CI | packaged-wheel job in hosted CI | **PASS** (run `45883811438`) |
-| Linux x86-64 | 3.12.3 | sdist `atlas_quant-0.2.0b1.tar.gz` | built, hashed and reproduced; installed indirectly through the source build | **PASS** for build/reproduction; not installed standalone on every platform |
+| Linux x86-64 | 3.12.3 | sdist `atlas_quant-0.2.0b2.tar.gz` | built, hashed and reproduced; installed indirectly through the source build | **PASS** for build/reproduction; not installed standalone on every platform |
 | Any | 3.11 | — | — | **NOT SUPPORTED**: `numpy` publishes no 3.11 wheel for this range |
 
 The platform matrix covers installation and the offline demonstration. The real SEC journey was

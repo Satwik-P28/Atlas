@@ -7,15 +7,17 @@ This page covers the released artifacts. For a source checkout see [QUICKSTART.m
 Download the wheel, the source distribution and `SHA256SUMS`, then verify before installing:
 
 ```bash
-sha256sum -c SHA256SUMS          # macOS: shasum -a 256 -c SHA256SUMS
-python -m venv .venv
-. .venv/bin/activate             # Windows: .venv\Scripts\activate
-pip install "atlas_quant-0.2.0b1-py3-none-any.whl[terminal]"
-atlas init --db var/atlas.db
-atlas doctor --db var/atlas.db
+pip install "atlas-quant[terminal]==0.2.0b2"     # PyPI
+
+atlas --db var/atlas.db init
+atlas --db var/atlas.db doctor
 atlas demo --db-path var/demo.db
-atlas serve --db var/atlas.db --port 8000
+atlas serve --db-path var/atlas.db --port 8000
 ```
+
+From the release page instead, download the wheel, the source distribution and `SHA256SUMS`, verify
+with `sha256sum -c SHA256SUMS` (macOS: `shasum -a 256 -c SHA256SUMS`), then
+`pip install "atlas_quant-0.2.0b2-py3-none-any.whl[terminal]"` and run the same commands.
 
 The `terminal` extra installs the local HTTP API and static hosting. The wheel already contains the
 built terminal and the demonstration fixtures, so no checkout and no Node.js are needed.
@@ -29,9 +31,9 @@ returns 200 with `release_version`.
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -e ".[dev,terminal]"
-.venv/bin/atlas init --db var/atlas.db
+.venv/bin/atlas --db var/atlas.db init
 .venv/bin/atlas demo --db-path var/demo.db
-.venv/bin/atlas serve --db var/atlas.db --port 8000
+.venv/bin/atlas serve --db-path var/atlas.db --port 8000
 ```
 
 Frontend development:

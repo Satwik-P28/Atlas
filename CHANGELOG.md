@@ -4,6 +4,33 @@ All notable changes to Atlas. This project is a research system; entries describ
 research records, not marketing milestones. Versions before 0.2.0 are engineering phases of the
 research programme and are documented under `docs/`.
 
+## [0.2.0b2] — v0.2.0-beta.2 — 2026-11-26
+
+Corrective release. The `0.2.0b1` files were uploaded to PyPI and then deleted, and PyPI never
+allows a deleted distribution filename to be uploaded again, so the release needs a new version
+number. No research, data, schema or feature change is included.
+
+### Fixed
+
+- **Quickstart commands that did not run against the shipped CLI.** `atlas init --db var/atlas.db`
+  fails with `unrecognized arguments: --db`, and `atlas --version` fails because no such flag exists.
+  Every install instruction now uses the form the parser accepts — `atlas --db PATH init|doctor|migrate`
+  (global option before the subcommand) and `atlas demo|serve|mcp --db-path PATH` — in README,
+  RELEASE_NOTES, both quickstarts, the user guide, the installation, troubleshooting and verification
+  pages, the landing page and the release runbook. `atlas doctor --json` is documented as the way to
+  read the release version.
+- **Python requirement stated inconsistently.** `docs/QUICKSTART.md` said 3.11 or 3.12 while the
+  package requires 3.12+; it now says 3.12 or newer and marks 3.11 unsupported.
+
+### Changed
+
+- Version `0.2.0b2` (label `v0.2.0-beta.2`) in the package attribute, the web package and the
+  version-consistency test. `pyproject.toml` still reads the version dynamically.
+- Installation instructions lead with the published PyPI package, `pip install "atlas-quant[terminal]==0.2.0b2"`,
+  with the release wheel kept as the verified alternative.
+- `scripts/build_sbom.py` derives the component purl from `atlas.__version__` instead of a hard-coded
+  version string, so an SBOM can no longer name the wrong release.
+
 ## [0.2.0b1] — v0.2.0-beta.1 — 2026-11-23
 
 First integrated release candidate. It combines the FOCUS certificate stack, the financial-answer

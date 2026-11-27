@@ -111,7 +111,9 @@ def build(commit: str, target: Path) -> dict[str, Any]:
     git("config", "user.name", "Atlas Release Bot", cwd=target)
     git("config", "user.email", "release@atlas.invalid", cwd=target)
     git("add", "-A", cwd=target)
-    message = (f"Atlas v0.2.0-beta.1 distribution source\n\n"
+    from atlas import __release_label__
+
+    message = (f"Atlas {__release_label__} distribution source\n\n"
                f"Sanitized snapshot of {report['commit']} with restricted vendor data excluded.\n"
                f"Provenance: docs/PROVENANCE_MAPPING.json.")
     environment = {

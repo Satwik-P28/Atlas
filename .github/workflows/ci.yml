@@ -9,7 +9,8 @@ on:
     branches: [main, freebuff/41a4fd2abe41a6515dc8d5bb, focus/answer-semantics,
                holdout/answer-semantics-prospective, focus/financial-answer-hardening-v1,
                release/v0.2.0-beta.1, integration/phase10.3,
-               release/v0.2.0-beta.1-final, release/v0.2.0-closeout]
+               release/v0.2.0-beta.1-final, release/v0.2.0-closeout,
+               release/v0.2.0-beta.2]
   pull_request:
     branches: [main]
 

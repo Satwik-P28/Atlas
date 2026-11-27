@@ -67,7 +67,7 @@ Data rights are separate from software rights and are inventoried per source in
 ## Verifying the licence in a built artifact
 
 ```bash
-.venv/bin/python -c "import zipfile; z=zipfile.ZipFile('dist/atlas_quant-0.2.0b1-py3-none-any.whl'); print([n for n in z.namelist() if 'licen' in n.lower() or n.endswith('NOTICE') or 'NOTICES' in n])"
+.venv/bin/python -c "import zipfile; z=zipfile.ZipFile('dist/atlas_quant-0.2.0b2-py3-none-any.whl'); print([n for n in z.namelist() if 'licen' in n.lower() or n.endswith('NOTICE') or 'NOTICES' in n])"
 .venv/bin/python -c "from importlib.metadata import metadata; m=metadata('atlas-quant'); print(m['License-Expression'], m.get_all('License-File'))"
 ```
 

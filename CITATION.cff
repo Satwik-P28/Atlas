@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use Atlas in research, cite this release. Apache-2.0 licenses Atlas-authored software; it does not license third-party data or dependencies."
 title: "Atlas: The Evidence-First Financial Research Operating System"
-version: "0.2.0-beta.1"
+version: "0.2.0-beta.2"
 date-released: "2026-11-26"
 license: Apache-2.0
 url: "https://github.com/Satwik-P28/Atlas"

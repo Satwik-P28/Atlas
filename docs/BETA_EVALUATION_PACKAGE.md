@@ -1,7 +1,7 @@
 # External beta evaluation package
 
 **Status: prepared, NOT RUN.** No external participant has executed this protocol. No usability,
-comprehension, trust or installation-success result is claimed for v0.2.0-beta.1. This document is
+comprehension, trust or installation-success result is claimed for v0.2.0-beta.2. This document is
 the complete package a facilitator needs; the machine-readable results schema is
 [beta_eval_results.schema.json](beta_eval_results.schema.json).
 

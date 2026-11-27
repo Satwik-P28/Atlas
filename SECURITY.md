@@ -2,7 +2,7 @@
 
 ## Scope and threat model
 
-Atlas v0.2.0-beta.1 is a **local-first, single-user** research system. It has no accounts, no
+Atlas v0.2.0-beta.2 is a **local-first, single-user** research system. It has no accounts, no
 multi-tenancy and no authentication. The security boundary is the local machine and the user's own
 data, not a network perimeter.
 
@@ -35,7 +35,7 @@ already read your files. Do not deploy an Atlas API on a public network.
 
 ## Supported versions
 
-Only the current release candidate line (`0.2.0b1`) is supported. Earlier trees are research
+Only the current release line (`0.2.0b2`) is supported. Earlier trees are research
 snapshots without security maintenance.
 
 ## Reporting a vulnerability

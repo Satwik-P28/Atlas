@@ -8,7 +8,7 @@ independent check of that computation — or it refuses with a reason you can ac
 
 Most financial tools give you a number. Atlas gives you a number you can challenge.
 
-> Release: **v0.2.0-beta.1** (`0.2.0b1`), Apache-2.0, an experimental public preview and a
+> Release: **v0.2.0-beta.2** (`0.2.0b2`), Apache-2.0, an experimental public preview and a
 > prerelease. This is a research system, not an investment product. It does not claim institutional
 > trading performance, terminal parity with commercial vendors, or hallucination-free answers, and no
 > independent human evaluation has been performed. Read
@@ -83,14 +83,13 @@ Captured from the released build on Chromium at 1440×900; the same pages at 390
 
 ## Release status and launch materials
 
-- **Artifacts certified; publication blocked on administrative execution.** All eleven engineering
-  gates and the licensing and data-rights gates pass on the exact artifacts (Apache-2.0 applied,
-  licence metadata inside the wheel, zero restricted vendor material in any artifact). Publishing
-  needs repository rename, visibility change, repository creation, release creation and Pages
-  enablement on the maintainer's account; this environment has no administrative credentials, so
-  nothing was published. Verdict: **PUBLICATION BLOCKED — ACTION REQUIRED** — see
-  [`docs/RELEASE_GATES.json`](docs/RELEASE_GATES.json), [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)
-  and the exact sequence in [`docs/PUBLIC_RELEASE_HANDOVER.md`](docs/PUBLIC_RELEASE_HANDOVER.md).
+- **Published.** v0.2.0-beta.2 is a GitHub prerelease and the package is published on PyPI as
+  `atlas-quant` `0.2.0b2`. All eleven engineering gates and the licensing and data-rights gates pass
+  on the exact artifacts (Apache-2.0 applied, licence metadata inside the wheel, zero restricted
+  vendor material in any artifact). Verdict: **PUBLIC RELEASE PUBLISHED — PRERELEASE, EXPERIMENTAL**
+  — see [`docs/RELEASE_GATES.json`](docs/RELEASE_GATES.json),
+  [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md) and the runbook in
+  [`docs/PUBLIC_RELEASE_HANDOVER.md`](docs/PUBLIC_RELEASE_HANDOVER.md).
 - **Install guide:** [`docs/QUICKSTART.md`](docs/QUICKSTART.md) · **verify a release**:
   [`docs/RELEASE_VERIFICATION.md`](docs/RELEASE_VERIFICATION.md) · **landing page** (static, no
   server, published through GitHub Pages by `.github/workflows/pages.yml`):
@@ -109,18 +108,22 @@ Captured from the released build on Chromium at 1440×900; the same pages at 390
 Requires Python 3.12+. No Node, no database server, no paid data provider, no API key.
 
 ```bash
-# Download the wheel and SHA256SUMS from the release page, then verify before installing
-sha256sum -c SHA256SUMS         # macOS: shasum -a 256 -c SHA256SUMS
-
 python -m venv .venv
 . .venv/bin/activate            # Windows: .venv\Scripts\activate
-pip install "atlas_quant-0.2.0b1-py3-none-any.whl[terminal]"
+pip install "atlas-quant[terminal]==0.2.0b2"
 
-atlas init --db var/atlas.db          # create and migrate the database
-atlas doctor --db var/atlas.db        # schema, integrity and foreign-key checks
+atlas --db var/atlas.db init          # create and migrate the database
+atlas --db var/atlas.db doctor        # schema, integrity and foreign-key checks
 atlas demo --db-path var/demo.db      # offline end-to-end demonstration
-atlas serve --db var/atlas.db --port 8000
+atlas serve --db-path var/atlas.db --port 8000
 ```
+
+`--db` is a global option and must come **before** the subcommand (`atlas --db PATH init`);
+`atlas init --db PATH` is rejected. `demo` and `serve` also accept `--db-path`, which overrides the
+global value. To install from the release assets instead of PyPI, download the wheel and
+`SHA256SUMS` from the release page and verify them first
+(`sha256sum -c SHA256SUMS`; macOS: `shasum -a 256 -c SHA256SUMS`), then
+`pip install "atlas_quant-0.2.0b2-py3-none-any.whl[terminal]"`.
 
 Then open <http://127.0.0.1:8000>. The wheel bundles the built terminal and the small demonstration
 fixture set, so nothing else has to be installed. The API binds to loopback and refuses a

@@ -73,7 +73,7 @@
 
 <main>
   <div class="wrap hero">
-    <p class="eyebrow">v0.2.0-beta.1 · experimental public preview</p>
+    <p class="eyebrow">v0.2.0-beta.2 · experimental public preview</p>
     <h1>Financial research whose evidence, assumptions, calculations and conclusions can be inspected, challenged, verified and reproduced.</h1>
     <p class="lede">Atlas takes a financial question and returns one verified source cell, the typed arithmetic that produced the number, and an independent check of that arithmetic — or it refuses, with a code and the evidence it considered. Everything runs on your machine, from filings you can re-download.</p>
     <div class="cta">
@@ -149,7 +149,7 @@
       <p class="sub">Python 3.12+. No Node.js, no database server, no API keys, no network for the demo.</p>
       <pre><code>python -m venv .venv
 . .venv/bin/activate            # Windows: .venv\Scripts\activate
-pip install "atlas_quant-0.2.0b1-py3-none-any.whl[terminal]"
+pip install "atlas-quant[terminal]==0.2.0b2"
 atlas demo                      # builds a synthetic filing and opens the terminal
 </code></pre>
       <p class="sub">Then, if you want a real company: <code>atlas sec sync --cik 320193 --user-agent "Your Name you@example.org"</code> followed by <code>atlas serve</code>.</p>
@@ -175,7 +175,7 @@ atlas demo                      # builds a synthetic filing and opens the termin
 
 <footer>
   <div class="wrap">
-    Atlas: The Evidence-First Financial Research Operating System · v0.2.0-beta.1 · Apache-2.0 ·
+    Atlas: The Evidence-First Financial Research Operating System · v0.2.0-beta.2 · Apache-2.0 ·
     <a href="https://github.com/Satwik-P28/Atlas">source</a> ·
     <a href="../QUICKSTART.md">quickstart</a> ·
     <a href="../RELEASE_VERIFICATION.md">verify a release</a> ·

@@ -12,9 +12,9 @@ The package is organised around stable domain contracts:
 ``atlas.ingestion``  Provider adapters (SEC EDGAR, CSV market data) isolated from storage.
 """
 
-# PEP 440 form of the release label v0.2.0-beta.1. This attribute is the single source of
+# PEP 440 form of the release label v0.2.0-beta.2. This attribute is the single source of
 # truth: pyproject.toml reads it dynamically, and the HTTP API reports it.
-__version__ = "0.2.0b1"
-__release_label__ = "v0.2.0-beta.1"
+__version__ = "0.2.0b2"
+__release_label__ = "v0.2.0-beta.2"
 
 __all__ = ["__version__", "__release_label__"]

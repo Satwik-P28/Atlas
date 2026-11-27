@@ -12,7 +12,8 @@ different interpreter. Activate `.venv` and run `python -m pip show atlas-quant`
 Install what you need:
 
 ```bash
-pip install "atlas_quant-0.2.0b1-py3-none-any.whl[terminal]"   # HTTP API and UI
+pip install "atlas-quant[terminal]==0.2.0b2"                    # HTTP API and UI (PyPI)
+pip install "atlas_quant-0.2.0b2-py3-none-any.whl[terminal]"    # same, from the release wheel
 pip install -e ".[dev,terminal,learning,columnar,optimization]" # source tree, everything
 ```
 

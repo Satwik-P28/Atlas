@@ -1,10 +1,14 @@
 # Public release handover — exact administrative sequence
 
 Everything engineering-side is finished and certified. This file is the sequence a maintainer with
-GitHub (and PyPI) administrative rights runs to publish Atlas v0.2.0-beta.1. Each step says what it
-unblocks, the command, and how to check it worked. Nothing here was executed by the coding agent: it
-has no administrative credentials, and repository rename, visibility change, repository creation,
-release creation and Pages enablement are account-level operations.
+GitHub (and PyPI) administrative rights runs to publish an Atlas release. Each step says what it
+unblocks, the command, and how to check it worked.
+
+**Status: executed for v0.2.0-beta.1 on 2026-11-26** with an authenticated GitHub CLI, and executed
+again for the corrective release v0.2.0-beta.2 on the same day (see §10, which records the sequence
+actually used: a sanitized commit on `main`, hosted CI on that exact commit, artifacts built from it,
+a metadata-only certification commit, then tag, release and PyPI trusted publishing). The commands
+below are kept as the reusable runbook.
 
 Certified inputs (in this checkout):
 
@@ -209,3 +213,57 @@ visibility removed data that had already been downloaded.
 | CI run identifiers on the public repository | RELEASE_GATES.json `candidate_ci_run` |
 | PyPI project URL, if uploaded | RELEASE_NOTES.md, README |
 | Final visibility state of the archive | REPOSITORY_MIGRATION.md |
+
+## 10. Corrective release v0.2.0-beta.2 (executed 2026-11-26)
+
+`0.2.0b1` was uploaded to PyPI and then deleted. PyPI permanently prohibits reuse of a deleted
+distribution filename, so the same tree ships as `0.2.0b2`. The `v0.2.0-beta.1` GitHub release, its
+tag and its certified assets were left untouched.
+
+The sequence below does not create a repository, rewrite history or change the trusted publisher.
+It runs on the existing public repository:
+
+```bash
+# 1. Clone the public repository and confirm its identity before pushing anything.
+git clone https://github.com/Satwik-P28/Atlas.git && cd Atlas
+git remote -v                      # must be Satwik-P28/Atlas
+git log --oneline -1
+
+# 2. One release-candidate commit: 0.2.0b2 / v0.2.0-beta.2, the CLI documentation corrections,
+#    README, release notes, landing page, CHANGELOG, CITATION and the CI branch list.
+git switch -c release/v0.2.0-beta.2
+git add -A && git commit
+git push -u origin release/v0.2.0-beta.2
+gh run watch "$(gh run list --branch release/v0.2.0-beta.2 --workflow ci.yml \
+  --limit 1 --json databaseId --jq '.[0].databaseId')" --exit-status   # 13/13 required
+
+# 3. Build the four artifacts from that exact commit and record their hashes.
+python3.12 -m venv .venv && .venv/bin/pip install -e '.[dev,terminal]'
+(cd web && npm ci && npm run build)
+.venv/bin/python scripts/build_release_artifacts.py
+.venv/bin/python scripts/build_sbom.py --wheel dist/atlas_quant-0.2.0b2-py3-none-any.whl
+.venv/bin/python scripts/build_sanitized_archive.py --commit HEAD
+
+# 4. A metadata-only certification commit: docs/RELEASE_GATES.json, artifacts/release/* and the
+#    release notes' hash table. None of it is inside the wheel or the sdist, so their hashes hold.
+git add -A && git commit && git push
+
+# 5. Fast-forward main, require hosted CI on the certification commit, then tag and publish.
+git switch main && git merge --ff-only release/v0.2.0-beta.2 && git push
+git tag -a v0.2.0-beta.2 -m "Atlas v0.2.0-beta.2 — corrective experimental preview"
+git push origin v0.2.0-beta.2
+gh release create v0.2.0-beta.2 dist/atlas_quant-0.2.0b2-py3-none-any.whl \
+  dist/atlas_quant-0.2.0b2.tar.gz dist/atlas-source-HEAD-sanitized.tar.gz \
+  dist/sbom.cdx.json dist/SHA256SUMS --prerelease --latest=false \
+  --title "Atlas v0.2.0-beta.2 — corrective experimental preview" --notes-file RELEASE_NOTES.md
+
+# 6. Re-download and check the assets, then let the release event run trusted publishing.
+gh release download v0.2.0-beta.2 --dir /tmp/check && (cd /tmp/check && sha256sum -c SHA256SUMS)
+gh workflow enable release.yml            # if it was disabled after an earlier failure
+gh run watch "$(gh run list --workflow release.yml --limit 1 --json databaseId \
+  --jq '.[0].databaseId')" --exit-status
+```
+
+The PyPI workflow re-verifies the attached wheel and sdist against `docs/RELEASE_GATES.json` before
+uploading, so the certification commit must land **before** the release is published. Publishing the
+release triggers it; `gh workflow run release.yml -f tag=v0.2.0-beta.2` is the retry path.

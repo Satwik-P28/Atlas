@@ -1,8 +1,8 @@
 {
   "schema": "atlas.release.gates.v2",
-  "release_label": "v0.2.0-beta.1",
-  "package_version": "0.2.0b1",
-  "phase": "10.7 final publication",
+  "release_label": "v0.2.0-beta.2",
+  "package_version": "0.2.0b2",
+  "phase": "10.7 corrective release (0.2.0b2)",
   "branch": "release/v0.2.0-closeout",
   "base_commit": "fd207c84fa5465201dfbbd901c473417312965b3",
   "base_ci_run": "45705018400",
@@ -105,9 +105,9 @@
     {
       "id": "historical_exposure_remediation",
       "name": "Historical exposure remediation",
-      "state": "BLOCKED",
-      "evidence": "A verified clean-history candidate exists at .release/clean-history (single commit 8e3da8f, 1,089 files, 1,185 objects, provenance docs/PROVENANCE_MAPPING.json, restricted reachable 0, all five self-checks PASS). Executing the remediation needs GitHub administrative rights this environment does not hold: rename Satwik-P28/Atlas to Satwik-P28/Atlas-development, make it private, create Satwik-P28/Atlas, push the candidate, tag it. The exact sequence and backup step are in docs/PUBLIC_RELEASE_HANDOVER.md; the name Atlas-development was confirmed free (HTTP 404) on 2026-11-26.",
-      "command": ".venv/bin/python scripts/build_clean_history_candidate.py --commit 36c7ee8"
+      "state": "PASS",
+      "evidence": "Executed on 2026-11-26 with an authenticated GitHub CLI (account Satwik-P28, scopes gist/read:org/repo/workflow, ADMIN on the repository). A --mirror backup was taken before any change and stored privately outside the public distribution: 25 branches, 0 tags, 16 refs/pull refs, all 9 restricted blobs retained, git fsck --full clean, archive sha256 7240146ee9f19d876a985fe050670c9d76a9893185f6c81eb5ca9451275c2605. The development repository was restricted to private and renamed Satwik-P28/Atlas-development. The replacement Satwik-P28/Atlas received exactly one branch from exactly one commit (807a96206177, tree 735b5aa8, 1,094 files) whose CI run 45896178209 passed 13/13 jobs while the repository was still private; only then did visibility change to public. No history rewrite was performed: the original development history is intact and private. Residual exposure is unchanged and recorded: earlier clones, forks, GitHub cached views and search-engine caches were not recalled, and the removal request to GitHub Support has not been sent.",
+      "command": "git clone --mirror ...; gh repo edit Satwik-P28/Atlas --visibility private; gh repo rename Atlas-development; gh repo create Satwik-P28/Atlas --private; git push -u origin main; gh run watch 45896178209; gh repo edit Satwik-P28/Atlas --visibility public"
     },
     {
       "id": "software_licensing",
@@ -126,9 +126,9 @@
     {
       "id": "authorized_publication_destination",
       "name": "Authorised publication destination",
-      "state": "BLOCKED",
-      "evidence": "The maintainer authorised Satwik-P28/Atlas as the public distribution repository and Satwik-P28/Atlas-development as the private archive. Execution needs GitHub administrative credentials (repository rename, visibility change, repository creation, release creation, Pages enablement) that this environment does not have: no gh CLI, no token, and the git remote helper only pushes an existing branch. Nothing was published; the prepared assets and the exact command sequence are in docs/PUBLIC_RELEASE_HANDOVER.md.",
-      "command": "see docs/PUBLIC_RELEASE_HANDOVER.md sections 2-6"
+      "state": "PASS",
+      "evidence": "Published on 2026-11-26 to the authorised destination Satwik-P28/Atlas (public, default branch main, description, homepage https://satwik-p28.github.io/Atlas/ and seven topics set) with Satwik-P28/Atlas-development as the private archive. Tag v0.2.0-beta.1 was created on 807a96206177 and the release published as a prerelease, not latest: https://github.com/Satwik-P28/Atlas/releases/tag/v0.2.0-beta.1. All four assets plus SHA256SUMS were uploaded, re-downloaded and verified with sha256sum -c. GitHub Pages is enabled with build_type workflow and https://satwik-p28.github.io/Atlas/ returns HTTP 200. PyPI trusted publishing is configured: GitHub environment 'pypi' plus a pending publisher for atlas-quant (owner Satwik-P28, repository Atlas, workflow release.yml).",
+      "command": "gh release create v0.2.0-beta.1 ... --prerelease; gh api -X POST repos/Satwik-P28/Atlas/pages -f build_type=workflow; gh workflow run pages.yml; gh workflow run release.yml -f tag=..."
     }
   ],
   "validation_milestones": [
@@ -236,16 +236,16 @@
       "pass": 11
     },
     "distribution_gates": {
-      "pass": 3,
-      "blocked": 2
+      "pass": 5,
+      "blocked": 0
     },
     "validation_milestones": {
       "not_run": 3,
       "not_applicable": 1
     }
   },
-  "decision": "READY FOR PRIVATE RELEASE CANDIDATE",
-  "publication_verdict": "PUBLICATION BLOCKED — ACTION REQUIRED",
+  "decision": "READY FOR EXPERIMENTAL PUBLIC PREVIEW",
+  "publication_verdict": "PUBLIC RELEASE PUBLISHED \u2014 PRERELEASE, EXPERIMENTAL",
   "decision_basis": [
     "Every engineering gate passes on the exact artifacts built after the licence was applied: real-filing citation integrity, the full browser journey, packaged installation of the distributed wheel, MCP interoperability and reproducible artifacts.",
     "The software licence gate now passes: Apache-2.0 is applied with a named copyright holder and travels inside the wheel and sdist, and the third-party notices are effective.",
@@ -261,5 +261,20 @@
   ],
   "candidate_note": "The certified source commit. Artifacts were built from this commit with a clean working tree; the registry commit that follows is metadata-only and does not change them.",
   "candidate_ci_run": "45883811438",
-  "candidate_ci_conclusion": "success (13/13 jobs on 1436489: backend suite and audits, frontend, database integrity, research and rights integrity, clean-checkout reproducibility, Chromium/Firefox/WebKit certification journeys, packaged wheel on ubuntu-latest, windows-latest and macos-latest, and the release wheel build)"
+  "candidate_ci_conclusion": "success (13/13 jobs on 1436489: backend suite and audits, frontend, database integrity, research and rights integrity, clean-checkout reproducibility, Chromium/Firefox/WebKit certification journeys, packaged wheel on ubuntu-latest, windows-latest and macos-latest, and the release wheel build)",
+  "publication": {
+    "v0.2.0-beta.1": {
+      "published_at_utc": "2026-11-26T21:15:00Z",
+      "repository": "https://github.com/Satwik-P28/Atlas",
+      "release": "https://github.com/Satwik-P28/Atlas/releases/tag/v0.2.0-beta.1",
+      "landing_page": "https://satwik-p28.github.io/Atlas/",
+      "private_archive": "https://github.com/Satwik-P28/Atlas-development (private)",
+      "candidate_commit": "807a96206177bb6ec07d3d5547d045a0c101150c",
+      "candidate_ci_run": "45896178209",
+      "pages_run": "45896832258",
+      "tag": "v0.2.0-beta.1 (annotated, prerelease, not latest)",
+      "pypi": "0.2.0b1 was uploaded and then deleted by the maintainer. PyPI permanently prohibits reuse of a deleted distribution filename, so the same tree ships as 0.2.0b2 in v0.2.0-beta.2. The GitHub release and its assets are preserved."
+    }
+  },
+  "corrective_release_reason": "0.2.0b1's distribution files were deleted from PyPI and those filenames can never be reused. v0.2.0-beta.2 republishes the same tree as 0.2.0b2 and corrects the CLI documentation defects found by installing the published beta.1 wheel. No research, data, schema or feature change."
 }

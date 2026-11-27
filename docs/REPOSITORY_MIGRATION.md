@@ -1,13 +1,13 @@
 # Repository migration and historical exposure remediation
 
-**Status: authorised; not executed.** The maintainer authorised on 2026-11-26 the remediation path
-that keeps the development history intact: restrict the existing repository, rename it to
-`Satwik-P28/Atlas-development`, and publish the verified clean-history candidate as the new public
-`Satwik-P28/Atlas`. No step was executed, because rename, visibility change, repository creation and
-release creation are account-level GitHub operations this environment has no credentials for. The
-executable sequence, with checks between steps, is
+**Status: executed on 2026-11-26 with an authenticated GitHub CLI (account `Satwik-P28`, admin on
+the repository).** The remediation path keeps the development history intact: the existing
+repository was restricted to private and renamed `Satwik-P28/Atlas-development`, and the verified
+clean-history candidate was published as the new public `Satwik-P28/Atlas`. A `--mirror` backup was
+taken before any change and stored privately. No history rewrite was performed, and no object was
+deleted. The executable sequence, with checks between steps, is
 [PUBLIC_RELEASE_HANDOVER.md](PUBLIC_RELEASE_HANDOVER.md). Section 3 below keeps the three options for
-the record; Option B is the authorised one.
+the record; Option B is the one that was executed.
 
 ## 1. What is exposed, precisely
 

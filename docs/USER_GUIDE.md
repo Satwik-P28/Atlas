@@ -1,6 +1,6 @@
 # User guide
 
-A working guide to the Atlas v0.2.0-beta.1 command line and terminal. It documents what exists; for
+A working guide to the Atlas v0.2.0-beta.2 command line and terminal. It documents what exists; for
 what does not, see [known limitations](KNOWN_LIMITATIONS.md).
 
 ## Mental model
@@ -20,11 +20,16 @@ If you read a number in Atlas, you can always ask it for layer 1 and layer 2.
 ## Database lifecycle
 
 ```bash
-atlas init --db var/atlas.db        # create or migrate
-atlas doctor --db var/atlas.db      # status, schema, integrity, foreign keys, counts
-atlas migrate --db var/atlas.db     # backup + migrate + verify
-atlas stats --db var/atlas.db       # row counts per area
+atlas --db var/atlas.db init        # create or migrate
+atlas --db var/atlas.db doctor      # status, schema, integrity, foreign keys, counts
+atlas --db var/atlas.db migrate     # backup + migrate + verify
+atlas --db var/atlas.db stats       # row counts per area
 ```
+
+`--db` is a global option and must be given before the subcommand. There is no `--version` flag:
+`atlas doctor --json` reports the release version (`release_version`), and
+`python -c "import atlas; print(atlas.__release_label__)"` prints the release label. Commands that
+manage their own database file (`demo`, `serve`, `mcp`) accept `--db-path` as well.
 
 `doctor` writes a JSON document (`atlas.doctor.v1`) with `--json`. It is the first thing to run when
 something looks wrong; it exits non-zero when the database needs attention.
@@ -80,7 +85,7 @@ atlas app init my-study                      # scaffold a declarative project
 atlas app build my-study --out my-study.atlas
 atlas app inspect my-study.atlas
 atlas app verify my-study.atlas
-atlas app install my-study.atlas --db var/atlas.db
+atlas --db var/atlas.db app install my-study.atlas
 atlas app execute <install_id> --db var/atlas.db
 atlas app export <install_id> --db var/atlas.db --out replay.atlas
 atlas app compare <left> <right> --db var/atlas.db
@@ -100,7 +105,7 @@ manifest.
 ## The terminal
 
 ```bash
-atlas serve --db var/atlas.db --port 8000
+atlas serve --db-path var/atlas.db --port 8000
 ```
 
 Pages: Companies, Company, Filings, Research, Workstation, Markets, Screener, Watchlists, Workspaces,

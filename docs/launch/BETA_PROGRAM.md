@@ -14,7 +14,7 @@ be filled in, estimated or illustrated with invented users.
 
 ## Invitation note (send unchanged)
 
-> You are invited to evaluate Atlas v0.2.0-beta.1, an experimental financial-research preview. It
+> You are invited to evaluate Atlas v0.2.0-beta.2, an experimental financial-research preview. It
 > runs locally, needs no account and no API key, and includes a synthetic demonstration company so
 > you can start without network access.
 >

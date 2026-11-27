@@ -30,8 +30,8 @@ def test_pyproject_reads_the_version_from_the_package() -> None:
 
 
 def test_release_label_matches_the_pep440_version() -> None:
-    assert atlas.__version__ == "0.2.0b1"
-    assert atlas.__release_label__ == "v0.2.0-beta.1"
+    assert atlas.__version__ == "0.2.0b2"
+    assert atlas.__release_label__ == "v0.2.0-beta.2"
 
 
 def test_web_package_uses_the_release_label() -> None:

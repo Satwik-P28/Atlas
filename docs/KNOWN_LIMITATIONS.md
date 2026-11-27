@@ -1,4 +1,4 @@
-# Known limitations — v0.2.0-beta.1
+# Known limitations — v0.2.0-beta.2
 
 Every item here is a statement about this release, not about what Atlas is trying to become. Where a
 capability is absent it is named as absent, because a misleading "supported" label is worse than a

@@ -5,14 +5,17 @@ a paid data feed, an LLM subscription, or a development checkout.
 
 ## 1. Install (Linux, macOS, Windows)
 
-Python 3.11 or 3.12.
+Python 3.12 or newer (3.11 is not supported).
 
 ```bash
 python -m venv .venv
 . .venv/bin/activate          # Windows PowerShell: .venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-pip install "atlas_quant-0.2.0b1-py3-none-any.whl[terminal]"
+pip install "atlas-quant[terminal]==0.2.0b2"      # PyPI
 ```
+
+The wheel attached to the release works the same way after verifying `SHA256SUMS`:
+`pip install "atlas_quant-0.2.0b2-py3-none-any.whl[terminal]"`.
 
 Windows notes: use PowerShell, and if activation is blocked run
 `Set-ExecutionPolicy -Scope Process Bypass` for that shell only. Paths with spaces work.
@@ -20,7 +23,7 @@ Windows notes: use PowerShell, and if activation is blocked run
 ## 2. Run the offline demonstration (no network)
 
 ```bash
-atlas demo
+atlas demo                        # --db-path var/demo.db to choose the file
 ```
 
 This creates `~/.atlas/atlas.db`, ingests a project-authored synthetic 10-K (not a real company),
@@ -73,7 +76,7 @@ work because the transport and schema are standard, but they have not been teste
 
 ```bash
 cp ~/.atlas/atlas.db ~/atlas-backup-$(date +%F).db   # backup: one file
-atlas --db ~/atlas-backup-2026-11-24.db verify       # check it opens and verifies
+atlas --db ~/atlas-backup-2026-11-24.db doctor       # check it opens and verifies
 pip install --upgrade "<newer-wheel>.whl[terminal]"   # upgrade: schema migrations run on open
 ```
 

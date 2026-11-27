@@ -21,9 +21,9 @@ Inspect the SBOM and the licence that travels with the wheel:
 python - <<'PY'
 import json, zipfile
 print(json.load(open("sbom.cdx.json"))["metadata"]["component"]["name"])
-z = zipfile.ZipFile("atlas_quant-0.2.0b1-py3-none-any.whl")
+z = zipfile.ZipFile("atlas_quant-0.2.0b2-py3-none-any.whl")
 print([n for n in z.namelist() if "licenses/" in n])
-print([l for l in z.read("atlas_quant-0.2.0b1.dist-info/METADATA").decode().splitlines()
+print([l for l in z.read("atlas_quant-0.2.0b2.dist-info/METADATA").decode().splitlines()
        if l.startswith("License")])
 PY
 ```
@@ -35,10 +35,10 @@ three `License-File:` lines.
 
 ```bash
 python -m venv .venv && . .venv/bin/activate
-pip install "atlas_quant-0.2.0b1-py3-none-any.whl[terminal]"
-atlas init --db var/atlas.db && atlas doctor --db var/atlas.db
+pip install "atlas-quant[terminal]==0.2.0b2"     # or the release wheel, after sha256sum -c
+atlas --db var/atlas.db init && atlas --db var/atlas.db doctor
 atlas demo --db-path var/demo.db        # offline, exit 0
-atlas serve --db var/atlas.db --port 8000 &
+atlas serve --db-path var/atlas.db --port 8000 &
 curl -s http://127.0.0.1:8000/api/health | head -c 400
 ```
 
