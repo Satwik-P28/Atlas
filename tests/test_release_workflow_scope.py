@@ -14,7 +14,8 @@ WORKFLOWS = ROOT / ".github/workflows"
 
 def test_the_pypi_workflow_is_limited_to_software_version_tags() -> None:
     text = (WORKFLOWS / "release.yml").read_text(encoding="utf-8")
-    assert "if: startsWith(github.event.release.tag_name, 'v')" in text
+    assert "github.event_name == 'release' && startsWith(github.event.release.tag_name, 'v')" in text
+    assert "github.event_name == 'workflow_dispatch' && startsWith(inputs.tag, 'v')" in text
     assert "jobs:\n  publish:" in text
 
 
