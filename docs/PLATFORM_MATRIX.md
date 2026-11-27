@@ -10,9 +10,9 @@ means the configuration was not run. Artifacts are the post-licence build from c
 | --- | --- | --- | --- | --- |
 | Linux x86-64 | 3.12.3 | wheel `atlas_quant-0.2.0b2` | install into clean venv, `init`, `doctor`, `demo`, `serve` health, MCP handshake (`scripts/verify_packaged_install.py`) | **PASS** (2026-11-26, this build) |
 | Linux x86-64 | 3.12.3 | wheel | full real-SEC journey, 45/45 steps | **PASS** (2026-11-26) |
-| Ubuntu (GitHub runner) | 3.12 | wheel built in CI | packaged-wheel job in hosted CI | **PASS** (run `45883811438`) |
-| Windows (GitHub runner) | 3.12 | wheel built in CI | packaged-wheel job in hosted CI | **PASS** (run `45883811438`) |
-| macOS (GitHub runner) | 3.12 | wheel built in CI | packaged-wheel job in hosted CI | **PASS** (run `45883811438`) |
+| Ubuntu (GitHub runner) | 3.12 | wheel built in CI | packaged-wheel job in hosted CI | **PASS** (run `45921091414`) |
+| Windows (GitHub runner) | 3.12 | wheel built in CI | packaged-wheel job in hosted CI | **PASS** (run `45921091414`) |
+| macOS (GitHub runner) | 3.12 | wheel built in CI | packaged-wheel job in hosted CI | **PASS** (run `45921091414`) |
 | Linux x86-64 | 3.12.3 | sdist `atlas_quant-0.2.0b2.tar.gz` | built, hashed and reproduced; installed indirectly through the source build | **PASS** for build/reproduction; not installed standalone on every platform |
 | Any | 3.11 | — | — | **NOT SUPPORTED**: `numpy` publishes no 3.11 wheel for this range |
 
@@ -24,9 +24,9 @@ executed on Linux only; the hosted matrix certifies installation, not the networ
 | Engine | Where | Viewports tested | Result |
 | --- | --- | --- | --- |
 | Chromium (headless shell 156) | local | 1440×900, 390×844 | **21 of 21 checks PASS** (`artifacts/browser/phase10_5_chromium.json`) |
-| Chromium | hosted CI | 1440×900 | **PASS** (run `45883811438`, certification job) |
-| Firefox | hosted CI | 1440×900 | **PASS** (run `45883811438`, certification job) |
-| WebKit | hosted CI | 1440×900 | **PASS** (run `45883811438`, certification job) |
+| Chromium | hosted CI | 1440×900 | **PASS** (run `45921091414`, certification job) |
+| Firefox | hosted CI | 1440×900 | **PASS** (run `45921091414`, certification job) |
+| WebKit | hosted CI | 1440×900 | **PASS** (run `45921091414`, certification job) |
 | Firefox / WebKit | local container | — | **NOT RUN** — no GTK/Pango stack and no root in the build container |
 | Safari, Edge, mobile browsers | — | — | **NOT TESTED** |
 

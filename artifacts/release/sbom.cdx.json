@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:de5dde5f-9fba-f46b-7504-4a9ebed0b1e7",
+  "serialNumber": "urn:uuid:1628ee0f-e188-2bb2-33fd-7f792d4eb7c5",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-26T19:27:13Z",
+    "timestamp": "2026-11-27T01:12:13Z",
     "tools": [
       {
         "vendor": "Atlas",
@@ -15,25 +15,25 @@
     "component": {
       "type": "application",
       "name": "atlas_quant",
-      "version": "36c7ee8e0986",
-      "purl": "pkg:pypi/atlas-quant@0.2.0b1",
+      "version": "d09e6116d60b",
+      "purl": "pkg:pypi/atlas-quant@0.2.0b2",
       "properties": [
         {
           "name": "atlas:source_commit",
-          "value": "36c7ee8e09862dd9bcea6d1927a72650a7308937"
+          "value": "d09e6116d60bc2614bbec512f5537d3038ba9d8c"
         }
       ],
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0d546263fc66288b1d3d5adc9ac9a6d6d332073f52df32910429deb10e917dac"
+          "content": "5ea9fde5bd257b24ca013ed7137aecb3b1c62829f48cab0ecc63743e8d97d251"
         }
       ]
     },
     "properties": [
       {
         "name": "atlas:wheel_filename",
-        "value": "atlas_quant-0.2.0b1-py3-none-any.whl"
+        "value": "atlas_quant-0.2.0b2-py3-none-any.whl"
       }
     ]
   },

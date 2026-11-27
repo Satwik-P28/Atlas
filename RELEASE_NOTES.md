@@ -78,10 +78,20 @@ From a source checkout: `make install`, then `make demo`, `make focus-demo`, `ma
 
 ## Artifacts
 
-Four artifacts are attached to the release: the wheel, the sdist, a CycloneDX SBOM and the sanitized
-source snapshot, with `SHA256SUMS` alongside them. Sizes and SHA-256 digests are recorded in
-[`artifacts/release/SHA256SUMS`](artifacts/release/SHA256SUMS), in
-[`docs/RELEASE_GATES.json`](docs/RELEASE_GATES.json) and on the release page.
+Four artifacts are attached to the release, with `SHA256SUMS` alongside them. They were built from
+the candidate commit `d09e6116d60b` with a clean working tree.
+
+| Artifact | Bytes | SHA-256 |
+| --- | --- | --- |
+| `atlas_quant-0.2.0b2-py3-none-any.whl` | 1,436,904 | `5ea9fde5bd257b24ca013ed7137aecb3b1c62829f48cab0ecc63743e8d97d251` |
+| `atlas_quant-0.2.0b2.tar.gz` | 1,544,834 | `2738f5ffa801943b9e99ea04dfd013ffb7f25343a4e6c7891fd34a6520235f3b` |
+| `atlas-source-HEAD-sanitized.tar.gz` (source snapshot, no vendor data) | 33,918,734 | `988876fd1d980934b3db2263e612b2f7e62fd29c6a6093a4a22e64c765ae05b3` |
+| `sbom.cdx.json` (CycloneDX) | 8,087 | `ce22c12ef5003bad03545c0c0b1a61b1b3d3c021a06de4e9ba7075c62792dcc2` |
+
+The same digests are recorded in [`artifacts/release/SHA256SUMS`](artifacts/release/SHA256SUMS) and
+[`docs/RELEASE_GATES.json`](docs/RELEASE_GATES.json). Two builds of this commit produce
+byte-identical wheel and sdist with the same interpreter, setuptools and zlib; a different toolchain
+may produce different bytes.
 
 Checksums identify the distributed files; they are **not** signatures or attestations, and nothing
 here is signed. PyPI trusted publishing identifies the workflow that uploaded the files; it does not
@@ -96,7 +106,7 @@ sign the bytes.
 | Packaged installation of the distributed wheel | clean venv: `pip install`, `init`, `doctor`, `demo`, `serve` health and the MCP handshake all pass |
 | Restricted data | tree, wheel, sdist and source snapshot contain no restricted vendor material; zero of the nine exact vendor paths reachable in any ref |
 | Security | SQL interpolation inventory and structure tests unchanged; dependency scan clean; no credentials in the tree |
-| Hosted CI | 13/13 jobs on the certification commit — backend and audits, frontend, database integrity, research and rights integrity, clean-checkout reproducibility, the 21-step browser journey on Chromium, Firefox and WebKit, the packaged wheel on Ubuntu, Windows and macOS, and the release wheel build. Run identifier in `docs/RELEASE_GATES.json`. |
+| Hosted CI | run **`45921091414`** on the candidate commit: **13/13 jobs** — backend and audits, frontend, database integrity, research and rights integrity, clean-checkout reproducibility, the 21-step browser journey on Chromium, Firefox and WebKit, the packaged wheel on Ubuntu, Windows and macOS, and the release wheel build. |
 | PyPI | `0.2.0b2` published through trusted publishing, then installed from PyPI into a fresh virtualenv and exercised through the quickstart above |
 
 Not performed, and not claimed: independent human evaluation, external usability testing, adoption

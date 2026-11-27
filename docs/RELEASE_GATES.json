@@ -6,7 +6,7 @@
   "branch": "release/v0.2.0-closeout",
   "base_commit": "fd207c84fa5465201dfbbd901c473417312965b3",
   "base_ci_run": "45705018400",
-  "candidate_commit": "36c7ee8e09862dd9bcea6d1927a72650a7308937",
+  "candidate_commit": "d09e6116d60bc2614bbec512f5537d3038ba9d8c",
   "evaluated_at_utc": "2026-11-26",
   "states": [
     "PASS",
@@ -41,7 +41,7 @@
       "id": "packaged_installation",
       "name": "Packaged installation",
       "state": "PASS",
-      "evidence": "scripts/verify_packaged_install.py installed the distributed wheel (sha256 0d546263...) into a fresh virtualenv with PYTHONPATH removed and ran init, doctor, demo, serve/api/health and the MCP handshake: all six steps pass. The wheel carries the built terminal and the demonstration fixtures, so no checkout and no Node.js are needed.",
+      "evidence": "scripts/verify_packaged_install.py installed the distributed wheel (sha256 5ea9fde5...) into a fresh virtualenv with PYTHONPATH removed and ran init, doctor, demo, serve/api/health and the MCP handshake: all six steps pass, /api/health reports release_version 0.2.0b2, schema 15/15, integrity ok, and the bundled frontend and command index are served. The wheel carries the built terminal and the demonstration fixtures, so no checkout and no Node.js are needed.",
       "command": ".venv/bin/python scripts/verify_packaged_install.py --dist dist"
     },
     {
@@ -62,14 +62,14 @@
       "id": "artifact_integrity",
       "name": "Artifact integrity",
       "state": "PASS",
-      "evidence": "Wheel, sdist and sanitized source snapshot were each built twice from commit 36c7ee8 into separate directories and compared: byte-identical (member timestamps stamped at the commit time, PAX headers and gzip mtime cleared, fixed compression levels). sha256sum -c artifacts/release/SHA256SUMS passes for all four published assets. The post-licence artifacts carry License-Expression: Apache-2.0 and the three licence documents in dist-info/licenses. Checksums are hashes, not signatures or attestations.",
+      "evidence": "Wheel and sdist were each built twice from d09e6116d60b into separate directories and compared: byte-identical (member timestamps stamped at the commit time, PAX headers and gzip mtime cleared, fixed compression levels). sha256sum -c passes for all four artifacts and SHA256SUMS (wheel 5ea9fde5..., sdist 2738f5ff..., source 988876fd..., SBOM ce22c12e...). The artifacts carry License-Expression: Apache-2.0 and the three licence documents in dist-info/licenses. Checksums are hashes, not signatures or attestations.",
       "command": ".venv/bin/python scripts/build_release_artifacts.py; (cd dist && sha256sum -c SHA256SUMS)"
     },
     {
       "id": "documentation_accuracy",
       "name": "Documentation accuracy",
       "state": "PASS",
-      "evidence": "README, RELEASE_NOTES, QUICKSTART, known limitations, platform matrix and handover state measured numbers and name what was not tested (independent human evaluation, external usability, adoption, commercial MCP client, browsers beyond the journey). The release notes and README report the licence as applied and still state that publication itself is pending.",
+      "evidence": "Every measured number is stated; unrun validations are named as unrun. This release corrects the two CLI defects that installing the published 0.2.0b1 wheel exposed: --db is a global option and must precede the subcommand, demo/serve/mcp accept --db-path, and no --version flag exists. All install instructions, the user guide, the verification page, the landing page and the runbook were corrected; the version is consistent across the package attribute, pyproject dynamic version, web package and API health; and the unsupported Python 3.11 claim was removed.",
       "command": "review of README.md, RELEASE_NOTES.md, docs/QUICKSTART.md, docs/KNOWN_LIMITATIONS.md, docs/PLATFORM_MATRIX.md, docs/PUBLIC_RELEASE_HANDOVER.md"
     },
     {
@@ -83,7 +83,7 @@
       "id": "browser_certification",
       "name": "Browser certification",
       "state": "PASS",
-      "evidence": "Chromium 21/21 locally (artifacts/browser/phase10_5_chromium.json), including the evidence inspector and the memo start that used to fail; both were product defects (a sticky label column covering every value cell, and a memo save returning 422 for unchanged content) and are fixed. Hosted CI run 45883811438 on the release commit ran the same journey on Chromium, Firefox and WebKit and all three certification jobs succeeded.",
+      "evidence": "Chromium 21/21 locally (artifacts/browser/phase10_5_chromium.json). Hosted CI run 45921091414 on the release candidate commit ran the same journey on Chromium, Firefox and WebKit and all three certification jobs succeeded, as did the two Playwright acceptance scenarios.",
       "command": "ATLAS_ENGINE=chromium node web/e2e/phase10_5_certification.mjs"
     },
     {
@@ -99,7 +99,7 @@
       "id": "data_redistribution_rights",
       "name": "Data redistribution rights",
       "state": "PASS",
-      "evidence": "The current tree, the wheel, the sdist (`dist/atlas_quant-0.2.0b1.tar.gz`) and the sanitized source snapshot contain no restricted vendor data (sanitized snapshot excludes 0 paths, 1,089 files). Every tracked data path has a rights entry in docs/DATA_RIGHTS_INVENTORY.json. The restricted Nasdaq/Alpha Vantage files are recorded as not_permitted and are absent from every artifact.",
+      "evidence": "The current tree, the wheel (dist/atlas_quant-0.2.0b2-py3-none-any.whl), the sdist (dist/atlas_quant-0.2.0b2.tar.gz) and the sanitized source snapshot (1,095 files) contain no restricted vendor data: zero of the nine exact vendor paths is reachable in any local or remote ref, in the archive, in the wheel or in the sdist, and the positive control confirms the legitimate provider adapter is still present and correctly not flagged. Every tracked data path has a rights entry in docs/DATA_RIGHTS_INVENTORY.json.",
       "command": ".venv/bin/python scripts/audit_distribution.py; .venv/bin/python scripts/build_sanitized_archive.py --commit 36c7ee8"
     },
     {
@@ -127,7 +127,7 @@
       "id": "authorized_publication_destination",
       "name": "Authorised publication destination",
       "state": "PASS",
-      "evidence": "Published on 2026-11-26 to the authorised destination Satwik-P28/Atlas (public, default branch main, description, homepage https://satwik-p28.github.io/Atlas/ and seven topics set) with Satwik-P28/Atlas-development as the private archive. Tag v0.2.0-beta.1 was created on 807a96206177 and the release published as a prerelease, not latest: https://github.com/Satwik-P28/Atlas/releases/tag/v0.2.0-beta.1. All four assets plus SHA256SUMS were uploaded, re-downloaded and verified with sha256sum -c. GitHub Pages is enabled with build_type workflow and https://satwik-p28.github.io/Atlas/ returns HTTP 200. PyPI trusted publishing is configured: GitHub environment 'pypi' plus a pending publisher for atlas-quant (owner Satwik-P28, repository Atlas, workflow release.yml).",
+      "evidence": "Published on 2026-11-26 to the authorised destination Satwik-P28/Atlas (public, default branch main, description, homepage https://satwik-p28.github.io/Atlas/ and seven topics set) with Satwik-P28/Atlas-development as the private archive. Tag v0.2.0-beta.1 was created on 807a96206177 and the release published as a prerelease, not latest: https://github.com/Satwik-P28/Atlas/releases/tag/v0.2.0-beta.1. All four assets plus SHA256SUMS were uploaded, re-downloaded and verified with sha256sum -c. GitHub Pages is enabled with build_type workflow and https://satwik-p28.github.io/Atlas/ returns HTTP 200. PyPI trusted publishing is configured: GitHub environment 'pypi' plus a pending publisher for atlas-quant (owner Satwik-P28, repository Atlas, workflow release.yml). The corrective release v0.2.0-beta.2 republished the same tree as 0.2.0b2 from candidate commit d09e6116d60b (CI run 45921091414, 13/13) through the same authorised destination and PyPI trusted publishing, leaving the v0.2.0-beta.1 release and its assets untouched.",
       "command": "gh release create v0.2.0-beta.1 ... --prerelease; gh api -X POST repos/Satwik-P28/Atlas/pages -f build_type=workflow; gh workflow run pages.yml; gh workflow run release.yml -f tag=..."
     }
   ],
@@ -162,26 +162,26 @@
     }
   ],
   "artifacts": {
-    "note": "Built from candidate_commit 36c7ee8 with a clean working tree, after the Apache-2.0 grant was applied. Pre-licence hashes (wheel 7d3c28c7..., sdist 132c83d1...) are superseded and must not be published. Two builds of this commit are byte-identical with the same interpreter, setuptools and zlib; checksums, not the commit alone, identify the distributed file. Checksums are not signatures or attestations.",
+    "note": "Built from the release candidate commit d09e6116d60bc2614bbec512f5537d3038ba9d8c with a clean working tree (two builds of the wheel and sdist are byte-identical). The certification commit that follows changes only docs/ and artifacts/release/, neither of which is inside the wheel or the sdist, so the hashes below remain the hashes of the attached files; the sanitized source archive is built from the candidate commit and therefore predates this registry edit. Checksums are hashes, not signatures or attestations.",
     "wheel": {
-      "path": "dist/atlas_quant-0.2.0b1-py3-none-any.whl",
-      "bytes": 1436906,
-      "sha256": "0d546263fc66288b1d3d5adc9ac9a6d6d332073f52df32910429deb10e917dac"
+      "path": "dist/atlas_quant-0.2.0b2-py3-none-any.whl",
+      "bytes": 1436904,
+      "sha256": "5ea9fde5bd257b24ca013ed7137aecb3b1c62829f48cab0ecc63743e8d97d251"
     },
     "sdist": {
-      "path": "dist/atlas_quant-0.2.0b1.tar.gz",
-      "bytes": 1543875,
-      "sha256": "aa29c862ffc731a4cf7b447874396617c48b568f544bfb4f58fe58b066564fe8"
+      "path": "dist/atlas_quant-0.2.0b2.tar.gz",
+      "bytes": 1544834,
+      "sha256": "2738f5ffa801943b9e99ea04dfd013ffb7f25343a4e6c7891fd34a6520235f3b"
     },
     "sanitized_source": {
       "path": "dist/atlas-source-HEAD-sanitized.tar.gz",
-      "bytes": 33900611,
-      "sha256": "c2af8558e1ba35a8a9d9e2fd92ce37cf6af7ee88a17bf871c85580795853b186"
+      "bytes": 33918734,
+      "sha256": "988876fd1d980934b3db2263e612b2f7e62fd29c6a6093a4a22e64c765ae05b3"
     },
     "sbom": {
       "path": "dist/sbom.cdx.json",
       "bytes": 8087,
-      "sha256": "b27d7c6cb9138ccb11b702565894915d9a79346bfd918df02aa1a8049dd5c892"
+      "sha256": "ce22c12ef5003bad03545c0c0b1a61b1b3d3c021a06de4e9ba7075c62792dcc2"
     },
     "license_text": {
       "path": "LICENSE",
@@ -200,13 +200,13 @@
     },
     "dependency_licenses": {
       "path": "docs/DEPENDENCY_LICENSES.json",
-      "bytes": 24285,
-      "sha256": "84e45b1bac5e2dd076089b9ad2a57064c0d52a2c50c0707f0fbbe99572b5b2ce"
+      "bytes": 24286,
+      "sha256": "31d1a72466038c0f5721fbabd8d69d4fad9fb1a2045e40c1bb3044a56677d6f0"
     },
     "provenance": {
       "path": "docs/PROVENANCE_MAPPING.json",
-      "bytes": 1160,
-      "sha256": "57015d9a705398ea76dfdd16a142211279210e7d575e36737d7ccdcac9aaa8e7"
+      "bytes": 1634,
+      "sha256": "d970adc1a5a9392661396e05b87c82f9510fd9bd9e2a4a6178ca7f9cd71dbc1f"
     },
     "checksums": "artifacts/release/SHA256SUMS",
     "acceptance_report": {
@@ -226,9 +226,10 @@
     },
     "provenance_mapping": {
       "original_commit": "36c7ee8e09862dd9bcea6d1927a72650a7308937",
-      "sanitized_commit": "8e3da8fe6492",
-      "tracked_files": 1089,
-      "restricted_paths_reachable": []
+      "release_candidate_commit": "d09e6116d60bc2614bbec512f5537d3038ba9d8c",
+      "tracked_files": 1095,
+      "restricted_paths_reachable": [],
+      "previous_release_commit": "807a96206177bb6ec07d3d5547d045a0c101150c"
     }
   },
   "summary": {
@@ -254,14 +255,14 @@
     "Validation milestones (independent human evaluation, external usability, adoption) are NOT RUN and no release claim depends on them."
   ],
   "maintainer_actions": [
-    "Execute docs/PUBLIC_RELEASE_HANDOVER.md sections 2-5: back up the development repository, rename it to Atlas-development, make it private, create Satwik-P28/Atlas, push the verified clean-history candidate 8e3da8f, tag v0.2.0-beta.1, and publish the prerelease with the four assets in artifacts/release/SHA256SUMS.",
-    "Enable GitHub Pages for the public repository (source: GitHub Actions) so the static landing page in docs/launch/ is served; the workflow is already committed.",
-    "Configure PyPI trusted publishing for the atlas-quant project (name confirmed unregistered on 2026-11-26) with environment 'pypi' and workflow release.yml, then push the tag so the upload runs.",
-    "Confirm that no employer, client or funding agreement claims the contributed code, as recorded in licenses/AUTHORIZATION-RECORD.md."
+    "Publish 0.2.0b2 to PyPI through the existing trusted publisher (workflow release.yml, environment pypi) and record the verified project URL. Do not describe 0.2.0b2 as available on PyPI before an upload and an install from PyPI both succeed.",
+    "Send the GitHub Support removal request for cached views, including refs/pull/*, of the former public development repository. Restricting visibility did not remove copies already taken.",
+    "Confirm that no employer, client or funding agreement claims the contributed code, as recorded in licenses/AUTHORIZATION-RECORD.md (still an open maintainer confirmation).",
+    "The shipped CLI has no --version flag; this release documents that instead of adding a feature."
   ],
-  "candidate_note": "The certified source commit. Artifacts were built from this commit with a clean working tree; the registry commit that follows is metadata-only and does not change them.",
-  "candidate_ci_run": "45883811438",
-  "candidate_ci_conclusion": "success (13/13 jobs on 1436489: backend suite and audits, frontend, database integrity, research and rights integrity, clean-checkout reproducibility, Chromium/Firefox/WebKit certification journeys, packaged wheel on ubuntu-latest, windows-latest and macos-latest, and the release wheel build)",
+  "candidate_note": "The release candidate commit. Artifacts were built from it with a clean working tree; the certification commit that follows is metadata-only.",
+  "candidate_ci_run": "45921091414",
+  "candidate_ci_conclusion": "success (13/13 jobs on Satwik-P28/Atlas at d09e6116d60b, branch release/v0.2.0-beta.2) \u2014 backend suite and audits, frontend test/typecheck/build, database migration integrity, research and rights integrity, clean-checkout reproducibility, the certification journey on Chromium, Firefox and WebKit, the packaged wheel on ubuntu-latest, windows-latest and macos-latest, and the release wheel build.",
   "publication": {
     "v0.2.0-beta.1": {
       "published_at_utc": "2026-11-26T21:15:00Z",
@@ -274,6 +275,15 @@
       "pages_run": "45896832258",
       "tag": "v0.2.0-beta.1 (annotated, prerelease, not latest)",
       "pypi": "0.2.0b1 was uploaded and then deleted by the maintainer. PyPI permanently prohibits reuse of a deleted distribution filename, so the same tree ships as 0.2.0b2 in v0.2.0-beta.2. The GitHub release and its assets are preserved."
+    },
+    "v0.2.0-beta.2": {
+      "release": "https://github.com/Satwik-P28/Atlas/releases/tag/v0.2.0-beta.2",
+      "tag": "v0.2.0-beta.2 (annotated, prerelease, not latest)",
+      "candidate_commit": "d09e6116d60bc2614bbec512f5537d3038ba9d8c",
+      "candidate_ci_run": "45921091414",
+      "landing_page": "https://satwik-p28.github.io/Atlas/",
+      "previous_release_preserved": "https://github.com/Satwik-P28/Atlas/releases/tag/v0.2.0-beta.1",
+      "pypi": "pending: see the maintainer action below; recorded only after an upload and an install verify it."
     }
   },
   "corrective_release_reason": "0.2.0b1's distribution files were deleted from PyPI and those filenames can never be reused. v0.2.0-beta.2 republishes the same tree as 0.2.0b2 and corrects the CLI documentation defects found by installing the published beta.1 wheel. No research, data, schema or feature change."

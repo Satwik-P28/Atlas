@@ -1,70 +1,70 @@
 {
   "schema": "atlas.release.packaged_install.v1",
-  "generated_at": "2026-11-26T19:18:07Z",
-  "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
-  "python": "3.12.3",
+  "generated_at": "2026-11-27T01:12:01Z",
+  "platform": "macOS-15.7.2-arm64-arm-64bit",
+  "python": "3.12.16",
   "wheel": {
-    "path": "atlas_quant-0.2.0b1-py3-none-any.whl",
-    "sha256": "0d546263fc66288b1d3d5adc9ac9a6d6d332073f52df32910429deb10e917dac",
-    "bytes": 1436906
+    "path": "atlas_quant-0.2.0b2-py3-none-any.whl",
+    "sha256": "5ea9fde5bd257b24ca013ed7137aecb3b1c62829f48cab0ecc63743e8d97d251",
+    "bytes": 1436904
   },
-  "workdir": "/tmp/atlas-install-2i2x5two",
+  "workdir": "/var/folders/h6/9yvh5q8j3jsc5g13_0v5yxhc0000gn/T/atlas-install-_ld16_j4",
   "steps": [
     {
       "command": [
-        "/tmp/atlas-install-2i2x5two/venv/bin/python",
+        "/var/folders/h6/9yvh5q8j3jsc5g13_0v5yxhc0000gn/T/atlas-install-_ld16_j4/venv/bin/python",
         "-m",
         "pip",
         "install",
         "--disable-pip-version-check",
-        "/workspace/chats/7c583000e3d88b493cb6695c/dist/atlas_quant-0.2.0b1-py3-none-any.whl[terminal]"
+        "/Users/satwikp/Projects/Atlas/.release/public-beta2/dist/atlas_quant-0.2.0b2-py3-none-any.whl[terminal]"
       ],
       "exit": 0,
-      "duration_s": 6.2,
-      "stdout_tail": " MB)\nUsing cached python_dotenv-1.2.4-py3-none-any.whl (23 kB)\nUsing cached pyyaml-6.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (849 kB)\nUsing cached starlette-1.10.0-py3-none-any.whl (80 kB)\nUsing cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)\nUsing cached typing_inspection-0.4.5-py3-none-any.whl (14 kB)\nUsing cached uvloop-0.23.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (4.5 MB)\nUsing cached watchfiles-1.3.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (458 kB)\nUsing cached websockets-17.4-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (226 kB)\nUsing cached annotated_types-0.8.0-py3-none-any.whl (13 kB)\nUsing cached idna-3.20-py3-none-any.whl (69 kB)\nInstalling collected packages: websockets, uvloop, tzdata, typing-extensions, pyyaml, python-dotenv, numpy, idna, httptools, h11, click, annotated-types, annotated-doc, uvicorn, typing-inspection, pydantic-core, opentelemetry-api, atlas-quant, anyio, watchfiles, starlette, pydantic, fastapi\nSuccessfully installed annotated-doc-0.0.7 annotated-types-0.8.0 anyio-4.16.0 atlas-quant-0.2.0b1 click-8.5.1 fastapi-0.165.0 h11-0.16.0 httptools-0.9.0 idna-3.20 numpy-2.5.5 opentelemetry-api-1.45.2 pydantic-2.14.4 pydantic-core-2.50.5 python-dotenv-1.2.4 pyyaml-6.0.4 starlette-1.10.0 typing-extensions-4.16.0 typing-inspection-0.4.5 tzdata-2026.6 uvicorn-0.54.0 uvloop-0.23.0 watchfiles-1.3.0 websockets-17.4\n",
+      "duration_s": 5.39,
+      "stdout_tail": "tarlette-1.10.0-py3-none-any.whl (80 kB)\nUsing cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)\nUsing cached typing_inspection-0.4.5-py3-none-any.whl (14 kB)\nUsing cached tzdata-2026.6-py2.py3-none-any.whl (348 kB)\nUsing cached uvicorn-0.54.0-py3-none-any.whl (87 kB)\nUsing cached click-8.5.1-py3-none-any.whl (126 kB)\nUsing cached h11-0.16.0-py3-none-any.whl (37 kB)\nUsing cached httptools-0.9.0-cp312-cp312-macosx_11_0_arm64.whl (119 kB)\nUsing cached python_dotenv-1.2.4-py3-none-any.whl (23 kB)\nUsing cached pyyaml-6.0.4-cp312-cp312-macosx_11_0_arm64.whl (179 kB)\nUsing cached uvloop-0.23.0-cp312-cp312-macosx_10_13_universal2.whl (1.4 MB)\nUsing cached watchfiles-1.3.0-cp310-abi3-macosx_11_0_arm64.whl (397 kB)\nUsing cached websockets-17.4-cp312-cp312-macosx_11_0_arm64.whl (216 kB)\nInstalling collected packages: websockets, uvloop, tzdata, typing-extensions, pyyaml, python-dotenv, numpy, idna, httptools, h11, click, annotated-types, annotated-doc, uvicorn, typing-inspection, pydantic-core, opentelemetry-api, atlas-quant, anyio, watchfiles, starlette, pydantic, fastapi\n\nSuccessfully installed annotated-doc-0.0.7 annotated-types-0.8.0 anyio-4.16.0 atlas-quant-0.2.0b2 click-8.5.1 fastapi-0.165.0 h11-0.16.0 httptools-0.9.0 idna-3.20 numpy-2.5.5 opentelemetry-api-1.45.2 pydantic-2.14.4 pydantic-core-2.50.5 python-dotenv-1.2.4 pyyaml-6.0.4 starlette-1.10.0 typing-extensions-4.16.0 typing-inspection-0.4.5 tzdata-2026.6 uvicorn-0.54.0 uvloop-0.23.0 watchfiles-1.3.0 websockets-17.4\n",
       "stderr_tail": "",
       "ok": true,
       "step": "pip install wheel[terminal]"
     },
     {
       "command": [
-        "/tmp/atlas-install-2i2x5two/venv/bin/atlas",
+        "/var/folders/h6/9yvh5q8j3jsc5g13_0v5yxhc0000gn/T/atlas-install-_ld16_j4/venv/bin/atlas",
         "--db",
-        "/tmp/atlas-install-2i2x5two/atlas.db",
+        "/var/folders/h6/9yvh5q8j3jsc5g13_0v5yxhc0000gn/T/atlas-install-_ld16_j4/atlas.db",
         "init"
       ],
       "exit": 0,
-      "duration_s": 0.38,
-      "stdout_tail": "initialised /tmp/atlas-install-2i2x5two/atlas.db (schema v15, 0 migration(s) applied)\n",
+      "duration_s": 0.35,
+      "stdout_tail": "initialised /var/folders/h6/9yvh5q8j3jsc5g13_0v5yxhc0000gn/T/atlas-install-_ld16_j4/atlas.db (schema v15, 0 migration(s) applied)\n",
       "stderr_tail": "",
       "ok": true,
       "step": "atlas init"
     },
     {
       "command": [
-        "/tmp/atlas-install-2i2x5two/venv/bin/atlas",
+        "/var/folders/h6/9yvh5q8j3jsc5g13_0v5yxhc0000gn/T/atlas-install-_ld16_j4/venv/bin/atlas",
         "--db",
-        "/tmp/atlas-install-2i2x5two/atlas.db",
+        "/var/folders/h6/9yvh5q8j3jsc5g13_0v5yxhc0000gn/T/atlas-install-_ld16_j4/atlas.db",
         "--json",
         "doctor"
       ],
       "exit": 0,
-      "duration_s": 0.35,
-      "stdout_tail": "7:59Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 8,\n      \"name\": \"phase6_learning_runtime\",\n      \"applied_at\": \"2026-11-26T19:17:59Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 9,\n      \"name\": \"phase7_economic_intelligence\",\n      \"applied_at\": \"2026-11-26T19:17:59Z\",\n      \"duration_ms\": 1\n    },\n    {\n      \"version\": 10,\n      \"name\": \"phase8_portable_applications\",\n      \"applied_at\": \"2026-11-26T19:17:59Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 11,\n      \"name\": \"phase9_2_regulatory_evidence\",\n      \"applied_at\": \"2026-11-26T19:17:59Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 12,\n      \"name\": \"phase9_2_market_price_rights\",\n      \"applied_at\": \"2026-11-26T19:17:59Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 13,\n      \"name\": \"phase9_2_fr_y9c_consolidated\",\n      \"applied_at\": \"2026-11-26T19:17:59Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 14,\n      \"name\": \"phase9_5_financial_knowledge_engine\",\n      \"applied_at\": \"2026-11-26T19:17:59Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 15,\n      \"name\": \"phase9_6_1_availability_model\",\n      \"applied_at\": \"2026-11-26T19:17:59Z\",\n      \"duration_ms\": 1\n    }\n  ],\n  \"package_schema\": \"atlas.application_package.v1\",\n  \"signature_support\": \"unsupported: unsigned packages are integrity-checked, publisher identity is not verified\",\n  \"untrusted_executable_support\": \"unsupported: no Python, JavaScript, shell or native extensions are executed\"\n}\n",
+      "duration_s": 0.14,
+      "stdout_tail": "1:54Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 8,\n      \"name\": \"phase6_learning_runtime\",\n      \"applied_at\": \"2026-11-27T01:11:54Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 9,\n      \"name\": \"phase7_economic_intelligence\",\n      \"applied_at\": \"2026-11-27T01:11:54Z\",\n      \"duration_ms\": 1\n    },\n    {\n      \"version\": 10,\n      \"name\": \"phase8_portable_applications\",\n      \"applied_at\": \"2026-11-27T01:11:54Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 11,\n      \"name\": \"phase9_2_regulatory_evidence\",\n      \"applied_at\": \"2026-11-27T01:11:54Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 12,\n      \"name\": \"phase9_2_market_price_rights\",\n      \"applied_at\": \"2026-11-27T01:11:54Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 13,\n      \"name\": \"phase9_2_fr_y9c_consolidated\",\n      \"applied_at\": \"2026-11-27T01:11:54Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 14,\n      \"name\": \"phase9_5_financial_knowledge_engine\",\n      \"applied_at\": \"2026-11-27T01:11:54Z\",\n      \"duration_ms\": 0\n    },\n    {\n      \"version\": 15,\n      \"name\": \"phase9_6_1_availability_model\",\n      \"applied_at\": \"2026-11-27T01:11:54Z\",\n      \"duration_ms\": 1\n    }\n  ],\n  \"package_schema\": \"atlas.application_package.v1\",\n  \"signature_support\": \"unsupported: unsigned packages are integrity-checked, publisher identity is not verified\",\n  \"untrusted_executable_support\": \"unsupported: no Python, JavaScript, shell or native extensions are executed\"\n}\n",
       "stderr_tail": "",
       "ok": true,
       "step": "atlas doctor"
     },
     {
       "command": [
-        "/tmp/atlas-install-2i2x5two/venv/bin/atlas",
+        "/var/folders/h6/9yvh5q8j3jsc5g13_0v5yxhc0000gn/T/atlas-install-_ld16_j4/venv/bin/atlas",
         "--db",
-        "/tmp/atlas-install-2i2x5two/demo.db",
+        "/var/folders/h6/9yvh5q8j3jsc5g13_0v5yxhc0000gn/T/atlas-install-_ld16_j4/demo.db",
         "demo",
         "--keep"
       ],
       "exit": 0,
-      "duration_s": 5.45,
+      "duration_s": 4.17,
       "stdout_tail": "oncept\": {\n          \"revenue\": 341,\n          \"net_income\": 340,\n          \"eps_diluted\": 339,\n          \"gross_profit\": 338,\n          \"eps_basic\": 338,\n          \"cash_and_equivalents\": 288,\n          \"equity\": 264,\n          \"dividends_paid\": 248,\n          \"weighted_average_shares_diluted\": 234,\n          \"selling_general_administrative\": 234,\n          \"research_and_development\": 234,\n          \"pretax_income\": 234,\n          \"operating_income\": 234,\n          \"operating_expenses\": 234,\n          \"income_tax_expense\": 234,\n          \"cost_of_revenue\": 234,\n          \"shares_outstanding\": 213,\n          \"operating_cash_flow\": 165,\n          \"capex\": 165,\n          \"investing_cash_flow\": 164,\n          \"financing_cash_flow\": 164,\n          \"depreciation_amortization\": 164,\n          \"assets\": 147,\n          \"receivables\": 144,\n          \"liabilities\": 144,\n          \"inventory\": 144,\n          \"interest_expense\": 136,\n          \"share_repurchases\": 126,\n          \"long_term_debt\": 109,\n          \"short_term_debt\": 101,\n          \"short_term_investments\": 70\n        },\n        \"by_quality\": {\n          \"suspect\": 271,\n          \"verified\": 6253\n        },\n        \"by_derivation\": {\n          \"normalized_source_observation\": 539,\n          \"source_observation\": 5985\n        }\n      },\n      \"issues\": {\n        \"error\": 0,\n        \"warning\": 0,\n        \"info\": 0\n      },\n      \"documents_by_source\": {\n        \"sec-edgar\": 4\n      },\n      \"integrity_check\": \"ok\"\n    }\n  }\n}\n",
       "stderr_tail": "",
       "ok": true,
@@ -75,10 +75,10 @@
       "step": "atlas serve /api/health",
       "ok": true,
       "exit": 0,
-      "duration_s": 1.27,
+      "duration_s": 2.54,
       "status": 200,
-      "body_tail": "{\"status\":\"ok\",\"database\":\"/tmp/atlas-install-2i2x5two/demo.db\",\"as_of\":\"2026-11-26T19:18:06Z\",\"terminal_schema\":\"atlas.terminal.v1\",\"release_version\":\"0.2.0b1\",\"schema_version\":15,\"supported_schema\":15,\"integrity_check\":\"ok\",\"evidence\":6524,\"issuers\":5,\"bars\":8,\"economic_observations\":0,\"economic_analyses\":0,\"application_installations\":0,\"domain_packs\":0}",
-      "release_version": "0.2.0b1",
+      "body_tail": "{\"status\":\"ok\",\"database\":\"/var/folders/h6/9yvh5q8j3jsc5g13_0v5yxhc0000gn/T/atlas-install-_ld16_j4/demo.db\",\"as_of\":\"2026-11-27T01:12:01Z\",\"terminal_schema\":\"atlas.terminal.v1\",\"release_version\":\"0.2.0b2\",\"schema_version\":15,\"supported_schema\":15,\"integrity_check\":\"ok\",\"evidence\":6524,\"issuers\":5,\"bars\":8,\"economic_observations\":0,\"economic_analyses\":0,\"application_installations\":0,\"domain_packs\":0}",
+      "release_version": "0.2.0b2",
       "schema_version": 15,
       "status_value": "ok",
       "frontend_status": 200,
@@ -88,7 +88,7 @@
     },
     {
       "step": "atlas mcp handshake",
-      "duration_s": 0.55,
+      "duration_s": 0.31,
       "responses": 3,
       "response_ids": [
         1,

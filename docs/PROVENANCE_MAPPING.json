@@ -1,28 +1,36 @@
 {
-  "target": ".release/clean-history",
-  "original_commit": "36c7ee8e09862dd9bcea6d1927a72650a7308937",
-  "original_commit_date": "2026-11-26T19:17:08+00:00",
-  "sanitized_commit": "8e3da8fe6492c7fc672c695ccc66d8c5a9e3b163",
-  "sanitized_tree": "b5a6146e752a4f860acb23e9834c3378b6391703",
-  "archive": {
-    "path": "/workspace/chats/7c583000e3d88b493cb6695c/dist/atlas-source-HEAD-sanitized.tar.gz",
-    "sha256": "c2af8558e1ba35a8a9d9e2fd92ce37cf6af7ee88a17bf871c85580795853b186",
-    "bytes": 33900611,
-    "files": 1089
-  },
-  "tracked_files": 1089,
-  "objects": 1185,
-  "clean_tree": true,
-  "excluded_paths": [],
-  "excluded_blobs": [],
-  "restricted_paths_reachable": [],
-  "verification": {
-    "no_restricted_paths_in_history": true,
-    "clean_working_tree": true,
-    "single_commit": true,
-    "tree_matches_archive": true
-  },
-  "generated_at": "2026-11-26T19:17:39Z",
   "schema": "atlas.provenance_mapping.v1",
-  "note": "The candidate is a fresh-history snapshot. It does not fix exposure in the original repository, whose history still contains the excluded blobs until the maintainer authorises a rewrite or makes that repository private."
+  "note": "The public repository is a sanitized distribution history. It contains none of the nine restricted vendor data paths in any commit, and the development history remains private in Satwik-P28/Atlas-development. No history was rewritten or deleted.",
+  "development_release_commit": "36c7ee8e09862dd9bcea6d1927a72650a7308937",
+  "distribution": {
+    "repository": "https://github.com/Satwik-P28/Atlas",
+    "v0.2.0-beta.1": {
+      "commit": "807a96206177bb6ec07d3d5547d045a0c101150c",
+      "tree": "735b5aa807f1d9d3e61de5355f4f5aa932a7d872",
+      "tracked_files": 1094
+    },
+    "v0.2.0-beta.2": {
+      "commit": "d09e6116d60bc2614bbec512f5537d3038ba9d8c",
+      "tracked_files": 1095,
+      "source_archive": {
+        "path": "dist/atlas-source-HEAD-sanitized.tar.gz",
+        "sha256": "988876fd1d980934b3db2263e612b2f7e62fd29c6a6093a4a22e64c765ae05b3",
+        "bytes": 33918734
+      }
+    }
+  },
+  "restricted_paths_reachable": [],
+  "restricted_paths": [
+    "fixtures/market/nasdaq_AAPL.csv",
+    "fixtures/market/nasdaq_AMZN.csv",
+    "fixtures/market/nasdaq_GS.csv",
+    "fixtures/market/nasdaq_JPM.csv",
+    "fixtures/market/nasdaq_UNH.csv",
+    "fixtures/market/ibm_daily_alphavantage.json",
+    "fixtures/market/ibm_dividends_alphavantage.json",
+    "fixtures/market/ibm_splits_alphavantage.json",
+    "fixtures/market/alphavantage_manifest.json"
+  ],
+  "positive_control": "src/atlas/ingestion/market_alphavantage.py is first-party adapter code and is present; it is not vendor data and is not part of the exposure.",
+  "generated_at": "2026-11-27T01:20:00Z"
 }

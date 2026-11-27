@@ -1,9 +1,9 @@
 {
   "schema": "atlas.release.dependency_scan.v1",
-  "generated_at": "2026-11-26T19:27:13Z",
+  "generated_at": "2026-11-27T01:12:13Z",
   "python": {
     "status": "ok",
-    "packages": 65,
+    "packages": 51,
     "findings": []
   },
   "npm": {
