@@ -1,0 +1,247 @@
+name: Open data release
+
+# Explicitly dispatched. Acquisition and packaging run with `contents: read` only.
+# Publication is split into two protected jobs, each in the `open-data-release`
+# environment, so a human approves the draft *and* approves promoting that same
+# draft. Every input is validated once by scripts/validate_release_inputs.py into
+# dist/release-plan.json; no workflow input is interpolated into a shell command.
+#
+# Draft first: `mode: draft` uploads a draft release so the assets, hashes and the
+# embedded LICENSES.md can be inspected and byte-verified before anything is public.
+# `mode: public` publishes the same tag: the draft is never rebuilt under a new tag.
+# An existing tag is always refused, so an asset is never replaced in place.
+#
+# Artifact layout: each upload-artifact step names exactly one path root and each
+# download-artifact step restores it to the matching directory, so `dist/<asset>`
+# stays `dist/<asset>` between jobs. `test_workflow_artifact_paths_are_single_rooted`
+# fails CI if that stops being true.
+
+on:
+  workflow_dispatch:
+    inputs:
+      datasets:
+        description: "Space-separated registry dataset ids (validated against current rights)"
+        required: true
+        default: "sec.company_tickers treasury.nominal_yields"
+      tag:
+        description: "Release tag: open-data-YYYY-MM or open-data-YYYY-MM-rN (must not exist)"
+        required: true
+        default: "open-data-2026-11"
+      oversized:
+        description: "Optional dataset=bytes claims for datasets above the asset limit"
+        required: false
+        default: ""
+      mode:
+        description: "draft creates an unpublished draft; public also publishes it"
+        type: choice
+        options: ["draft", "public"]
+        default: "draft"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: open-data-release
+  cancel-in-progress: false
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+  ATLAS_OPEN_DATA_ROOT: /tmp/atlas_open_data
+  ATLAS_OPEN_DATA_DB: /tmp/atlas_open_data/index.db
+  ATLAS_ARTIFACT_LIMIT_BYTES: "1900000000"
+
+jobs:
+  plan:
+    name: Validate inputs and rights
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -e '.[dev,columnar,open-data]'
+      - name: Registry is current
+        run: python scripts/build_open_data_registry.py --check
+      - name: Rights audit is clean
+        run: python scripts/audit_open_data.py --strict
+      - name: Validate dispatch inputs
+        env:
+          ATLAS_RELEASE_DATASETS: ${{ inputs.datasets }}
+          ATLAS_RELEASE_TAG: ${{ inputs.tag }}
+          ATLAS_RELEASE_OVERSIZED: ${{ inputs.oversized }}
+          ATLAS_RELEASE_MODE: ${{ inputs.mode }}
+        run: python scripts/validate_release_inputs.py --out dist/release-plan.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: release-plan
+          path: dist/release-plan.json
+          if-no-files-found: error
+
+  package:
+    name: Acquire, verify and package
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          name: release-plan
+          path: dist
+      - name: Install dependencies
+        run: python -m pip install -e '.[dev,columnar,open-data]' duckdb
+      - name: Disk space check
+        run: |
+          free=$(df -B1 /tmp | awk 'NR==2 {print $4}')
+          echo "free bytes: $free"
+          if [ "$free" -lt 16106127360 ]; then
+            echo "at least 15 GiB free is required"; exit 1
+          fi
+      - name: Acquire the planned datasets
+        run: python scripts/release_step.py acquire --plan dist/release-plan.json --out dist/acquire.json
+      - name: Verify stored bytes against their manifests
+        run: python -m atlas.cli data verify
+      - name: Export manifests as the recovery contract
+        run: python -m atlas.cli data export-manifest --all
+      - name: Build rights-gated packages from the plan
+        run: python scripts/build_release_packages.py --plan dist/release-plan.json --out dist
+      - name: Write the committable release index and notes
+        run: python scripts/release_step.py index --plan dist/release-plan.json --out dist/release-index.json
+      - name: Asset size and hash gate
+        run: python scripts/release_step.py check-assets --dist dist --plan dist/release-plan.json --limit 1900000000
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        if: always()
+        with:
+          name: release-package
+          path: dist/
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        if: always()
+        with:
+          name: release-manifests
+          path: data/open_data/manifests/
+          if-no-files-found: warn
+
+  draft:
+    name: Draft the release and byte-verify it
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    environment: open-data-release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          name: release-package
+          path: dist
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          name: release-manifests
+          path: data/open_data/manifests
+      - name: Install dependencies
+        run: python -m pip install -e '.[dev,columnar,open-data]'
+      - name: Re-validate rights immediately before upload
+        run: |
+          python scripts/build_open_data_registry.py --check
+          python scripts/audit_open_data.py --strict
+      - name: The publication environment must require approval
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/check_release_environment.py --repo "$GITHUB_REPOSITORY"
+      - name: Refuse an existing tag and create the draft release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/release_step.py draft --plan dist/release-plan.json --dist dist
+      - name: Download and byte-verify the draft assets and restore them
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          python scripts/release_step.py verify
+          --index dist/release-index.json
+          --download-dir /tmp/verify-draft
+          --fresh-store /tmp/verify-store-draft
+          --require-byte-verification
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        if: always()
+        with:
+          name: release-draft-report
+          path: data/open_data/releases/publications/
+          if-no-files-found: warn
+
+  publish:
+    name: Promote the verified draft to public
+    needs: draft
+    if: inputs.mode == 'public'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    environment: open-data-release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          name: release-package
+          path: dist
+      - name: Install dependencies
+        run: python -m pip install -e '.[dev,columnar,open-data]'
+      - name: The publication environment must require approval
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/check_release_environment.py --repo "$GITHUB_REPOSITORY"
+      - name: The reviewed draft is still the release being promoted
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          python scripts/release_step.py verify
+          --index dist/release-index.json
+          --metadata-only
+      - name: Publish the same reviewed draft
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/release_step.py publish --plan dist/release-plan.json
+      - name: Independently download, hash and restore the public assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          python scripts/release_step.py verify
+          --index dist/release-index.json
+          --download-dir /tmp/verify-public
+          --fresh-store /tmp/verify-store-public
+          --require-byte-verification
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        if: always()
+        with:
+          name: release-publication-report
+          path: data/open_data/releases/publications/
+          if-no-files-found: warn

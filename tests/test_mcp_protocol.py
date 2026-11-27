@@ -134,7 +134,7 @@ def test_tool_discovery_marks_every_tool_read_only_except_the_mutator(
     response = server.handle_message(_request("tools/list", {}))
     tools = {tool["name"]: tool for tool in response["result"]["tools"]}
     assert set(tools) == set(TOOLS)
-    assert len(tools) == 14
+    assert len(tools) == len(TOOLS)
     for name, tool in tools.items():
         schema = tool["inputSchema"]
         assert schema["type"] == "object"
@@ -420,7 +420,7 @@ def test_stdio_process_speaks_mcp_end_to_end(db_path) -> None:
         responses = {response["id"]: response for response in client.read(3)}
         assert set(responses) == {1, 2, 3}
         assert responses[1]["result"]["serverInfo"]["name"] == "atlas"
-        assert len(responses[2]["result"]["tools"]) == 14
+        assert len(responses[2]["result"]["tools"]) == len(TOOLS)
         answer = responses[3]["result"]["structuredContent"]
         assert answer["answered"] is True
         assert answer["evidence"]["accession"] == ACCESSION

@@ -1,0 +1,130 @@
+name: Open data acquisition
+
+on:
+  # A change to this workflow itself runs the small, budgeted smoke acquisition so the
+  # live path is exercised on the hosted runner. Normal code changes never trigger it.
+  push:
+    branches: [data/open-data-bootstrap, main]
+    paths:
+      - ".github/workflows/open-data-acquire.yml"
+  workflow_dispatch:
+    inputs:
+      datasets:
+        description: "Dataset ids or groups (sec, treasury, macro, banking, energy, cftc, identifiers)"
+        required: true
+        default: "treasury.nominal_yields"
+      mode:
+        description: "smoke (small, budgeted) or bulk"
+        type: choice
+        options: [smoke, bulk]
+        default: smoke
+      max_bytes:
+        description: "Per-dataset byte budget for smoke mode"
+        required: false
+        default: "20000000"
+      force:
+        description: "Ignore ETag/Last-Modified and re-download"
+        type: boolean
+        default: false
+      publish:
+        description: "Build a distributable package (never uploads automatically)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: open-data-acquire-${{ github.event.inputs.datasets || github.sha }}
+  cancel-in-progress: false
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+  ATLAS_OPEN_DATA_ROOT: /tmp/atlas_open_data
+  ATLAS_OPEN_DATA_DB: /tmp/atlas_open_data/index.db
+
+jobs:
+  acquire:
+    name: Acquire and validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -e '.[dev,columnar]' zstandard duckdb
+      - name: Verify registry and rights before any download
+        run: |
+          python scripts/build_open_data_registry.py --check
+          python scripts/audit_open_data.py --strict
+      - name: Disk space check
+        run: |
+          free=$(df -B1 /tmp | awk 'NR==2 {print $4}')
+          echo "free bytes: $free"
+          if [ "$free" -lt 5368709120 ]; then
+            echo "at least 5 GiB free is required for a bulk run"; exit 1
+          fi
+      - name: Acquire selection
+        env:
+          DATASETS: ${{ github.event.inputs.datasets || 'treasury.nominal_yields' }}
+          MODE: ${{ github.event.inputs.mode || 'smoke' }}
+          MAX_BYTES: ${{ github.event.inputs.max_bytes || '20000000' }}
+          FORCE: ${{ github.event.inputs.force || 'false' }}
+        run: |
+          set -o pipefail
+          budget="$MAX_BYTES"
+          if [ "$MODE" = "bulk" ]; then budget=""; fi
+          args=(data sync "$DATASETS" --automated)
+          if [ "$FORCE" = "true" ]; then args+=(--force); fi
+          if [ -n "$budget" ]; then args+=(--max-bytes "$budget"); fi
+          python -m atlas.cli "${args[@]}" | tee /tmp/acquire.json
+      - name: Verify snapshot hashes
+        if: always()
+        run: python -m atlas.cli data verify
+      - name: Coverage dashboard
+        if: always()
+        run: python -m atlas.cli data dashboard --out artifacts/open_data_dashboard.html
+      - name: Export manifests as versioned evidence
+        if: always()
+        run: |
+          mkdir -p data/open_data/manifests
+          python - <<'PY'
+          import json, pathlib
+          from atlas.open_data.engine import AcquisitionEngine
+          engine = AcquisitionEngine()
+          exported = []
+          for snapshot in engine.store.list_snapshots():
+              target = pathlib.Path("data/open_data/manifests") / snapshot.dataset_id / f"{snapshot.snapshot_id}.json"
+              engine.export_manifest(snapshot, target)
+              exported.append(str(target))
+          engine.close()
+          print(f"exported {len(exported)} manifests")
+          PY
+      - name: Rights-gated package (no upload)
+        if: ${{ github.event.inputs.publish == 'true' }}
+        run: python scripts/build_open_data_package.py --out dist/open_data_package.tar.zst
+      - name: Upload evidence and manifests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: open-data-acquisition
+          path: |
+            artifacts/open_data_dashboard.html
+            artifacts/open_data_dashboard.json
+            artifacts/open_data_audit.json
+            /tmp/acquire.json
+            data/open_data/manifests/**
+            dist/open_data_package.tar.zst
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Report failures
+        if: failure()
+        run: |
+          echo "## Acquisition failure" >> "$GITHUB_STEP_SUMMARY"
+          echo "Selection: ${{ github.event.inputs.datasets }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "See the uploaded artifacts and the acquisition log." >> "$GITHUB_STEP_SUMMARY"
+          tail -100 /tmp/acquire.json || true

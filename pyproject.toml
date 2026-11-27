@@ -39,12 +39,16 @@ Issues = "https://github.com/Satwik-P28/Atlas/issues"
 Security = "https://github.com/Satwik-P28/Atlas/blob/main/SECURITY.md"
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "hypothesis>=6", "httpx>=0.27", "build>=1"]
+dev = ["pytest>=8", "hypothesis>=6", "httpx>=0.27", "build>=1", "zstandard>=0.22"]
 # Convex decision programs, revision certificates and their baselines. Deliberately its own
 # extra: the packaging contract forbids pulling the numerical stack into `dev`, and the
 # decision tests skip cleanly when this extra is absent.
 optimization = ["scipy>=1.18,<2", "osqp>=1,<2", "clarabel>=0.11,<1"]
 columnar = ["pyarrow>=15"]  # optional: Parquet market-bar import
+# The open-data engine: release packaging (Zstandard), derived observation tables
+# (pyarrow) and in-place columnar queries (DuckDB). CI installs this extra rather
+# than adding DuckDB by hand, so a clean installation is what gets tested.
+open-data = ["zstandard>=0.22", "pyarrow>=15", "duckdb>=1.1,<2"]
 learning = [
   "scipy>=1.18,<2",
   "scikit-learn>=1.9,<2",

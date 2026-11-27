@@ -12,6 +12,7 @@ from decimal import Decimal
 import pytest
 from fastapi.testclient import TestClient
 
+from atlas.storage.migrations import LATEST_VERSION
 from atlas.core.temporal import ReportingPeriod, availability_from_instant
 from atlas.entities.master import SecurityMaster
 from atlas.evidence.kernel import EvidenceKernel
@@ -151,7 +152,7 @@ def test_health_and_contract(terminal):
     client = terminal["client"]
     health = client.get("/api/health").json()
     assert health["status"] == "ok"
-    assert health["schema_version"] == 15
+    assert health["schema_version"] == LATEST_VERSION
     assert health["issuers"] == 1
     contract = client.get("/api/schema").json()
     assert contract["selection_policy"] == "atlas.select.point_in_time.v2"

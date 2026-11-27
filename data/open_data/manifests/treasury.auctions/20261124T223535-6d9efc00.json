@@ -1,0 +1,295 @@
+{
+  "completed_at": "2026-11-24T22:35:48.618408Z",
+  "dataset_id": "treasury.auctions",
+  "exported_at": "2026-11-24T23:21:46.536163Z",
+  "files": [
+    {
+      "bytes": 3200201,
+      "content_type": "application/json",
+      "name": "page-00001.json",
+      "path": "page-00001.json",
+      "sha256": "a82faa47e35851209cac1dc502b843765bb97926d70bbf24c3ff42642f1b7d5e"
+    },
+    {
+      "bytes": 3197394,
+      "content_type": "application/json",
+      "name": "page-00002.json",
+      "path": "page-00002.json",
+      "sha256": "7399c29e8756af8ec164c6ed0fd4d100bd9dd2f6afe2381d6adbf8fe031a1f39"
+    },
+    {
+      "bytes": 3200404,
+      "content_type": "application/json",
+      "name": "page-00003.json",
+      "path": "page-00003.json",
+      "sha256": "54c3be5b75fbd68498a594ff12495044b3797bd49e56e321a4833d5cf7a96b92"
+    },
+    {
+      "bytes": 3213762,
+      "content_type": "application/json",
+      "name": "page-00004.json",
+      "path": "page-00004.json",
+      "sha256": "f63ae19f2cb5a0fb91fb46333eabaf3be4b62738cd2ba092981f92b531a608ad"
+    },
+    {
+      "bytes": 3239430,
+      "content_type": "application/json",
+      "name": "page-00005.json",
+      "path": "page-00005.json",
+      "sha256": "3fc48217d3ea5680a4faae21b4884b0b4263d3082becd20182cc09bdc34bf5e6"
+    },
+    {
+      "bytes": 3384349,
+      "content_type": "application/json",
+      "name": "page-00006.json",
+      "path": "page-00006.json",
+      "sha256": "e97fdebfbaef938a1885a4c3a4993c0e806fa738d8ca0464d465c10742ad840a"
+    },
+    {
+      "bytes": 3375118,
+      "content_type": "application/json",
+      "name": "page-00007.json",
+      "path": "page-00007.json",
+      "sha256": "bfd2256ac693a4bd7547509ffbbbf7354dbd34132577b2103be90c0a199f01d8"
+    },
+    {
+      "bytes": 3380891,
+      "content_type": "application/json",
+      "name": "page-00008.json",
+      "path": "page-00008.json",
+      "sha256": "6b8fa4a93a72522439d21dbc31b334b73066b3dfb9fe7266b729460b85d1a349"
+    },
+    {
+      "bytes": 3386575,
+      "content_type": "application/json",
+      "name": "page-00009.json",
+      "path": "page-00009.json",
+      "sha256": "81d688e49c735266c68e28b71ff4a1d9c998b580e70828b0787d27fa9a8971ed"
+    },
+    {
+      "bytes": 3395133,
+      "content_type": "application/json",
+      "name": "page-00010.json",
+      "path": "page-00010.json",
+      "sha256": "7996731651dc896a45518f02d882343a0e899aafa959a029a56f8b41e9a10d29"
+    },
+    {
+      "bytes": 3399757,
+      "content_type": "application/json",
+      "name": "page-00011.json",
+      "path": "page-00011.json",
+      "sha256": "fa3216675cdcdb9149937cbb1064fafb761251989d2cfeb71448343ca7a31388"
+    },
+    {
+      "bytes": 534168,
+      "content_type": "application/json",
+      "name": "page-00012.json",
+      "path": "page-00012.json",
+      "sha256": "31d772fa9495d562b51aa5c48557c10807002c36a0b1a10a73ecd4abe068e4cb"
+    },
+    {
+      "bytes": 139072,
+      "content_type": "application/vnd.apache.parquet",
+      "name": "treasury_auctions.parquet",
+      "notes": "derived observation table; raw source bytes are the authority",
+      "path": "treasury_auctions.parquet",
+      "record_count": 22302,
+      "sha256": "742c469b7b59b23323b8fd7779b33b50de4b1aef29de3efe3a280d6c0e26c016",
+      "uncompressed_bytes": 139072
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "US Treasury",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:35:48.618288Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:35:48.618270Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.govinfo.gov/link/uscode/17/105",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223535-6d9efc00",
+  "source": {
+    "content_type": null,
+    "download_endpoint": "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query",
+    "etag": null,
+    "final_url": "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query",
+    "last_modified": null,
+    "official_source_url": "https://fiscaldata.treasury.gov/datasets/treasury-securities-auctions-data/"
+  },
+  "stats": {
+    "dataset_id": "treasury.auctions",
+    "decompressed_bytes": 0,
+    "derived_compression": "zstd",
+    "derived_observations": 22302,
+    "entity_count": 0,
+    "file_count": 12,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": "2026-10-22",
+    "obs_start": "1979-10-31",
+    "pages": 12,
+    "publications_with_dates": 0,
+    "record_count": 11154,
+    "series_count": 2,
+    "transfer": {
+      "bytes_downloaded": 36907182,
+      "elapsed_seconds": 12.213,
+      "final_url": "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query",
+      "pages": 12,
+      "status": 206
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 3200201,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        },
+        {
+          "bytes": 3197394,
+          "detected_format": "json",
+          "file": "page-00002.json"
+        },
+        {
+          "bytes": 3200404,
+          "detected_format": "json",
+          "file": "page-00003.json"
+        },
+        {
+          "bytes": 3213762,
+          "detected_format": "json",
+          "file": "page-00004.json"
+        },
+        {
+          "bytes": 3239430,
+          "detected_format": "json",
+          "file": "page-00005.json"
+        },
+        {
+          "bytes": 3384349,
+          "detected_format": "json",
+          "file": "page-00006.json"
+        },
+        {
+          "bytes": 3375118,
+          "detected_format": "json",
+          "file": "page-00007.json"
+        },
+        {
+          "bytes": 3380891,
+          "detected_format": "json",
+          "file": "page-00008.json"
+        },
+        {
+          "bytes": 3386575,
+          "detected_format": "json",
+          "file": "page-00009.json"
+        },
+        {
+          "bytes": 3395133,
+          "detected_format": "json",
+          "file": "page-00010.json"
+        },
+        {
+          "bytes": 3399757,
+          "detected_format": "json",
+          "file": "page-00011.json"
+        },
+        {
+          "bytes": 534168,
+          "detected_format": "json",
+          "file": "page-00012.json"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "Treasury securities auctions",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 3200201,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        },
+        {
+          "bytes": 3197394,
+          "detected_format": "json",
+          "file": "page-00002.json"
+        },
+        {
+          "bytes": 3200404,
+          "detected_format": "json",
+          "file": "page-00003.json"
+        },
+        {
+          "bytes": 3213762,
+          "detected_format": "json",
+          "file": "page-00004.json"
+        },
+        {
+          "bytes": 3239430,
+          "detected_format": "json",
+          "file": "page-00005.json"
+        },
+        {
+          "bytes": 3384349,
+          "detected_format": "json",
+          "file": "page-00006.json"
+        },
+        {
+          "bytes": 3375118,
+          "detected_format": "json",
+          "file": "page-00007.json"
+        },
+        {
+          "bytes": 3380891,
+          "detected_format": "json",
+          "file": "page-00008.json"
+        },
+        {
+          "bytes": 3386575,
+          "detected_format": "json",
+          "file": "page-00009.json"
+        },
+        {
+          "bytes": 3395133,
+          "detected_format": "json",
+          "file": "page-00010.json"
+        },
+        {
+          "bytes": 3399757,
+          "detected_format": "json",
+          "file": "page-00011.json"
+        },
+        {
+          "bytes": 534168,
+          "detected_format": "json",
+          "file": "page-00012.json"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

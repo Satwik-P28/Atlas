@@ -1,0 +1,103 @@
+{
+  "completed_at": "2026-11-24T22:47:37.578715Z",
+  "dataset_id": "bls.employment_series",
+  "exported_at": "2026-11-24T23:21:46.522829Z",
+  "files": [
+    {
+      "bytes": 3941924,
+      "content_type": "application/octet-stream",
+      "name": "ce.series",
+      "path": "ce.series",
+      "sha256": "7b6776cc1b0396452753968e12a0c776cb802510bc6321f8e27cd6fe48c2572a"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "BLS",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:47:37.578599Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:47:37.578584Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: U.S. Bureau of Labor Statistics",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain",
+    "license_url": "https://www.bls.gov/opub/copyright-information.htm",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T224736-b0f371b9",
+  "source": {
+    "content_type": "text/plain",
+    "download_endpoint": "https://download.bls.gov/pub/time.series/ce/ce.series",
+    "etag": "\"03ca8951771dd1:0\"",
+    "final_url": "https://download.bls.gov/pub/time.series/ce/ce.series",
+    "last_modified": "Tue, 10 Nov 2026 13:30:00 GMT",
+    "official_source_url": "https://download.bls.gov/pub/time.series/ce/"
+  },
+  "stats": {
+    "dataset_id": "bls.employment_series",
+    "decompressed_bytes": 0,
+    "entity_count": 0,
+    "file_count": 0,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 0,
+    "series_count": 0,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 3941924,
+      "content_length": 3941924,
+      "content_type": "text/plain",
+      "elapsed_seconds": 1.152,
+      "etag": "\"03ca8951771dd1:0\"",
+      "final_url": "https://download.bls.gov/pub/time.series/ce/ce.series",
+      "last_modified": "Tue, 10 Nov 2026 13:30:00 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "7b6776cc1b0396452753968e12a0c776cb802510bc6321f8e27cd6fe48c2572a",
+      "status": 200,
+      "url": "https://download.bls.gov/pub/time.series/ce/ce.series"
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 3941924,
+          "detected_format": "unknown",
+          "file": "ce.series"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "BLS CES series metadata",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 3941924,
+          "detected_format": "unknown",
+          "file": "ce.series"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

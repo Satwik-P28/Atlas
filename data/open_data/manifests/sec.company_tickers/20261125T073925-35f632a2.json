@@ -1,0 +1,104 @@
+{
+  "completed_at": "2026-11-25T07:39:25.545675Z",
+  "dataset_id": "sec.company_tickers",
+  "exported_at": "2026-11-25T08:14:22.858560Z",
+  "files": [
+    {
+      "bytes": 521932,
+      "content_type": "application/json",
+      "name": "company_tickers_exchange.json",
+      "path": "company_tickers_exchange.json",
+      "sha256": "a4549a73d027584e90490c5b8ff207de3e6a607768c7de416144ef52e6474c84"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "SEC",
+  "retrieval": {
+    "completed_at": "2026-11-25T07:39:25.545561Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-25T07:39:25.545545Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261125T073925-35f632a2",
+  "source": {
+    "content_type": "application/json",
+    "download_endpoint": "https://www.sec.gov/files/company_tickers_exchange.json",
+    "etag": null,
+    "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+    "last_modified": "Mon, 23 Nov 2026 15:08:10 GMT",
+    "official_source_url": "https://www.sec.gov/files/company_tickers_exchange.json"
+  },
+  "stats": {
+    "dataset_id": "sec.company_tickers",
+    "decompressed_bytes": 0,
+    "entity_count": 10400,
+    "file_count": 1,
+    "future_observation_dates": 0,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 10400,
+    "series_count": 0,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 521932,
+      "content_length": 521932,
+      "content_type": "application/json",
+      "elapsed_seconds": 0.124,
+      "etag": null,
+      "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+      "last_modified": "Mon, 23 Nov 2026 15:08:10 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "a4549a73d027584e90490c5b8ff207de3e6a607768c7de416144ef52e6474c84",
+      "status": 200,
+      "url": "https://www.sec.gov/files/company_tickers_exchange.json"
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 521932,
+          "detected_format": "json",
+          "file": "company_tickers_exchange.json"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "SEC company tickers and exchange mapping",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 521932,
+          "detected_format": "json",
+          "file": "company_tickers_exchange.json"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

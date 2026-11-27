@@ -1,0 +1,109 @@
+{
+  "completed_at": "2026-11-24T22:39:47.245921Z",
+  "dataset_id": "sec.form13f",
+  "exported_at": "2026-11-24T23:21:46.533229Z",
+  "files": [
+    {
+      "bytes": 99411274,
+      "content_type": "application/zip",
+      "name": "01mar2026-31may2026_form13f.zip",
+      "path": "01mar2026-31may2026_form13f.zip",
+      "sha256": "05f4da8f526cd471a387af45661a8cb3bbfaf345d3ec9c2cefd31349aa257e63"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "SEC",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:39:47.245725Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:39:47.245707Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223939-c2bb3fbb",
+  "source": {
+    "content_type": "application/octet-stream",
+    "download_endpoint": "https://www.sec.gov/files/structureddata/data/form-13f-data-sets/01mar2026-31may2026_form13f.zip",
+    "etag": null,
+    "final_url": "https://www.sec.gov/files/structureddata/data/form-13f-data-sets/01mar2026-31may2026_form13f.zip",
+    "last_modified": "Thu, 04 Jun 2026 17:38:20 GMT",
+    "official_source_url": "https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets"
+  },
+  "stats": {
+    "dataset_id": "sec.form13f",
+    "decompressed_bytes": 401782293,
+    "entity_count": 10865,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 3877007,
+    "series_count": 0,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 99411274,
+      "content_length": 99411274,
+      "content_type": "application/octet-stream",
+      "elapsed_seconds": 1.889,
+      "etag": null,
+      "final_url": "https://www.sec.gov/files/structureddata/data/form-13f-data-sets/01mar2026-31may2026_form13f.zip",
+      "last_modified": "Thu, 04 Jun 2026 17:38:20 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "05f4da8f526cd471a387af45661a8cb3bbfaf345d3ec9c2cefd31349aa257e63",
+      "status": 200,
+      "url": "https://www.sec.gov/files/structureddata/data/form-13f-data-sets/01mar2026-31may2026_form13f.zip"
+    },
+    "validation": {
+      "files": [
+        {
+          "archive_members": 9,
+          "bytes": 99411274,
+          "compression_ratio": 4.04,
+          "detected_format": "zip",
+          "file": "01mar2026-31may2026_form13f.zip",
+          "uncompressed_bytes": 401782293
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "SEC Form 13F data sets",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "archive_members": 9,
+          "bytes": 99411274,
+          "compression_ratio": 4.04,
+          "detected_format": "zip",
+          "file": "01mar2026-31may2026_form13f.zip",
+          "uncompressed_bytes": 401782293
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

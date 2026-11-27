@@ -1,0 +1,244 @@
+{
+  "completed_at": "2026-11-24T22:35:33.508625Z",
+  "dataset_id": "treasury.debt_to_penny",
+  "exported_at": "2026-11-24T23:21:46.538237Z",
+  "files": [
+    {
+      "bytes": 320455,
+      "content_type": "application/json",
+      "name": "page-00001.json",
+      "path": "page-00001.json",
+      "sha256": "bd74e761f0eb8c15fb5dbdf4bd0d53ce47d8ec0851f114e3520f4b0520dd4748"
+    },
+    {
+      "bytes": 320588,
+      "content_type": "application/json",
+      "name": "page-00002.json",
+      "path": "page-00002.json",
+      "sha256": "260b228b3b39878f83e16752f6f2f49333a1939599ee88d63446213aa00aa6b6"
+    },
+    {
+      "bytes": 321476,
+      "content_type": "application/json",
+      "name": "page-00003.json",
+      "path": "page-00003.json",
+      "sha256": "159e026e0f18a448fbcd59d8d15931239507fcbe7414d76773395b515c5e767b"
+    },
+    {
+      "bytes": 344537,
+      "content_type": "application/json",
+      "name": "page-00004.json",
+      "path": "page-00004.json",
+      "sha256": "63bfc4bfe79eefe0c7b3225fe82187439c3b87994c8c6611ca5b4ae0b21f09bf"
+    },
+    {
+      "bytes": 345874,
+      "content_type": "application/json",
+      "name": "page-00005.json",
+      "path": "page-00005.json",
+      "sha256": "1e6cee26d7b515e00cb095f008ad55e46f68a5cb75ad5e4a18990a6921d3565f"
+    },
+    {
+      "bytes": 346492,
+      "content_type": "application/json",
+      "name": "page-00006.json",
+      "path": "page-00006.json",
+      "sha256": "5534c47cc7609d37d23e2efe7917d5101b4ad5499ecce312295fdc0ae4fac88a"
+    },
+    {
+      "bytes": 346492,
+      "content_type": "application/json",
+      "name": "page-00007.json",
+      "path": "page-00007.json",
+      "sha256": "88ff5f31fb0abf4127163a840f35d24de7334896e7caddb0638a0e8831d58a82"
+    },
+    {
+      "bytes": 346492,
+      "content_type": "application/json",
+      "name": "page-00008.json",
+      "path": "page-00008.json",
+      "sha256": "f71a79a26c46e19450cd5c496e498d16933231a4311f7e150a44777b4e7f884a"
+    },
+    {
+      "bytes": 153254,
+      "content_type": "application/json",
+      "name": "page-00009.json",
+      "path": "page-00009.json",
+      "sha256": "9dfd11d03c002b8f6360e7fa9dcf00e6421c337a46a508876eadc9289026cfc0"
+    },
+    {
+      "bytes": 106984,
+      "content_type": "application/vnd.apache.parquet",
+      "name": "treasury_debt_to_penny.parquet",
+      "notes": "derived observation table; raw source bytes are the authority",
+      "path": "treasury_debt_to_penny.parquet",
+      "record_count": 8440,
+      "sha256": "4c0e8a226bad163a04aab35f70ccabbc211c1ba91f3f7f0e296c9be59a463958",
+      "uncompressed_bytes": 106984
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "US Treasury",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:35:33.508541Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:35:33.508526Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.govinfo.gov/link/uscode/17/105",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223528-a4f61273",
+  "source": {
+    "content_type": null,
+    "download_endpoint": "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny",
+    "etag": null,
+    "final_url": "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny",
+    "last_modified": null,
+    "official_source_url": "https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/"
+  },
+  "stats": {
+    "dataset_id": "treasury.debt_to_penny",
+    "decompressed_bytes": 0,
+    "derived_compression": "zstd",
+    "derived_observations": 8440,
+    "entity_count": 0,
+    "file_count": 9,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": "2026-11-23",
+    "obs_start": "1993-04-01",
+    "pages": 9,
+    "publications_with_dates": 0,
+    "record_count": 8440,
+    "series_count": 1,
+    "transfer": {
+      "bytes_downloaded": 2845660,
+      "elapsed_seconds": 4.625,
+      "final_url": "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny",
+      "pages": 9,
+      "status": 206
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 320455,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        },
+        {
+          "bytes": 320588,
+          "detected_format": "json",
+          "file": "page-00002.json"
+        },
+        {
+          "bytes": 321476,
+          "detected_format": "json",
+          "file": "page-00003.json"
+        },
+        {
+          "bytes": 344537,
+          "detected_format": "json",
+          "file": "page-00004.json"
+        },
+        {
+          "bytes": 345874,
+          "detected_format": "json",
+          "file": "page-00005.json"
+        },
+        {
+          "bytes": 346492,
+          "detected_format": "json",
+          "file": "page-00006.json"
+        },
+        {
+          "bytes": 346492,
+          "detected_format": "json",
+          "file": "page-00007.json"
+        },
+        {
+          "bytes": 346492,
+          "detected_format": "json",
+          "file": "page-00008.json"
+        },
+        {
+          "bytes": 153254,
+          "detected_format": "json",
+          "file": "page-00009.json"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "Treasury debt to the penny",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 320455,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        },
+        {
+          "bytes": 320588,
+          "detected_format": "json",
+          "file": "page-00002.json"
+        },
+        {
+          "bytes": 321476,
+          "detected_format": "json",
+          "file": "page-00003.json"
+        },
+        {
+          "bytes": 344537,
+          "detected_format": "json",
+          "file": "page-00004.json"
+        },
+        {
+          "bytes": 345874,
+          "detected_format": "json",
+          "file": "page-00005.json"
+        },
+        {
+          "bytes": 346492,
+          "detected_format": "json",
+          "file": "page-00006.json"
+        },
+        {
+          "bytes": 346492,
+          "detected_format": "json",
+          "file": "page-00007.json"
+        },
+        {
+          "bytes": 346492,
+          "detected_format": "json",
+          "file": "page-00008.json"
+        },
+        {
+          "bytes": 153254,
+          "detected_format": "json",
+          "file": "page-00009.json"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

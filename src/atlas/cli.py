@@ -616,7 +616,8 @@ def cmd_mcp(db: Database, args: argparse.Namespace) -> int:
     if getattr(args, "allow_mutations", False):
         print("atlas mcp: mutations authorised for this session", file=sys.stderr)
     server = build_server(path, allow_mutations=bool(getattr(args, "allow_mutations", False)),
-                          call_timeout=float(getattr(args, "call_timeout", 20.0)))
+                          call_timeout=float(getattr(args, "call_timeout", 20.0)),
+                          columnar_root=getattr(args, "columnar_root", None))
     return server.serve()
 
 
@@ -1140,6 +1141,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--call-timeout", type=float, default=20.0,
         help="per-tool-call deadline in seconds (default 20)",
     )
+    mcp.add_argument(
+        "--columnar-root", default=None,
+        help="columnar dataset root exposed to the read-only columnar tools",
+    )
     mcp.set_defaults(func=cmd_mcp)
 
     verify_certificate = subparsers.add_parser(
@@ -1155,6 +1160,10 @@ def build_parser() -> argparse.ArgumentParser:
     certificate_verify = certificate_sub.add_parser("verify", help="verify a certificate")
     _add_certificate_arguments(certificate_verify)
     certificate_verify.set_defaults(func=cmd_verify_certificate)
+
+    from .open_data.cli import add_data_parser
+
+    add_data_parser(subparsers)
     return parser
 
 
@@ -1220,6 +1229,20 @@ def cmd_verify_certificate(_db: Database | None, args: argparse.Namespace) -> in
 def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    if getattr(args, "command", None) == "data":
+        # The open-data engine is usable without an evidence database, so it dispatches
+        # before the database is opened.
+        try:
+            return args.func(args)
+        except BrokenPipeError:  # pragma: no cover - a pager closed the pipe
+            return 0
+        except AtlasError as exc:
+            print(json.dumps(exc.to_dict(), indent=2) if getattr(args, "json", False)
+                  else f"error: {exc}", file=sys.stderr)
+            return 2
+        except (KeyError, FileNotFoundError, PermissionError, ValueError) as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 2
     # Certificate verification is intentionally database-free.
     if getattr(args, "command", None) in {"verify-certificate", "certificate"}:
         try:

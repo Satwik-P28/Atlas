@@ -1,0 +1,109 @@
+{
+  "completed_at": "2026-11-24T22:40:22.756716Z",
+  "dataset_id": "sec.form_n_port",
+  "exported_at": "2026-11-24T23:21:46.534218Z",
+  "files": [
+    {
+      "bytes": 462371568,
+      "content_type": "application/zip",
+      "name": "2026q3_nport.zip",
+      "path": "2026q3_nport.zip",
+      "sha256": "2f5ee059234d2e28f16d0451d9fcb405aab3dad5d92cded74c8ea9ffc4b66c38"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "SEC",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:40:22.756527Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:40:22.756507Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223947-fa3cb125",
+  "source": {
+    "content_type": "application/octet-stream",
+    "download_endpoint": "https://www.sec.gov/files/dera/data/form-n-port-data-sets/2026q3_nport.zip",
+    "etag": null,
+    "final_url": "https://www.sec.gov/files/dera/data/form-n-port-data-sets/2026q3_nport.zip",
+    "last_modified": "Wed, 07 Oct 2026 16:13:21 GMT",
+    "official_source_url": "https://www.sec.gov/data-research/sec-markets-data/form-n-port-data-sets"
+  },
+  "stats": {
+    "dataset_id": "sec.form_n_port",
+    "decompressed_bytes": 1628002181,
+    "entity_count": 1955,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 23073901,
+    "series_count": 0,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 462371568,
+      "content_length": 462371568,
+      "content_type": "application/octet-stream",
+      "elapsed_seconds": 9.195,
+      "etag": null,
+      "final_url": "https://www.sec.gov/files/dera/data/form-n-port-data-sets/2026q3_nport.zip",
+      "last_modified": "Wed, 07 Oct 2026 16:13:21 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "2f5ee059234d2e28f16d0451d9fcb405aab3dad5d92cded74c8ea9ffc4b66c38",
+      "status": 200,
+      "url": "https://www.sec.gov/files/dera/data/form-n-port-data-sets/2026q3_nport.zip"
+    },
+    "validation": {
+      "files": [
+        {
+          "archive_members": 32,
+          "bytes": 462371568,
+          "compression_ratio": 3.52,
+          "detected_format": "zip",
+          "file": "2026q3_nport.zip",
+          "uncompressed_bytes": 1628002181
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "SEC Form N-PORT data sets",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "archive_members": 32,
+          "bytes": 462371568,
+          "compression_ratio": 3.52,
+          "detected_format": "zip",
+          "file": "2026q3_nport.zip",
+          "uncompressed_bytes": 1628002181
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

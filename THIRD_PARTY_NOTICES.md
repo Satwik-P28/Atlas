@@ -22,6 +22,8 @@ They keep their own licences; the inventory records the licence each package rep
 | scipy (optional) | 1.18.1 | BSD-3-Clause |
 | scikit-learn (optional) | 1.9.1 | BSD-3-Clause |
 | pyarrow (optional) | 26.0.1 | Apache-2.0 |
+| duckdb (optional) | 1.5.6 | MIT |
+| zstandard (optional) | 0.25.0 | BSD-3-Clause |
 | osqp (optional) | 1.1.3 | Apache-2.0 |
 | clarabel (optional) | 0.11.1 | Apache-2.0 |
 | fastapi (optional) | 0.165.0 | MIT |

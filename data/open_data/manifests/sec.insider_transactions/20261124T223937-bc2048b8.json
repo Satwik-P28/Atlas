@@ -1,0 +1,109 @@
+{
+  "completed_at": "2026-11-24T22:39:39.013397Z",
+  "dataset_id": "sec.insider_transactions",
+  "exported_at": "2026-11-24T23:21:46.534655Z",
+  "files": [
+    {
+      "bytes": 13874904,
+      "content_type": "application/zip",
+      "name": "2026q1_form345.zip",
+      "path": "2026q1_form345.zip",
+      "sha256": "3dcb680593f5829bc951cb0969e858b60fc21a6835b094838218093a849592d6"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "SEC",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:39:39.013208Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:39:39.013191Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223937-bc2048b8",
+  "source": {
+    "content_type": "application/octet-stream",
+    "download_endpoint": "https://www.sec.gov/files/structureddata/data/insider-transactions-data-sets/2026q1_form345.zip",
+    "etag": null,
+    "final_url": "https://www.sec.gov/files/structureddata/data/insider-transactions-data-sets/2026q1_form345.zip",
+    "last_modified": "Tue, 07 Apr 2026 11:43:35 GMT",
+    "official_source_url": "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets"
+  },
+  "stats": {
+    "dataset_id": "sec.insider_transactions",
+    "decompressed_bytes": 91074307,
+    "entity_count": 0,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 580545,
+    "series_count": 0,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 13874904,
+      "content_length": 13874904,
+      "content_type": "application/octet-stream",
+      "elapsed_seconds": 0.379,
+      "etag": null,
+      "final_url": "https://www.sec.gov/files/structureddata/data/insider-transactions-data-sets/2026q1_form345.zip",
+      "last_modified": "Tue, 07 Apr 2026 11:43:35 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "3dcb680593f5829bc951cb0969e858b60fc21a6835b094838218093a849592d6",
+      "status": 200,
+      "url": "https://www.sec.gov/files/structureddata/data/insider-transactions-data-sets/2026q1_form345.zip"
+    },
+    "validation": {
+      "files": [
+        {
+          "archive_members": 10,
+          "bytes": 13874904,
+          "compression_ratio": 6.56,
+          "detected_format": "zip",
+          "file": "2026q1_form345.zip",
+          "uncompressed_bytes": 91074307
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "SEC Forms 3, 4 and 5 data sets",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "archive_members": 10,
+          "bytes": 13874904,
+          "compression_ratio": 6.56,
+          "detected_format": "zip",
+          "file": "2026q1_form345.zip",
+          "uncompressed_bytes": 91074307
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

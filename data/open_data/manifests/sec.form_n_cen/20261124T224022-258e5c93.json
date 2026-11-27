@@ -1,0 +1,109 @@
+{
+  "completed_at": "2026-11-24T22:40:23.921982Z",
+  "dataset_id": "sec.form_n_cen",
+  "exported_at": "2026-11-24T23:21:46.533749Z",
+  "files": [
+    {
+      "bytes": 5871882,
+      "content_type": "application/zip",
+      "name": "2026q3_ncen.zip",
+      "path": "2026q3_ncen.zip",
+      "sha256": "4761f8614d42dc52892417d3ad5f809309a39573b1f44530aa549c36f2f6593d"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "SEC",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:40:23.921818Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:40:23.921801Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T224022-258e5c93",
+  "source": {
+    "content_type": "application/octet-stream",
+    "download_endpoint": "https://www.sec.gov/files/dera/data/form-n-cen-data-sets/2026q3_ncen.zip",
+    "etag": null,
+    "final_url": "https://www.sec.gov/files/dera/data/form-n-cen-data-sets/2026q3_ncen.zip",
+    "last_modified": "Wed, 07 Oct 2026 15:51:11 GMT",
+    "official_source_url": "https://www.sec.gov/data-research/sec-markets-data/form-n-cen-data-sets"
+  },
+  "stats": {
+    "dataset_id": "sec.form_n_cen",
+    "decompressed_bytes": 67458178,
+    "entity_count": 396,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 679513,
+    "series_count": 0,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 5871882,
+      "content_length": 5871882,
+      "content_type": "application/octet-stream",
+      "elapsed_seconds": 0.439,
+      "etag": null,
+      "final_url": "https://www.sec.gov/files/dera/data/form-n-cen-data-sets/2026q3_ncen.zip",
+      "last_modified": "Wed, 07 Oct 2026 15:51:11 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "4761f8614d42dc52892417d3ad5f809309a39573b1f44530aa549c36f2f6593d",
+      "status": 200,
+      "url": "https://www.sec.gov/files/dera/data/form-n-cen-data-sets/2026q3_ncen.zip"
+    },
+    "validation": {
+      "files": [
+        {
+          "archive_members": 45,
+          "bytes": 5871882,
+          "compression_ratio": 11.5,
+          "detected_format": "zip",
+          "file": "2026q3_ncen.zip",
+          "uncompressed_bytes": 67458178
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "SEC Form N-CEN data sets",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "archive_members": 45,
+          "bytes": 5871882,
+          "compression_ratio": 11.5,
+          "detected_format": "zip",
+          "file": "2026q3_ncen.zip",
+          "uncompressed_bytes": 67458178
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

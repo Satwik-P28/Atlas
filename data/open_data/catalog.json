@@ -1,0 +1,308 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-11-24",
+  "scope": "Public structured data only; no market feed or institutional datasets. Downloads are current snapshots, not historical vintages.",
+  "datasets": [
+    {
+      "id": "sec.companyfacts",
+      "provider": "SEC",
+      "url": "https://www.sec.gov/Archives/edgar/daily-index/xbrl/companyfacts.zip",
+      "rights": "SEC public filing reuse; structured data only",
+      "policy_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+      "kind": "zip",
+      "filename": "companyfacts.zip",
+      "max_bytes": 12000000000
+    },
+    {
+      "id": "sec.submissions",
+      "provider": "SEC",
+      "url": "https://www.sec.gov/Archives/edgar/daily-index/bulkdata/submissions.zip",
+      "rights": "SEC public filing reuse; structured data only",
+      "policy_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+      "kind": "zip",
+      "filename": "submissions.zip",
+      "max_bytes": 12000000000
+    },
+    {
+      "id": "sec.tickers",
+      "provider": "SEC",
+      "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+      "rights": "SEC public data reuse",
+      "policy_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+      "kind": "json",
+      "filename": "company_tickers_exchange.json",
+      "max_bytes": 50000000
+    },
+    {
+      "id": "treasury.historical_debt",
+      "provider": "US Treasury Fiscal Data",
+      "url": "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_outstanding",
+      "rights": "Unrestricted commercial and noncommercial reuse",
+      "policy_url": "https://fiscaldata.treasury.gov/api-documentation/",
+      "kind": "fiscal_api",
+      "filename": "debt_outstanding.json",
+      "max_bytes": 100000000
+    },
+    {
+      "id": "treasury.daily_debt",
+      "provider": "US Treasury Fiscal Data",
+      "url": "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny",
+      "rights": "Unrestricted commercial and noncommercial reuse",
+      "policy_url": "https://fiscaldata.treasury.gov/api-documentation/",
+      "kind": "fiscal_api",
+      "filename": "debt_to_penny.json",
+      "max_bytes": 100000000
+    },
+    {
+      "id": "bls.cpi_current",
+      "provider": "BLS",
+      "url": "https://download.bls.gov/pub/time.series/cu/cu.data.0.Current",
+      "rights": "US public domain agency data",
+      "policy_url": "https://www.bls.gov/opub/copyright-information.htm",
+      "kind": "tsv",
+      "filename": "cu.data.0.Current",
+      "max_bytes": 500000000
+    },
+    {
+      "id": "bls.cpi_series",
+      "provider": "BLS",
+      "url": "https://download.bls.gov/pub/time.series/cu/cu.series",
+      "rights": "US public domain agency data",
+      "policy_url": "https://www.bls.gov/opub/copyright-information.htm",
+      "kind": "tsv",
+      "filename": "cu.series",
+      "max_bytes": 100000000
+    },
+    {
+      "id": "treasury.nominal_yields",
+      "provider": "US Treasury",
+      "url": "https://home.treasury.gov/system/files/276/yield-curve-rates-1990-2024.csv",
+      "rights": "US government-produced published rate statistics; public domain in US (17 USC 105); not underlying vendor quotes",
+      "policy_url": "https://www.govinfo.gov/link/uscode/17/105",
+      "kind": "csv",
+      "filename": "yield-curve-rates-1990-2024.csv",
+      "max_bytes": 10000000,
+      "source_url": "https://home.treasury.gov/interest-rates-data-csv-archive/"
+    },
+    {
+      "id": "treasury.bill_rates",
+      "provider": "US Treasury",
+      "url": "https://home.treasury.gov/system/files/276/bill-rates-2002-2024.csv",
+      "rights": "US government-produced published rate statistics; public domain in US (17 USC 105); not underlying vendor quotes",
+      "policy_url": "https://www.govinfo.gov/link/uscode/17/105",
+      "kind": "csv",
+      "filename": "bill-rates-2002-2024.csv",
+      "max_bytes": 10000000,
+      "source_url": "https://home.treasury.gov/interest-rates-data-csv-archive/"
+    },
+    {
+      "id": "treasury.long_term_rates",
+      "provider": "US Treasury",
+      "url": "https://home.treasury.gov/system/files/276/long-term-rates-2000-2024.csv",
+      "rights": "US government-produced published rate statistics; public domain in US (17 USC 105); not underlying vendor quotes",
+      "policy_url": "https://www.govinfo.gov/link/uscode/17/105",
+      "kind": "csv",
+      "filename": "long-term-rates-2000-2024.csv",
+      "max_bytes": 10000000,
+      "source_url": "https://home.treasury.gov/interest-rates-data-csv-archive/"
+    },
+    {
+      "id": "treasury.real_yields",
+      "provider": "US Treasury",
+      "url": "https://home.treasury.gov/system/files/276/par-real-yield-curve-rates-2003-2024.csv",
+      "rights": "US government-produced published rate statistics; public domain in US (17 USC 105); not underlying vendor quotes",
+      "policy_url": "https://www.govinfo.gov/link/uscode/17/105",
+      "kind": "csv",
+      "filename": "par-real-yield-curve-rates-2003-2024.csv",
+      "max_bytes": 10000000,
+      "source_url": "https://home.treasury.gov/interest-rates-data-csv-archive/"
+    },
+    {
+      "id": "treasury.real_long_term_rates",
+      "provider": "US Treasury",
+      "url": "https://home.treasury.gov/system/files/276/real-long-term-rates-2000-2024.csv",
+      "rights": "US government-produced published rate statistics; public domain in US (17 USC 105); not underlying vendor quotes",
+      "policy_url": "https://www.govinfo.gov/link/uscode/17/105",
+      "kind": "csv",
+      "filename": "real-long-term-rates-2000-2024.csv",
+      "max_bytes": 10000000,
+      "source_url": "https://home.treasury.gov/interest-rates-data-csv-archive/"
+    },
+    {
+      "id": "cftc.legacy_1986_2016",
+      "provider": "CFTC",
+      "url": "https://www.cftc.gov/files/dea/history/deacot1986_2016.zip",
+      "rights": "Public domain government reports; credit CFTC",
+      "policy_url": "https://www.cftc.gov/WebPolicy/index.htm",
+      "kind": "zip",
+      "filename": "deacot1986_2016.zip",
+      "max_bytes": 250000000,
+      "source_url": "https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalCompressed/index.htm"
+    },
+    {
+      "id": "cftc.disaggregated_2006_2016",
+      "provider": "CFTC",
+      "url": "https://www.cftc.gov/files/dea/history/fut_disagg_txt_hist_2006_2016.zip",
+      "rights": "Public domain government reports; credit CFTC",
+      "policy_url": "https://www.cftc.gov/WebPolicy/index.htm",
+      "kind": "zip",
+      "filename": "fut_disagg_txt_hist_2006_2016.zip",
+      "max_bytes": 250000000,
+      "source_url": "https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalCompressed/index.htm"
+    },
+    {
+      "id": "cftc.financial_2006_2016",
+      "provider": "CFTC",
+      "url": "https://www.cftc.gov/files/dea/history/fin_fut_txt_2006_2016.zip",
+      "rights": "Public domain government reports; credit CFTC",
+      "policy_url": "https://www.cftc.gov/WebPolicy/index.htm",
+      "kind": "zip",
+      "filename": "fin_fut_txt_2006_2016.zip",
+      "max_bytes": 250000000,
+      "source_url": "https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalCompressed/index.htm"
+    },
+    {
+      "id": "cftc.legacy_combined_1995_2016",
+      "provider": "CFTC",
+      "url": "https://www.cftc.gov/files/dea/history/deahistfo_1995_2016.zip",
+      "rights": "Public domain government reports; credit CFTC",
+      "policy_url": "https://www.cftc.gov/WebPolicy/index.htm",
+      "kind": "zip",
+      "filename": "deahistfo_1995_2016.zip",
+      "max_bytes": 250000000,
+      "source_url": "https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalCompressed/index.htm"
+    },
+    {
+      "id": "cftc.legacy_2025",
+      "provider": "CFTC",
+      "url": "https://www.cftc.gov/files/dea/history/deacot2025.zip",
+      "rights": "Public domain government reports; credit CFTC",
+      "policy_url": "https://www.cftc.gov/WebPolicy/index.htm",
+      "kind": "zip",
+      "filename": "deacot2025.zip",
+      "max_bytes": 250000000,
+      "source_url": "https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalCompressed/index.htm"
+    },
+    {
+      "id": "cftc.disaggregated_2025",
+      "provider": "CFTC",
+      "url": "https://www.cftc.gov/files/dea/history/fut_disagg_txt_2025.zip",
+      "rights": "Public domain government reports; credit CFTC",
+      "policy_url": "https://www.cftc.gov/WebPolicy/index.htm",
+      "kind": "zip",
+      "filename": "fut_disagg_txt_2025.zip",
+      "max_bytes": 250000000,
+      "source_url": "https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalCompressed/index.htm"
+    },
+    {
+      "id": "cftc.financial_2025",
+      "provider": "CFTC",
+      "url": "https://www.cftc.gov/files/dea/history/fut_fin_txt_2025.zip",
+      "rights": "Public domain government reports; credit CFTC",
+      "policy_url": "https://www.cftc.gov/WebPolicy/index.htm",
+      "kind": "zip",
+      "filename": "fut_fin_txt_2025.zip",
+      "max_bytes": 250000000,
+      "source_url": "https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalCompressed/index.htm"
+    },
+    {
+      "id": "bls.labor_force",
+      "provider": "BLS",
+      "url": "https://download.bls.gov/pub/time.series/ln/ln.data.1.AllData",
+      "rights": "US public domain agency data; credit BLS",
+      "policy_url": "https://www.bls.gov/opub/copyright-information.htm",
+      "kind": "tsv",
+      "filename": "ln.data.1.AllData",
+      "max_bytes": 1000000000,
+      "source_url": "https://download.bls.gov/pub/time.series/ln/"
+    },
+    {
+      "id": "bls.labor_force_series",
+      "provider": "BLS",
+      "url": "https://download.bls.gov/pub/time.series/ln/ln.series",
+      "rights": "US public domain agency data; credit BLS",
+      "policy_url": "https://www.bls.gov/opub/copyright-information.htm",
+      "kind": "tsv",
+      "filename": "ln.series",
+      "max_bytes": 50000000,
+      "source_url": "https://download.bls.gov/pub/time.series/ln/"
+    },
+    {
+      "id": "bls.payroll",
+      "provider": "BLS",
+      "url": "https://download.bls.gov/pub/time.series/ce/ce.data.0.AllCESSeries",
+      "rights": "US public domain agency data; credit BLS",
+      "policy_url": "https://www.bls.gov/opub/copyright-information.htm",
+      "kind": "tsv",
+      "filename": "ce.data.0.AllCESSeries",
+      "max_bytes": 1000000000,
+      "source_url": "https://download.bls.gov/pub/time.series/ce/"
+    },
+    {
+      "id": "bls.payroll_series",
+      "provider": "BLS",
+      "url": "https://download.bls.gov/pub/time.series/ce/ce.series",
+      "rights": "US public domain agency data; credit BLS",
+      "policy_url": "https://www.bls.gov/opub/copyright-information.htm",
+      "kind": "tsv",
+      "filename": "ce.series",
+      "max_bytes": 50000000,
+      "source_url": "https://download.bls.gov/pub/time.series/ce/"
+    },
+    {
+      "id": "bls.payroll_nonfarm",
+      "provider": "BLS",
+      "url": "https://download.bls.gov/pub/time.series/ce/ce.data.00a.TotalNonfarm.Employment",
+      "rights": "US public domain agency data; credit BLS",
+      "policy_url": "https://www.bls.gov/opub/copyright-information.htm",
+      "kind": "tsv",
+      "filename": "ce.data.00a.TotalNonfarm.Employment",
+      "max_bytes": 5000000,
+      "source_url": "https://download.bls.gov/pub/time.series/ce/"
+    },
+    {
+      "id": "bls.payroll_industry",
+      "provider": "BLS",
+      "url": "https://download.bls.gov/pub/time.series/ce/ce.industry",
+      "rights": "US public domain agency data; credit BLS",
+      "policy_url": "https://www.bls.gov/opub/copyright-information.htm",
+      "kind": "tsv",
+      "filename": "ce.industry",
+      "max_bytes": 10000000,
+      "source_url": "https://download.bls.gov/pub/time.series/ce/"
+    }
+  ],
+  "review_queue": [
+    {
+      "provider": "EIA",
+      "source": "https://www.eia.gov/opendata/v1/bulkfiles.php",
+      "policy": "https://www.eia.gov/about/copyrights_reuse.php",
+      "reason": "Select agency-produced series and check per-series copyright metadata before redistribution."
+    },
+    {
+      "provider": "World Bank",
+      "source": "https://data.worldbank.org/",
+      "policy": "https://datacatalog.worldbank.org/public-licenses",
+      "reason": "CC BY 4.0 plus additional terms and third-party exceptions; verify individual dataset and attribution."
+    },
+    {
+      "provider": "FRED/ALFRED",
+      "reason": "Verify rights at individual series level; do not assume the whole catalog is redistributable."
+    },
+    {
+      "provider": "CRSP/Compustat/Bloomberg/Yahoo/Alpaca/Massive",
+      "reason": "Excluded from public mirroring without explicit redistribution permission."
+    },
+    {
+      "provider": "CFTC additional years",
+      "source": "https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalCompressed/index.htm",
+      "reason": "Add remaining annual archives and combined reports after exact links are checked; existing entries cover only specified windows."
+    },
+    {
+      "provider": "FDIC",
+      "source": "https://banks.data.fdic.gov/bankfind-suite/bulkData",
+      "policy": "https://www.fdic.gov/about/website-policies",
+      "reason": "Review exact API or quarterly archive URLs and fields; do not mirror personal information or third-party content."
+    }
+  ]
+}

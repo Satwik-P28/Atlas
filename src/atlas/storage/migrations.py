@@ -1254,6 +1254,72 @@ UPDATE knowledge_document
 """
 
 
+_MIGRATION_016 = """
+-- Point-in-time selection asks "what did this record supersede?" once per fact. Without
+-- an index on the superseding side that question is a full scan of every supersession,
+-- which turns a single-issuer statement read into a tens-of-seconds query after bulk
+-- integration. Both directions are indexed because lineage walks either way.
+CREATE INDEX IF NOT EXISTS idx_evidence_supersession_superseding
+    ON evidence_supersession (superseding_id);
+CREATE INDEX IF NOT EXISTS idx_evidence_supersession_superseded
+    ON evidence_supersession (superseded_id);
+"""
+
+_MIGRATION_017 = """
+-- ===========================================================================
+-- Open data: destination database identity and authoritative integration progress
+-- ===========================================================================
+
+-- An integration checkpoint that records only processed CIKs cannot tell whether
+-- the database it describes still exists. Every Atlas database therefore carries
+-- one immutable identity. Copying a database (a backup) keeps the identity; deleting
+-- and recreating one produces a new identity, which invalidates progress computed
+-- against the old file instead of silently skipping issuers.
+CREATE TABLE database_identity (
+    identity_id          INTEGER PRIMARY KEY CHECK (identity_id = 1),
+    uuid                 TEXT NOT NULL UNIQUE,
+    created_at           TEXT NOT NULL,
+    atlas_schema_version INTEGER NOT NULL
+);
+
+-- Bulk integration progress lives in the destination database, in the same
+-- transaction as the evidence it describes, so the two cannot disagree after a
+-- crash. The external JSON checkpoint is a mirror for operators, never the
+-- authority.
+CREATE TABLE open_data_integration (
+    dataset_id          TEXT NOT NULL,
+    snapshot_id         TEXT NOT NULL,
+    database_uuid       TEXT NOT NULL,
+    integration_schema  TEXT NOT NULL,
+    manifest_sha256     TEXT NOT NULL,
+    archive_sha256      TEXT NOT NULL,
+    status              TEXT NOT NULL,
+    processed_ciks      INTEGER NOT NULL DEFAULT 0,
+    integrated_ciks     INTEGER NOT NULL DEFAULT 0,
+    ineligible_ciks     INTEGER NOT NULL DEFAULT 0,
+    rejected_ciks       INTEGER NOT NULL DEFAULT 0,
+    counts_json         TEXT NOT NULL,
+    started_at          TEXT NOT NULL,
+    updated_at          TEXT NOT NULL,
+    finished_at         TEXT,
+    PRIMARY KEY (dataset_id, snapshot_id)
+);
+
+CREATE TABLE open_data_integration_member (
+    dataset_id    TEXT NOT NULL,
+    snapshot_id   TEXT NOT NULL,
+    cik           TEXT NOT NULL,
+    status        TEXT NOT NULL
+        CHECK (status IN ('integrated', 'ineligible', 'rejected')),
+    evidence_rows INTEGER NOT NULL DEFAULT 0,
+    member        TEXT,
+    updated_at    TEXT NOT NULL,
+    PRIMARY KEY (dataset_id, snapshot_id, cik)
+);
+CREATE INDEX idx_open_data_integration_member_status
+    ON open_data_integration_member (dataset_id, snapshot_id, status);
+"""
+
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=1, name="phase1_foundation", sql=_MIGRATION_001),
     Migration(version=2, name="phase1_1_history_and_dependencies", sql=_MIGRATION_002),
@@ -1270,6 +1336,8 @@ MIGRATIONS: tuple[Migration, ...] = (
     Migration(version=13, name="phase9_2_fr_y9c_consolidated", sql=_MIGRATION_013),
     Migration(version=14, name="phase9_5_financial_knowledge_engine", sql=_MIGRATION_014),
     Migration(version=15, name="phase9_6_1_availability_model", sql=_MIGRATION_015),
+    Migration(version=16, name="open_data_supersession_indexes", sql=_MIGRATION_016),
+    Migration(version=17, name="open_data_integration_progress", sql=_MIGRATION_017),
 )
 
 LATEST_VERSION = max(m.version for m in MIGRATIONS)

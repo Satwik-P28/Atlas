@@ -1,0 +1,109 @@
+{
+  "completed_at": "2026-11-24T22:36:13.833910Z",
+  "dataset_id": "worldbank.wdi_gdp",
+  "exported_at": "2026-11-24T23:21:46.540103Z",
+  "files": [
+    {
+      "bytes": 3691618,
+      "content_type": "application/json",
+      "name": "page-00001.json",
+      "path": "page-00001.json",
+      "sha256": "df62232ba866a5d8b7831e7930d458301be5ed72adc86f52df529ede59c0f1b9"
+    },
+    {
+      "bytes": 149168,
+      "content_type": "application/vnd.apache.parquet",
+      "name": "worldbank_wdi_gdp.parquet",
+      "notes": "derived observation table; raw source bytes are the authority",
+      "path": "worldbank_wdi_gdp.parquet",
+      "record_count": 14811,
+      "sha256": "2c1010059e05745c0bc06f2219fd37a52154d71c0fd72bf5d6125731c290bbee",
+      "uncompressed_bytes": 149168
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "World Bank",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:36:13.833820Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:36:13.833805Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: World Bank, World Development Indicators (CC BY 4.0)",
+    "commercial_use": true,
+    "license_name": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "license_url": "https://datacatalog.worldbank.org/public-licenses",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "permissive",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": [
+      "Country data supplied by national statistical agencies may carry their own attribution terms"
+    ]
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223613-fc6a14a0",
+  "source": {
+    "content_type": null,
+    "download_endpoint": "https://api.worldbank.org/v2/country/all/indicator/NY.GDP.MKTP.CD",
+    "etag": null,
+    "final_url": "https://api.worldbank.org/v2/country/all/indicator/NY.GDP.MKTP.CD",
+    "last_modified": null,
+    "official_source_url": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD"
+  },
+  "stats": {
+    "dataset_id": "worldbank.wdi_gdp",
+    "decompressed_bytes": 0,
+    "derived_compression": "zstd",
+    "derived_observations": 14811,
+    "entity_count": 266,
+    "file_count": 0,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": "2025-01-01",
+    "obs_start": "1960-01-01",
+    "publications_with_dates": 0,
+    "record_count": 17556,
+    "series_count": 1,
+    "transfer": {
+      "bytes_downloaded": 3691618,
+      "elapsed_seconds": 0.169,
+      "final_url": "https://api.worldbank.org/v2/country/all/indicator/NY.GDP.MKTP.CD",
+      "pages": 1,
+      "status": 200
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 3691618,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "World Bank GDP (current US$)",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 3691618,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

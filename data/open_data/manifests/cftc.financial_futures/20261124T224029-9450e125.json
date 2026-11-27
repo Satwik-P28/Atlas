@@ -1,0 +1,109 @@
+{
+  "completed_at": "2026-11-24T22:40:30.411882Z",
+  "dataset_id": "cftc.financial_futures",
+  "exported_at": "2026-11-24T23:21:46.525023Z",
+  "files": [
+    {
+      "bytes": 3166765,
+      "content_type": "application/zip",
+      "name": "fin_fut_txt_2006_2016.zip",
+      "path": "fin_fut_txt_2006_2016.zip",
+      "sha256": "c3a8d01765133a24ce9c082de88933816497d06f1b03eec8c53750bdd818f14b"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "CFTC",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:40:30.411719Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:40:30.411701Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: U.S. Commodity Futures Trading Commission",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain",
+    "license_url": "https://www.cftc.gov/WebPolicy/index.htm",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T224029-9450e125",
+  "source": {
+    "content_type": "application/zip",
+    "download_endpoint": "https://www.cftc.gov/files/dea/history/fin_fut_txt_2006_2016.zip",
+    "etag": null,
+    "final_url": "https://www.cftc.gov/files/dea/history/fin_fut_txt_2006_2016.zip",
+    "last_modified": "Thu, 04 Jan 2018 18:03:18 GMT",
+    "official_source_url": "https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalCompressed/index.htm"
+  },
+  "stats": {
+    "dataset_id": "cftc.financial_futures",
+    "decompressed_bytes": 15955914,
+    "entity_count": 0,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 18911,
+    "series_count": 0,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 3166765,
+      "content_length": 3166765,
+      "content_type": "application/zip",
+      "elapsed_seconds": 0.149,
+      "etag": null,
+      "final_url": "https://www.cftc.gov/files/dea/history/fin_fut_txt_2006_2016.zip",
+      "last_modified": "Thu, 04 Jan 2018 18:03:18 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "c3a8d01765133a24ce9c082de88933816497d06f1b03eec8c53750bdd818f14b",
+      "status": 200,
+      "url": "https://www.cftc.gov/files/dea/history/fin_fut_txt_2006_2016.zip"
+    },
+    "validation": {
+      "files": [
+        {
+          "archive_members": 1,
+          "bytes": 3166765,
+          "compression_ratio": 5.04,
+          "detected_format": "zip",
+          "file": "fin_fut_txt_2006_2016.zip",
+          "uncompressed_bytes": 15955914
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "CFTC financial futures reports 2006-2016",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "archive_members": 1,
+          "bytes": 3166765,
+          "compression_ratio": 5.04,
+          "detected_format": "zip",
+          "file": "fin_fut_txt_2006_2016.zip",
+          "uncompressed_bytes": 15955914
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

@@ -41,7 +41,7 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install backend dependencies
-        run: python -m pip install -e '.[dev,terminal,learning,columnar,optimization]'
+        run: python -m pip install -e '.[dev,terminal,learning,columnar,optimization,open-data]'
       - name: Compile sources
         run: python -m compileall -q src scripts tests
       - name: Run backend suite
@@ -395,3 +395,28 @@ jobs:
             artifacts/browser/phase10_5_${{ matrix.engine }}.json
             browser-shots/**
           if-no-files-found: warn
+
+  open-data-clean-install:
+    name: Open-data clean installation (wheel + extras)
+    needs: wheel-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-dists
+          path: release-dists
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install wheel with declared extras
+        run: |
+          python -m venv /tmp/atlas-open-data-venv
+          wheel="$(find "$GITHUB_WORKSPACE/release-dists" -name 'atlas_quant-*.whl' -print -quit)"
+          test -n "$wheel"
+          /tmp/atlas-open-data-venv/bin/python -m pip install "$wheel[open-data,dev]"
+      - name: Verify installed package and run offline open-data tests
+        run: |
+          cd /tmp
+          /tmp/atlas-open-data-venv/bin/python -I -c 'import atlas, duckdb, pyarrow, zstandard, pytest, pathlib, sys, os; from atlas.open_data import columnar; p = pathlib.Path(atlas.__file__).resolve(); assert p.is_relative_to(pathlib.Path(sys.prefix).resolve()), p; root = pathlib.Path(os.environ["GITHUB_WORKSPACE"]); raise SystemExit(pytest.main([str(root / "tests/test_open_data_columnar.py"), str(root / "tests/test_open_data_engine.py"), "-q"]))'

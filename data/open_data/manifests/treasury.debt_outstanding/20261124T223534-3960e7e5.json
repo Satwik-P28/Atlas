@@ -1,0 +1,120 @@
+{
+  "completed_at": "2026-11-24T22:35:34.907728Z",
+  "dataset_id": "treasury.debt_outstanding",
+  "exported_at": "2026-11-24T23:21:46.537783Z",
+  "files": [
+    {
+      "bytes": 62928,
+      "content_type": "application/json",
+      "name": "page-00001.json",
+      "path": "page-00001.json",
+      "sha256": "3a5644ef2660dabffe967673a8dcb171641c90f3de5950058e5153f53474d501"
+    },
+    {
+      "bytes": 5834,
+      "content_type": "application/vnd.apache.parquet",
+      "name": "treasury_debt_outstanding.parquet",
+      "notes": "derived observation table; raw source bytes are the authority",
+      "path": "treasury_debt_outstanding.parquet",
+      "record_count": 238,
+      "sha256": "59dea59cae393ae58c1ea8b8ca8920cadbbefaaf942cc8d153150789f28b1beb",
+      "uncompressed_bytes": 5834
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "US Treasury",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:35:34.907596Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:35:34.907580Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.govinfo.gov/link/uscode/17/105",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223534-3960e7e5",
+  "source": {
+    "content_type": null,
+    "download_endpoint": "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_outstanding",
+    "etag": null,
+    "final_url": "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_outstanding",
+    "last_modified": null,
+    "official_source_url": "https://fiscaldata.treasury.gov/datasets/historical-debt-outstanding/"
+  },
+  "stats": {
+    "dataset_id": "treasury.debt_outstanding",
+    "decompressed_bytes": 0,
+    "derived_compression": "zstd",
+    "derived_observations": 238,
+    "entity_count": 0,
+    "file_count": 1,
+    "implausible_observation_dates": 111,
+    "issues": [
+      {
+        "code": "implausible_observation_dates",
+        "detail": "111 provider rows carry dates outside 1900-01-01..today+2y; they remain in the raw snapshot but are excluded from the advertised coverage range",
+        "severity": "warning"
+      }
+    ],
+    "obs_end": "2026-09-30",
+    "obs_start": "1900-07-01",
+    "pages": 1,
+    "publications_with_dates": 0,
+    "record_count": 238,
+    "series_count": 1,
+    "transfer": {
+      "bytes_downloaded": 62928,
+      "elapsed_seconds": 0.3,
+      "final_url": "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_outstanding",
+      "pages": 1,
+      "status": 200
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 62928,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "Treasury historical debt outstanding",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 62928,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [
+      {
+        "code": "implausible_observation_dates",
+        "detail": "111 provider rows carry dates outside 1900-01-01..today+2y; they remain in the raw snapshot but are excluded from the advertised coverage range",
+        "severity": "warning"
+      }
+    ],
+    "status": "valid"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "dataset": "treasury.auctions",
+  "snapshot_id": "20261124T223535-6d9efc00",
+  "raw_bytes": 37046254,
+  "raw_files": 13,
+  "peak_rss_mb": 256.2,
+  "measurements": {
+    "zstd": {
+      "source_bytes": 3399757,
+      "stored_bytes": 206358,
+      "ratio": 16.475,
+      "compress_seconds": 0.068,
+      "decompress_seconds": 0.014,
+      "compress_mb_s": 49.85,
+      "decompress_mb_s": 235.61,
+      "exact_roundtrip": true
+    },
+    "parquet": {
+      "rows": 12729,
+      "stored_bytes": 1230976,
+      "write_seconds": 0.082,
+      "read_seconds": 0.106,
+      "roundtrip_rows": 12729
+    },
+    "duckdb_parquet": {
+      "seconds": 0.01,
+      "groups": 2,
+      "rows_scanned": 12729
+    },
+    "sqlite_random": {
+      "queries": 100,
+      "found": 100,
+      "seconds": 0.0027,
+      "queries_per_second": 37695.6
+    }
+  },
+  "limits": [],
+  "benchmark_workspace_mb": 4.84
+}

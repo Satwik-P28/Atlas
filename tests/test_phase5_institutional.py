@@ -29,11 +29,11 @@ def _curve():
 
 def test_schema_7_and_tables(tmp_path):
     db = Database(tmp_path / "phase5.db")
-    assert LATEST_VERSION == 15
-    assert db.migrate() == list(range(1, 16))
+    assert LATEST_VERSION >= 14
+    assert db.migrate() == list(range(1, LATEST_VERSION + 1))
     tables = {row["name"] for row in db.query("SELECT name FROM sqlite_master WHERE type='table'")}
     assert {"institutional_run", "validation_attempt", "learning_run", "learning_model"} <= tables
-    assert db.schema_version() == 15
+    assert db.schema_version() == LATEST_VERSION
     db.close()
 
 
@@ -186,7 +186,7 @@ def test_institutional_api_persists_runs_and_applications():
         db.migrate()
         db.close()
         client = TestClient(create_app(path))
-        assert client.get("/api/health").json()["schema_version"] == 15
+        assert client.get("/api/health").json()["schema_version"] == LATEST_VERSION
         catalog = client.get("/api/institutional/catalog")
         assert catalog.status_code == 200
         assert "2024-06-28" in catalog.json()["curve"]["dates"]

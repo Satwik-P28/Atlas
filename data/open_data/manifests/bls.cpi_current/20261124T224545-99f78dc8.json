@@ -1,0 +1,124 @@
+{
+  "completed_at": "2026-11-24T22:46:03.199181Z",
+  "dataset_id": "bls.cpi_current",
+  "exported_at": "2026-11-24T23:21:46.521321Z",
+  "files": [
+    {
+      "bytes": 49295740,
+      "content_type": "application/octet-stream",
+      "name": "cu.data.0.Current",
+      "path": "cu.data.0.Current",
+      "sha256": "36641dfc4bd037e66acf9f3a7e4e979ff804075fded8abc0bfded80268baff89"
+    },
+    {
+      "bytes": 4211045,
+      "content_type": "application/vnd.apache.parquet",
+      "name": "bls_cpi_current.parquet",
+      "notes": "derived observation table; raw source bytes are the authority",
+      "path": "bls_cpi_current.parquet",
+      "record_count": 1096272,
+      "sha256": "3b28175516ff9dda90789a0a2c4caec4aa0276bd4c5090a697dc4874789b5496",
+      "uncompressed_bytes": 4211045
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "BLS",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:46:03.198893Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:46:03.198865Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: U.S. Bureau of Labor Statistics",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain",
+    "license_url": "https://www.bls.gov/opub/copyright-information.htm",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T224545-99f78dc8",
+  "source": {
+    "content_type": "text/plain",
+    "download_endpoint": "https://download.bls.gov/pub/time.series/cu/cu.data.0.Current",
+    "etag": "\"03ca8951771dd1:0\"",
+    "final_url": "https://download.bls.gov/pub/time.series/cu/cu.data.0.Current",
+    "last_modified": "Tue, 10 Nov 2026 13:30:00 GMT",
+    "official_source_url": "https://download.bls.gov/pub/time.series/cu/"
+  },
+  "stats": {
+    "columns": [
+      "series_id",
+      "year",
+      "period",
+      "value",
+      "footnote_codes"
+    ],
+    "dataset_id": "bls.cpi_current",
+    "decompressed_bytes": 0,
+    "delimiter": "tab",
+    "derived_compression": "zstd",
+    "derived_observations": 1096272,
+    "entity_count": 0,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "mode": "narrow",
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 1173641,
+    "series_count": 7936,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 49295740,
+      "content_length": 49295740,
+      "content_type": "text/plain",
+      "elapsed_seconds": 1.3,
+      "etag": "\"03ca8951771dd1:0\"",
+      "final_url": "https://download.bls.gov/pub/time.series/cu/cu.data.0.Current",
+      "last_modified": "Tue, 10 Nov 2026 13:30:00 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "36641dfc4bd037e66acf9f3a7e4e979ff804075fded8abc0bfded80268baff89",
+      "status": 200,
+      "url": "https://download.bls.gov/pub/time.series/cu/cu.data.0.Current"
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 49295740,
+          "detected_format": "unknown",
+          "file": "cu.data.0.Current"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "BLS CPI current series data",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 49295740,
+          "detected_format": "unknown",
+          "file": "cu.data.0.Current"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

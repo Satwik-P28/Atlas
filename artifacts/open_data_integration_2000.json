@@ -1,0 +1,64 @@
+{
+  "archive_bytes": 1429381505,
+  "atlas_db_bytes": 5792026624,
+  "batch_size": 500,
+  "bytes_per_processed_record": 1230.7,
+  "checkpoint": "/tmp/atlas_sf/store/checkpoints/integration.sec.companyfacts.20261125T210758-62a9fb0c.json",
+  "command": "scripts/bench_open_data_integration.py --limit 2000 --batch-size 500",
+  "companies_processed": 2000,
+  "duplicates": 0,
+  "elapsed_seconds": 1465.0,
+  "evidence_inserted": 4440951,
+  "evidence_per_second": 3212.5,
+  "evidence_superseding": 265375,
+  "facts_per_second": 3212.5,
+  "finished_at": "2026-11-25T21:39:35Z",
+  "generated_at": "2026-11-25T21:40:20.822266Z",
+  "ineligible_companies": 288,
+  "issuers_per_second": 1.169,
+  "issuers_with_evidence": 1712,
+  "largest_issuers_by_facts": [
+    {
+      "entity_id": "ISS-CIK0000068505",
+      "facts": 6906
+    },
+    {
+      "entity_id": "ISS-CIK0000701985",
+      "facts": 6773
+    },
+    {
+      "entity_id": "ISS-CIK0000006281",
+      "facts": 6681
+    },
+    {
+      "entity_id": "ISS-CIK0000789019",
+      "facts": 6622
+    },
+    {
+      "entity_id": "ISS-CIK0000320193",
+      "facts": 6598
+    }
+  ],
+  "limit": 2000,
+  "peak_rss_mb": null,
+  "peak_rss_note": "Peak RSS was not captured: /usr/bin/time is absent in the container and the timing wrapper failed. It is not estimated.",
+  "query_latency_ms": {
+    "count_evidence": 13.8,
+    "distinct_issuers": 289.7,
+    "recent_100_facts": 1303.6,
+    "top_25_issuers_by_fact_count": 404.3
+  },
+  "records_parsed": 4706326,
+  "rejected": 20,
+  "resume_demonstration": {
+    "command": "same command re-run after the checkpoint reached 2,000",
+    "elapsed_seconds": 0.901,
+    "new_issuers": 0,
+    "note": "A second run at the same limit resumed from the checkpoint and inserted nothing twice.",
+    "processed_at_start": 2000
+  },
+  "schema": "atlas.open_data.integration_bench.v1",
+  "source_archive": "https://www.sec.gov/Archives/edgar/daily-index/xbrl/companyfacts.zip",
+  "started_at": "2026-11-25T21:15:10Z",
+  "supersessions": 466278
+}

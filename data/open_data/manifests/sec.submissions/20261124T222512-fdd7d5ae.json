@@ -1,0 +1,135 @@
+{
+  "completed_at": "2026-11-24T22:27:50.980681Z",
+  "dataset_id": "sec.submissions",
+  "exported_at": "2026-11-24T23:21:46.535690Z",
+  "files": [
+    {
+      "bytes": 1577709248,
+      "content_type": "application/zip",
+      "name": "submissions.zip",
+      "path": "submissions.zip",
+      "sha256": "938e364371098916106804a4e63c4e319c946c19259bf3ee3add7e02359a1632"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "SEC",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:27:50.979788Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:27:50.979738Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T222512-fdd7d5ae",
+  "source": {
+    "content_type": "application/zip",
+    "download_endpoint": "https://www.sec.gov/Archives/edgar/daily-index/bulkdata/submissions.zip",
+    "etag": "\"4679963c4f3e4e5cfc740ff44948a2cc-189\"",
+    "final_url": "https://www.sec.gov/Archives/edgar/daily-index/bulkdata/submissions.zip",
+    "last_modified": "Tue, 24 Nov 2026 04:21:30 GMT",
+    "official_source_url": "https://www.sec.gov/edgar/sec-api-documentation"
+  },
+  "stats": {
+    "dataset_id": "sec.submissions",
+    "decompressed_bytes": 5785634251,
+    "entity_count": 999637,
+    "file_count": 999637,
+    "form_distribution": {
+      "10-K": 205707,
+      "10-Q": 612753,
+      "13F-HR": 453358,
+      "144": 269927,
+      "24F-2NT": 187809,
+      "3": 819379,
+      "4": 8205631,
+      "4/A": 229706,
+      "424B2": 253607,
+      "424B3": 247496,
+      "485BPOS": 159399,
+      "497": 379475,
+      "497K": 159482,
+      "5": 193693,
+      "6-K": 496687,
+      "8-K": 1731248,
+      "CORRESP": 228009,
+      "D": 490238,
+      "D/A": 307114,
+      "DEF 14A": 170008,
+      "NPORT-P": 247106,
+      "SC 13D/A": 239239,
+      "SC 13G": 326465,
+      "SC 13G/A": 562710,
+      "UPLOAD": 211750
+    },
+    "issues": [],
+    "obs_end": "2026-11-23",
+    "obs_start": "1980-01-02",
+    "publications_with_dates": 0,
+    "record_count": 22211702,
+    "series_count": 0,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 1577709248,
+      "content_length": 1577709248,
+      "content_type": "application/zip",
+      "elapsed_seconds": 36.063,
+      "etag": "\"4679963c4f3e4e5cfc740ff44948a2cc-189\"",
+      "final_url": "https://www.sec.gov/Archives/edgar/daily-index/bulkdata/submissions.zip",
+      "last_modified": "Tue, 24 Nov 2026 04:21:30 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "938e364371098916106804a4e63c4e319c946c19259bf3ee3add7e02359a1632",
+      "status": 200,
+      "url": "https://www.sec.gov/Archives/edgar/daily-index/bulkdata/submissions.zip"
+    },
+    "validation": {
+      "files": [
+        {
+          "archive_members": 999638,
+          "bytes": 1577709248,
+          "compression_ratio": 4.09,
+          "detected_format": "zip",
+          "file": "submissions.zip",
+          "uncompressed_bytes": 5785634267
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "SEC EDGAR submissions archive",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "archive_members": 999638,
+          "bytes": 1577709248,
+          "compression_ratio": 4.09,
+          "detected_format": "zip",
+          "file": "submissions.zip",
+          "uncompressed_bytes": 5785634267
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

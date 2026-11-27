@@ -1,0 +1,125 @@
+{
+  "alternative_layout": {
+    "buckets": 16,
+    "build_seconds": 1950.32,
+    "company_lookup": {
+      "count": 30,
+      "max_ms": 40.561,
+      "mean_ms": 25.273,
+      "p50_ms": 24.058,
+      "p95_ms": 31.137
+    },
+    "files": 16,
+    "manifest_bytes": 4238062,
+    "open_ms": 614.803,
+    "parquet_bytes": 1087548433,
+    "point_in_time": {
+      "count": 5,
+      "max_ms": 33.844,
+      "mean_ms": 26.993,
+      "p50_ms": 25.442,
+      "p95_ms": 33.844
+    },
+    "restatements": {
+      "count": 5,
+      "max_ms": 42.156,
+      "mean_ms": 31.986,
+      "p50_ms": 31.685,
+      "p95_ms": 42.156
+    },
+    "screen_ms": 1194.779,
+    "statement": {
+      "count": 30,
+      "max_ms": 46.309,
+      "mean_ms": 26.15,
+      "p50_ms": 25.369,
+      "p95_ms": 34.136
+    }
+  },
+  "chosen_layout": {
+    "buckets": 256,
+    "build_seconds": 1891.34,
+    "company_lookup": {
+      "count": 30,
+      "max_ms": 23.509,
+      "mean_ms": 9.465,
+      "p50_ms": 8.201,
+      "p95_ms": 18.522
+    },
+    "files": 256,
+    "manifest_bytes": 4281163,
+    "open_ms": 1945.962,
+    "parquet_bytes": 1167267980,
+    "point_in_time": {
+      "count": 5,
+      "max_ms": 15.97,
+      "mean_ms": 9.87,
+      "p50_ms": 8.789,
+      "p95_ms": 15.97
+    },
+    "restatements": {
+      "count": 5,
+      "max_ms": 25.287,
+      "mean_ms": 15.147,
+      "p50_ms": 15.124,
+      "p95_ms": 25.287
+    },
+    "screen_ms": 1915.962,
+    "statement": {
+      "count": 30,
+      "max_ms": 36.355,
+      "mean_ms": 10.915,
+      "p50_ms": 10.164,
+      "p95_ms": 16.144
+    }
+  },
+  "companies_queried": 30,
+  "generated_at": "2026-11-26T21:26:05Z",
+  "notes": [
+    "Both layouts were built from the same archive snapshot and contain the same 24,822,801 records.",
+    "Company lookups read exactly one bucket file; the screen scans every file, which is why more buckets trade scan time for lookup time."
+  ],
+  "rows_returned": 40107,
+  "schema": "atlas.open_data.full_universe_benchmark.v1",
+  "screen": {
+    "concept": "revenue",
+    "fiscal_year": 2024,
+    "ms": 1915.962,
+    "rows": 100,
+    "top": [
+      {
+        "cik": "0001913510",
+        "value": 13927746000000.0
+      },
+      {
+        "cik": "0000067088",
+        "value": 1658863000000.0
+      },
+      {
+        "cik": "0001070304",
+        "value": 1246098000000.0
+      },
+      {
+        "cik": "0001549802",
+        "value": 1046236000000.0
+      },
+      {
+        "cik": "0001335730",
+        "value": 980000000000.0
+      }
+    ]
+  },
+  "source": {
+    "archive_bytes": 1429485898,
+    "archive_sha256": "f39d0bef9c2bc5b473fca7ed5949f21d207c9be34d9f8c6b44a876306fce5e8f",
+    "dataset_id": "sec.companyfacts",
+    "snapshot_id": "20261126T193010-9af78904"
+  },
+  "universe": {
+    "companies_indexed": 20558,
+    "companies_with_facts": 17083,
+    "ineligible_companies": 3475,
+    "records": 24822801,
+    "rejected_members": 70
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "completed_at": "2026-11-24T22:48:24.313729Z",
+  "dataset_id": "bls.labor_force",
+  "exported_at": "2026-11-24T23:21:46.523250Z",
+  "files": [
+    {
+      "bytes": 393029790,
+      "content_type": "application/octet-stream",
+      "name": "ln.data.1.AllData",
+      "path": "ln.data.1.AllData",
+      "sha256": "b9a0d26c8874b41b54085fa9660527f39fbf02e7bba719f969a848e605478c1c"
+    },
+    {
+      "bytes": 5621907,
+      "content_type": "application/vnd.apache.parquet",
+      "name": "bls_labor_force.parquet",
+      "notes": "derived observation table; raw source bytes are the authority",
+      "path": "bls_labor_force.parquet",
+      "record_count": 2000000,
+      "sha256": "2ea2ca4dc7068d746989dbbbb61881f7aba183eddde14dd252ead9ddfbbde23a",
+      "uncompressed_bytes": 5621907
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "BLS",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:48:24.313487Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:48:24.313460Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: U.S. Bureau of Labor Statistics",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain",
+    "license_url": "https://www.bls.gov/opub/copyright-information.htm",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T224737-c320db42",
+  "source": {
+    "content_type": "application/octet-stream",
+    "download_endpoint": "https://download.bls.gov/pub/time.series/ln/ln.data.1.AllData",
+    "etag": "\"03c1ecf26ddd1:0\"",
+    "final_url": "https://download.bls.gov/pub/time.series/ln/ln.data.1.AllData",
+    "last_modified": "Fri, 06 Nov 2026 13:30:00 GMT",
+    "official_source_url": "https://download.bls.gov/pub/time.series/ln/"
+  },
+  "stats": {
+    "columns": [
+      "series_id",
+      "year",
+      "period",
+      "value",
+      "footnote_codes"
+    ],
+    "dataset_id": "bls.labor_force",
+    "decompressed_bytes": 0,
+    "delimiter": "tab",
+    "derived_compression": "zstd",
+    "derived_observations": 2000000,
+    "entity_count": 0,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [
+      {
+        "code": "row_limit",
+        "detail": "stopped after 5000001 rows",
+        "severity": "warning"
+      }
+    ],
+    "mode": "narrow",
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 5000001,
+    "series_count": 8233,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 393029790,
+      "content_length": 393029790,
+      "content_type": "application/octet-stream",
+      "elapsed_seconds": 8.349,
+      "etag": "\"03c1ecf26ddd1:0\"",
+      "final_url": "https://download.bls.gov/pub/time.series/ln/ln.data.1.AllData",
+      "last_modified": "Fri, 06 Nov 2026 13:30:00 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "b9a0d26c8874b41b54085fa9660527f39fbf02e7bba719f969a848e605478c1c",
+      "status": 200,
+      "url": "https://download.bls.gov/pub/time.series/ln/ln.data.1.AllData"
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 393029790,
+          "detected_format": "unknown",
+          "file": "ln.data.1.AllData"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "BLS Local Area Unemployment Statistics",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 393029790,
+          "detected_format": "unknown",
+          "file": "ln.data.1.AllData"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [
+      {
+        "code": "row_limit",
+        "detail": "stopped after 5000001 rows",
+        "severity": "warning"
+      }
+    ],
+    "status": "valid"
+  }
+}

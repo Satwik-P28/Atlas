@@ -1,0 +1,25 @@
+{
+  "downloads": [
+    {
+      "asset": "sec.company_tickers.tar.zst",
+      "bytes": 182517,
+      "dataset_id": "sec.company_tickers",
+      "matches_release_index": true,
+      "note": "Downloaded and hashed independently of the installer, from the local release mirror.",
+      "sha256": "965b5e24a889375d3da20ab47f3b165d6c5f2958acafc6c2770e73d8abc353df",
+      "url": "file:///tmp/atlas_p3/mirror/sec.company_tickers.tar.zst",
+      "verified_at": "2026-11-25T21:40:29.438363Z"
+    },
+    {
+      "asset": "treasury.nominal_yields.tar.zst",
+      "bytes": 318261,
+      "dataset_id": "treasury.nominal_yields",
+      "matches_release_index": true,
+      "note": "Downloaded and hashed independently of the installer, from the local release mirror.",
+      "sha256": "1808334ab15318cc52beb4f3df56b90d91e52ae775e7a87b12f8174b70223262",
+      "url": "file:///tmp/atlas_p3/mirror/treasury.nominal_yields.tar.zst",
+      "verified_at": "2026-11-25T21:40:29.438732Z"
+    }
+  ],
+  "schema": "atlas.open_data.downloads.v1"
+}

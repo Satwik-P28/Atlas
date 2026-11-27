@@ -1,0 +1,271 @@
+{
+  "catalog": {
+    "packaged": [],
+    "states": [
+      "discovered",
+      "rights_approved",
+      "acquired",
+      "local_available",
+      "packaged",
+      "uploaded",
+      "download_verified",
+      "restored",
+      "integrated"
+    ],
+    "summary": {
+      "acquired": 37,
+      "datasets": 57,
+      "discovered": 9,
+      "download_verified": 0,
+      "durable_snapshots": 2,
+      "integrated": 0,
+      "local_available": 0,
+      "packaged": 0,
+      "reached": {
+        "acquired": 38,
+        "discovered": 57,
+        "download_verified": 2,
+        "integrated": 0,
+        "local_available": 2,
+        "packaged": 2,
+        "restored": 2,
+        "rights_approved": 43,
+        "uploaded": 0
+      },
+      "restored": 2,
+      "rights_approved": 9,
+      "rights_approved_total": 43,
+      "uploaded": 0
+    }
+  },
+  "downloads_recorded": 2,
+  "elapsed_seconds": 0.337,
+  "generated_at": "2026-11-25T21:41:15.755625Z",
+  "github_publication": {
+    "reason": "No GitHub credential exists in this execution environment, so no asset was uploaded. Assets were published to a local mirror and installed from it; the GitHub path is implemented and dispatchable only from the default branch.",
+    "uploaded": false,
+    "url": null
+  },
+  "integration": {
+    "evidence_facts": 4706326,
+    "evidence_issuers": 1712,
+    "issuers": 2000,
+    "securities": 0
+  },
+  "integration_run": {
+    "archive_bytes": 1429381505,
+    "atlas_db_bytes": 5792026624,
+    "batch_size": 500,
+    "bytes_per_processed_record": 1230.7,
+    "checkpoint": "/tmp/atlas_sf/store/checkpoints/integration.sec.companyfacts.20261125T210758-62a9fb0c.json",
+    "command": "scripts/bench_open_data_integration.py --limit 2000 --batch-size 500",
+    "companies_processed": 2000,
+    "duplicates": 0,
+    "elapsed_seconds": 1465.0,
+    "evidence_inserted": 4440951,
+    "evidence_per_second": 3212.5,
+    "evidence_superseding": 265375,
+    "facts_per_second": 3212.5,
+    "finished_at": "2026-11-25T21:39:35Z",
+    "generated_at": "2026-11-25T21:40:20.822266Z",
+    "ineligible_companies": 288,
+    "issuers_per_second": 1.169,
+    "issuers_with_evidence": 1712,
+    "largest_issuers_by_facts": [
+      {
+        "entity_id": "ISS-CIK0000068505",
+        "facts": 6906
+      },
+      {
+        "entity_id": "ISS-CIK0000701985",
+        "facts": 6773
+      },
+      {
+        "entity_id": "ISS-CIK0000006281",
+        "facts": 6681
+      },
+      {
+        "entity_id": "ISS-CIK0000789019",
+        "facts": 6622
+      },
+      {
+        "entity_id": "ISS-CIK0000320193",
+        "facts": 6598
+      }
+    ],
+    "limit": 2000,
+    "peak_rss_mb": null,
+    "peak_rss_note": "Peak RSS was not captured: /usr/bin/time is absent in the container and the timing wrapper failed. It is not estimated.",
+    "query_latency_ms": {
+      "count_evidence": 13.8,
+      "distinct_issuers": 289.7,
+      "recent_100_facts": 1303.6,
+      "top_25_issuers_by_fact_count": 404.3
+    },
+    "records_parsed": 4706326,
+    "rejected": 20,
+    "resume_demonstration": {
+      "command": "same command re-run after the checkpoint reached 2,000",
+      "elapsed_seconds": 0.901,
+      "new_issuers": 0,
+      "note": "A second run at the same limit resumed from the checkpoint and inserted nothing twice.",
+      "processed_at_start": 2000
+    },
+    "schema": "atlas.open_data.integration_bench.v1",
+    "source_archive": "https://www.sec.gov/Archives/edgar/daily-index/xbrl/companyfacts.zip",
+    "started_at": "2026-11-25T21:15:10Z",
+    "supersessions": 466278
+  },
+  "multipart": [
+    {
+      "dataset_id": "sec.financial_statement_data_sets",
+      "index": "/tmp/atlas_p3/parts/bytes.parts.json",
+      "largest_part_bytes": 20000000,
+      "mode": "bytes",
+      "part_bytes": 124336804,
+      "parts": 7,
+      "per_part_sha256": [
+        "2501ff981164737eb33e0a3431f7486f8b776c2c07ad4deebb22e23d8f1f6892",
+        "9f923b2cc009802b6e9c6e5b6cb39b8a19cc2eae9cc90903dadca1c65dc77cd2",
+        "d6446b2d93dac1326c1a5f2b85ee6036dc0bda8c9b95e6de760ac9887cbd922a",
+        "23f04533fab32ba2c73cca8c478e0e4937def4e9965bbc5026bba1befeee554a",
+        "77028f3ed29da48ce4bc1c1718f497ea571e7fae4a240883a1c2454aad58ab9b",
+        "41d61119acf57f835b09dd9d6506ae6df06a95df4998b731a6962c63d55ab1e5",
+        "66b29451a0f0301cead232b9431df52a6afd20fce67f3de8422f26bda1b81830"
+      ],
+      "periods": [],
+      "snapshot_id": "real-2024q1",
+      "source_bytes": 124336804,
+      "source_sha256": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b"
+    },
+    {
+      "dataset_id": "sec.financial_statement_data_sets",
+      "index": "/tmp/atlas_p3/parts/period.parts.json",
+      "largest_part_bytes": 124340950,
+      "mode": "period",
+      "part_bytes": 363741464,
+      "parts": 3,
+      "per_part_sha256": [
+        "79f24c9ce81e885316154e47c6030783e01749a223d1845c40650cc5628b2a99",
+        "f7edbe7fd07bb02cd53580222fb4fabd2b1edaac4180b0c7616adab1c4f91411",
+        "292107fdc3dd2ff7b31ea8375b0dd62d4186ddbb633278591c3052eeb61923ec"
+      ],
+      "periods": [
+        "2023q4",
+        "2024q1",
+        "2024q2"
+      ],
+      "snapshot_id": "real-quarters",
+      "source_bytes": 363729425,
+      "source_sha256": "ae1124a32dcf74a65c14cbbbec6703b82fd9a47182ce6dad54f6451476f2a4c5"
+    }
+  ],
+  "registry": {
+    "datasets": 57,
+    "rights_approved_for_publication": 43
+  },
+  "release": {
+    "asset_bytes_declared": 500778,
+    "assets": [
+      {
+        "asset": "sec.company_tickers.tar.zst",
+        "asset_bytes": 182517,
+        "asset_sha256": "965b5e24a889375d3da20ab47f3b165d6c5f2958acafc6c2770e73d8abc353df",
+        "attribution_required": false,
+        "dataset_id": "sec.company_tickers",
+        "license_name": "U.S. federal government work - public domain (17 USC 105)",
+        "mirror_bytes": 182517,
+        "mirror_matches_index": true,
+        "mirror_present": true,
+        "mirror_sha256": "965b5e24a889375d3da20ab47f3b165d6c5f2958acafc6c2770e73d8abc353df",
+        "mode": null,
+        "rights_class": "public_domain",
+        "snapshot_id": "20261125T210614-394f51e5"
+      },
+      {
+        "asset": "treasury.nominal_yields.tar.zst",
+        "asset_bytes": 318261,
+        "asset_sha256": "1808334ab15318cc52beb4f3df56b90d91e52ae775e7a87b12f8174b70223262",
+        "attribution_required": false,
+        "dataset_id": "treasury.nominal_yields",
+        "license_name": "U.S. federal government work - public domain (17 USC 105)",
+        "mirror_bytes": 318261,
+        "mirror_matches_index": true,
+        "mirror_present": true,
+        "mirror_sha256": "1808334ab15318cc52beb4f3df56b90d91e52ae775e7a87b12f8174b70223262",
+        "mode": null,
+        "rights_class": "public_domain",
+        "snapshot_id": "20261125T210615-37bfb24b"
+      }
+    ],
+    "assets_declared": 2,
+    "mini_release_shas": [
+      {
+        "asset": "sec.company_tickers.tar.zst",
+        "asset_bytes": 182517,
+        "asset_sha256": "965b5e24a889375d3da20ab47f3b165d6c5f2958acafc6c2770e73d8abc353df",
+        "attribution_required": false,
+        "attribution_text": "",
+        "dataset_id": "sec.company_tickers",
+        "files": [
+          {
+            "bytes": 521932,
+            "path": "company_tickers_exchange.json",
+            "sha256": "a4549a73d027584e90490c5b8ff207de3e6a607768c7de416144ef52e6474c84"
+          }
+        ],
+        "license_name": "U.S. federal government work - public domain (17 USC 105)",
+        "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+        "manifest_sha256": "f41feed488afadaf21e87d4a09a2ab9fdb0aa1051b062b1f4bd0aebff76d3d50",
+        "provider": "SEC",
+        "raw_bytes": 521932,
+        "restore": "atlas data restore sec.company_tickers.tar.zst --expect-sha256 <asset_sha256>",
+        "rights_class": "public_domain",
+        "snapshot_id": "20261125T210614-394f51e5"
+      },
+      {
+        "asset": "treasury.nominal_yields.tar.zst",
+        "asset_bytes": 318261,
+        "asset_sha256": "1808334ab15318cc52beb4f3df56b90d91e52ae775e7a87b12f8174b70223262",
+        "attribution_required": false,
+        "attribution_text": "",
+        "dataset_id": "treasury.nominal_yields",
+        "files": [
+          {
+            "bytes": 555456,
+            "path": "yield-curve-rates-1990-2024.csv",
+            "sha256": "258a594eb64e9d21d9e8574b0b8580b0a5230dce56bb284ec6aa49a9a260897f"
+          },
+          {
+            "bytes": 152971,
+            "path": "treasury_nominal_yields.parquet",
+            "sha256": "91e69e9467e08569c7365355bcd8c581faf152239880f1f2efef9bcdd5cd832a"
+          }
+        ],
+        "license_name": "U.S. federal government work - public domain (17 USC 105)",
+        "license_url": "https://www.govinfo.gov/link/uscode/17/105",
+        "manifest_sha256": "0901990aa21c80488837d98fe2da5f5d760f9449e0111a0f98a5622b15edceed",
+        "provider": "US Treasury",
+        "raw_bytes": 708427,
+        "restore": "atlas data restore treasury.nominal_yields.tar.zst --expect-sha256 <asset_sha256>",
+        "rights_class": "public_domain",
+        "snapshot_id": "20261125T210615-37bfb24b"
+      }
+    ],
+    "rights_source": null,
+    "tag": "open-data-2026-11"
+  },
+  "restoration": {
+    "datasets": [
+      "sec.company_tickers",
+      "treasury.nominal_yields"
+    ],
+    "durable_datasets": 2,
+    "restored_from_package": 2,
+    "snapshots": 57,
+    "store": "/tmp/atlas_p3_fresh/store",
+    "stored_bytes_present": 1230359,
+    "verified_snapshots": 2
+  },
+  "schema": "atlas.open_data.phase3.v1"
+}

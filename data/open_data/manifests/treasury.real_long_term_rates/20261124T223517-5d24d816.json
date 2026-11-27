@@ -1,0 +1,123 @@
+{
+  "completed_at": "2026-11-24T22:35:27.691415Z",
+  "dataset_id": "treasury.real_long_term_rates",
+  "exported_at": "2026-11-24T23:21:46.539224Z",
+  "files": [
+    {
+      "bytes": 87030,
+      "content_type": "text/csv",
+      "name": "real-long-term-rates-2000-2024.csv",
+      "path": "real-long-term-rates-2000-2024.csv",
+      "sha256": "a4c576a4ef85beeee256b0d5c5ce8c3a54942029014bd348f2b9303209dd1709"
+    },
+    {
+      "bytes": 29185,
+      "content_type": "application/vnd.apache.parquet",
+      "name": "treasury_real_long_term_rates.parquet",
+      "notes": "derived observation table; raw source bytes are the authority",
+      "path": "treasury_real_long_term_rates.parquet",
+      "record_count": 6253,
+      "sha256": "f755d9629a6d9b8f721f6496a19556008634f379c80a96c12605275edd0edef2",
+      "uncompressed_bytes": 29185
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "US Treasury",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:35:27.691338Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:35:27.691325Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.govinfo.gov/link/uscode/17/105",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223517-5d24d816",
+  "source": {
+    "content_type": "text/csv",
+    "download_endpoint": "https://home.treasury.gov/system/files/276/real-long-term-rates-2000-2024.csv",
+    "etag": "W/\"45f1dfc0c1af7b99ab75c38ae7576504\"",
+    "final_url": "https://home.treasury.gov/system/files/276/real-long-term-rates-2000-2024.csv",
+    "last_modified": "Wed, 19 Aug 2026 16:04:56 GMT",
+    "official_source_url": "https://home.treasury.gov/interest-rates-data-csv-archive/"
+  },
+  "stats": {
+    "columns": [
+      "Date",
+      "LT Real Average (10> Yrs)"
+    ],
+    "dataset_id": "treasury.real_long_term_rates",
+    "decompressed_bytes": 0,
+    "delimiter": "comma",
+    "derived_compression": "zstd",
+    "derived_observations": 6253,
+    "entity_count": 0,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "mode": "wide",
+    "obs_end": "2024-12-31",
+    "obs_start": "2000-01-03",
+    "publications_with_dates": 0,
+    "record_count": 6253,
+    "series_count": 1,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 87030,
+      "content_length": 87030,
+      "content_type": "text/csv",
+      "elapsed_seconds": 9.367,
+      "etag": "W/\"45f1dfc0c1af7b99ab75c38ae7576504\"",
+      "final_url": "https://home.treasury.gov/system/files/276/real-long-term-rates-2000-2024.csv",
+      "last_modified": "Wed, 19 Aug 2026 16:04:56 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "a4c576a4ef85beeee256b0d5c5ce8c3a54942029014bd348f2b9303209dd1709",
+      "status": 200,
+      "url": "https://home.treasury.gov/system/files/276/real-long-term-rates-2000-2024.csv"
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 87030,
+          "columns": 2,
+          "detected_format": "unknown",
+          "file": "real-long-term-rates-2000-2024.csv"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "Treasury real long-term rates",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 87030,
+          "columns": 2,
+          "detected_format": "unknown",
+          "file": "real-long-term-rates-2000-2024.csv"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "completed_at": "2026-11-24T22:39:28.352374Z",
+  "dataset_id": "imf.datamapper",
+  "exported_at": "2026-11-24T23:21:46.530193Z",
+  "files": [
+    {
+      "bytes": 121784,
+      "content_type": "application/json",
+      "name": "imf_ngdp_rpch.json",
+      "path": "imf_ngdp_rpch.json",
+      "sha256": "5200170b0f19f025e4e0a4e7685d8d5182e11068bff6ef4c92aea400739f0148"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "IMF",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:39:28.352265Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:39:28.352250Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: International Monetary Fund, World Economic Outlook",
+    "commercial_use": true,
+    "license_name": "IMF Copyright and Usage - statistical data",
+    "license_url": "https://www.imf.org/en/about/copyright-and-terms",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "redistributable_conditions",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": [
+      "Some statistical products incorporate third-party information"
+    ]
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223927-fd45f0fe",
+  "source": {
+    "content_type": "application/json",
+    "download_endpoint": "https://www.imf.org/external/datamapper/api/v1/NGDP_RPCH",
+    "etag": null,
+    "final_url": "https://www.imf.org/external/datamapper/api/v1/NGDP_RPCH",
+    "last_modified": null,
+    "official_source_url": "https://www.imf.org/external/datamapper/"
+  },
+  "stats": {
+    "dataset_id": "imf.datamapper",
+    "decompressed_bytes": 0,
+    "entity_count": 0,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 1,
+    "series_count": 0,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 121784,
+      "content_length": 121784,
+      "content_type": "application/json",
+      "elapsed_seconds": 0.607,
+      "etag": null,
+      "final_url": "https://www.imf.org/external/datamapper/api/v1/NGDP_RPCH",
+      "last_modified": null,
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "5200170b0f19f025e4e0a4e7685d8d5182e11068bff6ef4c92aea400739f0148",
+      "status": 200,
+      "url": "https://www.imf.org/external/datamapper/api/v1/NGDP_RPCH"
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 121784,
+          "detected_format": "json",
+          "file": "imf_ngdp_rpch.json"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "IMF DataMapper macroeconomic indicators",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 121784,
+          "detected_format": "json",
+          "file": "imf_ngdp_rpch.json"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

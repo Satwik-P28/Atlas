@@ -1,0 +1,271 @@
+{
+  "completed_at": "2026-11-25T07:37:07.376941Z",
+  "dataset_id": "sec.companyfacts",
+  "exported_at": "2026-11-25T08:14:22.859186Z",
+  "files": [
+    {
+      "bytes": 1429381505,
+      "content_type": "application/zip",
+      "name": "companyfacts.zip",
+      "path": "companyfacts.zip",
+      "sha256": "8a16ccb8f7a8db12d92e6da7ead228e3cb3894abfee52e2c172558ea96dec34e"
+    },
+    {
+      "bytes": 1111811,
+      "content_type": "application/vnd.apache.parquet",
+      "name": "sec_companyfacts.parquet",
+      "notes": "derived observation table; raw source bytes are the authority",
+      "path": "sec_companyfacts.parquet",
+      "record_count": 250000,
+      "sha256": "95e42cae7ff9948cc28cb10000d4c70e2966f2127a2fb03c11e015b8f2f165b7",
+      "uncompressed_bytes": 1111811
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "SEC",
+  "retrieval": {
+    "completed_at": "2026-11-25T07:37:07.376638Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-25T07:37:07.376574Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261125T073234-894632f2",
+  "source": {
+    "content_type": "application/zip",
+    "download_endpoint": "https://www.sec.gov/Archives/edgar/daily-index/xbrl/companyfacts.zip",
+    "etag": "\"826857391a6dbc65357f9c3880828d8f-171\"",
+    "final_url": "https://www.sec.gov/Archives/edgar/daily-index/xbrl/companyfacts.zip",
+    "last_modified": "Wed, 25 Nov 2026 04:52:35 GMT",
+    "official_source_url": "https://www.sec.gov/edgar/sec-api-documentation"
+  },
+  "stats": {
+    "dataset_id": "sec.companyfacts",
+    "decompressed_bytes": 19573029602,
+    "derived_compression": "zstd",
+    "derived_observations": 250000,
+    "entity_count": 20620,
+    "file_count": 20620,
+    "future_observation_dates": 670,
+    "implausible_observation_dates": 910,
+    "issues": [
+      {
+        "code": "future_observation_dates",
+        "detail": "670 provider rows carry a future period end; they remain in the raw snapshot and are excluded from advertised coverage",
+        "severity": "warning"
+      },
+      {
+        "code": "implausible_observation_dates",
+        "detail": "910 provider rows carry dates outside 1900-01-01..today+2y; they remain in the raw snapshot but are excluded from the advertised coverage range",
+        "severity": "warning"
+      }
+    ],
+    "obs_end": "2026-11-24",
+    "obs_start": "1927-02-17",
+    "publications_with_dates": 0,
+    "record_count": 127342433,
+    "sample_companies": [
+      {
+        "cik": 1750,
+        "facts": 21157,
+        "name": "AAR CORP"
+      },
+      {
+        "cik": 1800,
+        "facts": 23233,
+        "name": "ABBOTT LABORATORIES"
+      },
+      {
+        "cik": 1961,
+        "facts": 7739,
+        "name": "GEMAXEL INC. (formerly known as Worlds Inc.)"
+      },
+      {
+        "cik": 2034,
+        "facts": 9273,
+        "name": "ACETO CORP"
+      },
+      {
+        "cik": 2098,
+        "facts": 17235,
+        "name": "ACME UNITED CORP"
+      },
+      {
+        "cik": "0000002110",
+        "facts": 0,
+        "name": ""
+      },
+      {
+        "cik": 2178,
+        "facts": 16493,
+        "name": "ADAMS RESOURCES & ENERGY, INC."
+      },
+      {
+        "cik": 2186,
+        "facts": 16546,
+        "name": "BK Technologies Corp"
+      },
+      {
+        "cik": "0000002230",
+        "facts": 0,
+        "name": ""
+      },
+      {
+        "cik": 2488,
+        "facts": 24249,
+        "name": "ADVANCED MICRO DEVICES INC"
+      },
+      {
+        "cik": 2491,
+        "facts": 6730,
+        "name": "BALLY TECHNOLOGIES, INC."
+      },
+      {
+        "cik": 2809,
+        "facts": 8446,
+        "name": "AGNICO EAGLE MINES LIMITED"
+      },
+      {
+        "cik": 2969,
+        "facts": 35334,
+        "name": "Air Products & Chemicals, Inc."
+      },
+      {
+        "cik": 3116,
+        "facts": 16093,
+        "name": "AKORN INC"
+      },
+      {
+        "cik": 3146,
+        "facts": 1229,
+        "name": "Spire Inc."
+      },
+      {
+        "cik": 3197,
+        "facts": 24198,
+        "name": "CECO ENVIRONMENTAL CORP."
+      },
+      {
+        "cik": 3453,
+        "facts": 20395,
+        "name": "Matson,\u00a0Inc."
+      },
+      {
+        "cik": 3499,
+        "facts": 14662,
+        "name": "ALEXANDERS INC"
+      },
+      {
+        "cik": null,
+        "facts": 0,
+        "name": null
+      },
+      {
+        "cik": 3545,
+        "facts": 19026,
+        "name": "ALICO, INC."
+      },
+      {
+        "cik": 3570,
+        "facts": 23758,
+        "name": "CHENIERE ENERGY, INC."
+      },
+      {
+        "cik": 3673,
+        "facts": 2217,
+        "name": "ALLEGHENY ENERGY, INC"
+      },
+      {
+        "cik": "0000003794",
+        "facts": 0,
+        "name": ""
+      },
+      {
+        "cik": 3952,
+        "facts": 232,
+        "name": "ALLIED DEFENSE GROUP INC"
+      },
+      {
+        "cik": 3982,
+        "facts": 36,
+        "name": "ALLIS CHALMERS ENERGY INC."
+      }
+    ],
+    "series_count": 2817,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 1429381505,
+      "content_length": 1429381505,
+      "content_type": "application/zip",
+      "elapsed_seconds": 31.312,
+      "etag": "\"826857391a6dbc65357f9c3880828d8f-171\"",
+      "final_url": "https://www.sec.gov/Archives/edgar/daily-index/xbrl/companyfacts.zip",
+      "last_modified": "Wed, 25 Nov 2026 04:52:35 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "8a16ccb8f7a8db12d92e6da7ead228e3cb3894abfee52e2c172558ea96dec34e",
+      "status": 200,
+      "url": "https://www.sec.gov/Archives/edgar/daily-index/xbrl/companyfacts.zip"
+    },
+    "validation": {
+      "files": [
+        {
+          "archive_members": 20620,
+          "bytes": 1429381505,
+          "compression_ratio": 13.73,
+          "detected_format": "zip",
+          "file": "companyfacts.zip",
+          "uncompressed_bytes": 19573029602
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "SEC EDGAR company facts (XBRL)",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "archive_members": 20620,
+          "bytes": 1429381505,
+          "compression_ratio": 13.73,
+          "detected_format": "zip",
+          "file": "companyfacts.zip",
+          "uncompressed_bytes": 19573029602
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [
+      {
+        "code": "future_observation_dates",
+        "detail": "670 provider rows carry a future period end; they remain in the raw snapshot and are excluded from advertised coverage",
+        "severity": "warning"
+      },
+      {
+        "code": "implausible_observation_dates",
+        "detail": "910 provider rows carry dates outside 1900-01-01..today+2y; they remain in the raw snapshot but are excluded from the advertised coverage range",
+        "severity": "warning"
+      }
+    ],
+    "status": "valid"
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "completed_at": "2026-11-24T22:35:15.985745Z",
+  "dataset_id": "treasury.real_yields",
+  "exported_at": "2026-11-24T23:21:46.539671Z",
+  "files": [
+    {
+      "bytes": 180127,
+      "content_type": "text/csv",
+      "name": "par-real-yield-curve-rates-2003-2024.csv",
+      "path": "par-real-yield-curve-rates-2003-2024.csv",
+      "sha256": "55a48bf362a072fdddede21265e5d5e4e0c4fa21128b0437540b7afe0373ca4d"
+    },
+    {
+      "bytes": 70089,
+      "content_type": "application/vnd.apache.parquet",
+      "name": "treasury_real_yields.parquet",
+      "notes": "derived observation table; raw source bytes are the authority",
+      "path": "treasury_real_yields.parquet",
+      "record_count": 25344,
+      "sha256": "eca7dd30655929324a21d16491a699daa43c59ce87415870bb43e33534f10bd5",
+      "uncompressed_bytes": 70089
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "US Treasury",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:35:15.985591Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:35:15.985561Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.govinfo.gov/link/uscode/17/105",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223505-30af680d",
+  "source": {
+    "content_type": "text/csv",
+    "download_endpoint": "https://home.treasury.gov/system/files/276/par-real-yield-curve-rates-2003-2024.csv",
+    "etag": "W/\"e759a88bf16fc312eb4be470e50cb8c3\"",
+    "final_url": "https://home.treasury.gov/system/files/276/par-real-yield-curve-rates-2003-2024.csv",
+    "last_modified": "Wed, 19 Aug 2026 16:04:55 GMT",
+    "official_source_url": "https://home.treasury.gov/interest-rates-data-csv-archive/"
+  },
+  "stats": {
+    "columns": [
+      "Date",
+      "5 YR",
+      "7 YR",
+      "10 YR",
+      "20 YR",
+      "30 YR"
+    ],
+    "dataset_id": "treasury.real_yields",
+    "decompressed_bytes": 0,
+    "delimiter": "comma",
+    "derived_compression": "zstd",
+    "derived_observations": 25344,
+    "entity_count": 0,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "mode": "wide",
+    "obs_end": "2024-12-31",
+    "obs_start": "2003-01-02",
+    "publications_with_dates": 0,
+    "record_count": 5504,
+    "series_count": 5,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 180127,
+      "content_length": 180127,
+      "content_type": "text/csv",
+      "elapsed_seconds": 10.323,
+      "etag": "W/\"e759a88bf16fc312eb4be470e50cb8c3\"",
+      "final_url": "https://home.treasury.gov/system/files/276/par-real-yield-curve-rates-2003-2024.csv",
+      "last_modified": "Wed, 19 Aug 2026 16:04:55 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "55a48bf362a072fdddede21265e5d5e4e0c4fa21128b0437540b7afe0373ca4d",
+      "status": 200,
+      "url": "https://home.treasury.gov/system/files/276/par-real-yield-curve-rates-2003-2024.csv"
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 180127,
+          "columns": 6,
+          "detected_format": "unknown",
+          "file": "par-real-yield-curve-rates-2003-2024.csv"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "Treasury real par yield curve rates",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 180127,
+          "columns": 6,
+          "detected_format": "unknown",
+          "file": "par-real-yield-curve-rates-2003-2024.csv"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "completed_at": "2026-11-24T22:34:51.246742Z",
+  "dataset_id": "treasury.bill_rates",
+  "exported_at": "2026-11-24T23:21:46.537287Z",
+  "files": [
+    {
+      "bytes": 303741,
+      "content_type": "text/csv",
+      "name": "bill-rates-2002-2024.csv",
+      "path": "bill-rates-2002-2024.csv",
+      "sha256": "331479ee87a56034528659b705f6dcc05ee8280f369ddb74562f0fe782ba6253"
+    },
+    {
+      "bytes": 88164,
+      "content_type": "application/vnd.apache.parquet",
+      "name": "treasury_bill_rates.parquet",
+      "notes": "derived observation table; raw source bytes are the authority",
+      "path": "treasury_bill_rates.parquet",
+      "record_count": 47032,
+      "sha256": "f2d5e3910b0a5f88108ee66ae790cc477ded3b5a4c4ed76d39ddae0d0f55a778",
+      "uncompressed_bytes": 88164
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "US Treasury",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:34:51.246588Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:34:51.246555Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.govinfo.gov/link/uscode/17/105",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223440-85fe6c26",
+  "source": {
+    "content_type": "text/csv",
+    "download_endpoint": "https://home.treasury.gov/system/files/276/bill-rates-2002-2024.csv",
+    "etag": "W/\"102c907f03e76f9e880e1ada2f5c59f8\"",
+    "final_url": "https://home.treasury.gov/system/files/276/bill-rates-2002-2024.csv",
+    "last_modified": "Wed, 19 Aug 2026 16:04:54 GMT",
+    "official_source_url": "https://home.treasury.gov/interest-rates-data-csv-archive/"
+  },
+  "stats": {
+    "columns": [
+      "Date",
+      "4 WEEKS BANK DISCOUNT",
+      "4 WEEKS COUPON EQUIVALENT",
+      "8 WEEKS BANK DISCOUNT",
+      "8 WEEKS COUPON EQUIVALENT",
+      "13 WEEKS BANK DISCOUNT",
+      "13 WEEKS COUPON EQUIVALENT",
+      "17 WEEKS BANK DISCOUNT",
+      "17 WEEKS COUPON EQUIVALENT",
+      "26 WEEKS BANK DISCOUNT",
+      "26 WEEKS COUPON EQUIVALENT",
+      "52 WEEKS BANK DISCOUNT",
+      "52 WEEKS COUPON EQUIVALENT"
+    ],
+    "dataset_id": "treasury.bill_rates",
+    "decompressed_bytes": 0,
+    "delimiter": "comma",
+    "derived_compression": "zstd",
+    "derived_observations": 47032,
+    "entity_count": 0,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "mode": "wide",
+    "obs_end": "2024-12-31",
+    "obs_start": "2002-01-02",
+    "publications_with_dates": 0,
+    "record_count": 5755,
+    "series_count": 12,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 303741,
+      "content_length": 303741,
+      "content_type": "text/csv",
+      "elapsed_seconds": 9.122,
+      "etag": "W/\"102c907f03e76f9e880e1ada2f5c59f8\"",
+      "final_url": "https://home.treasury.gov/system/files/276/bill-rates-2002-2024.csv",
+      "last_modified": "Wed, 19 Aug 2026 16:04:54 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "331479ee87a56034528659b705f6dcc05ee8280f369ddb74562f0fe782ba6253",
+      "status": 200,
+      "url": "https://home.treasury.gov/system/files/276/bill-rates-2002-2024.csv"
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 303741,
+          "columns": 13,
+          "detected_format": "unknown",
+          "file": "bill-rates-2002-2024.csv"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "Treasury bill rates",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 303741,
+          "columns": 13,
+          "detected_format": "unknown",
+          "file": "bill-rates-2002-2024.csv"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}
