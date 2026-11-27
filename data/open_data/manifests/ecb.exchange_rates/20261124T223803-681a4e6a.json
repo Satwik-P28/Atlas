@@ -1,0 +1,155 @@
+{
+  "completed_at": "2026-11-24T22:38:12.378614Z",
+  "dataset_id": "ecb.exchange_rates",
+  "exported_at": "2026-11-24T23:21:46.525512Z",
+  "files": [
+    {
+      "bytes": 1492938,
+      "content_type": "text/csv",
+      "name": "ecb_exr.csv",
+      "path": "ecb_exr.csv",
+      "sha256": "a16ecaf18263ee2c7902f4219ff5647a5e300eaa814fd5c09c35a18ec2ccfecc"
+    },
+    {
+      "bytes": 45513,
+      "content_type": "application/vnd.apache.parquet",
+      "name": "ecb_exchange_rates.parquet",
+      "notes": "derived observation table; raw source bytes are the authority",
+      "path": "ecb_exchange_rates.parquet",
+      "record_count": 7143,
+      "sha256": "3ff470ee6f1e5280d7e0cac2e3987c157be6f599bd1a301cb43f714ab53ca9db",
+      "uncompressed_bytes": 45513
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "ECB",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:38:12.378496Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:38:12.378477Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: ECB statistics",
+    "commercial_use": true,
+    "license_name": "ECB reuse policy for ESCB statistics",
+    "license_url": "https://www.ecb.europa.eu/stats/ecb_statistics/governance_and_quality_framework/html/usage_policy.en.html",
+    "modification": false,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "redistributable_conditions",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": [
+      "Third-party data requires prior permission from the originator"
+    ]
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223803-681a4e6a",
+  "source": {
+    "content_type": "text/csv",
+    "download_endpoint": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?format=csvdata",
+    "etag": null,
+    "final_url": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?format=csvdata",
+    "last_modified": "Tue, 24 Nov 2026 14:57:01 GMT",
+    "official_source_url": "https://data.ecb.europa.eu/"
+  },
+  "stats": {
+    "columns": [
+      "KEY",
+      "FREQ",
+      "CURRENCY",
+      "CURRENCY_DENOM",
+      "EXR_TYPE",
+      "EXR_SUFFIX",
+      "TIME_PERIOD",
+      "OBS_VALUE",
+      "OBS_STATUS",
+      "OBS_CONF",
+      "OBS_PRE_BREAK",
+      "OBS_COM",
+      "TIME_FORMAT",
+      "BREAKS",
+      "COLLECTION",
+      "COMPILING_ORG",
+      "DISS_ORG",
+      "DOM_SER_IDS",
+      "PUBL_ECB",
+      "PUBL_MU",
+      "PUBL_PUBLIC",
+      "UNIT_INDEX_BASE",
+      "COMPILATION",
+      "COVERAGE",
+      "DECIMALS",
+      "NAT_TITLE",
+      "SOURCE_AGENCY",
+      "SOURCE_PUB",
+      "TITLE",
+      "TITLE_COMPL",
+      "UNIT",
+      "UNIT_MULT"
+    ],
+    "dataset_id": "ecb.exchange_rates",
+    "decompressed_bytes": 0,
+    "delimiter": "comma",
+    "derived_compression": "zstd",
+    "derived_observations": 7143,
+    "entity_count": 0,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "mode": "narrow",
+    "obs_end": "2026-11-24",
+    "obs_start": "1999-01-04",
+    "publications_with_dates": 0,
+    "record_count": 7205,
+    "series_count": 1,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 1492938,
+      "content_length": 1492938,
+      "content_type": "text/csv",
+      "elapsed_seconds": 8.96,
+      "etag": null,
+      "final_url": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?format=csvdata",
+      "last_modified": "Tue, 24 Nov 2026 14:57:01 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "a16ecaf18263ee2c7902f4219ff5647a5e300eaa814fd5c09c35a18ec2ccfecc",
+      "status": 200,
+      "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?format=csvdata"
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 1492938,
+          "columns": 32,
+          "detected_format": "unknown",
+          "file": "ecb_exr.csv"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "ECB euro foreign exchange reference rates",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 1492938,
+          "columns": 32,
+          "detected_format": "unknown",
+          "file": "ecb_exr.csv"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

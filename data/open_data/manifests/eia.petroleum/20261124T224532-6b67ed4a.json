@@ -1,0 +1,121 @@
+{
+  "completed_at": "2026-11-24T22:45:44.785387Z",
+  "dataset_id": "eia.petroleum",
+  "exported_at": "2026-11-24T23:21:46.526876Z",
+  "files": [
+    {
+      "bytes": 55364374,
+      "content_type": "application/zip",
+      "name": "PET.zip",
+      "path": "PET.zip",
+      "sha256": "45e97cf055f6c92a670500f5376f84f107b7899780f7f3dec7723c941882906e"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "EIA",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:45:44.784916Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:45:44.784895Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: U.S. Energy Information Administration",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain",
+    "license_url": "https://www.eia.gov/about/copyrights_reuse.php",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T224532-6b67ed4a",
+  "source": {
+    "content_type": "application/x-zip-compressed",
+    "download_endpoint": "https://api.eia.gov/bulk/PET.zip",
+    "etag": "\"0ecae2577cdd1:0\"",
+    "final_url": "https://www.eia.gov/opendata/bulk/PET.zip",
+    "last_modified": "Tue, 24 Nov 2026 21:01:44 GMT",
+    "official_source_url": "https://www.eia.gov/opendata/bulkfiles.php"
+  },
+  "stats": {
+    "dataset_id": "eia.petroleum",
+    "decompressed_bytes": 368265009,
+    "entity_count": 0,
+    "file_count": 1,
+    "implausible_observation_dates": 154,
+    "issues": [
+      {
+        "code": "implausible_observation_dates",
+        "detail": "154 provider rows carry dates outside 1900-01-01..today+2y; they remain in the raw snapshot but are excluded from the advertised coverage range",
+        "severity": "warning"
+      }
+    ],
+    "obs_end": "2026-11-23",
+    "obs_start": "1900-01-01",
+    "publications_with_dates": 0,
+    "record_count": 195293,
+    "series_count": 181216,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 55364374,
+      "content_length": 55364374,
+      "content_type": "application/x-zip-compressed",
+      "elapsed_seconds": 1.042,
+      "etag": "\"0ecae2577cdd1:0\"",
+      "final_url": "https://www.eia.gov/opendata/bulk/PET.zip",
+      "last_modified": "Tue, 24 Nov 2026 21:01:44 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "45e97cf055f6c92a670500f5376f84f107b7899780f7f3dec7723c941882906e",
+      "status": 200,
+      "url": "https://api.eia.gov/bulk/PET.zip"
+    },
+    "validation": {
+      "files": [
+        {
+          "archive_members": 1,
+          "bytes": 55364374,
+          "compression_ratio": 6.65,
+          "detected_format": "zip",
+          "file": "PET.zip",
+          "uncompressed_bytes": 368265009
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "EIA petroleum bulk data",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "archive_members": 1,
+          "bytes": 55364374,
+          "compression_ratio": 6.65,
+          "detected_format": "zip",
+          "file": "PET.zip",
+          "uncompressed_bytes": 368265009
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [
+      {
+        "code": "implausible_observation_dates",
+        "detail": "154 provider rows carry dates outside 1900-01-01..today+2y; they remain in the raw snapshot but are excluded from the advertised coverage range",
+        "severity": "warning"
+      }
+    ],
+    "status": "valid"
+  }
+}

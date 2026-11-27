@@ -1,0 +1,164 @@
+{
+  "completed_at": "2026-11-24T22:57:48.715188Z",
+  "dataset_id": "sec.notes_data_sets",
+  "exported_at": "2026-11-24T23:21:46.535199Z",
+  "files": [
+    {
+      "bytes": 91722505,
+      "content_type": "application/zip",
+      "name": "2026_10_notes.zip",
+      "path": "2026_10_notes.zip",
+      "sha256": "44d1b48909babe6611fcf59ff5bd273281616acbf2b91567e9597a51f924cee1"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "SEC",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:57:48.714871Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:23:06.860818Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain (17 USC 105)",
+    "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T225735-4e9a46c1",
+  "source": {
+    "content_type": "application/octet-stream",
+    "download_endpoint": "https://www.sec.gov/files/dera/data/financial-statement-notes-data-sets/2026_10_notes.zip",
+    "etag": null,
+    "final_url": "https://www.sec.gov/files/dera/data/financial-statement-notes-data-sets/2026_10_notes.zip",
+    "last_modified": "Wed, 04 Nov 2026 15:10:02 GMT",
+    "official_source_url": "https://www.sec.gov/data-research/sec-markets-data/financial-statement-notes-data-sets"
+  },
+  "stats": {
+    "dataset_id": "sec.notes_data_sets",
+    "decompressed_bytes": 643981573,
+    "entity_count": 3555,
+    "file_count": 1,
+    "future_observation_dates": 937,
+    "implausible_observation_dates": 171,
+    "issues": [
+      {
+        "code": "future_observation_dates",
+        "detail": "937 provider rows carry a future period end; they remain in the raw snapshot and are excluded from advertised coverage",
+        "severity": "warning"
+      },
+      {
+        "code": "implausible_observation_dates",
+        "detail": "171 provider rows carry dates outside 1900-01-01..today+2y; they remain in the raw snapshot but are excluded from the advertised coverage range",
+        "severity": "warning"
+      }
+    ],
+    "obs_end": "2026-10-31",
+    "obs_start": "1977-12-31",
+    "publications_with_dates": 0,
+    "record_count": 3234860,
+    "series_count": 118791,
+    "submission_columns": [
+      "adsh",
+      "cik",
+      "name",
+      "sic",
+      "countryba",
+      "stprba",
+      "cityba",
+      "zipba",
+      "bas1",
+      "bas2",
+      "baph",
+      "countryma",
+      "stprma",
+      "cityma",
+      "zipma",
+      "mas1",
+      "mas2",
+      "countryinc",
+      "stprinc",
+      "ein",
+      "former",
+      "changed",
+      "afs",
+      "wksi",
+      "fye",
+      "form",
+      "period",
+      "fy",
+      "fp",
+      "filed"
+    ],
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 91722505,
+      "content_length": 91722505,
+      "content_type": "application/octet-stream",
+      "elapsed_seconds": 3.518,
+      "etag": null,
+      "final_url": "https://www.sec.gov/files/dera/data/financial-statement-notes-data-sets/2026_10_notes.zip",
+      "last_modified": "Wed, 04 Nov 2026 15:10:02 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "44d1b48909babe6611fcf59ff5bd273281616acbf2b91567e9597a51f924cee1",
+      "status": 200,
+      "url": "https://www.sec.gov/files/dera/data/financial-statement-notes-data-sets/2026_10_notes.zip"
+    },
+    "validation": {
+      "files": [
+        {
+          "archive_members": 10,
+          "bytes": 91722505,
+          "compression_ratio": 7.02,
+          "detected_format": "zip",
+          "file": "2026_10_notes.zip",
+          "uncompressed_bytes": 643981573
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "SEC Financial Statement Notes Data Sets",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "archive_members": 10,
+          "bytes": 91722505,
+          "compression_ratio": 7.02,
+          "detected_format": "zip",
+          "file": "2026_10_notes.zip",
+          "uncompressed_bytes": 643981573
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [
+      {
+        "code": "future_observation_dates",
+        "detail": "937 provider rows carry a future period end; they remain in the raw snapshot and are excluded from advertised coverage",
+        "severity": "warning"
+      },
+      {
+        "code": "implausible_observation_dates",
+        "detail": "171 provider rows carry dates outside 1900-01-01..today+2y; they remain in the raw snapshot but are excluded from the advertised coverage range",
+        "severity": "warning"
+      }
+    ],
+    "status": "valid"
+  }
+}

@@ -1,0 +1,1726 @@
+{
+  "completed_at": "2026-11-25T07:55:51.320279Z",
+  "dataset_id": "sec.financial_statement_data_sets",
+  "exported_at": "2026-11-25T08:14:22.860059Z",
+  "files": [
+    {
+      "bytes": 144894,
+      "content_type": "application/zip",
+      "name": "0000-2009q2.zip",
+      "path": "0000-2009q2.zip",
+      "sha256": "09d38a3fdea044be2728488ecb000fef8b5220fda805c601d2337afd1da333a8"
+    },
+    {
+      "bytes": 3544077,
+      "content_type": "application/zip",
+      "name": "0001-2009q3.zip",
+      "path": "0001-2009q3.zip",
+      "sha256": "dca07de82a7c40d28108cd3ba4fbce4225a9c5bd2bd9deea7167ff4992c8ddfa"
+    },
+    {
+      "bytes": 4050938,
+      "content_type": "application/zip",
+      "name": "0002-2009q4.zip",
+      "path": "0002-2009q4.zip",
+      "sha256": "ad23b114ecb430c3a05ee2f2be799e966a67591ef098c44311b2f1f632d3ea82"
+    },
+    {
+      "bytes": 5311282,
+      "content_type": "application/zip",
+      "name": "0003-2010q1.zip",
+      "path": "0003-2010q1.zip",
+      "sha256": "2a4db2340ab1662d5135d7e17be1a58352c5959017350f0ef2174135f9996125"
+    },
+    {
+      "bytes": 3994236,
+      "content_type": "application/zip",
+      "name": "0004-2010q2.zip",
+      "path": "0004-2010q2.zip",
+      "sha256": "25f416b020fd3e62a67dbf8c6522c9f239e716099b61cf5d05a59a91ffdef1f1"
+    },
+    {
+      "bytes": 13745950,
+      "content_type": "application/zip",
+      "name": "0005-2010q3.zip",
+      "path": "0005-2010q3.zip",
+      "sha256": "52014faf614ca0d7b8040e364f5b3e99f28d5e96b711aa922b490056e2c1d7b5"
+    },
+    {
+      "bytes": 14679781,
+      "content_type": "application/zip",
+      "name": "0006-2010q4.zip",
+      "path": "0006-2010q4.zip",
+      "sha256": "3dc43a8559cba9e1a9bb5a283a99e1fdfd2b0eaa7a9460887d5b4c70d69cef63"
+    },
+    {
+      "bytes": 19615544,
+      "content_type": "application/zip",
+      "name": "0007-2011q1.zip",
+      "path": "0007-2011q1.zip",
+      "sha256": "e63b781a5e57e55d68e110a06d3f697e942a60e17f093bbdc1a16ac7152a7df5"
+    },
+    {
+      "bytes": 15001310,
+      "content_type": "application/zip",
+      "name": "0008-2011q2.zip",
+      "path": "0008-2011q2.zip",
+      "sha256": "10a6f98f14d2a341e938a379ea32beb4857b01d59facf04e6e7b3c68558a95d1"
+    },
+    {
+      "bytes": 57941919,
+      "content_type": "application/zip",
+      "name": "0009-2011q3.zip",
+      "path": "0009-2011q3.zip",
+      "sha256": "43b9beb243c6686a29df5cf817ed2cb3a7c86a7398bbc56e2fb4d0cf4784ac28"
+    },
+    {
+      "bytes": 64306658,
+      "content_type": "application/zip",
+      "name": "0010-2011q4.zip",
+      "path": "0010-2011q4.zip",
+      "sha256": "0f674f68094cc65c83da3c142775dcfd091250e293783c3e8211ee4e97bc083f"
+    },
+    {
+      "bytes": 85474601,
+      "content_type": "application/zip",
+      "name": "0011-2012q1.zip",
+      "path": "0011-2012q1.zip",
+      "sha256": "42ed1a5ecac978d4338bd51cd4bc15bf60cc821291eea492f8172fc4e803d5f6"
+    },
+    {
+      "bytes": 80075771,
+      "content_type": "application/zip",
+      "name": "0012-2012q2.zip",
+      "path": "0012-2012q2.zip",
+      "sha256": "0dbb10aa316c674f07849a28e67a25a0a59bd6ef2bc214cd1800c8a2d2a05df6"
+    },
+    {
+      "bytes": 89608234,
+      "content_type": "application/zip",
+      "name": "0013-2012q3.zip",
+      "path": "0013-2012q3.zip",
+      "sha256": "a5b705fab7948837fc890d820c2b809d4afdb0ff1836129ad5a16127275f0ebf"
+    },
+    {
+      "bytes": 95805256,
+      "content_type": "application/zip",
+      "name": "0014-2012q4.zip",
+      "path": "0014-2012q4.zip",
+      "sha256": "af6629de7547f5d75c85abf170550b9466768071fcd419d5fdf1a1d026436e98"
+    },
+    {
+      "bytes": 99173442,
+      "content_type": "application/zip",
+      "name": "0015-2013q1.zip",
+      "path": "0015-2013q1.zip",
+      "sha256": "329f4e3e40c0351001037ad1dea3fd28c07100f6f6d6d64d5998ea01b060a790"
+    },
+    {
+      "bytes": 96917655,
+      "content_type": "application/zip",
+      "name": "0016-2013q2.zip",
+      "path": "0016-2013q2.zip",
+      "sha256": "7cc764386ea9cb01d62e1a9f4fac38dc9c741e96886a953ddaad2def4eb489c7"
+    },
+    {
+      "bytes": 98355005,
+      "content_type": "application/zip",
+      "name": "0017-2013q3.zip",
+      "path": "0017-2013q3.zip",
+      "sha256": "c9134387b650a9194f14b3f832f16aa1a72255c20a0e0b954001a643933cc849"
+    },
+    {
+      "bytes": 92335773,
+      "content_type": "application/zip",
+      "name": "0018-2013q4.zip",
+      "path": "0018-2013q4.zip",
+      "sha256": "7781ac25ddbd4f6eb8eb85e838656181fb06e8bc16b1dd5efccb9e21f8f5baa7"
+    },
+    {
+      "bytes": 102843522,
+      "content_type": "application/zip",
+      "name": "0019-2014q1.zip",
+      "path": "0019-2014q1.zip",
+      "sha256": "bf55481c6e0088fb45e8efeb2d8de6912a9c3533da918376a24ca5f84144680f"
+    },
+    {
+      "bytes": 85032839,
+      "content_type": "application/zip",
+      "name": "0020-2014q2.zip",
+      "path": "0020-2014q2.zip",
+      "sha256": "ab03600231a08369a980a31dde8bb78b6cd49f56d39ab7b90ca5bc0cfd52aa7f"
+    },
+    {
+      "bytes": 87408142,
+      "content_type": "application/zip",
+      "name": "0021-2014q3.zip",
+      "path": "0021-2014q3.zip",
+      "sha256": "4d10510a2f17a6da8012d83f66bed7fbb434bca2529f7b2a92043c522d2c52b1"
+    },
+    {
+      "bytes": 87639973,
+      "content_type": "application/zip",
+      "name": "0022-2014q4.zip",
+      "path": "0022-2014q4.zip",
+      "sha256": "c82395b7df380a95b30d652784372a5439dea9ed750d89784822bb643cbc4930"
+    },
+    {
+      "bytes": 98944359,
+      "content_type": "application/zip",
+      "name": "0023-2015q1.zip",
+      "path": "0023-2015q1.zip",
+      "sha256": "baa9e434480b8299593b781e8156f855e0c4548677329f166f495cbae287e52e"
+    },
+    {
+      "bytes": 78908272,
+      "content_type": "application/zip",
+      "name": "0024-2015q2.zip",
+      "path": "0024-2015q2.zip",
+      "sha256": "d3cac325930af6ef145d26fb7e035d7933e900ce174a11adaabb33abd87fbfa1"
+    },
+    {
+      "bytes": 82751989,
+      "content_type": "application/zip",
+      "name": "0025-2015q3.zip",
+      "path": "0025-2015q3.zip",
+      "sha256": "9301fa2e346aa6b3a48a36cafab80d1aab5d7970e60bfd168d53ba852a4deca9"
+    },
+    {
+      "bytes": 83007568,
+      "content_type": "application/zip",
+      "name": "0026-2015q4.zip",
+      "path": "0026-2015q4.zip",
+      "sha256": "1723b41ef2a1d3ea6595f6052ef229a80e03cd183391ca9e297a894f9e589d83"
+    },
+    {
+      "bytes": 95470843,
+      "content_type": "application/zip",
+      "name": "0027-2016q1.zip",
+      "path": "0027-2016q1.zip",
+      "sha256": "5c89a6badede1b47ab540913c7484795c7fc4c2a4672ac601b34b8c0afe5a698"
+    },
+    {
+      "bytes": 73848835,
+      "content_type": "application/zip",
+      "name": "0028-2016q2.zip",
+      "path": "0028-2016q2.zip",
+      "sha256": "e91daef1f83ab3a6a7a25425f1f09ac6c100be8e42ac7a54e539e1b0c303449c"
+    },
+    {
+      "bytes": 71116399,
+      "content_type": "application/zip",
+      "name": "0029-2016q3.zip",
+      "path": "0029-2016q3.zip",
+      "sha256": "4d014b8ee4476887aba067c59bfef967d4b12c905d4b1b3f89e8ff7ff7310156"
+    },
+    {
+      "bytes": 79400707,
+      "content_type": "application/zip",
+      "name": "0030-2016q4.zip",
+      "path": "0030-2016q4.zip",
+      "sha256": "b8a9550c386ea95eefcc95fc3b3c19f2b1428c0a7f46d5d547a671c3f9284e26"
+    },
+    {
+      "bytes": 92433981,
+      "content_type": "application/zip",
+      "name": "0031-2017q1.zip",
+      "path": "0031-2017q1.zip",
+      "sha256": "ffb6989983c4c9f87e2f39166b20e4a21f024f0fe1adccc199e08da5fc94a915"
+    },
+    {
+      "bytes": 71429748,
+      "content_type": "application/zip",
+      "name": "0032-2017q2.zip",
+      "path": "0032-2017q2.zip",
+      "sha256": "63a590d7deaac8f82d22f08cb2ada46f199341ecc7e7a8a0a7d6a181cec1d53b"
+    },
+    {
+      "bytes": 74356472,
+      "content_type": "application/zip",
+      "name": "0033-2017q3.zip",
+      "path": "0033-2017q3.zip",
+      "sha256": "5aa58d799c4fb3f5f98974eb713696d1aebe747a01a794e7ac58517631b5735d"
+    },
+    {
+      "bytes": 76051784,
+      "content_type": "application/zip",
+      "name": "0034-2017q4.zip",
+      "path": "0034-2017q4.zip",
+      "sha256": "be03bfd71f356a7f53d82a40ee907bb51aec4f61d6ce97f059f2df785bc37658"
+    },
+    {
+      "bytes": 93176693,
+      "content_type": "application/zip",
+      "name": "0035-2018q1.zip",
+      "path": "0035-2018q1.zip",
+      "sha256": "f7f0083d28779ff373cd097ded88d5408eae9cc178f89014ca3ed8b24dc84185"
+    },
+    {
+      "bytes": 91972487,
+      "content_type": "application/zip",
+      "name": "0036-2018q2.zip",
+      "path": "0036-2018q2.zip",
+      "sha256": "99daaf8af1fb1ba94b100613536d9dbee5e9a356f0736190963a3a68af623d54"
+    },
+    {
+      "bytes": 87202498,
+      "content_type": "application/zip",
+      "name": "0037-2018q3.zip",
+      "path": "0037-2018q3.zip",
+      "sha256": "30030056223c456d5cb7a42722ffa990345fda12deb5cfff723b1ae47dc9bf8d"
+    },
+    {
+      "bytes": 62895777,
+      "content_type": "application/zip",
+      "name": "0038-2018q4.zip",
+      "path": "0038-2018q4.zip",
+      "sha256": "ecc103d0979dacdf6cfcc7f0b2273f7b6046c41a3aa7f2e2aacfb8ccd45bc122"
+    },
+    {
+      "bytes": 95895180,
+      "content_type": "application/zip",
+      "name": "0039-2019q1.zip",
+      "path": "0039-2019q1.zip",
+      "sha256": "49f6f0a00b6f1792d22893a3e261f7a329377048eb826079f1a16c7895b76d9d"
+    },
+    {
+      "bytes": 90155728,
+      "content_type": "application/zip",
+      "name": "0040-2019q2.zip",
+      "path": "0040-2019q2.zip",
+      "sha256": "765e42efd43687b4ac4ea59c83213857a52dca0a4bd5c490034bd5bea2b6fac3"
+    },
+    {
+      "bytes": 89829588,
+      "content_type": "application/zip",
+      "name": "0041-2019q3.zip",
+      "path": "0041-2019q3.zip",
+      "sha256": "4c57e36f04b54a2b9917537e12974cba68353f765affbf168bd506478780e13e"
+    },
+    {
+      "bytes": 98753299,
+      "content_type": "application/zip",
+      "name": "0042-2019q4.zip",
+      "path": "0042-2019q4.zip",
+      "sha256": "1f997c123b6d2fe892eeca0a5f12687e718ab5ae031f148b4a5d82f2689daec3"
+    },
+    {
+      "bytes": 96584608,
+      "content_type": "application/zip",
+      "name": "0043-2020q1.zip",
+      "path": "0043-2020q1.zip",
+      "sha256": "48ed9834c66d565c21130d087eae941b25770e2d7cc8351d17652612289fcd67"
+    },
+    {
+      "bytes": 82008710,
+      "content_type": "application/zip",
+      "name": "0044-2020q2.zip",
+      "path": "0044-2020q2.zip",
+      "sha256": "bd796ea10c88e21205da013f9c3f6a20b2b14d3de94f0075e9f529e0ef9a3543"
+    },
+    {
+      "bytes": 87582976,
+      "content_type": "application/zip",
+      "name": "0045-2020q3.zip",
+      "path": "0045-2020q3.zip",
+      "sha256": "6a402070d4b1f12db0d2256533b38705735684ecb58bc12ce53a61dd12abe26e"
+    },
+    {
+      "bytes": 89811373,
+      "content_type": "application/zip",
+      "name": "0046-2020q4.zip",
+      "path": "0046-2020q4.zip",
+      "sha256": "7cabec2c9b90511983623e6db3869b24c7a894466bd409f060a8da32790ae68e"
+    },
+    {
+      "bytes": 97900752,
+      "content_type": "application/zip",
+      "name": "0047-2021q1.zip",
+      "path": "0047-2021q1.zip",
+      "sha256": "6a776a9fa3d974476101efa9a4bfc531b7cdc2763abd45a6f70dd240a223843b"
+    },
+    {
+      "bytes": 90864175,
+      "content_type": "application/zip",
+      "name": "0048-2021q2.zip",
+      "path": "0048-2021q2.zip",
+      "sha256": "528b91432896eba74661c20481edb327809f3a0bf00e01d81821fe8e6078bc33"
+    },
+    {
+      "bytes": 97252395,
+      "content_type": "application/zip",
+      "name": "0049-2021q3.zip",
+      "path": "0049-2021q3.zip",
+      "sha256": "0fae2ceb149c0fe7e83b35b19157f910c864dee7e25d5ecf8b93dc42ee261b99"
+    },
+    {
+      "bytes": 102642081,
+      "content_type": "application/zip",
+      "name": "0050-2021q4.zip",
+      "path": "0050-2021q4.zip",
+      "sha256": "30d21449c0488e71dfb88ba8f85644a0e72194864e95111b3c1c120b3514c594"
+    },
+    {
+      "bytes": 103669919,
+      "content_type": "application/zip",
+      "name": "0051-2022q1.zip",
+      "path": "0051-2022q1.zip",
+      "sha256": "2ebeef77727a383f878bc28ff22498fd292a8dbab04216877b4b130ca00c1520"
+    },
+    {
+      "bytes": 97089251,
+      "content_type": "application/zip",
+      "name": "0052-2022q2.zip",
+      "path": "0052-2022q2.zip",
+      "sha256": "8939a4cafeabf7c94bde48be0e8c444f6332e4a9663698a89242eddd1036d27e"
+    },
+    {
+      "bytes": 97589396,
+      "content_type": "application/zip",
+      "name": "0053-2022q3.zip",
+      "path": "0053-2022q3.zip",
+      "sha256": "4bbfdc953177acf1a430a9f0a624dd8244bc81292d42872107d0446d06167c26"
+    },
+    {
+      "bytes": 111091525,
+      "content_type": "application/zip",
+      "name": "0054-2022q4.zip",
+      "path": "0054-2022q4.zip",
+      "sha256": "83bdc7a9545479eb64d118688c888ba8e7554ebc774f3ab8a8b0cc1decb87f28"
+    },
+    {
+      "bytes": 113974946,
+      "content_type": "application/zip",
+      "name": "0055-2023q1.zip",
+      "path": "0055-2023q1.zip",
+      "sha256": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e"
+    },
+    {
+      "bytes": 116914392,
+      "content_type": "application/zip",
+      "name": "0056-2023q2.zip",
+      "path": "0056-2023q2.zip",
+      "sha256": "f028f1e8d24313e7619aa87c7c683a459452e7e81a8e5ba72d7ce39ddf62bda9"
+    },
+    {
+      "bytes": 117776944,
+      "content_type": "application/zip",
+      "name": "0057-2023q3.zip",
+      "path": "0057-2023q3.zip",
+      "sha256": "f075d721dde4393dabd49c1746578294ada4665ec29c85c2b3184f44f6f09187"
+    },
+    {
+      "bytes": 120272357,
+      "content_type": "application/zip",
+      "name": "0058-2023q4.zip",
+      "path": "0058-2023q4.zip",
+      "sha256": "ad23c5505e59b7305e16bfebb8bb839476689330b85a3e1ce216f809b18d1521"
+    },
+    {
+      "bytes": 124336804,
+      "content_type": "application/zip",
+      "name": "0059-2024q1.zip",
+      "path": "0059-2024q1.zip",
+      "sha256": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b"
+    },
+    {
+      "bytes": 119119954,
+      "content_type": "application/zip",
+      "name": "0060-2024q2.zip",
+      "path": "0060-2024q2.zip",
+      "sha256": "698796e9f0946501d3dc74e7696a6c8c71cf32b66026e053722a784236b37761"
+    },
+    {
+      "bytes": 118280418,
+      "content_type": "application/zip",
+      "name": "0061-2024q3.zip",
+      "path": "0061-2024q3.zip",
+      "sha256": "b1823f2d65189f0d5ecbb1968d683c59df762129ae1b23bda0394093a69e0da9"
+    },
+    {
+      "bytes": 122932548,
+      "content_type": "application/zip",
+      "name": "0062-2024q4.zip",
+      "path": "0062-2024q4.zip",
+      "sha256": "9a2cbbaf39c94aa642b33d512f4def92b198d3bfd12d2267bcd27abe55b9902d"
+    },
+    {
+      "bytes": 127765057,
+      "content_type": "application/zip",
+      "name": "0063-2025q1.zip",
+      "path": "0063-2025q1.zip",
+      "sha256": "4386e7057cc216b6fc729d8f957998acb831d29be7b16f6d8ed0f6b1ab74eba5"
+    },
+    {
+      "bytes": 78973768,
+      "content_type": "application/zip",
+      "name": "0064-2025q2.zip",
+      "path": "0064-2025q2.zip",
+      "sha256": "81bf19bdb5606d5ee0164a8de8b7e96d5546170e42e59bcbf95b652ca83ac5d7"
+    },
+    {
+      "bytes": 127842298,
+      "content_type": "application/zip",
+      "name": "0065-2025q3.zip",
+      "path": "0065-2025q3.zip",
+      "sha256": "ebe25fa74c3655f4738ed9eb144af3953c3981c80f57d74829fb9ad68b114710"
+    },
+    {
+      "bytes": 65830170,
+      "content_type": "application/zip",
+      "name": "0066-2025q4.zip",
+      "path": "0066-2025q4.zip",
+      "sha256": "2b36ac3850c022cf19edd882e31c3c453c7666677b9fdd2e1f7748fdb5768c6e"
+    },
+    {
+      "bytes": 85259424,
+      "content_type": "application/zip",
+      "name": "0067-2026q1.zip",
+      "path": "0067-2026q1.zip",
+      "sha256": "d18c01c615da8f5cd46273b0dacaeee5b1163f4089171da0f84153a5f3c362f6"
+    },
+    {
+      "bytes": 60419016,
+      "content_type": "application/zip",
+      "name": "0068-2026q2.zip",
+      "path": "0068-2026q2.zip",
+      "sha256": "d7c815395cd420cfbe09b29dbae73a45406c5d0652d5ae1859ae11ea2e22df77"
+    },
+    {
+      "bytes": 65148008,
+      "content_type": "application/zip",
+      "name": "0069-2026q3.zip",
+      "path": "0069-2026q3.zip",
+      "sha256": "b6ebdc56b78526a6423f5b99f6e355afcb0510e7264324300ee5f0d3bd1bad21"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "SEC",
+  "retrieval": {
+    "completed_at": "2026-11-25T07:55:51.320107Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-25T07:55:51.320060Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: U.S. Securities and Exchange Commission, EDGAR. Issuer-authored filings are reproduced here as factual data; third-party exhibits and narrative note text are excluded.",
+    "commercial_use": true,
+    "license_name": "SEC EDGAR public filing data - issuer-authored electronic filings; factual data",
+    "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "redistributable_conditions",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261125T075339-272361f7",
+  "source": {
+    "content_type": null,
+    "download_endpoint": "https://www.sec.gov/files/dera/data/financial-statement-data-sets/2009q2.zip",
+    "etag": null,
+    "final_url": "https://www.sec.gov/files/dera/data/financial-statement-data-sets/2009q2.zip",
+    "last_modified": null,
+    "official_source_url": "https://www.sec.gov/data-research/sec-markets-data/financial-statement-data-sets"
+  },
+  "stats": {
+    "census_members": [
+      "sub.txt"
+    ],
+    "dataset_id": "sec.financial_statement_data_sets",
+    "decompressed_bytes": 32239476871,
+    "entity_count": 17176,
+    "file_count": 70,
+    "future_observation_dates": 0,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": "2026-08-31",
+    "obs_start": "2004-12-31",
+    "publications_with_dates": 0,
+    "record_count": 440233,
+    "series_count": 0,
+    "submission_columns": [
+      "adsh",
+      "cik",
+      "name",
+      "sic",
+      "countryba",
+      "stprba",
+      "cityba",
+      "zipba",
+      "bas1",
+      "bas2",
+      "baph",
+      "countryma",
+      "stprma",
+      "cityma",
+      "zipma",
+      "mas1",
+      "mas2",
+      "countryinc",
+      "stprinc",
+      "ein",
+      "former",
+      "changed",
+      "afs",
+      "wksi",
+      "fye",
+      "form",
+      "period",
+      "fy",
+      "fp",
+      "filed"
+    ],
+    "transfer": {
+      "bytes_downloaded": 5709542274,
+      "elapsed_seconds": 117.527,
+      "final_url": "https://www.sec.gov/files/dera/data/financial-statement-data-sets/2009q2.zip",
+      "pages": 70,
+      "requested_urls": 70,
+      "skipped_urls": [],
+      "status": 206
+    },
+    "validation": {
+      "files": [
+        {
+          "archive_members": 5,
+          "bytes": 144894,
+          "compression_ratio": 7.06,
+          "detected_format": "zip",
+          "file": "0000-2009q2.zip",
+          "uncompressed_bytes": 1019373
+        },
+        {
+          "archive_members": 5,
+          "bytes": 3544077,
+          "compression_ratio": 6.35,
+          "detected_format": "zip",
+          "file": "0001-2009q3.zip",
+          "uncompressed_bytes": 22491218
+        },
+        {
+          "archive_members": 5,
+          "bytes": 4050938,
+          "compression_ratio": 6.32,
+          "detected_format": "zip",
+          "file": "0002-2009q4.zip",
+          "uncompressed_bytes": 25591696
+        },
+        {
+          "archive_members": 5,
+          "bytes": 5311282,
+          "compression_ratio": 6.49,
+          "detected_format": "zip",
+          "file": "0003-2010q1.zip",
+          "uncompressed_bytes": 34442376
+        },
+        {
+          "archive_members": 5,
+          "bytes": 3994236,
+          "compression_ratio": 6.34,
+          "detected_format": "zip",
+          "file": "0004-2010q2.zip",
+          "uncompressed_bytes": 25302322
+        },
+        {
+          "archive_members": 5,
+          "bytes": 13745950,
+          "compression_ratio": 5.96,
+          "detected_format": "zip",
+          "file": "0005-2010q3.zip",
+          "uncompressed_bytes": 81980760
+        },
+        {
+          "archive_members": 5,
+          "bytes": 14679781,
+          "compression_ratio": 5.92,
+          "detected_format": "zip",
+          "file": "0006-2010q4.zip",
+          "uncompressed_bytes": 86960992
+        },
+        {
+          "archive_members": 5,
+          "bytes": 19615544,
+          "compression_ratio": 5.99,
+          "detected_format": "zip",
+          "file": "0007-2011q1.zip",
+          "uncompressed_bytes": 117453090
+        },
+        {
+          "archive_members": 5,
+          "bytes": 15001310,
+          "compression_ratio": 5.91,
+          "detected_format": "zip",
+          "file": "0008-2011q2.zip",
+          "uncompressed_bytes": 88689467
+        },
+        {
+          "archive_members": 5,
+          "bytes": 57941919,
+          "compression_ratio": 5.65,
+          "detected_format": "zip",
+          "file": "0009-2011q3.zip",
+          "uncompressed_bytes": 327468047
+        },
+        {
+          "archive_members": 5,
+          "bytes": 64306658,
+          "compression_ratio": 5.62,
+          "detected_format": "zip",
+          "file": "0010-2011q4.zip",
+          "uncompressed_bytes": 361152836
+        },
+        {
+          "archive_members": 5,
+          "bytes": 85474601,
+          "compression_ratio": 5.19,
+          "detected_format": "zip",
+          "file": "0011-2012q1.zip",
+          "uncompressed_bytes": 443206778
+        },
+        {
+          "archive_members": 5,
+          "bytes": 80075771,
+          "compression_ratio": 5.1,
+          "detected_format": "zip",
+          "file": "0012-2012q2.zip",
+          "uncompressed_bytes": 408306301
+        },
+        {
+          "archive_members": 5,
+          "bytes": 89608234,
+          "compression_ratio": 5.06,
+          "detected_format": "zip",
+          "file": "0013-2012q3.zip",
+          "uncompressed_bytes": 453568006
+        },
+        {
+          "archive_members": 5,
+          "bytes": 95805256,
+          "compression_ratio": 5.04,
+          "detected_format": "zip",
+          "file": "0014-2012q4.zip",
+          "uncompressed_bytes": 483079088
+        },
+        {
+          "archive_members": 5,
+          "bytes": 99173442,
+          "compression_ratio": 5.11,
+          "detected_format": "zip",
+          "file": "0015-2013q1.zip",
+          "uncompressed_bytes": 506592391
+        },
+        {
+          "archive_members": 5,
+          "bytes": 96917655,
+          "compression_ratio": 5.06,
+          "detected_format": "zip",
+          "file": "0016-2013q2.zip",
+          "uncompressed_bytes": 490718426
+        },
+        {
+          "archive_members": 5,
+          "bytes": 98355005,
+          "compression_ratio": 5.04,
+          "detected_format": "zip",
+          "file": "0017-2013q3.zip",
+          "uncompressed_bytes": 495221363
+        },
+        {
+          "archive_members": 5,
+          "bytes": 92335773,
+          "compression_ratio": 5.42,
+          "detected_format": "zip",
+          "file": "0018-2013q4.zip",
+          "uncompressed_bytes": 500812377
+        },
+        {
+          "archive_members": 5,
+          "bytes": 102843522,
+          "compression_ratio": 5.47,
+          "detected_format": "zip",
+          "file": "0019-2014q1.zip",
+          "uncompressed_bytes": 562181414
+        },
+        {
+          "archive_members": 5,
+          "bytes": 85032839,
+          "compression_ratio": 5.55,
+          "detected_format": "zip",
+          "file": "0020-2014q2.zip",
+          "uncompressed_bytes": 471882449
+        },
+        {
+          "archive_members": 5,
+          "bytes": 87408142,
+          "compression_ratio": 5.46,
+          "detected_format": "zip",
+          "file": "0021-2014q3.zip",
+          "uncompressed_bytes": 477554551
+        },
+        {
+          "archive_members": 5,
+          "bytes": 87639973,
+          "compression_ratio": 5.46,
+          "detected_format": "zip",
+          "file": "0022-2014q4.zip",
+          "uncompressed_bytes": 478175184
+        },
+        {
+          "archive_members": 5,
+          "bytes": 98944359,
+          "compression_ratio": 5.45,
+          "detected_format": "zip",
+          "file": "0023-2015q1.zip",
+          "uncompressed_bytes": 538947639
+        },
+        {
+          "archive_members": 5,
+          "bytes": 78908272,
+          "compression_ratio": 5.53,
+          "detected_format": "zip",
+          "file": "0024-2015q2.zip",
+          "uncompressed_bytes": 436260905
+        },
+        {
+          "archive_members": 5,
+          "bytes": 82751989,
+          "compression_ratio": 5.48,
+          "detected_format": "zip",
+          "file": "0025-2015q3.zip",
+          "uncompressed_bytes": 453665145
+        },
+        {
+          "archive_members": 5,
+          "bytes": 83007568,
+          "compression_ratio": 5.48,
+          "detected_format": "zip",
+          "file": "0026-2015q4.zip",
+          "uncompressed_bytes": 454532909
+        },
+        {
+          "archive_members": 5,
+          "bytes": 95470843,
+          "compression_ratio": 5.41,
+          "detected_format": "zip",
+          "file": "0027-2016q1.zip",
+          "uncompressed_bytes": 516503662
+        },
+        {
+          "archive_members": 5,
+          "bytes": 73848835,
+          "compression_ratio": 5.5,
+          "detected_format": "zip",
+          "file": "0028-2016q2.zip",
+          "uncompressed_bytes": 406027859
+        },
+        {
+          "archive_members": 5,
+          "bytes": 71116399,
+          "compression_ratio": 5.47,
+          "detected_format": "zip",
+          "file": "0029-2016q3.zip",
+          "uncompressed_bytes": 389331162
+        },
+        {
+          "archive_members": 5,
+          "bytes": 79400707,
+          "compression_ratio": 5.44,
+          "detected_format": "zip",
+          "file": "0030-2016q4.zip",
+          "uncompressed_bytes": 432165369
+        },
+        {
+          "archive_members": 5,
+          "bytes": 92433981,
+          "compression_ratio": 5.46,
+          "detected_format": "zip",
+          "file": "0031-2017q1.zip",
+          "uncompressed_bytes": 505007731
+        },
+        {
+          "archive_members": 5,
+          "bytes": 71429748,
+          "compression_ratio": 5.53,
+          "detected_format": "zip",
+          "file": "0032-2017q2.zip",
+          "uncompressed_bytes": 395007840
+        },
+        {
+          "archive_members": 5,
+          "bytes": 74356472,
+          "compression_ratio": 5.47,
+          "detected_format": "zip",
+          "file": "0033-2017q3.zip",
+          "uncompressed_bytes": 406949329
+        },
+        {
+          "archive_members": 5,
+          "bytes": 76051784,
+          "compression_ratio": 5.45,
+          "detected_format": "zip",
+          "file": "0034-2017q4.zip",
+          "uncompressed_bytes": 414784390
+        },
+        {
+          "archive_members": 5,
+          "bytes": 93176693,
+          "compression_ratio": 5.33,
+          "detected_format": "zip",
+          "file": "0035-2018q1.zip",
+          "uncompressed_bytes": 496193444
+        },
+        {
+          "archive_members": 5,
+          "bytes": 91972487,
+          "compression_ratio": 4.96,
+          "detected_format": "zip",
+          "file": "0036-2018q2.zip",
+          "uncompressed_bytes": 455849404
+        },
+        {
+          "archive_members": 5,
+          "bytes": 87202498,
+          "compression_ratio": 5.06,
+          "detected_format": "zip",
+          "file": "0037-2018q3.zip",
+          "uncompressed_bytes": 440965563
+        },
+        {
+          "archive_members": 5,
+          "bytes": 62895777,
+          "compression_ratio": 7.17,
+          "detected_format": "zip",
+          "file": "0038-2018q4.zip",
+          "uncompressed_bytes": 450779847
+        },
+        {
+          "archive_members": 5,
+          "bytes": 95895180,
+          "compression_ratio": 5.36,
+          "detected_format": "zip",
+          "file": "0039-2019q1.zip",
+          "uncompressed_bytes": 514043697
+        },
+        {
+          "archive_members": 5,
+          "bytes": 90155728,
+          "compression_ratio": 5.36,
+          "detected_format": "zip",
+          "file": "0040-2019q2.zip",
+          "uncompressed_bytes": 483201012
+        },
+        {
+          "archive_members": 5,
+          "bytes": 89829588,
+          "compression_ratio": 5.47,
+          "detected_format": "zip",
+          "file": "0041-2019q3.zip",
+          "uncompressed_bytes": 491078770
+        },
+        {
+          "archive_members": 5,
+          "bytes": 98753299,
+          "compression_ratio": 5.18,
+          "detected_format": "zip",
+          "file": "0042-2019q4.zip",
+          "uncompressed_bytes": 511718443
+        },
+        {
+          "archive_members": 5,
+          "bytes": 96584608,
+          "compression_ratio": 5.36,
+          "detected_format": "zip",
+          "file": "0043-2020q1.zip",
+          "uncompressed_bytes": 517374457
+        },
+        {
+          "archive_members": 5,
+          "bytes": 82008710,
+          "compression_ratio": 5.37,
+          "detected_format": "zip",
+          "file": "0044-2020q2.zip",
+          "uncompressed_bytes": 440228479
+        },
+        {
+          "archive_members": 5,
+          "bytes": 87582976,
+          "compression_ratio": 5.45,
+          "detected_format": "zip",
+          "file": "0045-2020q3.zip",
+          "uncompressed_bytes": 477077046
+        },
+        {
+          "archive_members": 5,
+          "bytes": 89811373,
+          "compression_ratio": 5.49,
+          "detected_format": "zip",
+          "file": "0046-2020q4.zip",
+          "uncompressed_bytes": 492622451
+        },
+        {
+          "archive_members": 5,
+          "bytes": 97900752,
+          "compression_ratio": 5.3,
+          "detected_format": "zip",
+          "file": "0047-2021q1.zip",
+          "uncompressed_bytes": 518811206
+        },
+        {
+          "archive_members": 5,
+          "bytes": 90864175,
+          "compression_ratio": 5.4,
+          "detected_format": "zip",
+          "file": "0048-2021q2.zip",
+          "uncompressed_bytes": 490875035
+        },
+        {
+          "archive_members": 5,
+          "bytes": 97252395,
+          "compression_ratio": 5.47,
+          "detected_format": "zip",
+          "file": "0049-2021q3.zip",
+          "uncompressed_bytes": 531939564
+        },
+        {
+          "archive_members": 5,
+          "bytes": 102642081,
+          "compression_ratio": 5.52,
+          "detected_format": "zip",
+          "file": "0050-2021q4.zip",
+          "uncompressed_bytes": 566856212
+        },
+        {
+          "archive_members": 5,
+          "bytes": 103669919,
+          "compression_ratio": 5.4,
+          "detected_format": "zip",
+          "file": "0051-2022q1.zip",
+          "uncompressed_bytes": 560093741
+        },
+        {
+          "archive_members": 5,
+          "bytes": 97089251,
+          "compression_ratio": 5.44,
+          "detected_format": "zip",
+          "file": "0052-2022q2.zip",
+          "uncompressed_bytes": 528273289
+        },
+        {
+          "archive_members": 5,
+          "bytes": 97589396,
+          "compression_ratio": 5.52,
+          "detected_format": "zip",
+          "file": "0053-2022q3.zip",
+          "uncompressed_bytes": 539070716
+        },
+        {
+          "archive_members": 5,
+          "bytes": 111091525,
+          "compression_ratio": 5.39,
+          "detected_format": "zip",
+          "file": "0054-2022q4.zip",
+          "uncompressed_bytes": 599143825
+        },
+        {
+          "archive_members": 5,
+          "bytes": 113974946,
+          "compression_ratio": 5.2,
+          "detected_format": "zip",
+          "file": "0055-2023q1.zip",
+          "uncompressed_bytes": 592985984
+        },
+        {
+          "archive_members": 5,
+          "bytes": 116914392,
+          "compression_ratio": 5.12,
+          "detected_format": "zip",
+          "file": "0056-2023q2.zip",
+          "uncompressed_bytes": 599049395
+        },
+        {
+          "archive_members": 5,
+          "bytes": 117776944,
+          "compression_ratio": 5.18,
+          "detected_format": "zip",
+          "file": "0057-2023q3.zip",
+          "uncompressed_bytes": 609643017
+        },
+        {
+          "archive_members": 5,
+          "bytes": 120272357,
+          "compression_ratio": 5.23,
+          "detected_format": "zip",
+          "file": "0058-2023q4.zip",
+          "uncompressed_bytes": 628976692
+        },
+        {
+          "archive_members": 5,
+          "bytes": 124336804,
+          "compression_ratio": 4.8,
+          "detected_format": "zip",
+          "file": "0059-2024q1.zip",
+          "uncompressed_bytes": 596992597
+        },
+        {
+          "archive_members": 5,
+          "bytes": 119119954,
+          "compression_ratio": 5.1,
+          "detected_format": "zip",
+          "file": "0060-2024q2.zip",
+          "uncompressed_bytes": 607040601
+        },
+        {
+          "archive_members": 5,
+          "bytes": 118280418,
+          "compression_ratio": 5.14,
+          "detected_format": "zip",
+          "file": "0061-2024q3.zip",
+          "uncompressed_bytes": 608239998
+        },
+        {
+          "archive_members": 5,
+          "bytes": 122932548,
+          "compression_ratio": 5.18,
+          "detected_format": "zip",
+          "file": "0062-2024q4.zip",
+          "uncompressed_bytes": 637333977
+        },
+        {
+          "archive_members": 5,
+          "bytes": 127765057,
+          "compression_ratio": 5.04,
+          "detected_format": "zip",
+          "file": "0063-2025q1.zip",
+          "uncompressed_bytes": 644289706
+        },
+        {
+          "archive_members": 5,
+          "bytes": 78973768,
+          "compression_ratio": 7.76,
+          "detected_format": "zip",
+          "file": "0064-2025q2.zip",
+          "uncompressed_bytes": 613102158
+        },
+        {
+          "archive_members": 5,
+          "bytes": 127842298,
+          "compression_ratio": 5.09,
+          "detected_format": "zip",
+          "file": "0065-2025q3.zip",
+          "uncompressed_bytes": 650752271
+        },
+        {
+          "archive_members": 5,
+          "bytes": 65830170,
+          "compression_ratio": 10.27,
+          "detected_format": "zip",
+          "file": "0066-2025q4.zip",
+          "uncompressed_bytes": 675934365
+        },
+        {
+          "archive_members": 5,
+          "bytes": 85259424,
+          "compression_ratio": 7.88,
+          "detected_format": "zip",
+          "file": "0067-2026q1.zip",
+          "uncompressed_bytes": 671659462
+        },
+        {
+          "archive_members": 5,
+          "bytes": 60419016,
+          "compression_ratio": 11.89,
+          "detected_format": "zip",
+          "file": "0068-2026q2.zip",
+          "uncompressed_bytes": 718291456
+        },
+        {
+          "archive_members": 5,
+          "bytes": 65148008,
+          "compression_ratio": 15.13,
+          "detected_format": "zip",
+          "file": "0069-2026q3.zip",
+          "uncompressed_bytes": 985954546
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "SEC quarterly Financial Statement Data Sets",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "archive_members": 5,
+          "bytes": 144894,
+          "compression_ratio": 7.06,
+          "detected_format": "zip",
+          "file": "0000-2009q2.zip",
+          "uncompressed_bytes": 1019373
+        },
+        {
+          "archive_members": 5,
+          "bytes": 3544077,
+          "compression_ratio": 6.35,
+          "detected_format": "zip",
+          "file": "0001-2009q3.zip",
+          "uncompressed_bytes": 22491218
+        },
+        {
+          "archive_members": 5,
+          "bytes": 4050938,
+          "compression_ratio": 6.32,
+          "detected_format": "zip",
+          "file": "0002-2009q4.zip",
+          "uncompressed_bytes": 25591696
+        },
+        {
+          "archive_members": 5,
+          "bytes": 5311282,
+          "compression_ratio": 6.49,
+          "detected_format": "zip",
+          "file": "0003-2010q1.zip",
+          "uncompressed_bytes": 34442376
+        },
+        {
+          "archive_members": 5,
+          "bytes": 3994236,
+          "compression_ratio": 6.34,
+          "detected_format": "zip",
+          "file": "0004-2010q2.zip",
+          "uncompressed_bytes": 25302322
+        },
+        {
+          "archive_members": 5,
+          "bytes": 13745950,
+          "compression_ratio": 5.96,
+          "detected_format": "zip",
+          "file": "0005-2010q3.zip",
+          "uncompressed_bytes": 81980760
+        },
+        {
+          "archive_members": 5,
+          "bytes": 14679781,
+          "compression_ratio": 5.92,
+          "detected_format": "zip",
+          "file": "0006-2010q4.zip",
+          "uncompressed_bytes": 86960992
+        },
+        {
+          "archive_members": 5,
+          "bytes": 19615544,
+          "compression_ratio": 5.99,
+          "detected_format": "zip",
+          "file": "0007-2011q1.zip",
+          "uncompressed_bytes": 117453090
+        },
+        {
+          "archive_members": 5,
+          "bytes": 15001310,
+          "compression_ratio": 5.91,
+          "detected_format": "zip",
+          "file": "0008-2011q2.zip",
+          "uncompressed_bytes": 88689467
+        },
+        {
+          "archive_members": 5,
+          "bytes": 57941919,
+          "compression_ratio": 5.65,
+          "detected_format": "zip",
+          "file": "0009-2011q3.zip",
+          "uncompressed_bytes": 327468047
+        },
+        {
+          "archive_members": 5,
+          "bytes": 64306658,
+          "compression_ratio": 5.62,
+          "detected_format": "zip",
+          "file": "0010-2011q4.zip",
+          "uncompressed_bytes": 361152836
+        },
+        {
+          "archive_members": 5,
+          "bytes": 85474601,
+          "compression_ratio": 5.19,
+          "detected_format": "zip",
+          "file": "0011-2012q1.zip",
+          "uncompressed_bytes": 443206778
+        },
+        {
+          "archive_members": 5,
+          "bytes": 80075771,
+          "compression_ratio": 5.1,
+          "detected_format": "zip",
+          "file": "0012-2012q2.zip",
+          "uncompressed_bytes": 408306301
+        },
+        {
+          "archive_members": 5,
+          "bytes": 89608234,
+          "compression_ratio": 5.06,
+          "detected_format": "zip",
+          "file": "0013-2012q3.zip",
+          "uncompressed_bytes": 453568006
+        },
+        {
+          "archive_members": 5,
+          "bytes": 95805256,
+          "compression_ratio": 5.04,
+          "detected_format": "zip",
+          "file": "0014-2012q4.zip",
+          "uncompressed_bytes": 483079088
+        },
+        {
+          "archive_members": 5,
+          "bytes": 99173442,
+          "compression_ratio": 5.11,
+          "detected_format": "zip",
+          "file": "0015-2013q1.zip",
+          "uncompressed_bytes": 506592391
+        },
+        {
+          "archive_members": 5,
+          "bytes": 96917655,
+          "compression_ratio": 5.06,
+          "detected_format": "zip",
+          "file": "0016-2013q2.zip",
+          "uncompressed_bytes": 490718426
+        },
+        {
+          "archive_members": 5,
+          "bytes": 98355005,
+          "compression_ratio": 5.04,
+          "detected_format": "zip",
+          "file": "0017-2013q3.zip",
+          "uncompressed_bytes": 495221363
+        },
+        {
+          "archive_members": 5,
+          "bytes": 92335773,
+          "compression_ratio": 5.42,
+          "detected_format": "zip",
+          "file": "0018-2013q4.zip",
+          "uncompressed_bytes": 500812377
+        },
+        {
+          "archive_members": 5,
+          "bytes": 102843522,
+          "compression_ratio": 5.47,
+          "detected_format": "zip",
+          "file": "0019-2014q1.zip",
+          "uncompressed_bytes": 562181414
+        },
+        {
+          "archive_members": 5,
+          "bytes": 85032839,
+          "compression_ratio": 5.55,
+          "detected_format": "zip",
+          "file": "0020-2014q2.zip",
+          "uncompressed_bytes": 471882449
+        },
+        {
+          "archive_members": 5,
+          "bytes": 87408142,
+          "compression_ratio": 5.46,
+          "detected_format": "zip",
+          "file": "0021-2014q3.zip",
+          "uncompressed_bytes": 477554551
+        },
+        {
+          "archive_members": 5,
+          "bytes": 87639973,
+          "compression_ratio": 5.46,
+          "detected_format": "zip",
+          "file": "0022-2014q4.zip",
+          "uncompressed_bytes": 478175184
+        },
+        {
+          "archive_members": 5,
+          "bytes": 98944359,
+          "compression_ratio": 5.45,
+          "detected_format": "zip",
+          "file": "0023-2015q1.zip",
+          "uncompressed_bytes": 538947639
+        },
+        {
+          "archive_members": 5,
+          "bytes": 78908272,
+          "compression_ratio": 5.53,
+          "detected_format": "zip",
+          "file": "0024-2015q2.zip",
+          "uncompressed_bytes": 436260905
+        },
+        {
+          "archive_members": 5,
+          "bytes": 82751989,
+          "compression_ratio": 5.48,
+          "detected_format": "zip",
+          "file": "0025-2015q3.zip",
+          "uncompressed_bytes": 453665145
+        },
+        {
+          "archive_members": 5,
+          "bytes": 83007568,
+          "compression_ratio": 5.48,
+          "detected_format": "zip",
+          "file": "0026-2015q4.zip",
+          "uncompressed_bytes": 454532909
+        },
+        {
+          "archive_members": 5,
+          "bytes": 95470843,
+          "compression_ratio": 5.41,
+          "detected_format": "zip",
+          "file": "0027-2016q1.zip",
+          "uncompressed_bytes": 516503662
+        },
+        {
+          "archive_members": 5,
+          "bytes": 73848835,
+          "compression_ratio": 5.5,
+          "detected_format": "zip",
+          "file": "0028-2016q2.zip",
+          "uncompressed_bytes": 406027859
+        },
+        {
+          "archive_members": 5,
+          "bytes": 71116399,
+          "compression_ratio": 5.47,
+          "detected_format": "zip",
+          "file": "0029-2016q3.zip",
+          "uncompressed_bytes": 389331162
+        },
+        {
+          "archive_members": 5,
+          "bytes": 79400707,
+          "compression_ratio": 5.44,
+          "detected_format": "zip",
+          "file": "0030-2016q4.zip",
+          "uncompressed_bytes": 432165369
+        },
+        {
+          "archive_members": 5,
+          "bytes": 92433981,
+          "compression_ratio": 5.46,
+          "detected_format": "zip",
+          "file": "0031-2017q1.zip",
+          "uncompressed_bytes": 505007731
+        },
+        {
+          "archive_members": 5,
+          "bytes": 71429748,
+          "compression_ratio": 5.53,
+          "detected_format": "zip",
+          "file": "0032-2017q2.zip",
+          "uncompressed_bytes": 395007840
+        },
+        {
+          "archive_members": 5,
+          "bytes": 74356472,
+          "compression_ratio": 5.47,
+          "detected_format": "zip",
+          "file": "0033-2017q3.zip",
+          "uncompressed_bytes": 406949329
+        },
+        {
+          "archive_members": 5,
+          "bytes": 76051784,
+          "compression_ratio": 5.45,
+          "detected_format": "zip",
+          "file": "0034-2017q4.zip",
+          "uncompressed_bytes": 414784390
+        },
+        {
+          "archive_members": 5,
+          "bytes": 93176693,
+          "compression_ratio": 5.33,
+          "detected_format": "zip",
+          "file": "0035-2018q1.zip",
+          "uncompressed_bytes": 496193444
+        },
+        {
+          "archive_members": 5,
+          "bytes": 91972487,
+          "compression_ratio": 4.96,
+          "detected_format": "zip",
+          "file": "0036-2018q2.zip",
+          "uncompressed_bytes": 455849404
+        },
+        {
+          "archive_members": 5,
+          "bytes": 87202498,
+          "compression_ratio": 5.06,
+          "detected_format": "zip",
+          "file": "0037-2018q3.zip",
+          "uncompressed_bytes": 440965563
+        },
+        {
+          "archive_members": 5,
+          "bytes": 62895777,
+          "compression_ratio": 7.17,
+          "detected_format": "zip",
+          "file": "0038-2018q4.zip",
+          "uncompressed_bytes": 450779847
+        },
+        {
+          "archive_members": 5,
+          "bytes": 95895180,
+          "compression_ratio": 5.36,
+          "detected_format": "zip",
+          "file": "0039-2019q1.zip",
+          "uncompressed_bytes": 514043697
+        },
+        {
+          "archive_members": 5,
+          "bytes": 90155728,
+          "compression_ratio": 5.36,
+          "detected_format": "zip",
+          "file": "0040-2019q2.zip",
+          "uncompressed_bytes": 483201012
+        },
+        {
+          "archive_members": 5,
+          "bytes": 89829588,
+          "compression_ratio": 5.47,
+          "detected_format": "zip",
+          "file": "0041-2019q3.zip",
+          "uncompressed_bytes": 491078770
+        },
+        {
+          "archive_members": 5,
+          "bytes": 98753299,
+          "compression_ratio": 5.18,
+          "detected_format": "zip",
+          "file": "0042-2019q4.zip",
+          "uncompressed_bytes": 511718443
+        },
+        {
+          "archive_members": 5,
+          "bytes": 96584608,
+          "compression_ratio": 5.36,
+          "detected_format": "zip",
+          "file": "0043-2020q1.zip",
+          "uncompressed_bytes": 517374457
+        },
+        {
+          "archive_members": 5,
+          "bytes": 82008710,
+          "compression_ratio": 5.37,
+          "detected_format": "zip",
+          "file": "0044-2020q2.zip",
+          "uncompressed_bytes": 440228479
+        },
+        {
+          "archive_members": 5,
+          "bytes": 87582976,
+          "compression_ratio": 5.45,
+          "detected_format": "zip",
+          "file": "0045-2020q3.zip",
+          "uncompressed_bytes": 477077046
+        },
+        {
+          "archive_members": 5,
+          "bytes": 89811373,
+          "compression_ratio": 5.49,
+          "detected_format": "zip",
+          "file": "0046-2020q4.zip",
+          "uncompressed_bytes": 492622451
+        },
+        {
+          "archive_members": 5,
+          "bytes": 97900752,
+          "compression_ratio": 5.3,
+          "detected_format": "zip",
+          "file": "0047-2021q1.zip",
+          "uncompressed_bytes": 518811206
+        },
+        {
+          "archive_members": 5,
+          "bytes": 90864175,
+          "compression_ratio": 5.4,
+          "detected_format": "zip",
+          "file": "0048-2021q2.zip",
+          "uncompressed_bytes": 490875035
+        },
+        {
+          "archive_members": 5,
+          "bytes": 97252395,
+          "compression_ratio": 5.47,
+          "detected_format": "zip",
+          "file": "0049-2021q3.zip",
+          "uncompressed_bytes": 531939564
+        },
+        {
+          "archive_members": 5,
+          "bytes": 102642081,
+          "compression_ratio": 5.52,
+          "detected_format": "zip",
+          "file": "0050-2021q4.zip",
+          "uncompressed_bytes": 566856212
+        },
+        {
+          "archive_members": 5,
+          "bytes": 103669919,
+          "compression_ratio": 5.4,
+          "detected_format": "zip",
+          "file": "0051-2022q1.zip",
+          "uncompressed_bytes": 560093741
+        },
+        {
+          "archive_members": 5,
+          "bytes": 97089251,
+          "compression_ratio": 5.44,
+          "detected_format": "zip",
+          "file": "0052-2022q2.zip",
+          "uncompressed_bytes": 528273289
+        },
+        {
+          "archive_members": 5,
+          "bytes": 97589396,
+          "compression_ratio": 5.52,
+          "detected_format": "zip",
+          "file": "0053-2022q3.zip",
+          "uncompressed_bytes": 539070716
+        },
+        {
+          "archive_members": 5,
+          "bytes": 111091525,
+          "compression_ratio": 5.39,
+          "detected_format": "zip",
+          "file": "0054-2022q4.zip",
+          "uncompressed_bytes": 599143825
+        },
+        {
+          "archive_members": 5,
+          "bytes": 113974946,
+          "compression_ratio": 5.2,
+          "detected_format": "zip",
+          "file": "0055-2023q1.zip",
+          "uncompressed_bytes": 592985984
+        },
+        {
+          "archive_members": 5,
+          "bytes": 116914392,
+          "compression_ratio": 5.12,
+          "detected_format": "zip",
+          "file": "0056-2023q2.zip",
+          "uncompressed_bytes": 599049395
+        },
+        {
+          "archive_members": 5,
+          "bytes": 117776944,
+          "compression_ratio": 5.18,
+          "detected_format": "zip",
+          "file": "0057-2023q3.zip",
+          "uncompressed_bytes": 609643017
+        },
+        {
+          "archive_members": 5,
+          "bytes": 120272357,
+          "compression_ratio": 5.23,
+          "detected_format": "zip",
+          "file": "0058-2023q4.zip",
+          "uncompressed_bytes": 628976692
+        },
+        {
+          "archive_members": 5,
+          "bytes": 124336804,
+          "compression_ratio": 4.8,
+          "detected_format": "zip",
+          "file": "0059-2024q1.zip",
+          "uncompressed_bytes": 596992597
+        },
+        {
+          "archive_members": 5,
+          "bytes": 119119954,
+          "compression_ratio": 5.1,
+          "detected_format": "zip",
+          "file": "0060-2024q2.zip",
+          "uncompressed_bytes": 607040601
+        },
+        {
+          "archive_members": 5,
+          "bytes": 118280418,
+          "compression_ratio": 5.14,
+          "detected_format": "zip",
+          "file": "0061-2024q3.zip",
+          "uncompressed_bytes": 608239998
+        },
+        {
+          "archive_members": 5,
+          "bytes": 122932548,
+          "compression_ratio": 5.18,
+          "detected_format": "zip",
+          "file": "0062-2024q4.zip",
+          "uncompressed_bytes": 637333977
+        },
+        {
+          "archive_members": 5,
+          "bytes": 127765057,
+          "compression_ratio": 5.04,
+          "detected_format": "zip",
+          "file": "0063-2025q1.zip",
+          "uncompressed_bytes": 644289706
+        },
+        {
+          "archive_members": 5,
+          "bytes": 78973768,
+          "compression_ratio": 7.76,
+          "detected_format": "zip",
+          "file": "0064-2025q2.zip",
+          "uncompressed_bytes": 613102158
+        },
+        {
+          "archive_members": 5,
+          "bytes": 127842298,
+          "compression_ratio": 5.09,
+          "detected_format": "zip",
+          "file": "0065-2025q3.zip",
+          "uncompressed_bytes": 650752271
+        },
+        {
+          "archive_members": 5,
+          "bytes": 65830170,
+          "compression_ratio": 10.27,
+          "detected_format": "zip",
+          "file": "0066-2025q4.zip",
+          "uncompressed_bytes": 675934365
+        },
+        {
+          "archive_members": 5,
+          "bytes": 85259424,
+          "compression_ratio": 7.88,
+          "detected_format": "zip",
+          "file": "0067-2026q1.zip",
+          "uncompressed_bytes": 671659462
+        },
+        {
+          "archive_members": 5,
+          "bytes": 60419016,
+          "compression_ratio": 11.89,
+          "detected_format": "zip",
+          "file": "0068-2026q2.zip",
+          "uncompressed_bytes": 718291456
+        },
+        {
+          "archive_members": 5,
+          "bytes": 65148008,
+          "compression_ratio": 15.13,
+          "detected_format": "zip",
+          "file": "0069-2026q3.zip",
+          "uncompressed_bytes": 985954546
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

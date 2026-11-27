@@ -11,6 +11,7 @@ __pycache__/
 
 # Generated databases and logs (rebuildable with scripts/build_terminal_db.py)
 var/
+
 .pwlibs/
 
 # Frontend

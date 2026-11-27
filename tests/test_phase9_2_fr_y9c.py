@@ -41,9 +41,9 @@ def ingested(db):
     return db, result
 
 
-def test_schema_is_13_and_fr_y9c_table_exists(db):
-    assert LATEST_VERSION == 15
-    assert db.schema_version() == 15
+def test_schema_reaches_latest_with_fr_y9c_table(db):
+    assert LATEST_VERSION >= 14
+    assert db.schema_version() == LATEST_VERSION
     assert "fr_y9c_observation" in db.tables()
 
 

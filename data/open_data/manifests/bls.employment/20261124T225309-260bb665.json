@@ -1,0 +1,137 @@
+{
+  "completed_at": "2026-11-24T22:53:56.932371Z",
+  "dataset_id": "bls.employment",
+  "exported_at": "2026-11-24T23:21:46.522321Z",
+  "files": [
+    {
+      "bytes": 352998862,
+      "content_type": "application/octet-stream",
+      "name": "ce.data.0.AllCESSeries",
+      "path": "ce.data.0.AllCESSeries",
+      "sha256": "f8bf06afa558782be6e95ff2dc756de46739524ad43a95d59859a077f4d856e2"
+    },
+    {
+      "bytes": 6532799,
+      "content_type": "application/vnd.apache.parquet",
+      "name": "bls_employment.parquet",
+      "notes": "derived observation table; raw source bytes are the authority",
+      "path": "bls_employment.parquet",
+      "record_count": 2000000,
+      "sha256": "272386ae2d3db032d70750c02eb64b7b49be7044bc1b7ee27f1728b62017c20a",
+      "uncompressed_bytes": 6532799
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "BLS",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:53:56.932094Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:53:56.932033Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: U.S. Bureau of Labor Statistics",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain",
+    "license_url": "https://www.bls.gov/opub/copyright-information.htm",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T225309-260bb665",
+  "source": {
+    "content_type": "text/plain",
+    "download_endpoint": "https://download.bls.gov/pub/time.series/ce/ce.data.0.AllCESSeries",
+    "etag": "\"03ca8951771dd1:0\"",
+    "final_url": "https://download.bls.gov/pub/time.series/ce/ce.data.0.AllCESSeries",
+    "last_modified": "Tue, 10 Nov 2026 13:30:00 GMT",
+    "official_source_url": "https://download.bls.gov/pub/time.series/ce/"
+  },
+  "stats": {
+    "columns": [
+      "series_id",
+      "year",
+      "period",
+      "value",
+      "footnote_codes"
+    ],
+    "dataset_id": "bls.employment",
+    "decompressed_bytes": 0,
+    "delimiter": "tab",
+    "derived_compression": "zstd",
+    "derived_observations": 2000000,
+    "entity_count": 0,
+    "file_count": 1,
+    "future_observation_dates": 0,
+    "implausible_observation_dates": 0,
+    "issues": [
+      {
+        "code": "row_limit",
+        "detail": "stopped after 5000001 rows",
+        "severity": "warning"
+      }
+    ],
+    "mode": "narrow",
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 5000001,
+    "series_count": 5412,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 352998862,
+      "content_length": 352998862,
+      "content_type": "text/plain",
+      "elapsed_seconds": 10.03,
+      "etag": "\"03ca8951771dd1:0\"",
+      "final_url": "https://download.bls.gov/pub/time.series/ce/ce.data.0.AllCESSeries",
+      "last_modified": "Tue, 10 Nov 2026 13:30:00 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "f8bf06afa558782be6e95ff2dc756de46739524ad43a95d59859a077f4d856e2",
+      "status": 200,
+      "url": "https://download.bls.gov/pub/time.series/ce/ce.data.0.AllCESSeries"
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 352998862,
+          "detected_format": "unknown",
+          "file": "ce.data.0.AllCESSeries"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "BLS Current Employment Statistics (all series)",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 352998862,
+          "detected_format": "unknown",
+          "file": "ce.data.0.AllCESSeries"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [
+      {
+        "code": "row_limit",
+        "detail": "stopped after 5000001 rows",
+        "severity": "warning"
+      }
+    ],
+    "status": "valid"
+  }
+}

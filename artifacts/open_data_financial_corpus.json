@@ -1,0 +1,1676 @@
+{
+  "archive": {
+    "bytes": 1429485898,
+    "path": "/tmp/atlas_p4/store/datasets/sec.companyfacts/20261126T193010-9af78904/files/companyfacts.zip"
+  },
+  "columnar": {
+    "companies": 120,
+    "records": 245190,
+    "root": "/tmp/atlas_p4/validation-corpus"
+  },
+  "generated_at": "2026-11-26T19:58:42Z",
+  "issuers": [
+    {
+      "cik": "0000022252",
+      "entity_name": "COMARCO INC",
+      "foreign": false,
+      "member": "CIK0000022252.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000082020",
+      "entity_name": "UNITED STATES LIME & MINERALS INC",
+      "foreign": false,
+      "member": "CIK0000082020.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "energy",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000316888",
+      "entity_name": "Avino Silver & Gold Mines Ltd.",
+      "foreign": true,
+      "member": "CIK0000316888.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000037634",
+      "entity_name": "NEXTERA ENERGY, INC.",
+      "foreign": false,
+      "member": "CIK0000037634.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000006292",
+      "entity_name": "ANALYSTS INTERNATIONAL CORP",
+      "foreign": false,
+      "member": "CIK0000006292.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial"
+      ]
+    },
+    {
+      "cik": "0000200245",
+      "entity_name": "Citigroup Inc",
+      "foreign": false,
+      "member": "CIK0000200245.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "insurer",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000080019",
+      "entity_name": "ALLIANZ LIFE INSURANCE COMPANY OF NEW YORK",
+      "foreign": false,
+      "member": "CIK0000080019.json",
+      "missing_basic_inputs": true,
+      "non_december": true,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000004187",
+      "entity_name": "INDUSTRIAL SERVICES OF AMERICA INC",
+      "foreign": false,
+      "member": "CIK0000004187.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000001750",
+      "entity_name": "AAR CORP",
+      "foreign": false,
+      "member": "CIK0000001750.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000008670",
+      "entity_name": "AUTOMATIC DATA PROCESSING, INC.",
+      "foreign": false,
+      "member": "CIK0000008670.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000034067",
+      "entity_name": "DMC GLOBAL INC.",
+      "foreign": false,
+      "member": "CIK0000034067.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000700815",
+      "entity_name": "ADINO ENERGY CORP",
+      "foreign": false,
+      "member": "CIK0000700815.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "energy",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000909327",
+      "entity_name": "Suzano S.A.",
+      "foreign": true,
+      "member": "CIK0000909327.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000052428",
+      "entity_name": "AMERIPRISE CERTIFICATE CO",
+      "foreign": false,
+      "member": "CIK0000052428.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000107815",
+      "entity_name": "WISCONSIN ELECTRIC POWER COMPANY",
+      "foreign": false,
+      "member": "CIK0000107815.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial"
+      ]
+    },
+    {
+      "cik": "0000773660",
+      "entity_name": "HEALTHMARKETS, INC.",
+      "foreign": false,
+      "member": "CIK0000773660.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "insurer",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000793040",
+      "entity_name": "ELLSWORTH GROWTH AND INCOME FUND LTD.",
+      "foreign": false,
+      "member": "CIK0000793040.json",
+      "missing_basic_inputs": true,
+      "non_december": true,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000015847",
+      "entity_name": "BUTLER NATIONAL CORP",
+      "foreign": false,
+      "member": "CIK0000015847.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000012208",
+      "entity_name": "BIO-RAD LABORATORIES, INC.",
+      "foreign": false,
+      "member": "CIK0000012208.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000018926",
+      "entity_name": "LUMEN TECHNOLOGIES,\u00a0INC.",
+      "foreign": false,
+      "member": "CIK0000018926.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000040194",
+      "entity_name": "GATEWAY ENERGY CORP/NE",
+      "foreign": false,
+      "member": "CIK0000040194.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000867038",
+      "entity_name": "SPINDLETOP OIL & GAS CO.",
+      "foreign": false,
+      "member": "CIK0000867038.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "energy",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000913290",
+      "entity_name": "Frontline plc",
+      "foreign": true,
+      "member": "CIK0000913290.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "foreign_issuer",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000216934",
+      "entity_name": "CIK 0000216934",
+      "foreign": false,
+      "member": "CIK0000216934.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000311670",
+      "entity_name": "CIK 0000311670",
+      "foreign": false,
+      "member": "CIK0000311670.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000885550",
+      "entity_name": "CREDIT ACCEPTANCE CORP",
+      "foreign": false,
+      "member": "CIK0000885550.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "insurer",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000811779",
+      "entity_name": "MultiCell Technologies, Inc.",
+      "foreign": false,
+      "member": "CIK0000811779.json",
+      "missing_basic_inputs": false,
+      "non_december": true,
+      "restated": false,
+      "strata": [
+        "technology",
+        "non_december_fiscal_year"
+      ]
+    },
+    {
+      "cik": "0000028561",
+      "entity_name": "DEWEY ELECTRONICS CORP",
+      "foreign": false,
+      "member": "CIK0000028561.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000025445",
+      "entity_name": "CRANE NXT, CO.",
+      "foreign": false,
+      "member": "CIK0000025445.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000031107",
+      "entity_name": "THE EASTERN COMPANY",
+      "foreign": false,
+      "member": "CIK0000031107.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000048898",
+      "entity_name": "HUBBELL INC",
+      "foreign": false,
+      "member": "CIK0000048898.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000869495",
+      "entity_name": "DEEP WELL OIL & GAS INC",
+      "foreign": false,
+      "member": "CIK0000869495.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "energy"
+      ]
+    },
+    {
+      "cik": "0001012139",
+      "entity_name": "GUANGSHEN RAILWAY COMPANY LIMITED",
+      "foreign": true,
+      "member": "CIK0001012139.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000277375",
+      "entity_name": "Delta Natural Gas Co Inc",
+      "foreign": false,
+      "member": "CIK0000277375.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000356472",
+      "entity_name": "CENTURY PROPERTIES FUND XVII",
+      "foreign": false,
+      "member": "CIK0000356472.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "industrial",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0001091748",
+      "entity_name": "ARGO GROUP INTERNATIONAL HOLDINGS, INC.",
+      "foreign": false,
+      "member": "CIK0001091748.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "insurer",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000878079",
+      "entity_name": "BON TON STORES INC",
+      "foreign": false,
+      "member": "CIK0000878079.json",
+      "missing_basic_inputs": false,
+      "non_december": true,
+      "restated": false,
+      "strata": [
+        "retail",
+        "technology",
+        "non_december_fiscal_year"
+      ]
+    },
+    {
+      "cik": "0000056047",
+      "entity_name": "KIRBY CORPORATION",
+      "foreign": false,
+      "member": "CIK0000056047.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000043920",
+      "entity_name": "GREIF, INC.",
+      "foreign": false,
+      "member": "CIK0000043920.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000060667",
+      "entity_name": "LOWE\u2019S COMPANIES,\u00a0INC.",
+      "foreign": false,
+      "member": "CIK0000060667.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000065011",
+      "entity_name": "Hawkeye Acquisition, Inc.",
+      "foreign": false,
+      "member": "CIK0000065011.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000919721",
+      "entity_name": "TRANS ENERGY INC",
+      "foreign": false,
+      "member": "CIK0000919721.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "energy",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0001020825",
+      "entity_name": "MINCO GOLD CORP",
+      "foreign": true,
+      "member": "CIK0001020825.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000350852",
+      "entity_name": "COMMUNITY TRUST BANCORP, INC.",
+      "foreign": false,
+      "member": "CIK0000350852.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000732834",
+      "entity_name": "CONTINENTAL RESOURCES, INC.",
+      "foreign": false,
+      "member": "CIK0000732834.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "industrial",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001141719",
+      "entity_name": "ALTERRA CAPITAL HOLDINGS LTD",
+      "foreign": false,
+      "member": "CIK0001141719.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "insurer"
+      ]
+    },
+    {
+      "cik": "0000890908",
+      "entity_name": "DYNACQ HEALTHCARE INC",
+      "foreign": false,
+      "member": "CIK0000890908.json",
+      "missing_basic_inputs": true,
+      "non_december": true,
+      "restated": true,
+      "strata": [
+        "bank",
+        "retail",
+        "restated",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000073756",
+      "entity_name": "OCEANEERING INTERNATIONAL INC",
+      "foreign": false,
+      "member": "CIK0000073756.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000067517",
+      "entity_name": "MONARCH CEMENT CO",
+      "foreign": false,
+      "member": "CIK0000067517.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail"
+      ]
+    },
+    {
+      "cik": "0000071691",
+      "entity_name": "THE NEW YORK TIMES COMPANY",
+      "foreign": false,
+      "member": "CIK0000071691.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000087565",
+      "entity_name": "SCHULMAN A INC",
+      "foreign": false,
+      "member": "CIK0000087565.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0001016708",
+      "entity_name": "RENOVACARE, INC.",
+      "foreign": false,
+      "member": "CIK0001016708.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "energy",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001047716",
+      "entity_name": "LATAM Airlines Group S.A.",
+      "foreign": true,
+      "member": "CIK0001047716.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000706863",
+      "entity_name": "UNION BANKSHARES, INC.",
+      "foreign": false,
+      "member": "CIK0000706863.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000750304",
+      "entity_name": "HOUSING PROGRAMS LTD",
+      "foreign": false,
+      "member": "CIK0000750304.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "industrial",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001163348",
+      "entity_name": "Allied World Assurance Co Holdings, AG",
+      "foreign": false,
+      "member": "CIK0001163348.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "insurer",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0001051771",
+      "entity_name": "BELK INC",
+      "foreign": false,
+      "member": "CIK0001051771.json",
+      "missing_basic_inputs": false,
+      "non_december": true,
+      "restated": false,
+      "strata": [
+        "bank",
+        "retail",
+        "non_december_fiscal_year"
+      ]
+    },
+    {
+      "cik": "0000093556",
+      "entity_name": "STANLEY BLACK & DECKER, INC.",
+      "foreign": false,
+      "member": "CIK0000093556.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000076334",
+      "entity_name": "PARKER-HANNIFIN CORPORATION",
+      "foreign": false,
+      "member": "CIK0000076334.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000091388",
+      "entity_name": "SMITHFIELD FOODS, INC.",
+      "foreign": false,
+      "member": "CIK0000091388.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000101829",
+      "entity_name": "RTX CORPORATION",
+      "foreign": false,
+      "member": "CIK0000101829.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0001123647",
+      "entity_name": "ATP OIL & GAS CORP",
+      "foreign": false,
+      "member": "CIK0001123647.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "energy",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001108329",
+      "entity_name": "PETROCHINA CO LTD",
+      "foreign": true,
+      "member": "CIK0001108329.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "technology",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000717059",
+      "entity_name": "WEST COAST BANCORP /NEW/OR/",
+      "foreign": false,
+      "member": "CIK0000717059.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000753892",
+      "entity_name": "CIK 0000753892",
+      "foreign": false,
+      "member": "CIK0000753892.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0001178727",
+      "entity_name": "COMSOVEREIGN HOLDING CORP.",
+      "foreign": false,
+      "member": "CIK0001178727.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "insurer",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001074952",
+      "entity_name": "Nuveen California Quality Municipal Income Fund",
+      "foreign": false,
+      "member": "CIK0001074952.json",
+      "missing_basic_inputs": true,
+      "non_december": true,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000096831",
+      "entity_name": "TECUMSEH PRODUCTS CO",
+      "foreign": false,
+      "member": "CIK0000096831.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000099359",
+      "entity_name": "BREEZE-EASTERN CORP",
+      "foreign": false,
+      "member": "CIK0000099359.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail"
+      ]
+    },
+    {
+      "cik": "0000104777",
+      "entity_name": "ALTEVA, INC.",
+      "foreign": false,
+      "member": "CIK0000104777.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000352991",
+      "entity_name": "ADVANCED OXYGEN TECHNOLOGIES, INC.",
+      "foreign": false,
+      "member": "CIK0000352991.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001133062",
+      "entity_name": "JANEL CORPORATION",
+      "foreign": false,
+      "member": "CIK0001133062.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "energy",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001114446",
+      "entity_name": "UBS AG",
+      "foreign": true,
+      "member": "CIK0001114446.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000768890",
+      "entity_name": "CONSOLIDATED CAPITAL INSTITUTIONAL PROPERTIES 3",
+      "foreign": false,
+      "member": "CIK0000768890.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "industrial",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000778207",
+      "entity_name": "CIK 0000778207",
+      "foreign": false,
+      "member": "CIK0000778207.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0001333986",
+      "entity_name": "Equitable Holdings, Inc.",
+      "foreign": false,
+      "member": "CIK0001333986.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "insurer",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001143994",
+      "entity_name": "THE MACREPORT.NET, INC.",
+      "foreign": false,
+      "member": "CIK0001143994.json",
+      "missing_basic_inputs": true,
+      "non_december": true,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000314712",
+      "entity_name": "BOOMERANG SYSTEMS, INC.",
+      "foreign": false,
+      "member": "CIK0000314712.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000319240",
+      "entity_name": "IRIS INTERNATIONAL INC",
+      "foreign": false,
+      "member": "CIK0000319240.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000354963",
+      "entity_name": "Shenandoah Telecommunications Company",
+      "foreign": false,
+      "member": "CIK0000354963.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000714284",
+      "entity_name": "SORL Auto Parts, Inc.",
+      "foreign": false,
+      "member": "CIK0000714284.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001358831",
+      "entity_name": "LEGACY RESERVES LP",
+      "foreign": false,
+      "member": "CIK0001358831.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "energy",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001172494",
+      "entity_name": "AU OPTRONICS CORP",
+      "foreign": true,
+      "member": "CIK0001172494.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "technology",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000803771",
+      "entity_name": "USA REAL ESTATE INVESTMENT TRUST /CA",
+      "foreign": false,
+      "member": "CIK0000803771.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "industrial",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000795266",
+      "entity_name": "KB HOME",
+      "foreign": false,
+      "member": "CIK0000795266.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial"
+      ]
+    },
+    {
+      "cik": "0001489588",
+      "entity_name": "Home Bistro, Inc.",
+      "foreign": false,
+      "member": "CIK0001489588.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "insurer",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0001161049",
+      "entity_name": "WESTERN PLAINS ENERGY LLC",
+      "foreign": false,
+      "member": "CIK0001161049.json",
+      "missing_basic_inputs": true,
+      "non_december": true,
+      "restated": false,
+      "strata": [
+        "retail",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000719274",
+      "entity_name": "Gresham Worldwide, Inc.",
+      "foreign": false,
+      "member": "CIK0000719274.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000710846",
+      "entity_name": "FUSHI COPPERWELD, INC.",
+      "foreign": false,
+      "member": "CIK0000710846.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000721683",
+      "entity_name": "TOTAL SYSTEM SERVICES, INC.",
+      "foreign": false,
+      "member": "CIK0000721683.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000727207",
+      "entity_name": "ACCELERATE DIAGNOSTICS,\u00a0INC.",
+      "foreign": false,
+      "member": "CIK0000727207.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001376912",
+      "entity_name": "Rockies Region 2006 Limited Partnership",
+      "foreign": false,
+      "member": "CIK0001376912.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "energy"
+      ]
+    },
+    {
+      "cik": "0001205059",
+      "entity_name": "REPLICEL LIFE SCIENCES INC.",
+      "foreign": true,
+      "member": "CIK0001205059.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "technology",
+        "foreign_issuer",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000810084",
+      "entity_name": "BIOJECT MEDICAL TECHNOLOGIES INC",
+      "foreign": false,
+      "member": "CIK0000810084.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "technology",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000824036",
+      "entity_name": "CIK 0000824036",
+      "foreign": false,
+      "member": "CIK0000824036.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0001527032",
+      "entity_name": "New Enterprise Stone & Lime Co., Inc.",
+      "foreign": false,
+      "member": "CIK0001527032.json",
+      "missing_basic_inputs": false,
+      "non_december": true,
+      "restated": true,
+      "strata": [
+        "insurer",
+        "retail",
+        "technology",
+        "restated",
+        "non_december_fiscal_year"
+      ]
+    },
+    {
+      "cik": "0001165509",
+      "entity_name": "GENERAL DYNAMICS CORP",
+      "foreign": false,
+      "member": "CIK0001165509.json",
+      "missing_basic_inputs": true,
+      "non_december": true,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000730272",
+      "entity_name": "REPLIGEN CORP",
+      "foreign": false,
+      "member": "CIK0000730272.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000724004",
+      "entity_name": "MESA LABORATORIES INC /CO",
+      "foreign": false,
+      "member": "CIK0000724004.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000739878",
+      "entity_name": "KID BRANDS, INC",
+      "foreign": false,
+      "member": "CIK0000739878.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000743316",
+      "entity_name": "MAXIM INTEGRATED PRODUCTS, INC.",
+      "foreign": false,
+      "member": "CIK0000743316.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001386018",
+      "entity_name": "Tiger Oil & Energy, Inc.",
+      "foreign": false,
+      "member": "CIK0001386018.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "energy",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001347557",
+      "entity_name": "Pacific Airport Group",
+      "foreign": true,
+      "member": "CIK0001347557.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000813640",
+      "entity_name": "CITIZENS BANCSHARES CORP /GA/",
+      "foreign": false,
+      "member": "CIK0000813640.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000835729",
+      "entity_name": "BMC SOFTWARE INC",
+      "foreign": false,
+      "member": "CIK0000835729.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial"
+      ]
+    },
+    {
+      "cik": "0001578735",
+      "entity_name": "NATIONAL GENERAL HOLDINGS CORP.",
+      "foreign": false,
+      "member": "CIK0001578735.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "insurer",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0001282850",
+      "entity_name": "First Trust Senior Floating Rate Income Fund II",
+      "foreign": false,
+      "member": "CIK0001282850.json",
+      "missing_basic_inputs": true,
+      "non_december": true,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000761238",
+      "entity_name": "RADA ELECTRONIC INDUSTRIES LTD.",
+      "foreign": false,
+      "member": "CIK0000761238.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000788611",
+      "entity_name": "NextTrip, Inc.",
+      "foreign": false,
+      "member": "CIK0000788611.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000790528",
+      "entity_name": "RYERSON INC.",
+      "foreign": false,
+      "member": "CIK0000790528.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000764764",
+      "entity_name": "CATERPILLAR FINANCIAL SERVICES CORP",
+      "foreign": false,
+      "member": "CIK0000764764.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001434070",
+      "entity_name": "Ridgewood Energy Y Fund, LLC",
+      "foreign": false,
+      "member": "CIK0001434070.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "energy"
+      ]
+    },
+    {
+      "cik": "0001378239",
+      "entity_name": "Central North Airport Group",
+      "foreign": true,
+      "member": "CIK0001378239.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000845611",
+      "entity_name": "CIK 0000845611",
+      "foreign": false,
+      "member": "CIK0000845611.json",
+      "missing_basic_inputs": true,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000838796",
+      "entity_name": "Kiwibox.Com, Inc.",
+      "foreign": false,
+      "member": "CIK0000838796.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "industrial",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001687187",
+      "entity_name": "Ramaco Resources, Inc.",
+      "foreign": false,
+      "member": "CIK0001687187.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "insurer",
+        "retail",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001285650",
+      "entity_name": "Calamos\u00a0Global\u00a0Total\u00a0Return\u00a0Fund",
+      "foreign": false,
+      "member": "CIK0001285650.json",
+      "missing_basic_inputs": true,
+      "non_december": true,
+      "restated": false,
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000814926",
+      "entity_name": "CAPSTONE COMPANIES, INC.",
+      "foreign": false,
+      "member": "CIK0000814926.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": true,
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000806592",
+      "entity_name": "Sunwin Stevia International, Inc.",
+      "foreign": false,
+      "member": "CIK0000806592.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000798359",
+      "entity_name": "CENTERSPACE",
+      "foreign": false,
+      "member": "CIK0000798359.json",
+      "missing_basic_inputs": false,
+      "non_december": false,
+      "restated": false,
+      "strata": [
+        "technology"
+      ]
+    }
+  ],
+  "sampling": {
+    "candidates": 697,
+    "every_nth_member": 29,
+    "sampled": 700,
+    "selected": 120,
+    "strata": {
+      "bank": 35,
+      "energy": 12,
+      "foreign_issuer": 12,
+      "incomplete": 38,
+      "industrial": 31,
+      "insurer": 12,
+      "non_december_fiscal_year": 13,
+      "restated": 53,
+      "retail": 57,
+      "technology": 60
+    }
+  },
+  "schema": "atlas.open_data.financial_validation_corpus.v1"
+}

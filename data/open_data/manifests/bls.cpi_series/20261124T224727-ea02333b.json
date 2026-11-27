@@ -1,0 +1,103 @@
+{
+  "completed_at": "2026-11-24T22:47:27.763000Z",
+  "dataset_id": "bls.cpi_series",
+  "exported_at": "2026-11-24T23:21:46.521870Z",
+  "files": [
+    {
+      "bytes": 1339447,
+      "content_type": "application/octet-stream",
+      "name": "cu.series",
+      "path": "cu.series",
+      "sha256": "7085e772dc0b773e4521eb258b42d6237d427385cbb6058285b32ed202c084a6"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "BLS",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:47:27.762763Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:47:27.762745Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: U.S. Bureau of Labor Statistics",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain",
+    "license_url": "https://www.bls.gov/opub/copyright-information.htm",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T224727-ea02333b",
+  "source": {
+    "content_type": "text/plain",
+    "download_endpoint": "https://download.bls.gov/pub/time.series/cu/cu.series",
+    "etag": "\"03ca8951771dd1:0\"",
+    "final_url": "https://download.bls.gov/pub/time.series/cu/cu.series",
+    "last_modified": "Tue, 10 Nov 2026 13:30:00 GMT",
+    "official_source_url": "https://download.bls.gov/pub/time.series/cu/"
+  },
+  "stats": {
+    "dataset_id": "bls.cpi_series",
+    "decompressed_bytes": 0,
+    "entity_count": 0,
+    "file_count": 0,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 0,
+    "series_count": 0,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 1339447,
+      "content_length": 1339447,
+      "content_type": "text/plain",
+      "elapsed_seconds": 0.317,
+      "etag": "\"03ca8951771dd1:0\"",
+      "final_url": "https://download.bls.gov/pub/time.series/cu/cu.series",
+      "last_modified": "Tue, 10 Nov 2026 13:30:00 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "7085e772dc0b773e4521eb258b42d6237d427385cbb6058285b32ed202c084a6",
+      "status": 200,
+      "url": "https://download.bls.gov/pub/time.series/cu/cu.series"
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 1339447,
+          "detected_format": "unknown",
+          "file": "cu.series"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "BLS CPI series metadata",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 1339447,
+          "detected_format": "unknown",
+          "file": "cu.series"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

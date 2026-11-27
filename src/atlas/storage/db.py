@@ -147,6 +147,41 @@ class Database:
         else:
             self._conn.execute(f"RELEASE {name}")
 
+    # ---------------------------------------------------------------- identity
+    def identity_uuid(self) -> str | None:
+        """The database's persistent identity, or ``None`` before migration 16."""
+        exists = self.scalar(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='database_identity'"
+        )
+        if not exists:
+            return None
+        row = self.query_one("SELECT uuid FROM database_identity WHERE identity_id=1")
+        return str(row["uuid"]) if row else None
+
+    def ensure_identity(self) -> str:
+        """Return this database's UUID, creating it once if it is absent.
+
+        The row is created under ``BEGIN IMMEDIATE`` so two processes opening a new
+        database concurrently cannot mint two identities. A copied database keeps
+        its UUID: it is the same logical store (a backup), not a new one.
+        """
+        existing = self.identity_uuid()
+        if existing:
+            return existing
+        import uuid as _uuid
+
+        with self.transaction():
+            row = self.query_one("SELECT uuid FROM database_identity WHERE identity_id=1")
+            if row is not None:
+                return str(row["uuid"])
+            value = _uuid.uuid4().hex
+            self.execute(
+                "INSERT INTO database_identity (identity_id, uuid, created_at, "
+                "atlas_schema_version) VALUES (1, ?, ?, ?)",
+                (value, _now_iso(), self.schema_version()),
+            )
+            return value
+
     # ------------------------------------------------------------- migrations
     def schema_version(self) -> int:
         """Read the applied version without creating anything."""
@@ -298,4 +333,5 @@ def open_database(path: str | Path, *, migrate: bool = True) -> Database:
     db = Database(path)
     if migrate:
         db.migrate()
+        db.ensure_identity()
     return db

@@ -1,0 +1,175 @@
+{
+  "completed_at": "2026-11-24T22:36:57.319758Z",
+  "dataset_id": "fdic.financials",
+  "exported_at": "2026-11-24T23:21:46.527885Z",
+  "files": [
+    {
+      "bytes": 2875927,
+      "content_type": "application/json",
+      "name": "page-00001.json",
+      "path": "page-00001.json",
+      "sha256": "ad0f13316d57ea2173392a053578ff3853c690a046fd69590310ff031a4806f4"
+    },
+    {
+      "bytes": 2883882,
+      "content_type": "application/json",
+      "name": "page-00002.json",
+      "path": "page-00002.json",
+      "sha256": "10671688261ecf90a3127430f4542d9ae17234acecded003d082038ac8386f74"
+    },
+    {
+      "bytes": 2871780,
+      "content_type": "application/json",
+      "name": "page-00003.json",
+      "path": "page-00003.json",
+      "sha256": "fae01550d836612cd6231dd214ec8067c4631a0a2bcfc9e2cb89324d3b00b37a"
+    },
+    {
+      "bytes": 2883067,
+      "content_type": "application/json",
+      "name": "page-00004.json",
+      "path": "page-00004.json",
+      "sha256": "b195a49c5a42228bdbb74a75e274794af2a44dfa4c8174db83f22fe92a26af8f"
+    },
+    {
+      "bytes": 2868065,
+      "content_type": "application/json",
+      "name": "page-00005.json",
+      "path": "page-00005.json",
+      "sha256": "efd3cfb3cdc6d55c21aeebb6174be864717cace919b0e07fa990372d666394c3"
+    },
+    {
+      "bytes": 173024,
+      "content_type": "application/vnd.apache.parquet",
+      "name": "fdic_financials.parquet",
+      "notes": "derived observation table; raw source bytes are the authority",
+      "path": "fdic_financials.parquet",
+      "record_count": 24966,
+      "sha256": "854ffdb7d4614baa7501bc5db47a18d01d1b309ac95f4f8888188874f15ae91d",
+      "uncompressed_bytes": 173024
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "FDIC",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:36:57.319593Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:36:13.091603Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain",
+    "license_url": "https://www.fdic.gov/about/website-policies",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223649-79850b36",
+  "source": {
+    "content_type": null,
+    "download_endpoint": "https://api.fdic.gov/banks/financials",
+    "etag": null,
+    "final_url": "https://api.fdic.gov/banks/financials",
+    "last_modified": null,
+    "official_source_url": "https://banks.data.fdic.gov/docs/"
+  },
+  "stats": {
+    "dataset_id": "fdic.financials",
+    "decompressed_bytes": 0,
+    "derived_compression": "zstd",
+    "derived_observations": 24966,
+    "entity_count": 4291,
+    "file_count": 5,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": "2026-09-30",
+    "obs_start": "2026-06-30",
+    "publications_with_dates": 0,
+    "record_count": 5000,
+    "series_count": 5,
+    "transfer": {
+      "bytes_downloaded": 14382721,
+      "elapsed_seconds": 6.482,
+      "final_url": "https://api.fdic.gov/banks/financials",
+      "pages": 5,
+      "status": 206
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 2875927,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        },
+        {
+          "bytes": 2883882,
+          "detected_format": "json",
+          "file": "page-00002.json"
+        },
+        {
+          "bytes": 2871780,
+          "detected_format": "json",
+          "file": "page-00003.json"
+        },
+        {
+          "bytes": 2883067,
+          "detected_format": "json",
+          "file": "page-00004.json"
+        },
+        {
+          "bytes": 2868065,
+          "detected_format": "json",
+          "file": "page-00005.json"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "FDIC BankFind quarterly financials",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 2875927,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        },
+        {
+          "bytes": 2883882,
+          "detected_format": "json",
+          "file": "page-00002.json"
+        },
+        {
+          "bytes": 2871780,
+          "detected_format": "json",
+          "file": "page-00003.json"
+        },
+        {
+          "bytes": 2883067,
+          "detected_format": "json",
+          "file": "page-00004.json"
+        },
+        {
+          "bytes": 2868065,
+          "detected_format": "json",
+          "file": "page-00005.json"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

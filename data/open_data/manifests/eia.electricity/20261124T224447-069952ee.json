@@ -1,0 +1,109 @@
+{
+  "completed_at": "2026-11-24T22:45:32.420076Z",
+  "dataset_id": "eia.electricity",
+  "exported_at": "2026-11-24T23:21:46.526009Z",
+  "files": [
+    {
+      "bytes": 302022274,
+      "content_type": "application/zip",
+      "name": "ELEC.zip",
+      "path": "ELEC.zip",
+      "sha256": "4057ac4219a6648f2fe0c834105c37a513a5db66b537af75420cd5cfbbb26830"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "EIA",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:45:32.419151Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:45:32.419112Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: U.S. Energy Information Administration",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain",
+    "license_url": "https://www.eia.gov/about/copyrights_reuse.php",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T224447-069952ee",
+  "source": {
+    "content_type": "application/x-zip-compressed",
+    "download_endpoint": "https://api.eia.gov/bulk/ELEC.zip",
+    "etag": "\"805fcf58567cdd1:0\"",
+    "final_url": "https://www.eia.gov/opendata/bulk/ELEC.zip",
+    "last_modified": "Tue, 24 Nov 2026 20:56:59 GMT",
+    "official_source_url": "https://www.eia.gov/opendata/bulkfiles.php"
+  },
+  "stats": {
+    "dataset_id": "eia.electricity",
+    "decompressed_bytes": 1457746701,
+    "entity_count": 0,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": "2025-01-02",
+    "obs_start": "2001-01-01",
+    "publications_with_dates": 0,
+    "record_count": 808847,
+    "series_count": 785571,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 302022274,
+      "content_length": 302022274,
+      "content_type": "application/x-zip-compressed",
+      "elapsed_seconds": 3.669,
+      "etag": "\"805fcf58567cdd1:0\"",
+      "final_url": "https://www.eia.gov/opendata/bulk/ELEC.zip",
+      "last_modified": "Tue, 24 Nov 2026 20:56:59 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "4057ac4219a6648f2fe0c834105c37a513a5db66b537af75420cd5cfbbb26830",
+      "status": 200,
+      "url": "https://api.eia.gov/bulk/ELEC.zip"
+    },
+    "validation": {
+      "files": [
+        {
+          "archive_members": 1,
+          "bytes": 302022274,
+          "compression_ratio": 4.83,
+          "detected_format": "zip",
+          "file": "ELEC.zip",
+          "uncompressed_bytes": 1457746701
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "EIA electricity bulk data",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "archive_members": 1,
+          "bytes": 302022274,
+          "compression_ratio": 4.83,
+          "detected_format": "zip",
+          "file": "ELEC.zip",
+          "uncompressed_bytes": 1457746701
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

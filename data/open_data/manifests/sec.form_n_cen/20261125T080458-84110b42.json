@@ -1,0 +1,794 @@
+{
+  "completed_at": "2026-11-25T08:05:58.180948Z",
+  "dataset_id": "sec.form_n_cen",
+  "exported_at": "2026-11-25T08:14:22.861778Z",
+  "files": [
+    {
+      "bytes": 10964691,
+      "content_type": "application/zip",
+      "name": "0000-2019q1_ncen.zip",
+      "path": "0000-2019q1_ncen.zip",
+      "sha256": "0182b4fddf85c294434f58266398590e5dc2a4a33be3a5f5460178de229a6519"
+    },
+    {
+      "bytes": 9948476,
+      "content_type": "application/zip",
+      "name": "0001-2019q2_ncen.zip",
+      "path": "0001-2019q2_ncen.zip",
+      "sha256": "73b97d7bb2477e81df33d06301c2e343020768c05de50bbc9b6a441c7c569d7b"
+    },
+    {
+      "bytes": 13564033,
+      "content_type": "application/zip",
+      "name": "0002-2019q3_ncen.zip",
+      "path": "0002-2019q3_ncen.zip",
+      "sha256": "fed528ab8445d3bc3b38275b6c55bd4a9b6e26200e24e9a7ca59e744ee023d31"
+    },
+    {
+      "bytes": 11847950,
+      "content_type": "application/zip",
+      "name": "0003-2019q4_ncen.zip",
+      "path": "0003-2019q4_ncen.zip",
+      "sha256": "eaa9669018b97c19e974b9dcf061586383a0c48d556dff152c46ec5b81e07b2d"
+    },
+    {
+      "bytes": 16453431,
+      "content_type": "application/zip",
+      "name": "0004-2020q1_ncen.zip",
+      "path": "0004-2020q1_ncen.zip",
+      "sha256": "555e8010891c503743c46abf2eb898850862398ffdd6aedf60b88b33b4be1a3f"
+    },
+    {
+      "bytes": 7987682,
+      "content_type": "application/zip",
+      "name": "0005-2020q2_ncen.zip",
+      "path": "0005-2020q2_ncen.zip",
+      "sha256": "761bf89b94b04f2c841cd7d862d035963b3dd829408f19b588ccc7eaeb60c101"
+    },
+    {
+      "bytes": 4991240,
+      "content_type": "application/zip",
+      "name": "0006-2020q3_ncen.zip",
+      "path": "0006-2020q3_ncen.zip",
+      "sha256": "6c61cc7a16c7291fb2646ea6266a6ab647c60b79e30e843263af0e8a0ce60a66"
+    },
+    {
+      "bytes": 8156664,
+      "content_type": "application/zip",
+      "name": "0007-2020q4_ncen.zip",
+      "path": "0007-2020q4_ncen.zip",
+      "sha256": "b0a7eecdb5d056eac7151d4e7c8dfdaa8c2eac55b9d599212b8cacd3e589d801"
+    },
+    {
+      "bytes": 14978443,
+      "content_type": "application/zip",
+      "name": "0008-2021q1_ncen.zip",
+      "path": "0008-2021q1_ncen.zip",
+      "sha256": "f12f1b9c35eb24d32002faf4f4f85ea7c794f3c2e53b521ccccdd0679e9eeb41"
+    },
+    {
+      "bytes": 6766056,
+      "content_type": "application/zip",
+      "name": "0009-2021q2_ncen.zip",
+      "path": "0009-2021q2_ncen.zip",
+      "sha256": "6b3f67315265e4483c5f2567680de419a26c179d67e744abde484c88802b791e"
+    },
+    {
+      "bytes": 4858022,
+      "content_type": "application/zip",
+      "name": "0010-2021q3_ncen.zip",
+      "path": "0010-2021q3_ncen.zip",
+      "sha256": "430316e3d5701678faf064e796c992798709e712aa3f9688bf2f593f12efbd8e"
+    },
+    {
+      "bytes": 8346446,
+      "content_type": "application/zip",
+      "name": "0011-2021q4_ncen.zip",
+      "path": "0011-2021q4_ncen.zip",
+      "sha256": "5e6d78a17e4b4d50891188a11ac448282e75ead23f10ff5b8d5c61ba9dcef0f7"
+    },
+    {
+      "bytes": 14986237,
+      "content_type": "application/zip",
+      "name": "0012-2022q1_ncen.zip",
+      "path": "0012-2022q1_ncen.zip",
+      "sha256": "52338268929ea0c7c8a0570406c9234ba93f49237bf1f125913a0fd3f62b27c3"
+    },
+    {
+      "bytes": 7017193,
+      "content_type": "application/zip",
+      "name": "0013-2022q2_ncen.zip",
+      "path": "0013-2022q2_ncen.zip",
+      "sha256": "79c4ee177387accdb12f8de97c516da14a2984976a5d119a10507234685c7ce7"
+    },
+    {
+      "bytes": 5296909,
+      "content_type": "application/zip",
+      "name": "0014-2022q3_ncen.zip",
+      "path": "0014-2022q3_ncen.zip",
+      "sha256": "34fbeabd5ab77f618e82e708bdb4b301ad4a6c3c86a95163f8702235e3c67320"
+    },
+    {
+      "bytes": 8893904,
+      "content_type": "application/zip",
+      "name": "0015-2022q4_ncen.zip",
+      "path": "0015-2022q4_ncen.zip",
+      "sha256": "ad8f0bcda725fe9f4ebdb256b2edb68b3f410ef61ca47e100fa0f5205f473896"
+    },
+    {
+      "bytes": 15007931,
+      "content_type": "application/zip",
+      "name": "0016-2023q1_ncen.zip",
+      "path": "0016-2023q1_ncen.zip",
+      "sha256": "a2c96a7966d1c535c2e9769a1d0b9b5282ab360c406b7a119ae050c0b73bd7cc"
+    },
+    {
+      "bytes": 9355383,
+      "content_type": "application/zip",
+      "name": "0017-2023q2_ncen.zip",
+      "path": "0017-2023q2_ncen.zip",
+      "sha256": "2f3939ed3d825aa59d529d2a1f20e29325f343c703b048034110fed77da21d1a"
+    },
+    {
+      "bytes": 5581828,
+      "content_type": "application/zip",
+      "name": "0018-2023q3_ncen.zip",
+      "path": "0018-2023q3_ncen.zip",
+      "sha256": "6b837ca504f689898f3fda3eb501dd3ac0b839540c0563436340d1c0c365521e"
+    },
+    {
+      "bytes": 9618041,
+      "content_type": "application/zip",
+      "name": "0019-2023q4_ncen.zip",
+      "path": "0019-2023q4_ncen.zip",
+      "sha256": "a17231500c950e9b996ddae0f2e9d66edb4131fdf8297e2131bc906433d765a2"
+    },
+    {
+      "bytes": 16832357,
+      "content_type": "application/zip",
+      "name": "0020-2024q1_ncen.zip",
+      "path": "0020-2024q1_ncen.zip",
+      "sha256": "82a1e88ee5963e9f4eecdbf995b15eb5fb61b9fbc249f12ed99c1340f6c05b48"
+    },
+    {
+      "bytes": 8783269,
+      "content_type": "application/zip",
+      "name": "0021-2024q2_ncen.zip",
+      "path": "0021-2024q2_ncen.zip",
+      "sha256": "b8d3893f713b6a54ea51838be007e4b365f6651beb4268b4bde97ac222908adb"
+    },
+    {
+      "bytes": 6095721,
+      "content_type": "application/zip",
+      "name": "0022-2024q3_ncen.zip",
+      "path": "0022-2024q3_ncen.zip",
+      "sha256": "b634061c1e2df36851cc8e360fe6b8072cf3b940654dff1406350805ea958129"
+    },
+    {
+      "bytes": 9749913,
+      "content_type": "application/zip",
+      "name": "0023-2024q4_ncen.zip",
+      "path": "0023-2024q4_ncen.zip",
+      "sha256": "f9e1cdfc5b702886b74b080e11307c5768970d9b844d0eab5272d5c8a2b0354b"
+    },
+    {
+      "bytes": 16491772,
+      "content_type": "application/zip",
+      "name": "0024-2025q1_ncen.zip",
+      "path": "0024-2025q1_ncen.zip",
+      "sha256": "ee6f1d6081b420f11f8742c68c75fc3804160f42c13b3d5d4136e44e8d7ff4b1"
+    },
+    {
+      "bytes": 11576968,
+      "content_type": "application/zip",
+      "name": "0025-2025q2_ncen.zip",
+      "path": "0025-2025q2_ncen.zip",
+      "sha256": "4b537576dec6d8656f82dcfc6bbc8d295eaa0f82c9b8aa4b19dbf32024ba8765"
+    },
+    {
+      "bytes": 5977881,
+      "content_type": "application/zip",
+      "name": "0026-2025q3_ncen.zip",
+      "path": "0026-2025q3_ncen.zip",
+      "sha256": "1317f2bc2f51cc5d5e9f5d27d5e3c944afbbaa1acaf259b61a51ef5adbf597ff"
+    },
+    {
+      "bytes": 7571694,
+      "content_type": "application/zip",
+      "name": "0027-2025q4_ncen.zip",
+      "path": "0027-2025q4_ncen.zip",
+      "sha256": "edbd91ac464203625dda4f00ec07083d06ebbf5f04194673b13a3362ee1c1476"
+    },
+    {
+      "bytes": 16365257,
+      "content_type": "application/zip",
+      "name": "0028-2026q1_ncen.zip",
+      "path": "0028-2026q1_ncen.zip",
+      "sha256": "3b791cdfa9c497157468a26764d508cd0a5723056c5ba75a9809bf80db9ef9fd"
+    },
+    {
+      "bytes": 8404110,
+      "content_type": "application/zip",
+      "name": "0029-2026q2_ncen.zip",
+      "path": "0029-2026q2_ncen.zip",
+      "sha256": "97899fef613a151faf42b6b01573bde3d22db81af7f896598c43a62cec0c7614"
+    },
+    {
+      "bytes": 5871882,
+      "content_type": "application/zip",
+      "name": "0030-2026q3_ncen.zip",
+      "path": "0030-2026q3_ncen.zip",
+      "sha256": "4761f8614d42dc52892417d3ad5f809309a39573b1f44530aa549c36f2f6593d"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "SEC",
+  "retrieval": {
+    "completed_at": "2026-11-25T08:05:58.180505Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-25T08:05:58.180445Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: U.S. Securities and Exchange Commission, EDGAR. Issuer-authored filings are reproduced here as factual data; third-party exhibits and narrative note text are excluded.",
+    "commercial_use": true,
+    "license_name": "SEC EDGAR public filing data - issuer-authored electronic filings; factual data",
+    "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "redistributable_conditions",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261125T080458-84110b42",
+  "source": {
+    "content_type": null,
+    "download_endpoint": "https://www.sec.gov/files/dera/data/form-n-cen-data-sets/2019q1_ncen.zip",
+    "etag": null,
+    "final_url": "https://www.sec.gov/files/dera/data/form-n-cen-data-sets/2019q1_ncen.zip",
+    "last_modified": null,
+    "official_source_url": "https://www.sec.gov/data-research/sec-markets-data/form-n-cen-data-sets"
+  },
+  "stats": {
+    "dataset_id": "sec.form_n_cen",
+    "decompressed_bytes": 3753179865,
+    "entity_count": 3506,
+    "file_count": 31,
+    "future_observation_dates": 0,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 37835277,
+    "series_count": 0,
+    "transfer": {
+      "bytes_downloaded": 308341384,
+      "elapsed_seconds": 17.885,
+      "final_url": "https://www.sec.gov/files/dera/data/form-n-cen-data-sets/2019q1_ncen.zip",
+      "pages": 31,
+      "requested_urls": 31,
+      "skipped_urls": [],
+      "status": 206
+    },
+    "validation": {
+      "files": [
+        {
+          "archive_members": 53,
+          "bytes": 10964691,
+          "compression_ratio": 12.12,
+          "detected_format": "zip",
+          "file": "0000-2019q1_ncen.zip",
+          "uncompressed_bytes": 132864378
+        },
+        {
+          "archive_members": 51,
+          "bytes": 9948476,
+          "compression_ratio": 13.18,
+          "detected_format": "zip",
+          "file": "0001-2019q2_ncen.zip",
+          "uncompressed_bytes": 131042276
+        },
+        {
+          "archive_members": 45,
+          "bytes": 13564033,
+          "compression_ratio": 14.13,
+          "detected_format": "zip",
+          "file": "0002-2019q3_ncen.zip",
+          "uncompressed_bytes": 191652125
+        },
+        {
+          "archive_members": 48,
+          "bytes": 11847950,
+          "compression_ratio": 12.96,
+          "detected_format": "zip",
+          "file": "0003-2019q4_ncen.zip",
+          "uncompressed_bytes": 153419032
+        },
+        {
+          "archive_members": 54,
+          "bytes": 16453431,
+          "compression_ratio": 11.93,
+          "detected_format": "zip",
+          "file": "0004-2020q1_ncen.zip",
+          "uncompressed_bytes": 196204789
+        },
+        {
+          "archive_members": 46,
+          "bytes": 7987682,
+          "compression_ratio": 11.52,
+          "detected_format": "zip",
+          "file": "0005-2020q2_ncen.zip",
+          "uncompressed_bytes": 91975300
+        },
+        {
+          "archive_members": 45,
+          "bytes": 4991240,
+          "compression_ratio": 11.04,
+          "detected_format": "zip",
+          "file": "0006-2020q3_ncen.zip",
+          "uncompressed_bytes": 55046116
+        },
+        {
+          "archive_members": 46,
+          "bytes": 8156664,
+          "compression_ratio": 12.32,
+          "detected_format": "zip",
+          "file": "0007-2020q4_ncen.zip",
+          "uncompressed_bytes": 100455531
+        },
+        {
+          "archive_members": 54,
+          "bytes": 14978443,
+          "compression_ratio": 11.99,
+          "detected_format": "zip",
+          "file": "0008-2021q1_ncen.zip",
+          "uncompressed_bytes": 179489093
+        },
+        {
+          "archive_members": 50,
+          "bytes": 6766056,
+          "compression_ratio": 12.52,
+          "detected_format": "zip",
+          "file": "0009-2021q2_ncen.zip",
+          "uncompressed_bytes": 84618394
+        },
+        {
+          "archive_members": 45,
+          "bytes": 4858022,
+          "compression_ratio": 11.26,
+          "detected_format": "zip",
+          "file": "0010-2021q3_ncen.zip",
+          "uncompressed_bytes": 54621406
+        },
+        {
+          "archive_members": 48,
+          "bytes": 8346446,
+          "compression_ratio": 12.37,
+          "detected_format": "zip",
+          "file": "0011-2021q4_ncen.zip",
+          "uncompressed_bytes": 103189274
+        },
+        {
+          "archive_members": 53,
+          "bytes": 14986237,
+          "compression_ratio": 12.12,
+          "detected_format": "zip",
+          "file": "0012-2022q1_ncen.zip",
+          "uncompressed_bytes": 181503198
+        },
+        {
+          "archive_members": 48,
+          "bytes": 7017193,
+          "compression_ratio": 12.47,
+          "detected_format": "zip",
+          "file": "0013-2022q2_ncen.zip",
+          "uncompressed_bytes": 87450703
+        },
+        {
+          "archive_members": 45,
+          "bytes": 5296909,
+          "compression_ratio": 11.21,
+          "detected_format": "zip",
+          "file": "0014-2022q3_ncen.zip",
+          "uncompressed_bytes": 59315707
+        },
+        {
+          "archive_members": 49,
+          "bytes": 8893904,
+          "compression_ratio": 12.61,
+          "detected_format": "zip",
+          "file": "0015-2022q4_ncen.zip",
+          "uncompressed_bytes": 112112969
+        },
+        {
+          "archive_members": 53,
+          "bytes": 15007931,
+          "compression_ratio": 12.14,
+          "detected_format": "zip",
+          "file": "0016-2023q1_ncen.zip",
+          "uncompressed_bytes": 182132407
+        },
+        {
+          "archive_members": 44,
+          "bytes": 9355383,
+          "compression_ratio": 11.23,
+          "detected_format": "zip",
+          "file": "0017-2023q2_ncen.zip",
+          "uncompressed_bytes": 104978308
+        },
+        {
+          "archive_members": 55,
+          "bytes": 5581828,
+          "compression_ratio": 11.28,
+          "detected_format": "zip",
+          "file": "0018-2023q3_ncen.zip",
+          "uncompressed_bytes": 62911393
+        },
+        {
+          "archive_members": 55,
+          "bytes": 9618041,
+          "compression_ratio": 12.21,
+          "detected_format": "zip",
+          "file": "0019-2023q4_ncen.zip",
+          "uncompressed_bytes": 117397647
+        },
+        {
+          "archive_members": 53,
+          "bytes": 16832357,
+          "compression_ratio": 12.19,
+          "detected_format": "zip",
+          "file": "0020-2024q1_ncen.zip",
+          "uncompressed_bytes": 205141406
+        },
+        {
+          "archive_members": 47,
+          "bytes": 8783269,
+          "compression_ratio": 12.2,
+          "detected_format": "zip",
+          "file": "0021-2024q2_ncen.zip",
+          "uncompressed_bytes": 107044873
+        },
+        {
+          "archive_members": 48,
+          "bytes": 6095721,
+          "compression_ratio": 10.92,
+          "detected_format": "zip",
+          "file": "0022-2024q3_ncen.zip",
+          "uncompressed_bytes": 66524587
+        },
+        {
+          "archive_members": 45,
+          "bytes": 9749913,
+          "compression_ratio": 12.01,
+          "detected_format": "zip",
+          "file": "0023-2024q4_ncen.zip",
+          "uncompressed_bytes": 117055610
+        },
+        {
+          "archive_members": 53,
+          "bytes": 16491772,
+          "compression_ratio": 11.93,
+          "detected_format": "zip",
+          "file": "0024-2025q1_ncen.zip",
+          "uncompressed_bytes": 196703702
+        },
+        {
+          "archive_members": 47,
+          "bytes": 11576968,
+          "compression_ratio": 12.37,
+          "detected_format": "zip",
+          "file": "0025-2025q2_ncen.zip",
+          "uncompressed_bytes": 143168252
+        },
+        {
+          "archive_members": 48,
+          "bytes": 5977881,
+          "compression_ratio": 11.27,
+          "detected_format": "zip",
+          "file": "0026-2025q3_ncen.zip",
+          "uncompressed_bytes": 67287190
+        },
+        {
+          "archive_members": 46,
+          "bytes": 7571694,
+          "compression_ratio": 12.06,
+          "detected_format": "zip",
+          "file": "0027-2025q4_ncen.zip",
+          "uncompressed_bytes": 91220879
+        },
+        {
+          "archive_members": 53,
+          "bytes": 16365257,
+          "compression_ratio": 12.15,
+          "detected_format": "zip",
+          "file": "0028-2026q1_ncen.zip",
+          "uncompressed_bytes": 198806640
+        },
+        {
+          "archive_members": 47,
+          "bytes": 8404110,
+          "compression_ratio": 13.14,
+          "detected_format": "zip",
+          "file": "0029-2026q2_ncen.zip",
+          "uncompressed_bytes": 110388502
+        },
+        {
+          "archive_members": 45,
+          "bytes": 5871882,
+          "compression_ratio": 11.5,
+          "detected_format": "zip",
+          "file": "0030-2026q3_ncen.zip",
+          "uncompressed_bytes": 67458178
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "SEC Form N-CEN data sets",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "archive_members": 53,
+          "bytes": 10964691,
+          "compression_ratio": 12.12,
+          "detected_format": "zip",
+          "file": "0000-2019q1_ncen.zip",
+          "uncompressed_bytes": 132864378
+        },
+        {
+          "archive_members": 51,
+          "bytes": 9948476,
+          "compression_ratio": 13.18,
+          "detected_format": "zip",
+          "file": "0001-2019q2_ncen.zip",
+          "uncompressed_bytes": 131042276
+        },
+        {
+          "archive_members": 45,
+          "bytes": 13564033,
+          "compression_ratio": 14.13,
+          "detected_format": "zip",
+          "file": "0002-2019q3_ncen.zip",
+          "uncompressed_bytes": 191652125
+        },
+        {
+          "archive_members": 48,
+          "bytes": 11847950,
+          "compression_ratio": 12.96,
+          "detected_format": "zip",
+          "file": "0003-2019q4_ncen.zip",
+          "uncompressed_bytes": 153419032
+        },
+        {
+          "archive_members": 54,
+          "bytes": 16453431,
+          "compression_ratio": 11.93,
+          "detected_format": "zip",
+          "file": "0004-2020q1_ncen.zip",
+          "uncompressed_bytes": 196204789
+        },
+        {
+          "archive_members": 46,
+          "bytes": 7987682,
+          "compression_ratio": 11.52,
+          "detected_format": "zip",
+          "file": "0005-2020q2_ncen.zip",
+          "uncompressed_bytes": 91975300
+        },
+        {
+          "archive_members": 45,
+          "bytes": 4991240,
+          "compression_ratio": 11.04,
+          "detected_format": "zip",
+          "file": "0006-2020q3_ncen.zip",
+          "uncompressed_bytes": 55046116
+        },
+        {
+          "archive_members": 46,
+          "bytes": 8156664,
+          "compression_ratio": 12.32,
+          "detected_format": "zip",
+          "file": "0007-2020q4_ncen.zip",
+          "uncompressed_bytes": 100455531
+        },
+        {
+          "archive_members": 54,
+          "bytes": 14978443,
+          "compression_ratio": 11.99,
+          "detected_format": "zip",
+          "file": "0008-2021q1_ncen.zip",
+          "uncompressed_bytes": 179489093
+        },
+        {
+          "archive_members": 50,
+          "bytes": 6766056,
+          "compression_ratio": 12.52,
+          "detected_format": "zip",
+          "file": "0009-2021q2_ncen.zip",
+          "uncompressed_bytes": 84618394
+        },
+        {
+          "archive_members": 45,
+          "bytes": 4858022,
+          "compression_ratio": 11.26,
+          "detected_format": "zip",
+          "file": "0010-2021q3_ncen.zip",
+          "uncompressed_bytes": 54621406
+        },
+        {
+          "archive_members": 48,
+          "bytes": 8346446,
+          "compression_ratio": 12.37,
+          "detected_format": "zip",
+          "file": "0011-2021q4_ncen.zip",
+          "uncompressed_bytes": 103189274
+        },
+        {
+          "archive_members": 53,
+          "bytes": 14986237,
+          "compression_ratio": 12.12,
+          "detected_format": "zip",
+          "file": "0012-2022q1_ncen.zip",
+          "uncompressed_bytes": 181503198
+        },
+        {
+          "archive_members": 48,
+          "bytes": 7017193,
+          "compression_ratio": 12.47,
+          "detected_format": "zip",
+          "file": "0013-2022q2_ncen.zip",
+          "uncompressed_bytes": 87450703
+        },
+        {
+          "archive_members": 45,
+          "bytes": 5296909,
+          "compression_ratio": 11.21,
+          "detected_format": "zip",
+          "file": "0014-2022q3_ncen.zip",
+          "uncompressed_bytes": 59315707
+        },
+        {
+          "archive_members": 49,
+          "bytes": 8893904,
+          "compression_ratio": 12.61,
+          "detected_format": "zip",
+          "file": "0015-2022q4_ncen.zip",
+          "uncompressed_bytes": 112112969
+        },
+        {
+          "archive_members": 53,
+          "bytes": 15007931,
+          "compression_ratio": 12.14,
+          "detected_format": "zip",
+          "file": "0016-2023q1_ncen.zip",
+          "uncompressed_bytes": 182132407
+        },
+        {
+          "archive_members": 44,
+          "bytes": 9355383,
+          "compression_ratio": 11.23,
+          "detected_format": "zip",
+          "file": "0017-2023q2_ncen.zip",
+          "uncompressed_bytes": 104978308
+        },
+        {
+          "archive_members": 55,
+          "bytes": 5581828,
+          "compression_ratio": 11.28,
+          "detected_format": "zip",
+          "file": "0018-2023q3_ncen.zip",
+          "uncompressed_bytes": 62911393
+        },
+        {
+          "archive_members": 55,
+          "bytes": 9618041,
+          "compression_ratio": 12.21,
+          "detected_format": "zip",
+          "file": "0019-2023q4_ncen.zip",
+          "uncompressed_bytes": 117397647
+        },
+        {
+          "archive_members": 53,
+          "bytes": 16832357,
+          "compression_ratio": 12.19,
+          "detected_format": "zip",
+          "file": "0020-2024q1_ncen.zip",
+          "uncompressed_bytes": 205141406
+        },
+        {
+          "archive_members": 47,
+          "bytes": 8783269,
+          "compression_ratio": 12.2,
+          "detected_format": "zip",
+          "file": "0021-2024q2_ncen.zip",
+          "uncompressed_bytes": 107044873
+        },
+        {
+          "archive_members": 48,
+          "bytes": 6095721,
+          "compression_ratio": 10.92,
+          "detected_format": "zip",
+          "file": "0022-2024q3_ncen.zip",
+          "uncompressed_bytes": 66524587
+        },
+        {
+          "archive_members": 45,
+          "bytes": 9749913,
+          "compression_ratio": 12.01,
+          "detected_format": "zip",
+          "file": "0023-2024q4_ncen.zip",
+          "uncompressed_bytes": 117055610
+        },
+        {
+          "archive_members": 53,
+          "bytes": 16491772,
+          "compression_ratio": 11.93,
+          "detected_format": "zip",
+          "file": "0024-2025q1_ncen.zip",
+          "uncompressed_bytes": 196703702
+        },
+        {
+          "archive_members": 47,
+          "bytes": 11576968,
+          "compression_ratio": 12.37,
+          "detected_format": "zip",
+          "file": "0025-2025q2_ncen.zip",
+          "uncompressed_bytes": 143168252
+        },
+        {
+          "archive_members": 48,
+          "bytes": 5977881,
+          "compression_ratio": 11.27,
+          "detected_format": "zip",
+          "file": "0026-2025q3_ncen.zip",
+          "uncompressed_bytes": 67287190
+        },
+        {
+          "archive_members": 46,
+          "bytes": 7571694,
+          "compression_ratio": 12.06,
+          "detected_format": "zip",
+          "file": "0027-2025q4_ncen.zip",
+          "uncompressed_bytes": 91220879
+        },
+        {
+          "archive_members": 53,
+          "bytes": 16365257,
+          "compression_ratio": 12.15,
+          "detected_format": "zip",
+          "file": "0028-2026q1_ncen.zip",
+          "uncompressed_bytes": 198806640
+        },
+        {
+          "archive_members": 47,
+          "bytes": 8404110,
+          "compression_ratio": 13.14,
+          "detected_format": "zip",
+          "file": "0029-2026q2_ncen.zip",
+          "uncompressed_bytes": 110388502
+        },
+        {
+          "archive_members": 45,
+          "bytes": 5871882,
+          "compression_ratio": 11.5,
+          "detected_format": "zip",
+          "file": "0030-2026q3_ncen.zip",
+          "uncompressed_bytes": 67458178
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

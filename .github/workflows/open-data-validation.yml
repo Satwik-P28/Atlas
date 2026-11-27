@@ -1,0 +1,107 @@
+name: Open data validation
+
+on:
+  pull_request:
+    paths:
+      - "data/open_data/**"
+      - "src/atlas/open_data/**"
+      - "src/atlas/evidence/kernel.py"
+      - "src/atlas/storage/migrations.py"
+      - "scripts/reproduce_phase9_2.py"
+      - "scripts/build_open_data_package.py"
+      - "scripts/index_open_data_release.py"
+      - "scripts/audit_open_data.py"
+      - "scripts/build_open_data_registry.py"
+      - "tests/test_open_data_*.py"
+      - "pyproject.toml"
+      - ".github/workflows/open-data-*.yml"
+  push:
+    branches: [data/open-data-bootstrap, main]
+    paths:
+      - "data/open_data/**"
+      - "src/atlas/open_data/**"
+      - "src/atlas/evidence/kernel.py"
+      - "src/atlas/storage/migrations.py"
+      - "scripts/reproduce_phase9_2.py"
+      - "scripts/build_open_data_package.py"
+      - "scripts/index_open_data_release.py"
+      - "scripts/audit_open_data.py"
+      - "scripts/build_open_data_registry.py"
+      - "tests/test_open_data_*.py"
+      - "pyproject.toml"
+      - ".github/workflows/open-data-*.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: open-data-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  registry-and-engine:
+    name: Registry, rights policy and offline engine tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -e '.[dev,columnar,open-data]'
+      - name: Compile sources
+        run: python -m compileall -q src scripts tests
+      - name: Registry is valid and matches its reviewed source
+        run: |
+          python scripts/build_open_data_registry.py --check
+          python scripts/build_open_data_registry.py --summary
+      - name: Rights audit is default-deny
+        run: python scripts/audit_open_data.py --strict
+      - name: Offline engine, archive, rights and durability tests
+        run: |
+          python -m pytest tests/test_open_data_engine.py tests/test_open_data_bootstrap.py \
+            tests/test_open_data_durability.py -q
+      - name: Schema reproduction contract
+        run: python scripts/reproduce_phase9_2.py
+      - name: Adversarial archives and invalid licences are rejected
+        run: |
+          python -m pytest tests/test_open_data_engine.py -q \
+            -k "traversal or symlink or bomb or absolute or licence or class or stale or exclusions"
+      - name: CLI is importable and the registry is queryable
+        run: |
+          python -m atlas.cli data list --json > /tmp/registry.json
+          python - <<'PY'
+          import json
+          payload = json.load(open("/tmp/registry.json"))
+          assert payload["count"] >= 50
+          assert any(row["id"] == "sec.companyfacts" for row in payload["datasets"])
+          ids = [row["id"] for row in payload["datasets"]]
+          assert len(ids) == len(set(ids))
+          print(f"{payload['count']} registered datasets")
+          PY
+      - name: No bulk data is tracked in Git
+        run: |
+          python - <<'PY'
+          import pathlib, sys
+          banned = (".zip", ".gz", ".parquet", ".db", ".zst")
+          offenders = [p.as_posix() for p in pathlib.Path("data/open_data").rglob("*")
+                       if p.is_file() and p.suffix.lower() in banned and "registry" not in p.name]
+          if offenders:
+              print("bulk data files are tracked:", offenders)
+              sys.exit(1)
+          print("no bulk data files are tracked under data/open_data")
+          PY
+      - name: Upload audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: open-data-audit
+          path: artifacts/open_data_audit.json
+          if-no-files-found: warn

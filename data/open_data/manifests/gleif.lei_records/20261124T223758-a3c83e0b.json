@@ -1,0 +1,112 @@
+{
+  "completed_at": "2026-11-24T22:38:03.127638Z",
+  "dataset_id": "gleif.lei_records",
+  "exported_at": "2026-11-24T23:21:46.529739Z",
+  "files": [
+    {
+      "bytes": 490136,
+      "content_type": "application/json",
+      "name": "page-00001.json",
+      "path": "page-00001.json",
+      "sha256": "aad2320693682ec9a355fe22a922d441358b8ff4469c19a70b93fc6a48c180e6"
+    },
+    {
+      "bytes": 497643,
+      "content_type": "application/json",
+      "name": "page-00002.json",
+      "path": "page-00002.json",
+      "sha256": "945d971aa6842d7cb85e82554b3c3944dc573b1137e4cd8d81b5caca09c47ac8"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "GLEIF",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:38:03.127508Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:38:03.127490Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "LEI data: Global Legal Entity Identifier Foundation (GLEIF), CC0 1.0",
+    "commercial_use": true,
+    "license_name": "CC0 1.0 Universal (Public Domain Dedication)",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "permissive",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223758-a3c83e0b",
+  "source": {
+    "content_type": null,
+    "download_endpoint": "https://api.gleif.org/api/v1/lei-records",
+    "etag": null,
+    "final_url": "https://api.gleif.org/api/v1/lei-records",
+    "last_modified": null,
+    "official_source_url": "https://www.gleif.org/en/lei-data/gleif-api"
+  },
+  "stats": {
+    "dataset_id": "gleif.lei_records",
+    "decompressed_bytes": 0,
+    "entity_count": 400,
+    "file_count": 2,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 400,
+    "series_count": 0,
+    "transfer": {
+      "bytes_downloaded": 987779,
+      "elapsed_seconds": 4.178,
+      "final_url": "https://api.gleif.org/api/v1/lei-records",
+      "pages": 2,
+      "status": 206
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 490136,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        },
+        {
+          "bytes": 497643,
+          "detected_format": "json",
+          "file": "page-00002.json"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "GLEIF LEI records",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 490136,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        },
+        {
+          "bytes": 497643,
+          "detected_format": "json",
+          "file": "page-00002.json"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

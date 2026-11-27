@@ -1,0 +1,1205 @@
+{
+  "schema": "atlas.open_data.phase2_metrics.v1",
+  "generated_at": "2026-11-25T08:36:24.621936Z",
+  "store_root": "/tmp/atlas_raw_store",
+  "durability": {
+    "datasets": 57,
+    "snapshots": 62,
+    "by_status": {
+      "missing": 57,
+      "verified": 5
+    },
+    "latest_datasets": 5,
+    "latest_by_status": {
+      "verified": 5
+    },
+    "latest_verified_datasets": 5,
+    "source_bytes_committed": 13518288101,
+    "stored_bytes_present": 8359304612,
+    "by_acquisition_scope": {
+      "complete": 4,
+      "partial_scope": 1
+    }
+  },
+  "datasets": [
+    {
+      "dataset_id": "sec.companyfacts",
+      "snapshot_id": "20261125T073234-894632f2",
+      "files": 2,
+      "stored_bytes": 1430493316,
+      "decompressed_bytes": 19573029602,
+      "source_records": 127342433,
+      "unique_entities": 20620,
+      "obs_start": "1927-02-17",
+      "obs_end": "2026-11-24",
+      "observation_limit": null,
+      "partial_scope": null,
+      "issues": [
+        "future_observation_dates",
+        "implausible_observation_dates"
+      ],
+      "rights_class": "redistributable_conditions",
+      "manifest_rights_class": "public_domain"
+    },
+    {
+      "dataset_id": "sec.company_tickers",
+      "snapshot_id": "20261125T073925-35f632a2",
+      "files": 1,
+      "stored_bytes": 521932,
+      "decompressed_bytes": 0,
+      "source_records": 10400,
+      "unique_entities": 10400,
+      "obs_start": null,
+      "obs_end": null,
+      "observation_limit": null,
+      "partial_scope": null,
+      "issues": [],
+      "rights_class": "public_domain",
+      "manifest_rights_class": "public_domain"
+    },
+    {
+      "dataset_id": "sec.financial_statement_data_sets",
+      "snapshot_id": "20261125T075339-272361f7",
+      "files": 70,
+      "stored_bytes": 5709542274,
+      "decompressed_bytes": 32239476871,
+      "source_records": 440233,
+      "unique_entities": 17176,
+      "obs_start": "2004-12-31",
+      "obs_end": "2026-08-31",
+      "observation_limit": null,
+      "partial_scope": null,
+      "issues": [],
+      "rights_class": "redistributable_conditions",
+      "manifest_rights_class": "redistributable_conditions"
+    },
+    {
+      "dataset_id": "sec.insider_transactions",
+      "snapshot_id": "20261125T080302-50e871ad",
+      "files": 81,
+      "stored_bytes": 910405706,
+      "decompressed_bytes": 5543427664,
+      "source_records": 37169724,
+      "unique_entities": 0,
+      "obs_start": null,
+      "obs_end": null,
+      "observation_limit": null,
+      "partial_scope": null,
+      "issues": [
+        "archive_series_gap"
+      ],
+      "rights_class": "redistributable_conditions",
+      "manifest_rights_class": "redistributable_conditions"
+    },
+    {
+      "dataset_id": "sec.form_n_cen",
+      "snapshot_id": "20261125T080458-84110b42",
+      "files": 31,
+      "stored_bytes": 308341384,
+      "decompressed_bytes": 3753179865,
+      "source_records": 37835277,
+      "unique_entities": 3506,
+      "obs_start": null,
+      "obs_end": null,
+      "observation_limit": null,
+      "partial_scope": null,
+      "issues": [],
+      "rights_class": "redistributable_conditions",
+      "manifest_rights_class": "redistributable_conditions"
+    }
+  ],
+  "index": {
+    "source_records": 202798067,
+    "observations": 140097,
+    "snapshots": 5,
+    "runs_failed": 0
+  },
+  "atlas": {
+    "issuers": 1000,
+    "issuers_with_evidence": 886,
+    "evidence_facts": 2728020,
+    "securities": 467,
+    "ticker_assignments": 466,
+    "issuers_with_sic": 440,
+    "supersessions": 292422,
+    "schema_version": 15,
+    "bars": 2
+  },
+  "timings": {
+    "statement_seconds": 0.261,
+    "statement_rows": 13,
+    "cik": "0000068505"
+  },
+  "models": {
+    "issuers": 25,
+    "executed": 25,
+    "economically_supported": 25
+  },
+  "model_items": [
+    {
+      "issuer_id": "ISS-CIK0000068505",
+      "cik": "0000068505",
+      "legal_name": "MOTOROLA SOLUTIONS,\u00a0INC.",
+      "evidence_facts": 6906,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 257.7559266846711,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000006281",
+      "cik": "0000006281",
+      "legal_name": "Analog Devices, Inc.",
+      "evidence_facts": 6681,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 416.93325193577493,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000031462",
+      "cik": "0000031462",
+      "legal_name": "ECOLAB INC.",
+      "evidence_facts": 6489,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 96.06703968091884,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000066740",
+      "cik": "0000066740",
+      "legal_name": "3M COMPANY",
+      "evidence_facts": 6345,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 92.60534847479185,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000066382",
+      "cik": "0000066382",
+      "legal_name": "MillerKnoll, Inc.",
+      "evidence_facts": 6340,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 49.34974613607367,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000062996",
+      "cik": "0000062996",
+      "legal_name": "Masco Corporation",
+      "evidence_facts": 6305,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 56.43306064264637,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000093556",
+      "cik": "0000093556",
+      "legal_name": "STANLEY BLACK & DECKER, INC.",
+      "evidence_facts": 6287,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 148.5226028113232,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000070866",
+      "cik": "0000070866",
+      "legal_name": "NCR VOYIX CORPORATION",
+      "evidence_facts": 6245,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": -9.150184649589347,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000063276",
+      "cik": "0000063276",
+      "legal_name": "MATTEL INC /DE/",
+      "evidence_facts": 6223,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 12.831517604065432,
+      "contract_state": "insufficient_source_coverage",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000028823",
+      "cik": "0000028823",
+      "legal_name": "Diebold Nixdorf, Incorporated",
+      "evidence_facts": 6195,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 49.16949156349474,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000018230",
+      "cik": "0000018230",
+      "legal_name": "CATERPILLAR INC",
+      "evidence_facts": 6168,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 259.74913295116147,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000037785",
+      "cik": "0000037785",
+      "legal_name": "FMC CORPORATION",
+      "evidence_facts": 6136,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": -81.20934517048073,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000056873",
+      "cik": "0000056873",
+      "legal_name": "KROGER CO",
+      "evidence_facts": 6126,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 58.316368160986706,
+      "contract_state": "insufficient_source_coverage",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000089800",
+      "cik": "0000089800",
+      "legal_name": "THE SHERWIN-WILLIAMS COMPANY",
+      "evidence_facts": 6119,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 144.76253666658002,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000064803",
+      "cik": "0000064803",
+      "legal_name": "CVS HEALTH Corp",
+      "evidence_facts": 6103,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 261.26935643594015,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000004127",
+      "cik": "0000004127",
+      "legal_name": "Skyworks Solutions, Inc.",
+      "evidence_facts": 6100,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 1.845340186102618,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000106040",
+      "cik": "0000106040",
+      "legal_name": "WESTERN DIGITAL CORPORATION",
+      "evidence_facts": 6034,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 462.6050355647372,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000104889",
+      "cik": "0000104889",
+      "legal_name": "GRAHAM HOLDINGS CO",
+      "evidence_facts": 6031,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 970.3909484259216,
+      "contract_state": "insufficient_source_coverage",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000097476",
+      "cik": "0000097476",
+      "legal_name": "TEXAS INSTRUMENTS INC",
+      "evidence_facts": 6021,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 11.62518858047679,
+      "contract_state": "insufficient_source_coverage",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000097210",
+      "cik": "0000097210",
+      "legal_name": "TERADYNE, INC.",
+      "evidence_facts": 6020,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 65.13859778227337,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000046080",
+      "cik": "0000046080",
+      "legal_name": "HASBRO, INC.",
+      "evidence_facts": 5986,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 4.166464031991292,
+      "contract_state": "insufficient_source_coverage",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000030625",
+      "cik": "0000030625",
+      "legal_name": "FLOWSERVE CORP",
+      "evidence_facts": 5985,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 48.5387373781084,
+      "contract_state": "insufficient_source_coverage",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000002969",
+      "cik": "0000002969",
+      "legal_name": "Air Products & Chemicals, Inc.",
+      "evidence_facts": 5981,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": -322.96873894655107,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000079879",
+      "cik": "0000079879",
+      "legal_name": "PPG INDUSTRIES INC",
+      "evidence_facts": 5972,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 90.98949454575445,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    },
+    {
+      "issuer_id": "ISS-CIK0000077360",
+      "cik": "0000077360",
+      "legal_name": "Pentair plc",
+      "evidence_facts": 5969,
+      "method": "unlevered_fcff_dcf",
+      "status": "supported",
+      "executes": true,
+      "economically_supported": true,
+      "value_per_share": 64.6360846870391,
+      "contract_state": "arithmetically_verified",
+      "reason": null
+    }
+  ],
+  "release": {
+    "asset_bytes": 2647994911,
+    "asset_count": 4,
+    "asset_limit_bytes": 2000000000,
+    "assets": [
+      {
+        "asset": "sec.company_tickers.tar.zst",
+        "asset_bytes": 182196,
+        "asset_sha256": "668570943ae7d6c0095aee82596d5f6211c5e8b07179ce4f172bd58961303743",
+        "attribution_required": false,
+        "attribution_text": "",
+        "dataset_id": "sec.company_tickers",
+        "files": [
+          {
+            "bytes": 521932,
+            "path": "company_tickers_exchange.json",
+            "sha256": "a4549a73d027584e90490c5b8ff207de3e6a607768c7de416144ef52e6474c84"
+          }
+        ],
+        "license_name": "U.S. federal government work - public domain (17 USC 105)",
+        "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+        "manifest_sha256": "abfd6425e4aa15bf1c8891d89062bd2bac6a8f9d6926dacd65da67d820e1f1b5",
+        "provider": "SEC",
+        "raw_bytes": 521932,
+        "restore": "atlas data restore sec.company_tickers.tar.zst --expect-sha256 <asset_sha256>",
+        "rights_class": "public_domain",
+        "snapshot_id": "20261125T073925-35f632a2"
+      },
+      {
+        "asset": "sec.companyfacts.tar.zst",
+        "asset_bytes": 1429119498,
+        "asset_sha256": "113c500dfc614562405119aec3a19f0327aaa874d382e84a4a0b2ca4711a8299",
+        "attribution_required": true,
+        "attribution_text": "Source: U.S. Securities and Exchange Commission, EDGAR. Issuer-authored filings are reproduced here as factual data; third-party exhibits and narrative note text are excluded.",
+        "dataset_id": "sec.companyfacts",
+        "files": [
+          {
+            "bytes": 1429381505,
+            "path": "companyfacts.zip",
+            "sha256": "8a16ccb8f7a8db12d92e6da7ead228e3cb3894abfee52e2c172558ea96dec34e"
+          },
+          {
+            "bytes": 1111811,
+            "path": "sec_companyfacts.parquet",
+            "sha256": "95e42cae7ff9948cc28cb10000d4c70e2966f2127a2fb03c11e015b8f2f165b7"
+          }
+        ],
+        "license_name": "SEC EDGAR public filing data - issuer-authored electronic filings; factual data",
+        "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+        "manifest_sha256": "db1fc90739aa730ee658608065bde223502a253d97cb085466b663b5bd2552da",
+        "provider": "SEC",
+        "raw_bytes": 1430493316,
+        "restore": "atlas data restore sec.companyfacts.tar.zst --expect-sha256 <asset_sha256>",
+        "rights_class": "redistributable_conditions",
+        "snapshot_id": "20261125T073234-894632f2"
+      },
+      {
+        "asset": "sec.form_n_cen.tar.zst",
+        "asset_bytes": 308088758,
+        "asset_sha256": "304732b589642d96e4173f3a99e14cc5bc400aa0ff74fe292c78f04ad8e76f95",
+        "attribution_required": true,
+        "attribution_text": "Source: U.S. Securities and Exchange Commission, EDGAR. Issuer-authored filings are reproduced here as factual data; third-party exhibits and narrative note text are excluded.",
+        "dataset_id": "sec.form_n_cen",
+        "files": [
+          {
+            "bytes": 10964691,
+            "path": "0000-2019q1_ncen.zip",
+            "sha256": "0182b4fddf85c294434f58266398590e5dc2a4a33be3a5f5460178de229a6519"
+          },
+          {
+            "bytes": 9948476,
+            "path": "0001-2019q2_ncen.zip",
+            "sha256": "73b97d7bb2477e81df33d06301c2e343020768c05de50bbc9b6a441c7c569d7b"
+          },
+          {
+            "bytes": 13564033,
+            "path": "0002-2019q3_ncen.zip",
+            "sha256": "fed528ab8445d3bc3b38275b6c55bd4a9b6e26200e24e9a7ca59e744ee023d31"
+          },
+          {
+            "bytes": 11847950,
+            "path": "0003-2019q4_ncen.zip",
+            "sha256": "eaa9669018b97c19e974b9dcf061586383a0c48d556dff152c46ec5b81e07b2d"
+          },
+          {
+            "bytes": 16453431,
+            "path": "0004-2020q1_ncen.zip",
+            "sha256": "555e8010891c503743c46abf2eb898850862398ffdd6aedf60b88b33b4be1a3f"
+          },
+          {
+            "bytes": 7987682,
+            "path": "0005-2020q2_ncen.zip",
+            "sha256": "761bf89b94b04f2c841cd7d862d035963b3dd829408f19b588ccc7eaeb60c101"
+          },
+          {
+            "bytes": 4991240,
+            "path": "0006-2020q3_ncen.zip",
+            "sha256": "6c61cc7a16c7291fb2646ea6266a6ab647c60b79e30e843263af0e8a0ce60a66"
+          },
+          {
+            "bytes": 8156664,
+            "path": "0007-2020q4_ncen.zip",
+            "sha256": "b0a7eecdb5d056eac7151d4e7c8dfdaa8c2eac55b9d599212b8cacd3e589d801"
+          },
+          {
+            "bytes": 14978443,
+            "path": "0008-2021q1_ncen.zip",
+            "sha256": "f12f1b9c35eb24d32002faf4f4f85ea7c794f3c2e53b521ccccdd0679e9eeb41"
+          },
+          {
+            "bytes": 6766056,
+            "path": "0009-2021q2_ncen.zip",
+            "sha256": "6b3f67315265e4483c5f2567680de419a26c179d67e744abde484c88802b791e"
+          },
+          {
+            "bytes": 4858022,
+            "path": "0010-2021q3_ncen.zip",
+            "sha256": "430316e3d5701678faf064e796c992798709e712aa3f9688bf2f593f12efbd8e"
+          },
+          {
+            "bytes": 8346446,
+            "path": "0011-2021q4_ncen.zip",
+            "sha256": "5e6d78a17e4b4d50891188a11ac448282e75ead23f10ff5b8d5c61ba9dcef0f7"
+          },
+          {
+            "bytes": 14986237,
+            "path": "0012-2022q1_ncen.zip",
+            "sha256": "52338268929ea0c7c8a0570406c9234ba93f49237bf1f125913a0fd3f62b27c3"
+          },
+          {
+            "bytes": 7017193,
+            "path": "0013-2022q2_ncen.zip",
+            "sha256": "79c4ee177387accdb12f8de97c516da14a2984976a5d119a10507234685c7ce7"
+          },
+          {
+            "bytes": 5296909,
+            "path": "0014-2022q3_ncen.zip",
+            "sha256": "34fbeabd5ab77f618e82e708bdb4b301ad4a6c3c86a95163f8702235e3c67320"
+          },
+          {
+            "bytes": 8893904,
+            "path": "0015-2022q4_ncen.zip",
+            "sha256": "ad8f0bcda725fe9f4ebdb256b2edb68b3f410ef61ca47e100fa0f5205f473896"
+          },
+          {
+            "bytes": 15007931,
+            "path": "0016-2023q1_ncen.zip",
+            "sha256": "a2c96a7966d1c535c2e9769a1d0b9b5282ab360c406b7a119ae050c0b73bd7cc"
+          },
+          {
+            "bytes": 9355383,
+            "path": "0017-2023q2_ncen.zip",
+            "sha256": "2f3939ed3d825aa59d529d2a1f20e29325f343c703b048034110fed77da21d1a"
+          },
+          {
+            "bytes": 5581828,
+            "path": "0018-2023q3_ncen.zip",
+            "sha256": "6b837ca504f689898f3fda3eb501dd3ac0b839540c0563436340d1c0c365521e"
+          },
+          {
+            "bytes": 9618041,
+            "path": "0019-2023q4_ncen.zip",
+            "sha256": "a17231500c950e9b996ddae0f2e9d66edb4131fdf8297e2131bc906433d765a2"
+          },
+          {
+            "bytes": 16832357,
+            "path": "0020-2024q1_ncen.zip",
+            "sha256": "82a1e88ee5963e9f4eecdbf995b15eb5fb61b9fbc249f12ed99c1340f6c05b48"
+          },
+          {
+            "bytes": 8783269,
+            "path": "0021-2024q2_ncen.zip",
+            "sha256": "b8d3893f713b6a54ea51838be007e4b365f6651beb4268b4bde97ac222908adb"
+          },
+          {
+            "bytes": 6095721,
+            "path": "0022-2024q3_ncen.zip",
+            "sha256": "b634061c1e2df36851cc8e360fe6b8072cf3b940654dff1406350805ea958129"
+          },
+          {
+            "bytes": 9749913,
+            "path": "0023-2024q4_ncen.zip",
+            "sha256": "f9e1cdfc5b702886b74b080e11307c5768970d9b844d0eab5272d5c8a2b0354b"
+          },
+          {
+            "bytes": 16491772,
+            "path": "0024-2025q1_ncen.zip",
+            "sha256": "ee6f1d6081b420f11f8742c68c75fc3804160f42c13b3d5d4136e44e8d7ff4b1"
+          },
+          {
+            "bytes": 11576968,
+            "path": "0025-2025q2_ncen.zip",
+            "sha256": "4b537576dec6d8656f82dcfc6bbc8d295eaa0f82c9b8aa4b19dbf32024ba8765"
+          },
+          {
+            "bytes": 5977881,
+            "path": "0026-2025q3_ncen.zip",
+            "sha256": "1317f2bc2f51cc5d5e9f5d27d5e3c944afbbaa1acaf259b61a51ef5adbf597ff"
+          },
+          {
+            "bytes": 7571694,
+            "path": "0027-2025q4_ncen.zip",
+            "sha256": "edbd91ac464203625dda4f00ec07083d06ebbf5f04194673b13a3362ee1c1476"
+          },
+          {
+            "bytes": 16365257,
+            "path": "0028-2026q1_ncen.zip",
+            "sha256": "3b791cdfa9c497157468a26764d508cd0a5723056c5ba75a9809bf80db9ef9fd"
+          },
+          {
+            "bytes": 8404110,
+            "path": "0029-2026q2_ncen.zip",
+            "sha256": "97899fef613a151faf42b6b01573bde3d22db81af7f896598c43a62cec0c7614"
+          },
+          {
+            "bytes": 5871882,
+            "path": "0030-2026q3_ncen.zip",
+            "sha256": "4761f8614d42dc52892417d3ad5f809309a39573b1f44530aa549c36f2f6593d"
+          }
+        ],
+        "license_name": "SEC EDGAR public filing data - issuer-authored electronic filings; factual data",
+        "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+        "manifest_sha256": "654da1de4fe3a92a9186e61408c208e1b1baad0d87c16a870057ab1cce7f5a92",
+        "provider": "SEC",
+        "raw_bytes": 308341384,
+        "restore": "atlas data restore sec.form_n_cen.tar.zst --expect-sha256 <asset_sha256>",
+        "rights_class": "redistributable_conditions",
+        "snapshot_id": "20261125T080458-84110b42"
+      },
+      {
+        "asset": "sec.insider_transactions.tar.zst",
+        "asset_bytes": 910604459,
+        "asset_sha256": "edfc5d2e65f8518544a9ba8e27f3b2717d44a0f25ba814d184eded6fa7ac08c9",
+        "attribution_required": true,
+        "attribution_text": "Source: U.S. Securities and Exchange Commission, EDGAR. Issuer-authored filings are reproduced here as factual data; third-party exhibits and narrative note text are excluded.",
+        "dataset_id": "sec.insider_transactions",
+        "files": [
+          {
+            "bytes": 17306804,
+            "path": "0000-2006q1_form345.zip",
+            "sha256": "62becdadbe5eaff68f03edefe2ba2357c8bb498a1f825b697003e087cf98e6ce"
+          },
+          {
+            "bytes": 14116730,
+            "path": "0001-2006q2_form345.zip",
+            "sha256": "a787efec9ff37f2034b05b9aeefdba3f1d81c2a063749facfe3d62fc73b2ba14"
+          },
+          {
+            "bytes": 11083649,
+            "path": "0002-2006q3_form345.zip",
+            "sha256": "ab82fad621ca5e2d682f0c3510b73947bb484c57e58acfed1d5756054cc20e3f"
+          },
+          {
+            "bytes": 13180511,
+            "path": "0003-2006q4_form345.zip",
+            "sha256": "b5c82cdec683f5342409a462500f372ed9b83c8bb2652fafcc952cc0ead5cd9e"
+          },
+          {
+            "bytes": 17151240,
+            "path": "0004-2007q1_form345.zip",
+            "sha256": "de4b7259247e3b99d9bab65fc5d9d980a03daf59b3883231792d15e1a566e9f8"
+          },
+          {
+            "bytes": 14744238,
+            "path": "0005-2007q2_form345.zip",
+            "sha256": "cf8c84c69ae3153262b3981716f0c7d974f229fb3b4606e4c6d32dca823bc520"
+          },
+          {
+            "bytes": 12700224,
+            "path": "0006-2007q3_form345.zip",
+            "sha256": "7d635af4f1dd591e164d113c80e8a7d9d5613bdb79aab966aa522c68107c0cc0"
+          },
+          {
+            "bytes": 13861041,
+            "path": "0007-2007q4_form345.zip",
+            "sha256": "1d3040fe4d601f3f14ac4e8b0fb6f6944fd3c6e1c088f7a5648393dcfb6ac7e9"
+          },
+          {
+            "bytes": 16075732,
+            "path": "0008-2008q1_form345.zip",
+            "sha256": "872feae22ded06edc8e3edd364067d51ab54d8a647d5fb48417a06ced19cec2e"
+          },
+          {
+            "bytes": 13824775,
+            "path": "0009-2008q2_form345.zip",
+            "sha256": "3716ca2bd8be9f4dce67e4cbfb2ae1748a905b838988e1aad4eba650746034c4"
+          },
+          {
+            "bytes": 10862303,
+            "path": "0010-2008q3_form345.zip",
+            "sha256": "4efecc7ec2985f7b65efcdb9eea55565960d769812fa6685122cc9a66365a616"
+          },
+          {
+            "bytes": 10836597,
+            "path": "0011-2008q4_form345.zip",
+            "sha256": "d98887013329785788a3cde04a32380b98640091e1edd841f1a9fa14e6b34b34"
+          },
+          {
+            "bytes": 13143873,
+            "path": "0012-2009q1_form345.zip",
+            "sha256": "a81a4741c49b79c61426dcb9100b10221c76f524ad1c3d9e62716b92a2f2ba2b"
+          },
+          {
+            "bytes": 10091884,
+            "path": "0013-2009q2_form345.zip",
+            "sha256": "51e552335e82acec61bd7a38a9d16913896f9c6da28e6e47c1f8bf1159276ef8"
+          },
+          {
+            "bytes": 9012661,
+            "path": "0014-2009q3_form345.zip",
+            "sha256": "a0302d87c82e1ced213ea097ab7d5174589c6b98642e8bb657e86a87247d375d"
+          },
+          {
+            "bytes": 9888102,
+            "path": "0015-2009q4_form345.zip",
+            "sha256": "4ff26071432bb997fc5124cbd85ab03f8eca7fd469a5706d49c58887155b03a8"
+          },
+          {
+            "bytes": 13765513,
+            "path": "0016-2010q1_form345.zip",
+            "sha256": "bd7c7eaf3603bcee1a904d89d8bb957367513a1e2f47859dbcbce88359be2849"
+          },
+          {
+            "bytes": 11197221,
+            "path": "0017-2010q2_form345.zip",
+            "sha256": "1bafd756d517546cc4627424d6be8095e822ceec23dcd462bfb4d7f09d58d3d6"
+          },
+          {
+            "bytes": 8833546,
+            "path": "0018-2010q3_form345.zip",
+            "sha256": "8ba031550e019f62706f8230fe67aeccd593523397ed22d16ab53de5ad77460d"
+          },
+          {
+            "bytes": 10842841,
+            "path": "0019-2010q4_form345.zip",
+            "sha256": "1dba15dcac7b22a5caedf9db8ad27da5eb59c1ca398ed3cde11bcc4a25970092"
+          },
+          {
+            "bytes": 14431321,
+            "path": "0020-2011q1_form345.zip",
+            "sha256": "9cb7a76afdadd0707e503e875bccfa26fdeecea701a9f8edf0a6bab561fe8515"
+          },
+          {
+            "bytes": 11265081,
+            "path": "0021-2011q2_form345.zip",
+            "sha256": "4c61838de792994f1949730282ca5c8b046190309a510d7d0228a1ea5bf15434"
+          },
+          {
+            "bytes": 8440873,
+            "path": "0022-2011q3_form345.zip",
+            "sha256": "a173d41967a2c85996b0c3018d0ce5baf18100e7230a93fe7e5a01a759f225ce"
+          },
+          {
+            "bytes": 8958649,
+            "path": "0023-2011q4_form345.zip",
+            "sha256": "47f35cc68de7c43c7ab7dd86f00a8c9e5f5aa1f4bca0ea859b903d17f198e0b8"
+          },
+          {
+            "bytes": 14219288,
+            "path": "0024-2012q1_form345.zip",
+            "sha256": "0cac6f943813dae94c20ecc8bca63fda692e2b8ac6d02ce2c322ab411f45c357"
+          },
+          {
+            "bytes": 10535239,
+            "path": "0025-2012q2_form345.zip",
+            "sha256": "0ac1582986fd5a7486a6e34ab25f11a46fe8082d03f815340f8dda01f34a65e5"
+          },
+          {
+            "bytes": 9104710,
+            "path": "0026-2012q3_form345.zip",
+            "sha256": "a4f3223313657293318d82008e7c75112e35c5a392378872bd2ee3ddac6d5683"
+          },
+          {
+            "bytes": 10438069,
+            "path": "0027-2012q4_form345.zip",
+            "sha256": "aa328a6dd671ca9ac4b1746d14f224780a11c2721dd143735e6f01a9f39b502d"
+          },
+          {
+            "bytes": 14032058,
+            "path": "0028-2013q1_form345.zip",
+            "sha256": "795607b5f0c1510ffa086ca86f3f45abb54a432f49038f4ace16d8aa6ac12756"
+          },
+          {
+            "bytes": 11427360,
+            "path": "0029-2013q2_form345.zip",
+            "sha256": "0a74fce493cb2b871faeac26a4eca53e663836675a3c8cd45fb39862a6fe9749"
+          },
+          {
+            "bytes": 9557012,
+            "path": "0030-2013q3_form345.zip",
+            "sha256": "9b4c977f57713c8b8d0701907a9b27bfebf9d430602dd7c4a0b8e83cd91ad7ed"
+          },
+          {
+            "bytes": 10117129,
+            "path": "0031-2013q4_form345.zip",
+            "sha256": "7fbe8f624cde7507204bff090ee86a95de9533049a845428f72d14721824a13f"
+          },
+          {
+            "bytes": 14560119,
+            "path": "0032-2014q1_form345.zip",
+            "sha256": "784f13d1c1015b01c3d513915e7f1c50151b25aa4965704ac279041c5fc6f7aa"
+          },
+          {
+            "bytes": 11012390,
+            "path": "0033-2014q2_form345.zip",
+            "sha256": "54a109f0ed7f94b8bbc2b2a68bfac2aab63ec34e722ddcdc3ddee40703209310"
+          },
+          {
+            "bytes": 8979142,
+            "path": "0034-2014q3_form345.zip",
+            "sha256": "86c00d07b7056a0f2a124e313180ea064ed145f514e54cc3a8513dbf40a0fa22"
+          },
+          {
+            "bytes": 10294808,
+            "path": "0035-2014q4_form345.zip",
+            "sha256": "b37ac4d70bc97cff746e20f475c6cc392288e047f2a21d30c007868123793aa7"
+          },
+          {
+            "bytes": 14689945,
+            "path": "0036-2015q1_form345.zip",
+            "sha256": "36698eefccea88e8737868a43eb6dd2e0c726f2d026bce3dd0fcacdef382dfd6"
+          },
+          {
+            "bytes": 11336215,
+            "path": "0037-2015q2_form345.zip",
+            "sha256": "e07bc99bf94a1375f6e8df86189f5193ac3f276d388a7646a2ed71bcffe3b539"
+          },
+          {
+            "bytes": 8908570,
+            "path": "0038-2015q3_form345.zip",
+            "sha256": "f50e2e584aa552e2abc6d0cbb9a2e92217c8e2ec8c3cd79c1103dd5ca2123c4e"
+          },
+          {
+            "bytes": 9384596,
+            "path": "0039-2015q4_form345.zip",
+            "sha256": "a31dc71e838e9b81e77ff6d528af3be0f1a39b7fcfe0c2486a89dd0a369910fa"
+          },
+          {
+            "bytes": 13630106,
+            "path": "0040-2016q1_form345.zip",
+            "sha256": "5b3bd7e2bcc3c8468c3b6d3bcb1f8ca77596ca4ea7ccf696682e84d98a6bdc0b"
+          },
+          {
+            "bytes": 10388337,
+            "path": "0041-2016q2_form345.zip",
+            "sha256": "b99ffbceff8e31d49c6a01bc475ec8c7105c2895632b9eb3d72066db94c252a7"
+          },
+          {
+            "bytes": 8704557,
+            "path": "0042-2016q3_form345.zip",
+            "sha256": "5a25d3c6cb874875904b2be0059bb4784e4da28b315af30b15568fd250bd0dde"
+          },
+          {
+            "bytes": 9107157,
+            "path": "0043-2016q4_form345.zip",
+            "sha256": "3fd9daf61e256a9463958dc57f90eb9885c9d9f00e98a2d437346d78991252bd"
+          },
+          {
+            "bytes": 14209324,
+            "path": "0044-2017q1_form345.zip",
+            "sha256": "e3c135d06aeb13ccb7554e4b89cd4ade40faf9d0d39c8c6a7010b3f3260e5371"
+          },
+          {
+            "bytes": 10633369,
+            "path": "0045-2017q2_form345.zip",
+            "sha256": "071c75391305e5e5f01db18fd5c954da3800164a15fdad8b1161098fecd63786"
+          },
+          {
+            "bytes": 7972500,
+            "path": "0046-2017q3_form345.zip",
+            "sha256": "ca64bbc6a5a728c80e9532d91028b5a19bd8f8f8d179344e30e9eb361bb1bd18"
+          },
+          {
+            "bytes": 9036107,
+            "path": "0047-2017q4_form345.zip",
+            "sha256": "d529e3ebe7d1f4f022580eabb703b25ef66b42199dbb8adfe06e988d99bca06d"
+          },
+          {
+            "bytes": 13941852,
+            "path": "0048-2018q1_form345.zip",
+            "sha256": "8541f5c8a975ec99bf21964a77593775e02f55200a7fdf4c0711a7c858a9e2fb"
+          },
+          {
+            "bytes": 10757463,
+            "path": "0049-2018q2_form345.zip",
+            "sha256": "3e0942f34eae067a676b4482e927297216d8adc7449ac27ea8860f643724d05b"
+          },
+          {
+            "bytes": 8493817,
+            "path": "0050-2018q3_form345.zip",
+            "sha256": "c5c7e1f946b80dd2419356974a717d1e92b875436f7dad4b6b8e2094f867682e"
+          },
+          {
+            "bytes": 9225725,
+            "path": "0051-2018q4_form345.zip",
+            "sha256": "03dd59b0da4e10e98425a0961d04126707b127b8b8f33e13092b80deed087a9f"
+          },
+          {
+            "bytes": 13745081,
+            "path": "0052-2019q1_form345.zip",
+            "sha256": "3206a941a818d1210857277b8dff86900df8aa00e10902bfa2fa8879b1011a5d"
+          },
+          {
+            "bytes": 10594521,
+            "path": "0053-2019q2_form345.zip",
+            "sha256": "0d6d5fb5cc922dee8ca7451156a44ba76c5e1db65b02bb6473fe16354087c308"
+          },
+          {
+            "bytes": 8188905,
+            "path": "0054-2019q3_form345.zip",
+            "sha256": "d3ae11e56f9ec064e95b074e808bd08c19a7a1320fcfd146708bc80543a963bd"
+          },
+          {
+            "bytes": 8416016,
+            "path": "0055-2019q4_form345.zip",
+            "sha256": "df28aa75bf703f0c202c59d94046e84e8e082a97a49965a4b66149d3184e540c"
+          },
+          {
+            "bytes": 13886112,
+            "path": "0056-2020q1_form345.zip",
+            "sha256": "3c3bc3fefa4dbe32cb68f052ac4ea32cae16099bb2b104a0bd8d242465e004a8"
+          },
+          {
+            "bytes": 10237249,
+            "path": "0057-2020q2_form345.zip",
+            "sha256": "665be773d41b30fae10f4dea03096a0e33a7557b0acbb3fab9f1cd5796ee2b22"
+          },
+          {
+            "bytes": 8765495,
+            "path": "0058-2020q3_form345.zip",
+            "sha256": "5b89d93d94b70a649355bd47ec5a68a0450e40cc12f082b2817079589aa541b1"
+          },
+          {
+            "bytes": 10162651,
+            "path": "0059-2020q4_form345.zip",
+            "sha256": "0abb3ec65cb2ef4ef15d0e3f4c7ba782a2801b9998d32b5b36c3f44cc4130af3"
+          },
+          {
+            "bytes": 15891333,
+            "path": "0060-2021q1_form345.zip",
+            "sha256": "3ea90731d424e9b0324f00a6bab1ad603cc9419d9366025f7d7120fffc2a73c5"
+          },
+          {
+            "bytes": 12494758,
+            "path": "0061-2021q2_form345.zip",
+            "sha256": "7277d43d94cda0fdb83d7e6f4d9021a3baa2d886a963c0cd97b65e6875aec3b6"
+          },
+          {
+            "bytes": 10198876,
+            "path": "0062-2021q3_form345.zip",
+            "sha256": "8323d1ceb62ebbdc27da242533501f8abea7ef9703bc374dc28cef7379aa0070"
+          },
+          {
+            "bytes": 10818822,
+            "path": "0063-2021q4_form345.zip",
+            "sha256": "cd630b3ba9402d578b9ec88d637f022248f1452476de9066b4813823200e3fca"
+          },
+          {
+            "bytes": 14253893,
+            "path": "0064-2022q1_form345.zip",
+            "sha256": "bc733530b3360ec59b624041043a4b50619feba4cd8a13aea441d171d6d2c2c5"
+          },
+          {
+            "bytes": 10603723,
+            "path": "0065-2022q2_form345.zip",
+            "sha256": "fc091183d24d25283826e7e11e0318a8027995a9d77ea8bc4667589eb2b4d8f5"
+          },
+          {
+            "bytes": 8024500,
+            "path": "0066-2022q3_form345.zip",
+            "sha256": "846c1115906b1c45dd8761da076a32ea0cb9f8995dae76f81d0cd93b7e05b032"
+          },
+          {
+            "bytes": 8400983,
+            "path": "0067-2022q4_form345.zip",
+            "sha256": "6c6a909bd2eaaa0a24ccf5f0071b404670c115845d2939bc592bf3ce420dcdb9"
+          },
+          {
+            "bytes": 13882049,
+            "path": "0068-2023q1_form345.zip",
+            "sha256": "0b476188f52a0862e71886eb31a81f6345fc6616403b52188484aef0438cfcfb"
+          },
+          {
+            "bytes": 10742628,
+            "path": "0069-2023q2_form345.zip",
+            "sha256": "7e636787231ae0f00accf5c3627298402dedd1aefffd7c50fb48292e5d3a8fbb"
+          },
+          {
+            "bytes": 8202487,
+            "path": "0070-2023q3_form345.zip",
+            "sha256": "26947559fbd710ca4fb007e2ff0481b13ebc3ca47153e77a9b0bc84db250a48e"
+          },
+          {
+            "bytes": 8497639,
+            "path": "0071-2023q4_form345.zip",
+            "sha256": "be19822ad9116ea6c1a55303b1f2e23864f21101e42d2da0455a6ff2b33e1a9e"
+          },
+          {
+            "bytes": 13874620,
+            "path": "0072-2024q1_form345.zip",
+            "sha256": "8e9bb34335416829a88e4ca7d09bb8aaceca689da9718fef22c298d6f18c9b04"
+          },
+          {
+            "bytes": 10286787,
+            "path": "0073-2024q2_form345.zip",
+            "sha256": "782abee663e466b243f953625ae319da93c3e896816007d5a375e558c94dc7c1"
+          },
+          {
+            "bytes": 8163472,
+            "path": "0074-2024q3_form345.zip",
+            "sha256": "8b55b4ffd91e56770fc0e71f9b73e6886f3c60fac8b7266e4b3e5586d2857910"
+          },
+          {
+            "bytes": 8954329,
+            "path": "0075-2024q4_form345.zip",
+            "sha256": "44763a00aa8a2077747bc015f12c6a4c09ba7cae4a2d031bf24398f9db9e52f3"
+          },
+          {
+            "bytes": 12804783,
+            "path": "0076-2025q1_form345.zip",
+            "sha256": "37f6b4287df129b88acf0782498540640d055b1c893320877e329945b534a8c2"
+          },
+          {
+            "bytes": 9860984,
+            "path": "0077-2025q2_form345.zip",
+            "sha256": "64e7f81328933b1281bd8737961048d76d2ab3d5d1d2d7149a32ec061b0e3ff2"
+          },
+          {
+            "bytes": 7956025,
+            "path": "0078-2025q3_form345.zip",
+            "sha256": "9c57f272b7230500771f661bc1fe181527ed6b76a6f45d23a910c7fc7e9fcfa4"
+          },
+          {
+            "bytes": 8309708,
+            "path": "0079-2025q4_form345.zip",
+            "sha256": "6af26a68f5834eab96dff2c568530d9213638d3e6c9d1256e4f6c9f8af1d2d28"
+          },
+          {
+            "bytes": 13874904,
+            "path": "0080-2026q1_form345.zip",
+            "sha256": "3dcb680593f5829bc951cb0969e858b60fc21a6835b094838218093a849592d6"
+          }
+        ],
+        "license_name": "SEC EDGAR public filing data - issuer-authored electronic filings; factual data",
+        "license_url": "https://www.sec.gov/about/webmaster-frequently-asked-questions",
+        "manifest_sha256": "e462e254b0256a97c59162185e9217497f858359813426cf9cdab494bcd01a63",
+        "provider": "SEC",
+        "raw_bytes": 910405706,
+        "restore": "atlas data restore sec.insider_transactions.tar.zst --expect-sha256 <asset_sha256>",
+        "rights_class": "redistributable_conditions",
+        "snapshot_id": "20261125T080302-50e871ad"
+      }
+    ],
+    "generated_at": "2026-11-25T08:18:27.664214Z",
+    "oversized": [
+      {
+        "dataset_id": "sec.financial_statement_data_sets",
+        "raw_bytes": 5709542274,
+        "reason": "exceeds the 2 GiB release-asset limit; recover with atlas data sync"
+      }
+    ],
+    "policy": "Only snapshots whose stored bytes match a committed manifest and whose registry entry permits public redistribution are packaged. Third-party exclusions must be cleared. Local-use, restricted and unverified data is never packaged.",
+    "release_tag": "open-data-2026-11",
+    "restore": "atlas data restore <asset> --expect-sha256 <asset_sha256>; the restore verifies the package hash, the embedded manifest and every file before publishing the snapshot.",
+    "schema": "atlas.open_data.release.v1",
+    "upload": {
+      "manual": "gh release create <tag> dist/*.tar.zst dist/*.sha256",
+      "mechanism": ".github/workflows/open-data-release.yml uses the repository GITHUB_TOKEN",
+      "status": "not_uploaded_by_this_run"
+    }
+  },
+  "audit": {
+    "registry": {
+      "datasets": 57,
+      "errors": [],
+      "summary": {
+        "total": 57,
+        "by_rights_class": {
+          "local_use_only": 1,
+          "permissive": 2,
+          "public_domain": 34,
+          "redistributable_conditions": 16,
+          "restricted": 2,
+          "unverified": 2
+        },
+        "by_provider": {
+          "BEA": 1,
+          "BIS": 1,
+          "BLS": 6,
+          "Bank of England": 1,
+          "CFTC": 3,
+          "ClinicalTrials.gov": 1,
+          "Crypto exchanges": 1,
+          "ECB": 1,
+          "EIA": 3,
+          "Eurostat": 1,
+          "FDA": 1,
+          "FDIC": 2,
+          "FFIEC": 1,
+          "FINRA": 1,
+          "FRED": 1,
+          "Federal Reserve Board": 1,
+          "GDELT": 1,
+          "GLEIF": 1,
+          "IMF": 1,
+          "NOAA": 1,
+          "OECD": 1,
+          "SEC": 10,
+          "US Census Bureau": 1,
+          "US Treasury": 9,
+          "USASpending": 1,
+          "USDA": 1,
+          "USGS": 1,
+          "USPTO": 1,
+          "Various market vendors": 1,
+          "World Bank": 1
+        },
+        "by_ingestion_status": {
+          "blocked": 14,
+          "discovered": 1,
+          "implemented": 42
+        },
+        "approved_for_public_distribution": 43
+      },
+      "stale_reviews": 0,
+      "distribution_denied": 14
+    },
+    "endpoint_failures": 1,
+    "endpoint_transient": 1,
+    "samples_ok": true
+  },
+  "limitations": [
+    "The previous /tmp raw store did not survive the workspace; current bytes were re-acquired from providers and hashed against the manifests exported now.",
+    "Provider archives are revised, so a re-acquisition is not guaranteed to reproduce an older snapshot byte for byte.",
+    "FSDS is 5.7 GB and is not a single release asset; it is recoverable from 70 official URLs recorded in its manifest.",
+    "Insider archives have one provider gap (2026 Q3 was not published at acquisition time).",
+    "No redistributable market-price provider was found; price data is local/authorised only."
+  ],
+  "rights_refreshed_at": "2026-11-25T20:09:50.370087Z",
+  "rights_source": "registry"
+}

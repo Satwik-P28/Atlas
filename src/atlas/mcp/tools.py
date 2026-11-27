@@ -55,6 +55,9 @@ class ToolError(Exception):
 class ToolContext:
     db_path: str
     allow_mutations: bool = False
+    #: Operator-configured columnar dataset root. Never accepted from a tool argument:
+    #: no MCP tool may read an arbitrary filesystem path.
+    columnar_root: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -140,6 +143,95 @@ def search_companies(context: ToolContext, arguments: dict[str, Any]) -> dict[st
         "count": len(items),
         "items": items,
         "policy": "only issuers present in this Atlas database are returned; nothing is invented",
+    })
+
+
+def _columnar(context: ToolContext):
+    """Open the operator's columnar build, or explain why the tools are unavailable."""
+    if not context.columnar_root:
+        raise ToolError(
+            "columnar_unavailable",
+            "no columnar dataset is configured for this server; start `atlas mcp "
+            "--columnar-root <dir>` to expose the full-universe index",
+        )
+    from ..open_data.columnar import ColumnarEvidence
+
+    return ColumnarEvidence(context.columnar_root)
+
+
+def search_columnar_companies(context: ToolContext, arguments: dict[str, Any]) -> dict[str, Any]:
+    evidence = _columnar(context)
+    try:
+        items = evidence.search_companies(str(arguments["q"]),
+                                          limit=int(arguments.get("limit", 10)))
+    finally:
+        evidence.close()
+    return _bound({
+        "schema": f"{SCHEMA_PREFIX}.columnar_company_search.v1",
+        "query": arguments["q"],
+        "count": len(items),
+        "items": items,
+        "policy": "issuers present in the configured columnar build only",
+    })
+
+
+def query_columnar_evidence(context: ToolContext, arguments: dict[str, Any]) -> dict[str, Any]:
+    """Point-in-time facts for one issuer, selected the way the evidence kernel selects."""
+    evidence = _columnar(context)
+    try:
+        statement = evidence.statement(str(arguments["cik"]), as_of=arguments.get("as_of"))
+        availability = evidence.availability(str(arguments["cik"]))
+    finally:
+        evidence.close()
+    return _bound({
+        "schema": f"{SCHEMA_PREFIX}.columnar_evidence.v1",
+        "cik": statement["cik"],
+        "period_end": statement["period_end"],
+        "as_of": arguments.get("as_of"),
+        "concepts": statement["concepts"],
+        "evidence": statement["evidence"],
+        "contradictions": statement["contradictions"],
+        "availability": availability,
+        "selection_policy": statement["selection_policy"],
+        "scope": statement["scope"],
+        "notes": [
+            "historical reads exclude observations whose public availability is unknown or "
+            "only modelled; `availability` reports how many were excluded",
+            "values are exact decimals; no currency conversion is applied or implied",
+        ],
+    })
+
+
+def screen_columnar(context: ToolContext, arguments: dict[str, Any]) -> dict[str, Any]:
+    """Rank comparable issuers; an incomparable request is refused with its reason."""
+    from ..open_data.columnar import IncomparableScreen, ScreenSpec
+
+    evidence = _columnar(context)
+    try:
+        spec = ScreenSpec(
+            concept=str(arguments["concept"]),
+            fiscal_year=arguments.get("fiscal_year"),
+            period=str(arguments.get("period", "auto")),
+            currency=arguments.get("currency"),
+            unit=arguments.get("unit"),
+            as_of=arguments.get("as_of"),
+        )
+        try:
+            report = evidence.screen_report(spec, minimum=arguments.get("minimum"),
+                                            limit=int(arguments.get("limit", 50)))
+        except IncomparableScreen as exc:
+            raise ToolError("incomparable_screen", str(exc), {"groups": exc.groups}) from exc
+    finally:
+        evidence.close()
+    return _bound({
+        "schema": f"{SCHEMA_PREFIX}.columnar_screen.v1",
+        "request": report["request"],
+        "comparable": report["comparable"],
+        "selected": report["selected"],
+        "ranked_total": report.get("ranked_total"),
+        "refused": report["refused"],
+        "excluded": report["excluded"],
+        "notes": report.get("notes") or [],
     })
 
 
@@ -562,6 +654,37 @@ TOOLS: dict[str, ToolSpec] = {
         "empty list: Atlas does not invent a security.",
         _object({"q": {"type": "string", "minLength": 1, "maxLength": 120}, "limit": _LIMIT}),
         search_companies,
+    ),
+    "search_columnar_companies": ToolSpec(
+        "search_columnar_companies", "Search the full-universe index",
+        "Find issuers in the configured columnar build (the full SEC company universe) by "
+        "name. This index answers without importing it into SQLite.",
+        _object({"q": {"type": "string", "minLength": 1, "maxLength": 120},
+                 "limit": {"type": "integer", "minimum": 1, "maximum": 50}}),
+        search_columnar_companies,
+    ),
+    "query_columnar_evidence": ToolSpec(
+        "query_columnar_evidence", "Query columnar evidence",
+        "Point-in-time facts for one issuer from the columnar index, with the same "
+        "availability and adjudication semantics as the evidence kernel: unknown or "
+        "modelled availability is excluded from a historical cut-off and counted.",
+        _object({"cik": {"type": "string", "minLength": 1, "maxLength": 20},
+                 "as_of": _AS_OF}, ["cik"]),
+        query_columnar_evidence,
+    ),
+    "screen_columnar": ToolSpec(
+        "screen_columnar", "Screen the full universe",
+        "Rank issuers on one concept and fiscal year. Mixed currencies, units, durations or "
+        "scopes are refused rather than ranked; every refusal is returned with its reason.",
+        _object({"concept": {"type": "string", "minLength": 1, "maxLength": 80},
+                 "fiscal_year": {"type": "integer", "minimum": 1990, "maximum": 2100},
+                 "period": {"type": "string", "enum": ["auto", "annual", "quarter", "instant"]},
+                 "currency": {"type": "string", "minLength": 3, "maxLength": 3},
+                 "unit": {"type": "string", "minLength": 1, "maxLength": 24},
+                 "as_of": _AS_OF, "minimum": {"type": "number"},
+                 "limit": {"type": "integer", "minimum": 1, "maximum": 200}},
+                ["concept"]),
+        screen_columnar,
     ),
     "get_company_financials": ToolSpec(
         "get_company_financials", "Get company financial statements",

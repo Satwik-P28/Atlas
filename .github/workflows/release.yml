@@ -27,6 +27,9 @@ permissions:
 
 jobs:
   publish:
+    # A dataset release is a GitHub release too. It carries Zstandard packages and an
+    # index, never a wheel, so it must not reach this workflow's PyPI step.
+    if: startsWith(github.event.release.tag_name, 'v')
     name: Verify release assets and upload to PyPI
     runs-on: ubuntu-latest
     environment:

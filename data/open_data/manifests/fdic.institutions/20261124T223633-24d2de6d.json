@@ -1,0 +1,430 @@
+{
+  "completed_at": "2026-11-24T22:36:49.758592Z",
+  "dataset_id": "fdic.institutions",
+  "exported_at": "2026-11-24T23:21:46.528623Z",
+  "files": [
+    {
+      "bytes": 2116340,
+      "content_type": "application/json",
+      "name": "page-00001.json",
+      "path": "page-00001.json",
+      "sha256": "6fa566a2703fb8e1687ded92c81d2482a1546b4c585662fdd253d84a79b7e3ea"
+    },
+    {
+      "bytes": 2114814,
+      "content_type": "application/json",
+      "name": "page-00002.json",
+      "path": "page-00002.json",
+      "sha256": "b3d76b01c95219234029d15002fc8db5d5798c59ac7c77ac81ec9406d9671843"
+    },
+    {
+      "bytes": 2111752,
+      "content_type": "application/json",
+      "name": "page-00003.json",
+      "path": "page-00003.json",
+      "sha256": "7844747498e785c7bd8a7f2dd02cbe9ac82a60b308dc217da88956ae2429ef0c"
+    },
+    {
+      "bytes": 2113703,
+      "content_type": "application/json",
+      "name": "page-00004.json",
+      "path": "page-00004.json",
+      "sha256": "3687f7048a27e8e7fc0e332a692d063a95bf4342f8c3eb798f3fa65c724511b1"
+    },
+    {
+      "bytes": 2120057,
+      "content_type": "application/json",
+      "name": "page-00005.json",
+      "path": "page-00005.json",
+      "sha256": "4b0877e607fd7895064a1850d20730addfff40bf95f044c4234b1f93f2dcb8e5"
+    },
+    {
+      "bytes": 2130746,
+      "content_type": "application/json",
+      "name": "page-00006.json",
+      "path": "page-00006.json",
+      "sha256": "17d89c9c84d6619a4559bc3b7c281eaca5e5ff4731d24b2f191e380d639ce807"
+    },
+    {
+      "bytes": 2134110,
+      "content_type": "application/json",
+      "name": "page-00007.json",
+      "path": "page-00007.json",
+      "sha256": "62c6f97cd1281fe280e7ab8979b29b1129be90439ea13bf2ace44f70433b719e"
+    },
+    {
+      "bytes": 2120036,
+      "content_type": "application/json",
+      "name": "page-00008.json",
+      "path": "page-00008.json",
+      "sha256": "ddb4e66a8f23dd1e27e8b8c3e050d804bf487b28e53aaaceb3374919010f6955"
+    },
+    {
+      "bytes": 2077690,
+      "content_type": "application/json",
+      "name": "page-00009.json",
+      "path": "page-00009.json",
+      "sha256": "b1759b02ab963d5a1d07debe767c431156ba98a6c890373fe913012dc41f7e10"
+    },
+    {
+      "bytes": 2127676,
+      "content_type": "application/json",
+      "name": "page-00010.json",
+      "path": "page-00010.json",
+      "sha256": "3ad7d7767719712b901ea5de9ba9335e24484e58d45840cd656b977f08aebc1d"
+    },
+    {
+      "bytes": 2199589,
+      "content_type": "application/json",
+      "name": "page-00011.json",
+      "path": "page-00011.json",
+      "sha256": "22e947680fc4f5f8b2f86c34bd20a805bf7578ed533d03ebccb8e65426da7146"
+    },
+    {
+      "bytes": 2241370,
+      "content_type": "application/json",
+      "name": "page-00012.json",
+      "path": "page-00012.json",
+      "sha256": "90867a7a435cc687e5ae8c3403b28328d98a5de46a8e934b6db90c94df448d1a"
+    },
+    {
+      "bytes": 2256194,
+      "content_type": "application/json",
+      "name": "page-00013.json",
+      "path": "page-00013.json",
+      "sha256": "962a4bab48ff5d756aaf0185af0d9536394d95d027abe1020ad0bae0c0a6f30c"
+    },
+    {
+      "bytes": 2256887,
+      "content_type": "application/json",
+      "name": "page-00014.json",
+      "path": "page-00014.json",
+      "sha256": "3525c6991cd68d62120aa8d808a3a45ccf302dfa540d2d6486c55df666033d87"
+    },
+    {
+      "bytes": 2114257,
+      "content_type": "application/json",
+      "name": "page-00015.json",
+      "path": "page-00015.json",
+      "sha256": "bc61a391a87965b39dbb8ec8cd9d31eb669314869d3940b0ec48a744afece46f"
+    },
+    {
+      "bytes": 2102491,
+      "content_type": "application/json",
+      "name": "page-00016.json",
+      "path": "page-00016.json",
+      "sha256": "9c9a3ba05fbbe2ff7caf2f78600f22cabaffbd455ab582341b8e6db57d2d6dca"
+    },
+    {
+      "bytes": 2096647,
+      "content_type": "application/json",
+      "name": "page-00017.json",
+      "path": "page-00017.json",
+      "sha256": "bcf1556d5ebbf38e5177e4774aee16fb03bdbd3eaea968370a82a4d2e7d284b1"
+    },
+    {
+      "bytes": 2023545,
+      "content_type": "application/json",
+      "name": "page-00018.json",
+      "path": "page-00018.json",
+      "sha256": "2f93f5f599061790792e881a1700262421713352f11e75ad053d45ccde747aea"
+    },
+    {
+      "bytes": 2132037,
+      "content_type": "application/json",
+      "name": "page-00019.json",
+      "path": "page-00019.json",
+      "sha256": "f6d053c415f93bcbd27b7192744fdfe7d7776286f7f70dd1a75aad3d03133cca"
+    },
+    {
+      "bytes": 2247968,
+      "content_type": "application/json",
+      "name": "page-00020.json",
+      "path": "page-00020.json",
+      "sha256": "8daf331ea98f9da47855624048589806aa8e0eef6dbe98f5c858df6089fe6cb9"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "FDIC",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:36:49.758412Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:36:06.787757Z"
+  },
+  "rights": {
+    "attribution_required": false,
+    "attribution_text": "",
+    "commercial_use": true,
+    "license_name": "U.S. federal government work - public domain",
+    "license_url": "https://www.fdic.gov/about/website-policies",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "public_domain",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223633-24d2de6d",
+  "source": {
+    "content_type": null,
+    "download_endpoint": "https://api.fdic.gov/banks/institutions",
+    "etag": null,
+    "final_url": "https://api.fdic.gov/banks/institutions",
+    "last_modified": null,
+    "official_source_url": "https://banks.data.fdic.gov/docs/"
+  },
+  "stats": {
+    "dataset_id": "fdic.institutions",
+    "decompressed_bytes": 0,
+    "entity_count": 20000,
+    "file_count": 20,
+    "implausible_observation_dates": 2606,
+    "issues": [
+      {
+        "code": "implausible_observation_dates",
+        "detail": "2606 provider rows carry dates outside 1900-01-01..today+2y; they remain in the raw snapshot but are excluded from the advertised coverage range",
+        "severity": "warning"
+      }
+    ],
+    "obs_end": "2026-11-01",
+    "obs_start": "1970-01-02",
+    "publications_with_dates": 0,
+    "record_count": 20000,
+    "series_count": 0,
+    "transfer": {
+      "bytes_downloaded": 42837909,
+      "elapsed_seconds": 14.367,
+      "final_url": "https://api.fdic.gov/banks/institutions",
+      "pages": 20,
+      "status": 206
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 2116340,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        },
+        {
+          "bytes": 2114814,
+          "detected_format": "json",
+          "file": "page-00002.json"
+        },
+        {
+          "bytes": 2111752,
+          "detected_format": "json",
+          "file": "page-00003.json"
+        },
+        {
+          "bytes": 2113703,
+          "detected_format": "json",
+          "file": "page-00004.json"
+        },
+        {
+          "bytes": 2120057,
+          "detected_format": "json",
+          "file": "page-00005.json"
+        },
+        {
+          "bytes": 2130746,
+          "detected_format": "json",
+          "file": "page-00006.json"
+        },
+        {
+          "bytes": 2134110,
+          "detected_format": "json",
+          "file": "page-00007.json"
+        },
+        {
+          "bytes": 2120036,
+          "detected_format": "json",
+          "file": "page-00008.json"
+        },
+        {
+          "bytes": 2077690,
+          "detected_format": "json",
+          "file": "page-00009.json"
+        },
+        {
+          "bytes": 2127676,
+          "detected_format": "json",
+          "file": "page-00010.json"
+        },
+        {
+          "bytes": 2199589,
+          "detected_format": "json",
+          "file": "page-00011.json"
+        },
+        {
+          "bytes": 2241370,
+          "detected_format": "json",
+          "file": "page-00012.json"
+        },
+        {
+          "bytes": 2256194,
+          "detected_format": "json",
+          "file": "page-00013.json"
+        },
+        {
+          "bytes": 2256887,
+          "detected_format": "json",
+          "file": "page-00014.json"
+        },
+        {
+          "bytes": 2114257,
+          "detected_format": "json",
+          "file": "page-00015.json"
+        },
+        {
+          "bytes": 2102491,
+          "detected_format": "json",
+          "file": "page-00016.json"
+        },
+        {
+          "bytes": 2096647,
+          "detected_format": "json",
+          "file": "page-00017.json"
+        },
+        {
+          "bytes": 2023545,
+          "detected_format": "json",
+          "file": "page-00018.json"
+        },
+        {
+          "bytes": 2132037,
+          "detected_format": "json",
+          "file": "page-00019.json"
+        },
+        {
+          "bytes": 2247968,
+          "detected_format": "json",
+          "file": "page-00020.json"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "FDIC BankFind institutions",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 2116340,
+          "detected_format": "json",
+          "file": "page-00001.json"
+        },
+        {
+          "bytes": 2114814,
+          "detected_format": "json",
+          "file": "page-00002.json"
+        },
+        {
+          "bytes": 2111752,
+          "detected_format": "json",
+          "file": "page-00003.json"
+        },
+        {
+          "bytes": 2113703,
+          "detected_format": "json",
+          "file": "page-00004.json"
+        },
+        {
+          "bytes": 2120057,
+          "detected_format": "json",
+          "file": "page-00005.json"
+        },
+        {
+          "bytes": 2130746,
+          "detected_format": "json",
+          "file": "page-00006.json"
+        },
+        {
+          "bytes": 2134110,
+          "detected_format": "json",
+          "file": "page-00007.json"
+        },
+        {
+          "bytes": 2120036,
+          "detected_format": "json",
+          "file": "page-00008.json"
+        },
+        {
+          "bytes": 2077690,
+          "detected_format": "json",
+          "file": "page-00009.json"
+        },
+        {
+          "bytes": 2127676,
+          "detected_format": "json",
+          "file": "page-00010.json"
+        },
+        {
+          "bytes": 2199589,
+          "detected_format": "json",
+          "file": "page-00011.json"
+        },
+        {
+          "bytes": 2241370,
+          "detected_format": "json",
+          "file": "page-00012.json"
+        },
+        {
+          "bytes": 2256194,
+          "detected_format": "json",
+          "file": "page-00013.json"
+        },
+        {
+          "bytes": 2256887,
+          "detected_format": "json",
+          "file": "page-00014.json"
+        },
+        {
+          "bytes": 2114257,
+          "detected_format": "json",
+          "file": "page-00015.json"
+        },
+        {
+          "bytes": 2102491,
+          "detected_format": "json",
+          "file": "page-00016.json"
+        },
+        {
+          "bytes": 2096647,
+          "detected_format": "json",
+          "file": "page-00017.json"
+        },
+        {
+          "bytes": 2023545,
+          "detected_format": "json",
+          "file": "page-00018.json"
+        },
+        {
+          "bytes": 2132037,
+          "detected_format": "json",
+          "file": "page-00019.json"
+        },
+        {
+          "bytes": 2247968,
+          "detected_format": "json",
+          "file": "page-00020.json"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [
+      {
+        "code": "implausible_observation_dates",
+        "detail": "2606 provider rows carry dates outside 1900-01-01..today+2y; they remain in the raw snapshot but are excluded from the advertised coverage range",
+        "severity": "warning"
+      }
+    ],
+    "status": "valid"
+  }
+}

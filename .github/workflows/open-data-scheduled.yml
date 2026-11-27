@@ -1,0 +1,56 @@
+name: Open data scheduled incremental
+
+on:
+  schedule:
+    # Weekly, Monday 05:00 UTC. Small, high-value datasets only; no bulk archives.
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: open-data-scheduled
+  cancel-in-progress: false
+
+env:
+  ATLAS_OPEN_DATA_ROOT: /tmp/atlas_open_data
+  ATLAS_OPEN_DATA_DB: /tmp/atlas_open_data/index.db
+
+jobs:
+  incremental:
+    name: Incremental acquisition (small redistributable datasets)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e '.[dev,columnar]' zstandard duckdb
+      - name: Rights gate
+        run: python scripts/audit_open_data.py --strict
+      - name: Incremental acquisition
+        run: |
+          set -o pipefail
+          python -m atlas.cli data sync \
+            treasury.nominal_yields treasury.bill_rates treasury.long_term_rates \
+            treasury.real_yields treasury.real_long_term_rates treasury.debt_to_penny \
+            sec.company_tickers gdelt.events \
+            --automated --max-bytes 50000000 | tee /tmp/scheduled.json
+      - name: Verify and summarise
+        if: always()
+        run: |
+          python -m atlas.cli data verify
+          python -m atlas.cli data status --json > artifacts/open_data_scheduled_status.json || true
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: open-data-scheduled
+          path: |
+            /tmp/scheduled.json
+            artifacts/open_data_scheduled_status.json
+          if-no-files-found: warn
+          retention-days: 14

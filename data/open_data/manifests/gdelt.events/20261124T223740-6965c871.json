@@ -1,0 +1,103 @@
+{
+  "completed_at": "2026-11-24T22:37:40.552210Z",
+  "dataset_id": "gdelt.events",
+  "exported_at": "2026-11-24T23:21:46.529274Z",
+  "files": [
+    {
+      "bytes": 320,
+      "content_type": "application/octet-stream",
+      "name": "gdelt_lastupdate.txt",
+      "path": "gdelt_lastupdate.txt",
+      "sha256": "2534eb3e1ed84b6a4758e195ff8b711ffdf5110fdef507a616ea0fcca63ef800"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "GDELT",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:37:40.552094Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:37:40.552078Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "The GDELT Project (gdeltproject.org)",
+    "commercial_use": true,
+    "license_name": "GDELT terms of use",
+    "license_url": "https://gdeltproject.org/about.html",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "redistributable_conditions",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": []
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223740-6965c871",
+  "source": {
+    "content_type": "text/plain",
+    "download_endpoint": "https://data.gdeltproject.org/gdeltv2/lastupdate.txt",
+    "etag": "\"5492349ca0ece31be94838fa09564696\"",
+    "final_url": "https://data.gdeltproject.org/gdeltv2/lastupdate.txt",
+    "last_modified": "Tue, 24 Nov 2026 22:35:10 GMT",
+    "official_source_url": "https://www.gdeltproject.org/data.html"
+  },
+  "stats": {
+    "dataset_id": "gdelt.events",
+    "decompressed_bytes": 0,
+    "entity_count": 0,
+    "file_count": 0,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 0,
+    "series_count": 0,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 320,
+      "content_length": 320,
+      "content_type": "text/plain",
+      "elapsed_seconds": 0.107,
+      "etag": "\"5492349ca0ece31be94838fa09564696\"",
+      "final_url": "https://data.gdeltproject.org/gdeltv2/lastupdate.txt",
+      "last_modified": "Tue, 24 Nov 2026 22:35:10 GMT",
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "2534eb3e1ed84b6a4758e195ff8b711ffdf5110fdef507a616ea0fcca63ef800",
+      "status": 200,
+      "url": "https://data.gdeltproject.org/gdeltv2/lastupdate.txt"
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 320,
+          "detected_format": "unknown",
+          "file": "gdelt_lastupdate.txt"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "GDELT 2.0 event stream",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 320,
+          "detected_format": "unknown",
+          "file": "gdelt_lastupdate.txt"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}

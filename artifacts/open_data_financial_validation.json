@@ -1,0 +1,6929 @@
+{
+  "concept_comparisons": {
+    "absent_both": 340,
+    "atlas_only": 2,
+    "match": 490,
+    "mismatch": 0,
+    "source_only": 8,
+    "tag_variant": 0
+  },
+  "generated_at": "2026-11-26T19:58:47Z",
+  "historical_cutoff": {
+    "passed": 74,
+    "tested": 74
+  },
+  "issuers": 120,
+  "limitations": [
+    "The corpus is sampled across the archive, not the benchmark's first N members.",
+    "Issuers whose facts lack the priority tags are compared only where both sides report the concept; source_only and atlas_only are recorded, not counted as matches.",
+    "Extraction agreement is not a valuation-accuracy test."
+  ],
+  "ratio_comparisons": {
+    "checked": 255,
+    "mismatches": 0
+  },
+  "results": [
+    {
+      "cik": "0000022252",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "632000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "237000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "472000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "395000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "845000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "0"
+        }
+      },
+      "cutoff": {
+        "after_count": 42,
+        "availability": "2017-05-01T23:59:59Z",
+        "before_count": 41,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "COMARCO INC",
+      "period_end": "2017-01-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.625,
+          "net_margin": null,
+          "return_on_equity": 3.5654008438818567
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.625,
+          "net_margin": null,
+          "return_on_equity": 3.5654008438818567
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000082020",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "681044000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "190329000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "630760000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "182398000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "50284000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "134275000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "372727000"
+        }
+      },
+      "cutoff": {
+        "after_count": 265,
+        "availability": "2026-02-26T23:59:59Z",
+        "before_count": 262,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "UNITED STATES LIME & MINERALS INC",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.48936084587378964,
+          "liabilities_to_assets": 0.0738337023745896,
+          "net_margin": 0.36025026359775386,
+          "return_on_equity": 0.21287811528949205
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.48936084587378964,
+          "liabilities_to_assets": 0.0738337023745896,
+          "net_margin": 0.36025026359775386,
+          "return_on_equity": 0.21287811528949205
+        }
+      },
+      "strata": [
+        "retail",
+        "energy",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000316888",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-31461000"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "Avino Silver & Gold Mines Ltd.",
+      "period_end": "2019-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000037634",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "89993000000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "24341000000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "NEXTERA ENERGY, INC.",
+      "period_end": "2016-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "retail",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000006292",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "24719000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "82047000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "19148000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "23743000"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "105790000"
+        }
+      },
+      "cutoff": {
+        "after_count": 24,
+        "availability": "2013-02-21T23:59:59Z",
+        "before_count": 21,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "ANALYSTS INTERNATIONAL CORP",
+      "period_end": "2012-12-29",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.22443520181491636,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.22443520181491636,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial"
+      ]
+    },
+    {
+      "cik": "0000200245",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "2657202000000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "212291000000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "2443380000000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "14306000000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "85225000000"
+        }
+      },
+      "cutoff": {
+        "after_count": 366,
+        "availability": "2026-02-20T23:59:59Z",
+        "before_count": 363,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "Citigroup Inc",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.9195311459196553,
+          "net_margin": 0.16786154297447933,
+          "return_on_equity": 0.06738863164241536
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.9195311459196553,
+          "net_margin": 0.16786154297447933,
+          "return_on_equity": 0.06738863164241536
+        }
+      },
+      "strata": [
+        "bank",
+        "insurer",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000080019",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "ALLIANZ LIFE INSURANCE COMPANY OF NEW YORK",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000004187",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "22480000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "11014000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "4061000"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-349000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "61023000"
+        }
+      },
+      "cutoff": {
+        "after_count": 125,
+        "availability": "2019-03-13T23:59:59Z",
+        "before_count": 123,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "INDUSTRIAL SERVICES OF AMERICA INC",
+      "period_end": "2018-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.06654867836717303,
+          "liabilities_to_assets": null,
+          "net_margin": -0.005719155072677515,
+          "return_on_equity": -0.03168694388959506
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.06654867836717303,
+          "liabilities_to_assets": null,
+          "net_margin": -0.005719155072677515,
+          "return_on_equity": -0.03168694388959506
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000001750",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "3355900000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "2686000000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "1703800000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "622000000"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "187700000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "3308000000"
+        }
+      },
+      "cutoff": {
+        "after_count": 280,
+        "availability": "2026-07-22T23:59:59Z",
+        "before_count": 277,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "AAR CORP",
+      "period_end": "2026-05-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.18802902055622733,
+          "liabilities_to_assets": null,
+          "net_margin": 0.05674123337363966,
+          "return_on_equity": 0.11016551238408263
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.18802902055622733,
+          "liabilities_to_assets": null,
+          "net_margin": 0.05674123337363966,
+          "return_on_equity": 0.11016551238408263
+        }
+      },
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000008670",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "63193300000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "11760200000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "6031200000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "57162100000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "4413500000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "21947400000"
+        }
+      },
+      "cutoff": {
+        "after_count": 306,
+        "availability": "2026-08-05T23:59:59Z",
+        "before_count": 303,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "AUTOMATIC DATA PROCESSING, INC.",
+      "period_end": "2026-06-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.9045595023523063,
+          "net_margin": 0.2010944348761129,
+          "return_on_equity": 0.73177808727948
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.9045595023523063,
+          "net_margin": 0.2010944348761129,
+          "return_on_equity": 0.73177808727948
+        }
+      },
+      "strata": [
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000034067",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "635831000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "474587000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "242050000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "135253000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "206701000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-13452000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "609840000"
+        }
+      },
+      "cutoff": {
+        "after_count": 268,
+        "availability": "2026-02-23T23:59:59Z",
+        "before_count": 265,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "DMC GLOBAL INC.",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.22178440246622064,
+          "liabilities_to_assets": 0.3250879557618298,
+          "net_margin": -0.022058244785517513,
+          "return_on_equity": -0.05557529436066928
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.22178440246622064,
+          "liabilities_to_assets": 0.3250879557618298,
+          "net_margin": -0.022058244785517513,
+          "return_on_equity": -0.05557529436066928
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000700815",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "69763"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-970120"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "1039883"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-977253"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "0"
+        }
+      },
+      "cutoff": {
+        "after_count": 23,
+        "availability": "2013-04-26T23:59:59Z",
+        "before_count": 20,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "ADINO ENERGY CORP",
+      "period_end": "2012-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 14.905938678095838,
+          "net_margin": null,
+          "return_on_equity": 1.0073526986352204
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 14.905938678095838,
+          "net_margin": null,
+          "return_on_equity": 1.0073526986352204
+        }
+      },
+      "strata": [
+        "retail",
+        "energy",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000909327",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "Suzano S.A.",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000052428",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "2940085000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "114672000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "2825413000"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "AMERIPRISE CERTIFICATE CO",
+      "period_end": "2011-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.960997046003772,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.960997046003772,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "bank",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000107815",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "19696400000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "1498800000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "6779600000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "4493600000"
+        }
+      },
+      "cutoff": {
+        "after_count": 215,
+        "availability": "2026-02-20T23:59:59Z",
+        "before_count": 212,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "WISCONSIN ELECTRIC POWER COMPANY",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial"
+      ]
+    },
+    {
+      "cik": "0000773660",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "1258117000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "269927000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "988190000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-6934000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "568277000"
+        }
+      },
+      "cutoff": {
+        "after_count": 32,
+        "availability": "2013-03-19T23:59:59Z",
+        "before_count": 21,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "HEALTHMARKETS, INC.",
+      "period_end": "2012-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.7854515915451424,
+          "net_margin": -0.012201795955141594,
+          "return_on_equity": -0.025688426870968818
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.7854515915451424,
+          "net_margin": -0.012201795955141594,
+          "return_on_equity": -0.025688426870968818
+        }
+      },
+      "strata": [
+        "bank",
+        "insurer",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000793040",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "ELLSWORTH GROWTH AND INCOME FUND LTD.",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000015847",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "141842000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "81978000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "59864000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "21933000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "97967000"
+        }
+      },
+      "cutoff": {
+        "after_count": 232,
+        "availability": "2026-07-08T23:59:59Z",
+        "before_count": 230,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "BUTLER NATIONAL CORP",
+      "period_end": "2026-04-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.42204706645422374,
+          "net_margin": 0.2238815111210918,
+          "return_on_equity": 0.2675473907633755
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.42204706645422374,
+          "net_margin": 0.2238815111210918,
+          "return_on_equity": 0.2675473907633755
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000012208",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "10576500000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "1243300000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "7453600000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "1339900000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "3122900000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "759900000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "2583200000"
+        }
+      },
+      "cutoff": {
+        "after_count": 310,
+        "availability": "2026-02-13T23:59:59Z",
+        "before_count": 307,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "BIO-RAD LABORATORIES, INC.",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.5186977392381542,
+          "liabilities_to_assets": 0.2952678107124285,
+          "net_margin": 0.29417002167853823,
+          "return_on_equity": 0.10195073521519803
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.5186977392381542,
+          "liabilities_to_assets": 0.2952678107124285,
+          "net_margin": 0.29417002167853823,
+          "return_on_equity": 0.10195073521519803
+        }
+      },
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000018926",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "34342000000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "6638000000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-1117000000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-1739000000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "11331000000"
+        }
+      },
+      "cutoff": {
+        "after_count": 278,
+        "availability": "2026-02-20T23:59:59Z",
+        "before_count": 275,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "LUMEN TECHNOLOGIES,\u00a0INC.",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": -0.1534727738063719,
+          "return_on_equity": 1.5568487018800359
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": -0.1534727738063719,
+          "return_on_equity": 1.5568487018800359
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000040194",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "GATEWAY ENERGY CORP/NE",
+      "period_end": "2013-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "bank",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000867038",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "27451000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "14328000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "13123000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-1882000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "4442000"
+        }
+      },
+      "cutoff": {
+        "after_count": 267,
+        "availability": "2026-04-15T23:59:59Z",
+        "before_count": 264,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "SPINDLETOP OIL & GAS CO.",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.47805180139157044,
+          "net_margin": -0.42368302566411525,
+          "return_on_equity": -0.13135120044667783
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.47805180139157044,
+          "net_margin": -0.42368302566411525,
+          "return_on_equity": -0.13135120044667783
+        }
+      },
+      "strata": [
+        "energy",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000913290",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "4117098000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "1653014000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "2464556000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-11148000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "640327000"
+        }
+      },
+      "cutoff": {
+        "after_count": 62,
+        "availability": "2022-03-17T23:59:59Z",
+        "before_count": 59,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "Frontline plc",
+      "period_end": "2021-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.5986148495858005,
+          "net_margin": -0.017409854652388545,
+          "return_on_equity": -0.006744044515049479
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.5986148495858005,
+          "net_margin": -0.017409854652388545,
+          "return_on_equity": -0.006744044515049479
+        }
+      },
+      "strata": [
+        "retail",
+        "foreign_issuer",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000216934",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "CIK 0000216934",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000311670",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "CIK 0000311670",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000885550",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "8631700000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "1523600000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "7108100000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "423.9"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "2317200000"
+        }
+      },
+      "cutoff": {
+        "after_count": 265,
+        "availability": "2026-02-13T23:59:59Z",
+        "before_count": 262,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "CREDIT ACCEPTANCE CORP",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.8234878413290545,
+          "net_margin": 1.8293630243397204e-07,
+          "return_on_equity": 2.782226306117091e-07
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.8234878413290545,
+          "net_margin": 1.8293630243397204e-07,
+          "return_on_equity": 2.782226306117091e-07
+        }
+      },
+      "strata": [
+        "bank",
+        "insurer",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000811779",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "126223"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-144276"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "1643397"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-380071"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "49318"
+        }
+      },
+      "cutoff": {
+        "after_count": 42,
+        "availability": "2015-03-02T23:59:59Z",
+        "before_count": 40,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "MultiCell Technologies, Inc.",
+      "period_end": "2014-11-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 13.019790371010037,
+          "net_margin": -7.706537166957298,
+          "return_on_equity": 2.6343328065651943
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 13.019790371010037,
+          "net_margin": -7.706537166957298,
+          "return_on_equity": 2.6343328065651943
+        }
+      },
+      "strata": [
+        "technology",
+        "non_december_fiscal_year"
+      ]
+    },
+    {
+      "cik": "0000028561",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "3932219"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "4023278"
+        },
+        "equity": {
+          "status": "match",
+          "value": "2106252"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "1822770"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "1825967"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "116119"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "5846048"
+        }
+      },
+      "cutoff": {
+        "after_count": 60,
+        "availability": "2016-10-05T23:59:59Z",
+        "before_count": 58,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "DEWEY ELECTRONICS CORP",
+      "period_end": "2016-06-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.31179525039821776,
+          "liabilities_to_assets": 0.4643604539828529,
+          "net_margin": 0.019862820147901625,
+          "return_on_equity": 0.05513063014302182
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.31179525039821776,
+          "liabilities_to_assets": 0.4643604539828529,
+          "net_margin": 0.019862820147901625,
+          "return_on_equity": 0.05513063014302182
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000025445",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "3116400000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "952900000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "1253000000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "1859600000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "145100000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "1656700000"
+        }
+      },
+      "cutoff": {
+        "after_count": 286,
+        "availability": "2026-02-26T23:59:59Z",
+        "before_count": 283,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "CRANE NXT, CO.",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.5967141573610576,
+          "net_margin": 0.08758375082996318,
+          "return_on_equity": 0.11580207501995211
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.5967141573610576,
+          "net_margin": 0.08758375082996318,
+          "return_on_equity": 0.11580207501995211
+        }
+      },
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000031107",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "216676616"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "192011802"
+        },
+        "equity": {
+          "status": "match",
+          "value": "124645329"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "56958543"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "92031287"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "7132785"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "248970345"
+        }
+      },
+      "cutoff": {
+        "after_count": 240,
+        "availability": "2026-03-19T23:59:59Z",
+        "before_count": 238,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "THE EASTERN COMPANY",
+      "period_end": "2026-01-03",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.22877641511883676,
+          "liabilities_to_assets": 0.424740282080093,
+          "net_margin": 0.028649134899981762,
+          "return_on_equity": 0.05722464738329665
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.22877641511883676,
+          "liabilities_to_assets": 0.424740282080093,
+          "net_margin": 0.028649134899981762,
+          "return_on_equity": 0.05722464738329665
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000048898",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "8228800000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "3780500000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "3847900000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "2064100000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "4370900000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "887100000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "5844600000"
+        }
+      },
+      "cutoff": {
+        "after_count": 302,
+        "availability": "2026-02-12T23:59:59Z",
+        "before_count": 291,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "HUBBELL INC",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.35316360401053964,
+          "liabilities_to_assets": 0.531171009138635,
+          "net_margin": 0.15178113130068782,
+          "return_on_equity": 0.23054133423425766
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.35316360401053964,
+          "liabilities_to_assets": 0.531171009138635,
+          "net_margin": 0.15178113130068782,
+          "return_on_equity": 0.23054133423425766
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000869495",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "22768964"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "22003291"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "765673"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-103302"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "DEEP WELL OIL & GAS INC",
+      "period_end": "2020-09-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.03362792439743855,
+          "net_margin": null,
+          "return_on_equity": -0.0046948431486908025
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.03362792439743855,
+          "net_margin": null,
+          "return_on_equity": -0.0046948431486908025
+        }
+      },
+      "strata": [
+        "bank",
+        "energy"
+      ]
+    },
+    {
+      "cik": "0001012139",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "GUANGSHEN RAILWAY COMPANY LIMITED",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000277375",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "189956927"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "76494995"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "113461932"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "5516343"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "Delta Natural Gas Co Inc",
+      "period_end": "2017-06-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.5973034718549642,
+          "net_margin": null,
+          "return_on_equity": 0.07211377685559689
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.5973034718549642,
+          "net_margin": null,
+          "return_on_equity": 0.07211377685559689
+        }
+      },
+      "strata": [
+        "bank",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000356472",
+      "comparisons": {
+        "assets": {
+          "source": "16436000",
+          "status": "source_only"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "source": "52501000",
+          "status": "source_only"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "CENTURY PROPERTIES FUND XVII",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 3.1942686785105865,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0001091748",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "8879600000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "1603500000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "7276100000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-148100000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "378700000"
+        }
+      },
+      "cutoff": {
+        "after_count": 277,
+        "availability": "2025-05-08T23:59:59Z",
+        "before_count": 274,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "ARGO GROUP INTERNATIONAL HOLDINGS, INC.",
+      "period_end": "2024-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.8194175413306906,
+          "net_margin": -0.3910747293372062,
+          "return_on_equity": -0.09236046149048956
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.8194175413306906,
+          "net_margin": -0.3910747293372062,
+          "return_on_equity": -0.09236046149048956
+        }
+      },
+      "strata": [
+        "insurer",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000878079",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "1505063000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "1677726000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-22781000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "1527844000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-63419000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "2674351000"
+        }
+      },
+      "cutoff": {
+        "after_count": 116,
+        "availability": "2017-04-12T23:59:59Z",
+        "before_count": 105,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "BON TON STORES INC",
+      "period_end": "2017-01-28",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 1.0151362434662203,
+          "net_margin": -0.023713790747736555,
+          "return_on_equity": 2.783854966858347
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 1.0151362434662203,
+          "net_margin": -0.023713790747736555,
+          "return_on_equity": 2.783854966858347
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "non_december_fiscal_year"
+      ]
+    },
+    {
+      "cik": "0000056047",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "6008045000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "3380512000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "354569000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "3364050000"
+        }
+      },
+      "cutoff": {
+        "after_count": 288,
+        "availability": "2026-02-17T23:59:59Z",
+        "before_count": 285,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "KIRBY CORPORATION",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": 0.10539944412241198,
+          "return_on_equity": 0.10488618292140363
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": 0.10539944412241198,
+          "return_on_equity": 0.10488618292140363
+        }
+      },
+      "strata": [
+        "retail",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000043920",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "5657700000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "3400000000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "2870100000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "976800000"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "258500000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "4376800000"
+        }
+      },
+      "cutoff": {
+        "after_count": 305,
+        "availability": "2026-11-18T23:59:59Z",
+        "before_count": 302,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "GREIF, INC.",
+      "period_end": "2026-09-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.22317675013708646,
+          "liabilities_to_assets": null,
+          "net_margin": 0.059061414732224454,
+          "return_on_equity": 0.09006654820389534
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.22317675013708646,
+          "liabilities_to_assets": null,
+          "net_margin": 0.059061414732224454,
+          "return_on_equity": 0.09006654820389534
+        }
+      },
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000060667",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "54144000000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "57401000000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-9917000000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "28885000000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "64061000000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "6654000000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "86286000000"
+        }
+      },
+      "cutoff": {
+        "after_count": 222,
+        "availability": "2026-03-23T23:59:59Z",
+        "before_count": 219,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "LOWE\u2019S COMPANIES,\u00a0INC.",
+      "period_end": "2026-01-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.334758825301903,
+          "liabilities_to_assets": 1.1831597222222223,
+          "net_margin": 0.0771156386899381,
+          "return_on_equity": -0.6709690430573763
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.334758825301903,
+          "liabilities_to_assets": 1.1831597222222223,
+          "net_margin": 0.0771156386899381,
+          "return_on_equity": -0.6709690430573763
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000065011",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "5565800000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "652100000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "4913700000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "306600000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "2977400000"
+        }
+      },
+      "cutoff": {
+        "after_count": 234,
+        "availability": "2021-09-10T23:59:59Z",
+        "before_count": 231,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "Hawkeye Acquisition, Inc.",
+      "period_end": "2021-06-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.8828380466419922,
+          "net_margin": 0.10297575065493383,
+          "return_on_equity": 0.4701732863057813
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.8828380466419922,
+          "net_margin": 0.10297575065493383,
+          "return_on_equity": 0.4701732863057813
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000919721",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "93312907"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-36997770"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "130310677"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-19629467"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "TRANS ENERGY INC",
+      "period_end": "2015-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 1.3964914521417706,
+          "net_margin": null,
+          "return_on_equity": 0.5305581120159404
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 1.3964914521417706,
+          "net_margin": null,
+          "return_on_equity": 0.5305581120159404
+        }
+      },
+      "strata": [
+        "energy",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0001020825",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "MINCO GOLD CORP",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000350852",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "6684138000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "856072000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "5828066000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "98058000"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "COMMUNITY TRUST BANCORP, INC.",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.8719248465546343,
+          "net_margin": null,
+          "return_on_equity": 0.11454410376697287
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.8719248465546343,
+          "net_margin": null,
+          "return_on_equity": 0.11454410376697287
+        }
+      },
+      "strata": [
+        "bank",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000732834",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "24522162000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "13943952000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "2078441000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "6983581000"
+        }
+      },
+      "cutoff": {
+        "after_count": 286,
+        "availability": "2026-02-23T23:59:59Z",
+        "before_count": 283,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "CONTINENTAL RESOURCES, INC.",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": 0.29761822766858437,
+          "return_on_equity": 0.14905680971936794
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": 0.29761822766858437,
+          "return_on_equity": 0.14905680971936794
+        }
+      },
+      "strata": [
+        "industrial",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001141719",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "10677078000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "2839722000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "7837356000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "143806000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "1658466000"
+        }
+      },
+      "cutoff": {
+        "after_count": 53,
+        "availability": "2013-02-28T23:59:59Z",
+        "before_count": 42,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "ALTERRA CAPITAL HOLDINGS LTD",
+      "period_end": "2012-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.7340356603183006,
+          "net_margin": 0.08671024910971946,
+          "return_on_equity": 0.050640872592457996
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.7340356603183006,
+          "net_margin": 0.08671024910971946,
+          "return_on_equity": 0.050640872592457996
+        }
+      },
+      "strata": [
+        "insurer"
+      ]
+    },
+    {
+      "cik": "0000890908",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "36080265"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "18758852"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "17257374"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-3838375"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "DYNACQ HEALTHCARE INC",
+      "period_end": "2015-08-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.478305078967685,
+          "net_margin": null,
+          "return_on_equity": -0.2046167324098511
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.478305078967685,
+          "net_margin": null,
+          "return_on_equity": -0.2046167324098511
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "restated",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000073756",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "2667254000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "2215714000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "1070600000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "568442000"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "353761000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "2643062000"
+        }
+      },
+      "cutoff": {
+        "after_count": 236,
+        "availability": "2026-02-20T23:59:59Z",
+        "before_count": 233,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "OCEANEERING INTERNATIONAL INC",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.21506949137023648,
+          "liabilities_to_assets": null,
+          "net_margin": 0.13384513870654566,
+          "return_on_equity": 0.3304324677750794
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.21506949137023648,
+          "liabilities_to_assets": null,
+          "net_margin": 0.13384513870654566,
+          "return_on_equity": 0.3304324677750794
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000067517",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "174105862"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "106770282"
+        },
+        "equity": {
+          "status": "match",
+          "value": "114432381"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "20671317"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "5442711"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "127441599"
+        }
+      },
+      "cutoff": {
+        "after_count": 49,
+        "availability": "2014-03-14T23:59:59Z",
+        "before_count": 38,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "MONARCH CEMENT CO",
+      "period_end": "2013-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.16220227274455337,
+          "liabilities_to_assets": null,
+          "net_margin": 0.04270749145261431,
+          "return_on_equity": 0.047562682454365776
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.16220227274455337,
+          "liabilities_to_assets": null,
+          "net_margin": 0.04270749145261431,
+          "return_on_equity": 0.047562682454365776
+        }
+      },
+      "strata": [
+        "retail"
+      ]
+    },
+    {
+      "cik": "0000071691",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "2997090000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "2041363000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "343981000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "2824918000"
+        }
+      },
+      "cutoff": {
+        "after_count": 292,
+        "availability": "2026-02-27T23:59:59Z",
+        "before_count": 289,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "THE NEW YORK TIMES COMPANY",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": 0.1217667203083417,
+          "return_on_equity": 0.16850555241767387
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": 0.1217667203083417,
+          "return_on_equity": 0.16850555241767387
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000087565",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "SCHULMAN A INC",
+      "period_end": "2018-08-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0001016708",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "3652134"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "2346889"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "1305245"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-4471723"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "RENOVACARE, INC.",
+      "period_end": "2021-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.3573924176933267,
+          "net_margin": null,
+          "return_on_equity": -1.9053832541717994
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.3573924176933267,
+          "net_margin": null,
+          "return_on_equity": -1.9053832541717994
+        }
+      },
+      "strata": [
+        "bank",
+        "energy",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001047716",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "LATAM Airlines Group S.A.",
+      "period_end": "2022-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000706863",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "1617191000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "80864000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "1536327000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "11100000"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "UNION BANKSHARES, INC.",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.9499972483151341,
+          "net_margin": null,
+          "return_on_equity": 0.13726751088246933
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.9499972483151341,
+          "net_margin": null,
+          "return_on_equity": 0.13726751088246933
+        }
+      },
+      "strata": [
+        "bank",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000750304",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "1000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "895000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-158000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "0"
+        }
+      },
+      "cutoff": {
+        "after_count": 6,
+        "availability": "2012-03-29T23:59:59Z",
+        "before_count": 4,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "HOUSING PROGRAMS LTD",
+      "period_end": "2011-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 895.0,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 895.0,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001163348",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "13179000000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "3551800000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "9627200000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "255300000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "2576400000"
+        }
+      },
+      "cutoff": {
+        "after_count": 139,
+        "availability": "2017-02-28T23:59:59Z",
+        "before_count": 128,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "Allied World Assurance Co Holdings, AG",
+      "period_end": "2016-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.7304954852416724,
+          "net_margin": 0.09909175593851886,
+          "return_on_equity": 0.0718790472436511
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.7304954852416724,
+          "net_margin": 0.09909175593851886,
+          "return_on_equity": 0.0718790472436511
+        }
+      },
+      "strata": [
+        "insurer",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0001051771",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "2654491000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "2770201000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "1361746000"
+        },
+        "gross_profit": {
+          "atlas": "468090000",
+          "status": "atlas_only"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "1292745000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "146062000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "4109561000"
+        }
+      },
+      "cutoff": {
+        "after_count": 74,
+        "availability": "2015-04-14T23:59:59Z",
+        "before_count": 63,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "BELK INC",
+      "period_end": "2015-01-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.11390267719593407,
+          "liabilities_to_assets": 0.48700296968420687,
+          "net_margin": 0.035541995848218336,
+          "return_on_equity": 0.10726082544028034
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.48700296968420687,
+          "net_margin": 0.035541995848218336,
+          "return_on_equity": 0.10726082544028034
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "non_december_fiscal_year"
+      ]
+    },
+    {
+      "cik": "0000093556",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "21243700000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "10542100000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "9054600000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "401900000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "15130400000"
+        }
+      },
+      "cutoff": {
+        "after_count": 326,
+        "availability": "2026-02-24T23:59:59Z",
+        "before_count": 323,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "STANLEY BLACK & DECKER, INC.",
+      "period_end": "2026-01-03",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": 0.026562417384867552,
+          "return_on_equity": 0.04438627879751728
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": 0.026562417384867552,
+          "return_on_equity": 0.04438627879751728
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000076334",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "30877000000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "13397000000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "15404000000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "15464000000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "3649000000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "21499000000"
+        }
+      },
+      "cutoff": {
+        "after_count": 309,
+        "availability": "2026-08-21T23:59:59Z",
+        "before_count": 306,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "PARKER-HANNIFIN CORPORATION",
+      "period_end": "2026-06-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.5008258574343363,
+          "net_margin": 0.16972882459649286,
+          "return_on_equity": 0.23688652298104387
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.5008258574343363,
+          "net_margin": 0.16972882459649286,
+          "return_on_equity": 0.23688652298104387
+        }
+      },
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000091388",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "12177000000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "13442000000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "6801000000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "2089000000"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "987000000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "15531000000"
+        }
+      },
+      "cutoff": {
+        "after_count": 123,
+        "availability": "2026-03-24T23:59:59Z",
+        "before_count": 120,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "SMITHFIELD FOODS, INC.",
+      "period_end": "2025-12-28",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.13450518318202306,
+          "liabilities_to_assets": null,
+          "net_margin": 0.06355031871740391,
+          "return_on_equity": 0.145125716806352
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.13450518318202306,
+          "liabilities_to_assets": null,
+          "net_margin": 0.06355031871740391,
+          "return_on_equity": 0.145125716806352
+        }
+      },
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000101829",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "171079000000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "65245000000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "103941000000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "6732000000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "88603000000"
+        }
+      },
+      "cutoff": {
+        "after_count": 331,
+        "availability": "2026-02-06T23:59:59Z",
+        "before_count": 328,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "RTX CORPORATION",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.6075614189935644,
+          "net_margin": 0.07597936864440256,
+          "return_on_equity": 0.10318032033105985
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.6075614189935644,
+          "net_margin": 0.07597936864440256,
+          "return_on_equity": 0.10318032033105985
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0001123647",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "3388774000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "96334000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "3106565000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-210482000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "687208000"
+        }
+      },
+      "cutoff": {
+        "after_count": 3,
+        "availability": "2012-03-23T23:59:59Z",
+        "before_count": 0,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "ATP OIL & GAS CORP",
+      "period_end": "2011-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.91672238986725,
+          "net_margin": -0.3062857242639783,
+          "return_on_equity": -2.184919135507713
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.91672238986725,
+          "net_margin": -0.3062857242639783,
+          "return_on_equity": -2.184919135507713
+        }
+      },
+      "strata": [
+        "energy",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001108329",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "PETROCHINA CO LTD",
+      "period_end": "2017-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "technology",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000717059",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "2488180000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "339220000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "2148960000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "23506000"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "WEST COAST BANCORP /NEW/OR/",
+      "period_end": "2012-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.8636674195596782,
+          "net_margin": null,
+          "return_on_equity": 0.06929426330994634
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.8636674195596782,
+          "net_margin": null,
+          "return_on_equity": 0.06929426330994634
+        }
+      },
+      "strata": [
+        "bank",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000753892",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "CIK 0000753892",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0001178727",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "24918000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "7594000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-15001000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "2284000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "39919000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-79713000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "9878000"
+        }
+      },
+      "cutoff": {
+        "after_count": 143,
+        "availability": "2023-12-07T23:59:59Z",
+        "before_count": 141,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "COMSOVEREIGN HOLDING CORP.",
+      "period_end": "2022-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.2312208949179996,
+          "liabilities_to_assets": 1.6020146079139579,
+          "net_margin": -8.069750961733144,
+          "return_on_equity": 5.313845743617092
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.2312208949179996,
+          "liabilities_to_assets": 1.6020146079139579,
+          "net_margin": -8.069750961733144,
+          "return_on_equity": 5.313845743617092
+        }
+      },
+      "strata": [
+        "bank",
+        "insurer",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001074952",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "Nuveen California Quality Municipal Income Fund",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000096831",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "396300000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "653700000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "150300000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "70700000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "246000000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-32700000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "724400000"
+        }
+      },
+      "cutoff": {
+        "after_count": 96,
+        "availability": "2015-03-04T23:59:59Z",
+        "before_count": 85,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "TECUMSEH PRODUCTS CO",
+      "period_end": "2014-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.09759801214798454,
+          "liabilities_to_assets": 0.6207418622255867,
+          "net_margin": -0.04514080618442849,
+          "return_on_equity": -0.21756487025948104
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.09759801214798454,
+          "liabilities_to_assets": 0.6207418622255867,
+          "net_margin": -0.04514080618442849,
+          "return_on_equity": -0.21756487025948104
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000099359",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "96978000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "54918000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "67115000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "34864000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "29863000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "14907000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "89782000"
+        }
+      },
+      "cutoff": {
+        "after_count": 76,
+        "availability": "2015-05-29T23:59:59Z",
+        "before_count": 65,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "BREEZE-EASTERN CORP",
+      "period_end": "2015-03-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.3883183711657125,
+          "liabilities_to_assets": 0.3079358204953701,
+          "net_margin": 0.16603550823104854,
+          "return_on_equity": 0.22211130149742978
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.3883183711657125,
+          "liabilities_to_assets": 0.3079358204953701,
+          "net_margin": 0.16603550823104854,
+          "return_on_equity": 0.22211130149742978
+        }
+      },
+      "strata": [
+        "retail"
+      ]
+    },
+    {
+      "cik": "0000104777",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "57118000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "11791000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "40156000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "16962000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "29434000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "30105000"
+        }
+      },
+      "cutoff": {
+        "after_count": 76,
+        "availability": "2015-03-17T23:59:59Z",
+        "before_count": 74,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "ALTEVA, INC.",
+      "period_end": "2014-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.29696417941804687,
+          "net_margin": 0.9777113436306262,
+          "return_on_equity": 0.732991333798187
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.29696417941804687,
+          "net_margin": 0.9777113436306262,
+          "return_on_equity": 0.732991333798187
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000352991",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "657243"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "493625"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "163618"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "102970"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "47444"
+        }
+      },
+      "cutoff": {
+        "after_count": 200,
+        "availability": "2026-09-21T23:59:59Z",
+        "before_count": 198,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "ADVANCED OXYGEN TECHNOLOGIES, INC.",
+      "period_end": "2026-06-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.24894597584150763,
+          "net_margin": 2.170348199983138,
+          "return_on_equity": 0.2085996454798683
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.24894597584150763,
+          "net_margin": 2.170348199983138,
+          "return_on_equity": 0.2085996454798683
+        }
+      },
+      "strata": [
+        "bank",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001133062",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "170753000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "142450000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "25802000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "64993000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "144951000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "5657000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "183823000"
+        }
+      },
+      "cutoff": {
+        "after_count": 205,
+        "availability": "2025-12-05T23:59:59Z",
+        "before_count": 203,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "JANEL CORPORATION",
+      "period_end": "2025-09-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.35356293826126217,
+          "liabilities_to_assets": 0.8488928452208746,
+          "net_margin": 0.030774168629605653,
+          "return_on_equity": 0.21924657003333076
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.35356293826126217,
+          "liabilities_to_assets": 0.8488928452208746,
+          "net_margin": 0.030774168629605653,
+          "return_on_equity": 0.21924657003333076
+        }
+      },
+      "strata": [
+        "retail",
+        "energy",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001114446",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "UBS AG",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000768890",
+      "comparisons": {
+        "assets": {
+          "source": "15870000",
+          "status": "source_only"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "source": "27045000",
+          "status": "source_only"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "CONSOLIDATED CAPITAL INSTITUTIONAL PROPERTIES 3",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 1.7041587901701323,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000778207",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "CIK 0000778207",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0001333986",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "317990000000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-74000000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "316202000000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-1380"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "11665000000"
+        }
+      },
+      "cutoff": {
+        "after_count": 157,
+        "availability": "2026-02-25T23:59:59Z",
+        "before_count": 154,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "Equitable Holdings, Inc.",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.9943771816723797,
+          "net_margin": -1.1830261465923703e-07,
+          "return_on_equity": 1.864864864864865e-05
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.9943771816723797,
+          "net_margin": -1.1830261465923703e-07,
+          "return_on_equity": 1.864864864864865e-05
+        }
+      },
+      "strata": [
+        "insurer",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001143994",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "0"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-17400"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "17400"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-3800"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "THE MACREPORT.NET, INC.",
+      "period_end": "2023-11-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": 0.21839080459770116
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": 0.21839080459770116
+        }
+      },
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000314712",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "5101567"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "8444041"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-22503191"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "-2997151"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "27604758"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "2700000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "5446890"
+        }
+      },
+      "cutoff": {
+        "after_count": 46,
+        "availability": "2014-12-29T23:59:59Z",
+        "before_count": 44,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "BOOMERANG SYSTEMS, INC.",
+      "period_end": "2014-09-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": -0.5502499591510017,
+          "liabilities_to_assets": 5.41103508000581,
+          "net_margin": 0.4956957089274797,
+          "return_on_equity": -0.1199829837466162
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": -0.5502499591510017,
+          "liabilities_to_assets": 5.41103508000581,
+          "net_margin": 0.4956957089274797,
+          "return_on_equity": -0.1199829837466162
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000319240",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "111915000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "58103000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "90168000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "60221000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "21747000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-1194000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "118324000"
+        }
+      },
+      "cutoff": {
+        "after_count": 11,
+        "availability": "2012-03-12T23:59:59Z",
+        "before_count": 8,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "IRIS INTERNATIONAL INC",
+      "period_end": "2011-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.5089500016902742,
+          "liabilities_to_assets": 0.194317115668141,
+          "net_margin": -0.01009093674994084,
+          "return_on_equity": -0.013241948363055629
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.5089500016902742,
+          "liabilities_to_assets": 0.194317115668141,
+          "net_margin": -0.01009093674994084,
+          "return_on_equity": -0.013241948363055629
+        }
+      },
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000354963",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "1910762000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "880783000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-32943000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "357854000"
+        }
+      },
+      "cutoff": {
+        "after_count": 273,
+        "availability": "2026-02-26T23:59:59Z",
+        "before_count": 270,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "Shenandoah Telecommunications Company",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": -0.09205709591062276,
+          "return_on_equity": -0.03740194803941493
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": -0.09205709591062276,
+          "return_on_equity": -0.03740194803941493
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000714284",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "817721344"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "400042610"
+        },
+        "equity": {
+          "status": "match",
+          "value": "198640467"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "140145869"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "587742345"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "25413931"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "540188479"
+        }
+      },
+      "cutoff": {
+        "after_count": 112,
+        "availability": "2020-06-08T23:59:59Z",
+        "before_count": 110,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "SORL Auto Parts, Inc.",
+      "period_end": "2019-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.2594388337556529,
+          "liabilities_to_assets": 0.7187562723078438,
+          "net_margin": 0.04704641433124678,
+          "return_on_equity": 0.1279393437994686
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.2594388337556529,
+          "liabilities_to_assets": 0.7187562723078438,
+          "net_margin": 0.04704641433124678,
+          "return_on_equity": 0.1279393437994686
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001358831",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "1493082000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "1764769000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-53897000"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "LEGACY RESERVES LP",
+      "period_end": "2017-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 1.1819638841001365,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 1.1819638841001365,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "energy",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001172494",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "AU OPTRONICS CORP",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "technology",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000803771",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "USA REAL ESTATE INVESTMENT TRUST /CA",
+      "period_end": "2013-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000795266",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "6680252000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "3900858000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "428789000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "6236214000"
+        }
+      },
+      "cutoff": {
+        "after_count": 282,
+        "availability": "2026-01-23T23:59:59Z",
+        "before_count": 279,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "KB HOME",
+      "period_end": "2025-11-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": 0.06875790343307654,
+          "return_on_equity": 0.10992171465867252
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": 0.06875790343307654,
+          "return_on_equity": 0.10992171465867252
+        }
+      },
+      "strata": [
+        "industrial"
+      ]
+    },
+    {
+      "cik": "0001489588",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "7997270"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "1447901"
+        },
+        "equity": {
+          "status": "match",
+          "value": "4723304"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "196307"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "3273966"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-12802275"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "Home Bistro, Inc.",
+      "period_end": "2021-10-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.40938545278576316,
+          "net_margin": null,
+          "return_on_equity": -2.7104490839463224
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.40938545278576316,
+          "net_margin": null,
+          "return_on_equity": -2.7104490839463224
+        }
+      },
+      "strata": [
+        "bank",
+        "insurer",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0001161049",
+      "comparisons": {
+        "assets": {
+          "source": "65261170",
+          "status": "source_only"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "source": "28403931",
+          "status": "source_only"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "WESTERN PLAINS ENERGY LLC",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "retail",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000719274",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "31932000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "28078000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-3602000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "9748000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "34999000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-15095000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "37826000"
+        }
+      },
+      "cutoff": {
+        "after_count": 166,
+        "availability": "2024-04-15T23:59:59Z",
+        "before_count": 164,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "Gresham Worldwide, Inc.",
+      "period_end": "2023-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.2577063395548036,
+          "liabilities_to_assets": 1.0960478516848302,
+          "net_margin": -0.39906413577962246,
+          "return_on_equity": 4.1907273736812884
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.2577063395548036,
+          "liabilities_to_assets": 1.0960478516848302,
+          "net_margin": -0.39906413577962246,
+          "return_on_equity": 4.1907273736812884
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000710846",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "426804823"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "212433141"
+        },
+        "equity": {
+          "status": "match",
+          "value": "396167449"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "74956110"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "30637374"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "32045050"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "287389251"
+        }
+      },
+      "cutoff": {
+        "after_count": 11,
+        "availability": "2012-03-15T23:59:59Z",
+        "before_count": 8,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "FUSHI COPPERWELD, INC.",
+      "period_end": "2011-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.26081737482937384,
+          "liabilities_to_assets": 0.07178310166377853,
+          "net_margin": 0.11150399636902217,
+          "return_on_equity": 0.0808876400140588
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.26081737482937384,
+          "liabilities_to_assets": 0.07178310166377853,
+          "net_margin": 0.11150399636902217,
+          "return_on_equity": 0.0808876400140588
+        }
+      },
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000721683",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "7468709000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "2492482000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "2585906000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "4882803000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "576656000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "4028211000"
+        }
+      },
+      "cutoff": {
+        "after_count": 118,
+        "availability": "2019-02-21T23:59:59Z",
+        "before_count": 115,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "TOTAL SYSTEM SERVICES, INC.",
+      "period_end": "2018-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.6537680072955044,
+          "net_margin": 0.14315436803087028,
+          "return_on_equity": 0.22299959859329768
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.6537680072955044,
+          "net_margin": 0.14315436803087028,
+          "return_on_equity": 0.22299959859329768
+        }
+      },
+      "strata": [
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000727207",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "28556000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "8994000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-56040000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "2704000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "84596000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-50045000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "11698000"
+        }
+      },
+      "cutoff": {
+        "after_count": 263,
+        "availability": "2025-03-21T23:59:59Z",
+        "before_count": 261,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "ACCELERATE DIAGNOSTICS,\u00a0INC.",
+      "period_end": "2024-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.23115062403829714,
+          "liabilities_to_assets": 2.9624597282532568,
+          "net_margin": -4.278081723371517,
+          "return_on_equity": 0.89302284082798
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.23115062403829714,
+          "liabilities_to_assets": 2.9624597282532568,
+          "net_margin": -4.278081723371517,
+          "return_on_equity": 0.89302284082798
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001376912",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "1142509"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "2964190"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-209261"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "Rockies Region 2006 Limited Partnership",
+      "period_end": "2017-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 2.5944565863376132,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 2.5944565863376132,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "retail",
+        "energy"
+      ]
+    },
+    {
+      "cik": "0001205059",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "REPLICEL LIFE SCIENCES INC.",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "technology",
+        "foreign_issuer",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000810084",
+      "comparisons": {
+        "assets": {
+          "source": "4623545",
+          "status": "source_only"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "source": "1053445",
+          "status": "source_only"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "BIOJECT MEDICAL TECHNOLOGIES INC",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000824036",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "CIK 0000824036",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0001527032",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "653083000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "505075000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-187470000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "838481000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-21623000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "651931000"
+        }
+      },
+      "cutoff": {
+        "after_count": 108,
+        "availability": "2016-05-23T23:59:59Z",
+        "before_count": 97,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "New Enterprise Stone & Lime Co., Inc.",
+      "period_end": "2016-02-29",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 1.2838812218355093,
+          "net_margin": -0.03316762049971546,
+          "return_on_equity": 0.11534112124606603
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 1.2838812218355093,
+          "net_margin": -0.03316762049971546,
+          "return_on_equity": 0.11534112124606603
+        }
+      },
+      "strata": [
+        "insurer",
+        "retail",
+        "technology",
+        "restated",
+        "non_december_fiscal_year"
+      ]
+    },
+    {
+      "cik": "0001165509",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "GENERAL DYNAMICS CORP",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000730272",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "2949699000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "352011000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "2106129000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "843570000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "48894000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "738256000"
+        }
+      },
+      "cutoff": {
+        "after_count": 287,
+        "availability": "2026-02-26T23:59:59Z",
+        "before_count": 284,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "REPLIGEN CORP",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.2859851123792631,
+          "net_margin": 0.06622905875468672,
+          "return_on_equity": 0.02321510220883906
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.2859851123792631,
+          "net_margin": 0.06622905875468672,
+          "return_on_equity": 0.02321510220883906
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000724004",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "427747000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "90860000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "186245000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "158270000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "241502000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "6712000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "249130000"
+        }
+      },
+      "cutoff": {
+        "after_count": 292,
+        "availability": "2026-06-03T23:59:59Z",
+        "before_count": 289,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "MESA LABORATORIES INC /CO",
+      "period_end": "2026-03-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.6352908120258499,
+          "liabilities_to_assets": 0.5645907510748176,
+          "net_margin": 0.026941757315457792,
+          "return_on_equity": 0.03603855137050659
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.6352908120258499,
+          "liabilities_to_assets": 0.5645907510748176,
+          "net_margin": 0.026941757315457792,
+          "return_on_equity": 0.03603855137050659
+        }
+      },
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000739878",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "120256000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "151597000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "9240000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "36558000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "111016000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-28830000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "188155000"
+        }
+      },
+      "cutoff": {
+        "after_count": 53,
+        "availability": "2014-04-15T23:59:59Z",
+        "before_count": 42,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "KID BRANDS, INC",
+      "period_end": "2013-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.194297254922803,
+          "liabilities_to_assets": 0.9231639169771155,
+          "net_margin": -0.15322473492599187,
+          "return_on_equity": -3.1201298701298703
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.194297254922803,
+          "liabilities_to_assets": 0.9231639169771155,
+          "net_margin": -0.15322473492599187,
+          "return_on_equity": -3.1201298701298703
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000743316",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "4523099000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "872183000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "2415940000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "1760346000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "2107159000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "827261000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "2632529000"
+        }
+      },
+      "cutoff": {
+        "after_count": 231,
+        "availability": "2021-08-20T23:59:59Z",
+        "before_count": 220,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "MAXIM INTEGRATED PRODUCTS, INC.",
+      "period_end": "2021-06-26",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.6686900695111051,
+          "liabilities_to_assets": 0.4658662125237586,
+          "net_margin": 0.31424573100619213,
+          "return_on_equity": 0.3424178580593889
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.6686900695111051,
+          "liabilities_to_assets": 0.4658662125237586,
+          "net_margin": 0.31424573100619213,
+          "return_on_equity": 0.3424178580593889
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001386018",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "13174"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-1303913"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "1317087"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-1619565"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "15140"
+        }
+      },
+      "cutoff": {
+        "after_count": 20,
+        "availability": "2019-04-16T23:59:59Z",
+        "before_count": 18,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "Tiger Oil & Energy, Inc.",
+      "period_end": "2018-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 99.97624108091696,
+          "net_margin": -106.97258916776751,
+          "return_on_equity": 1.2420805682587719
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 99.97624108091696,
+          "net_margin": -106.97258916776751,
+          "return_on_equity": 1.2420805682587719
+        }
+      },
+      "strata": [
+        "energy",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001347557",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "Pacific Airport Group",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000813640",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "388620000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "50376000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "338244000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "1819159"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "CITIZENS BANCSHARES CORP /GA/",
+      "period_end": "2015-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.8703720858422109,
+          "net_margin": null,
+          "return_on_equity": 0.036111620612990315
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.8703720858422109,
+          "net_margin": null,
+          "return_on_equity": 0.036111620612990315
+        }
+      },
+      "strata": [
+        "bank",
+        "restated",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000835729",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "4720300000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "818500000"
+        },
+        "gross_profit": {
+          "atlas": "421200000",
+          "status": "atlas_only"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "3901800000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "331000000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "2201400000"
+        }
+      },
+      "cutoff": {
+        "after_count": 76,
+        "availability": "2013-05-09T23:59:59Z",
+        "before_count": 65,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "BMC SOFTWARE INC",
+      "period_end": "2013-03-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.19133278822567457,
+          "liabilities_to_assets": 0.8266000042370188,
+          "net_margin": 0.15035886254201872,
+          "return_on_equity": 0.4043982895540623
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.8266000042370188,
+          "net_margin": 0.15035886254201872,
+          "return_on_equity": 0.4043982895540623
+        }
+      },
+      "strata": [
+        "industrial"
+      ]
+    },
+    {
+      "cik": "0001578735",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "10127894000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "3237163000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "6911896000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "513331000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "760374000"
+        }
+      },
+      "cutoff": {
+        "after_count": 157,
+        "availability": "2021-02-26T23:59:59Z",
+        "before_count": 146,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "NATIONAL GENERAL HOLDINGS CORP.",
+      "period_end": "2020-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.6824613290778913,
+          "net_margin": 0.6751033044265059,
+          "return_on_equity": 0.158574344263789
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.6824613290778913,
+          "net_margin": 0.6751033044265059,
+          "return_on_equity": 0.158574344263789
+        }
+      },
+      "strata": [
+        "insurer",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0001282850",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "First Trust Senior Floating Rate Income Fund II",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000761238",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "203843000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "69691000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "156066000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "47545000"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "25074000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "117236000"
+        }
+      },
+      "cutoff": {
+        "after_count": 45,
+        "availability": "2022-03-24T23:59:59Z",
+        "before_count": 42,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "RADA ELECTRONIC INDUSTRIES LTD.",
+      "period_end": "2021-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.4055494899177727,
+          "liabilities_to_assets": null,
+          "net_margin": 0.21387628373537138,
+          "return_on_equity": 0.1606627965091692
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.4055494899177727,
+          "liabilities_to_assets": null,
+          "net_margin": 0.21387628373537138,
+          "return_on_equity": 0.1606627965091692
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000788611",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "13076958"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "3063042"
+        },
+        "equity": {
+          "status": "match",
+          "value": "5374401"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "652486"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "7315557"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "16247596"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "3715528"
+        }
+      },
+      "cutoff": {
+        "after_count": 118,
+        "availability": "2026-05-29T23:59:59Z",
+        "before_count": 116,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "NextTrip, Inc.",
+      "period_end": "2026-02-28",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.175610572709989,
+          "liabilities_to_assets": 0.5594234530691312,
+          "net_margin": 4.372890205645065,
+          "return_on_equity": 3.023145463094399
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.175610572709989,
+          "liabilities_to_assets": 0.5594234530691312,
+          "net_margin": 4.372890205645065,
+          "return_on_equity": 3.023145463094399
+        }
+      },
+      "strata": [
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000790528",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "1918000000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "2843700000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-142000000"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "616600000"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "2061200000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "85700000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "3460300000"
+        }
+      },
+      "cutoff": {
+        "after_count": 36,
+        "availability": "2014-03-13T23:59:59Z",
+        "before_count": 25,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "RYERSON INC.",
+      "period_end": "2013-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.17819264225645176,
+          "liabilities_to_assets": 1.0746611053180397,
+          "net_margin": 0.024766638730745888,
+          "return_on_equity": -0.6035211267605634
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.17819264225645176,
+          "liabilities_to_assets": 1.0746611053180397,
+          "net_margin": 0.024766638730745888,
+          "return_on_equity": -0.6035211267605634
+        }
+      },
+      "strata": [
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000764764",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "38313000000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "3227000000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "35086000000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "540000000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "3634000000"
+        }
+      },
+      "cutoff": {
+        "after_count": 122,
+        "availability": "2026-02-13T23:59:59Z",
+        "before_count": 119,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "CATERPILLAR FINANCIAL SERVICES CORP",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.9157727142223266,
+          "net_margin": 0.14859658778205834,
+          "return_on_equity": 0.16733808490858382
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.9157727142223266,
+          "net_margin": 0.14859658778205834,
+          "return_on_equity": 0.16733808490858382
+        }
+      },
+      "strata": [
+        "bank",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001434070",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "10328000"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "6315000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "4013000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "908000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "4383000"
+        }
+      },
+      "cutoff": {
+        "after_count": 96,
+        "availability": "2026-02-26T23:59:59Z",
+        "before_count": 94,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "Ridgewood Energy Y Fund, LLC",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.38855538342370255,
+          "net_margin": 0.20716404289299567,
+          "return_on_equity": 0.143784639746635
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.38855538342370255,
+          "net_margin": 0.20716404289299567,
+          "return_on_equity": 0.143784639746635
+        }
+      },
+      "strata": [
+        "energy"
+      ]
+    },
+    {
+      "cik": "0001378239",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "Central North Airport Group",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "foreign_issuer",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000845611",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "CIK 0000845611",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000838796",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "315414"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "7950"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-40167703"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "3867"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-4885943"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "11817"
+        }
+      },
+      "cutoff": {
+        "after_count": 72,
+        "availability": "2017-04-18T23:59:59Z",
+        "before_count": 70,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "Kiwibox.Com, Inc.",
+      "period_end": "2016-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.32724041634932727,
+          "liabilities_to_assets": null,
+          "net_margin": -413.46729288313446,
+          "return_on_equity": 0.1216385960631107
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.32724041634932727,
+          "liabilities_to_assets": null,
+          "net_margin": -413.46729288313446,
+          "return_on_equity": 0.1216385960631107
+        }
+      },
+      "strata": [
+        "industrial",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001687187",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "1140569000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "453389000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "483566000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "657003000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-51446000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "536618000"
+        }
+      },
+      "cutoff": {
+        "after_count": 152,
+        "availability": "2026-07-24T23:59:59Z",
+        "before_count": 149,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "Ramaco Resources, Inc.",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.5760309108874606,
+          "net_margin": -0.09587080567554573,
+          "return_on_equity": -0.10638878663925917
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.5760309108874606,
+          "net_margin": -0.09587080567554573,
+          "return_on_equity": -0.10638878663925917
+        }
+      },
+      "strata": [
+        "insurer",
+        "retail",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0001285650",
+      "comparisons": {
+        "assets": {
+          "status": "absent_both"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "absent_both"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "absent_both"
+        },
+        "net_income": {
+          "status": "absent_both"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "Calamos\u00a0Global\u00a0Total\u00a0Return\u00a0Fund",
+      "period_end": null,
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": null,
+          "net_margin": null,
+          "return_on_equity": null
+        }
+      },
+      "strata": [
+        "industrial",
+        "non_december_fiscal_year",
+        "incomplete"
+      ]
+    },
+    {
+      "cik": "0000814926",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "59105"
+        },
+        "cost_of_revenue": {
+          "status": "absent_both"
+        },
+        "equity": {
+          "status": "match",
+          "value": "-459069"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "518174"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-920168"
+        },
+        "revenue": {
+          "status": "absent_both"
+        }
+      },
+      "cutoff": {
+        "tested": false
+      },
+      "entity_name": "CAPSTONE COMPANIES, INC.",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 8.767007867354708,
+          "net_margin": null,
+          "return_on_equity": 2.0044219932079925
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 8.767007867354708,
+          "net_margin": null,
+          "return_on_equity": 2.0044219932079925
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology",
+        "restated"
+      ]
+    },
+    {
+      "cik": "0000806592",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "25491662"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "32156584"
+        },
+        "equity": {
+          "status": "match",
+          "value": "6827004"
+        },
+        "gross_profit": {
+          "status": "match",
+          "value": "3104895"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "22004906"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "-2910189"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "35261479"
+        }
+      },
+      "cutoff": {
+        "after_count": 132,
+        "availability": "2022-08-10T23:59:59Z",
+        "before_count": 130,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "Sunwin Stevia International, Inc.",
+      "period_end": "2022-04-30",
+      "ratios": {
+        "atlas": {
+          "gross_margin": 0.08805345345837592,
+          "liabilities_to_assets": 0.8632197461271847,
+          "net_margin": -0.08253167713129674,
+          "return_on_equity": -0.42627615276042025
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": 0.08805345345837592,
+          "liabilities_to_assets": 0.8632197461271847,
+          "net_margin": -0.08253167713129674,
+          "return_on_equity": -0.42627615276042025
+        }
+      },
+      "strata": [
+        "bank",
+        "retail",
+        "technology"
+      ]
+    },
+    {
+      "cik": "0000798359",
+      "comparisons": {
+        "assets": {
+          "status": "match",
+          "value": "1926167000"
+        },
+        "cost_of_revenue": {
+          "status": "match",
+          "value": "9638000"
+        },
+        "equity": {
+          "status": "match",
+          "value": "719156000"
+        },
+        "gross_profit": {
+          "status": "absent_both"
+        },
+        "liabilities": {
+          "status": "match",
+          "value": "1080411000"
+        },
+        "net_income": {
+          "status": "match",
+          "value": "17101000"
+        },
+        "revenue": {
+          "status": "match",
+          "value": "273662000"
+        }
+      },
+      "cutoff": {
+        "after_count": 190,
+        "availability": "2026-02-17T23:59:59Z",
+        "before_count": 187,
+        "ok": true,
+        "tested": true
+      },
+      "entity_name": "CENTERSPACE",
+      "period_end": "2025-12-31",
+      "ratios": {
+        "atlas": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.5609124234814531,
+          "net_margin": 0.06248949433973296,
+          "return_on_equity": 0.02377926346995645
+        },
+        "mismatches": [],
+        "source": {
+          "gross_margin": null,
+          "liabilities_to_assets": 0.5609124234814531,
+          "net_margin": 0.06248949433973296,
+          "return_on_equity": 0.02377926346995645
+        }
+      },
+      "strata": [
+        "technology"
+      ]
+    }
+  ],
+  "schema": "atlas.open_data.financial_validation.v1",
+  "strata": {
+    "bank": 35,
+    "energy": 12,
+    "foreign_issuer": 12,
+    "incomplete": 38,
+    "industrial": 31,
+    "insurer": 12,
+    "non_december_fiscal_year": 13,
+    "restated": 53,
+    "retail": 57,
+    "technology": 60
+  },
+  "valuation_methods": {
+    "executed": [],
+    "reason": "price-dependent methods require legitimate market prices; no such source has been acquired, so success is not claimed for them",
+    "unavailable": [
+      "dcf",
+      "comparables",
+      "residual_income",
+      "reverse_dcf"
+    ]
+  }
+}

@@ -52,6 +52,7 @@ class MCPServerConfig:
     db_path: str
     allow_mutations: bool = False
     call_timeout: float = 20.0
+    columnar_root: str | None = None
     max_workers: int = 4
     server_name: str = "atlas"
     server_version: str = __version__
@@ -67,7 +68,8 @@ class AtlasMCPServer:
     # ------------------------------------------------------------------ lifecycle
     def context(self) -> ToolContext:
         return ToolContext(db_path=self.config.db_path,
-                           allow_mutations=self.config.allow_mutations)
+                           allow_mutations=self.config.allow_mutations,
+                           columnar_root=self.config.columnar_root)
 
     def cancel(self, request_id: Any) -> None:
         key = _key(request_id)
@@ -278,9 +280,11 @@ def _tool_result(payload: Mapping[str, Any], *, is_error: bool = False) -> dict[
 
 
 def build_server(db_path: str, *, allow_mutations: bool = False,
-                 call_timeout: float = 20.0) -> AtlasMCPServer:
+                 call_timeout: float = 20.0,
+                 columnar_root: str | None = None) -> AtlasMCPServer:
     return AtlasMCPServer(config=MCPServerConfig(
-        db_path=str(db_path), allow_mutations=allow_mutations, call_timeout=call_timeout
+        db_path=str(db_path), allow_mutations=allow_mutations, call_timeout=call_timeout,
+        columnar_root=columnar_root,
     ))
 
 

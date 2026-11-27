@@ -236,6 +236,11 @@ class EvidenceKernel:
 
     def __init__(self, db: Database) -> None:
         self.db = db
+        # Bulk ingestion writes thousands of records through one kernel. Reading
+        # MAX(ingest_seq) per record turns an indexed insert into a full-table scan, so
+        # the counter is read once and advanced in memory. The kernel is the writer for
+        # this sequence; an external writer would need a fresh kernel instance.
+        self._next_ingest_seq: int | None = None
 
     # ------------------------------------------------------------------ writes
     def ingest(
@@ -284,9 +289,12 @@ class EvidenceKernel:
         # Ingestion order is assigned by the kernel, not the caller: it is a property of
         # when Atlas learned the fact, and it breaks ties between records whose public
         # availability timestamps are identical.
-        record.ingest_seq = int(
-            self.db.scalar("SELECT COALESCE(MAX(ingest_seq), 0) FROM evidence", default=0) or 0
-        ) + 1
+        if self._next_ingest_seq is None:
+            self._next_ingest_seq = int(
+                self.db.scalar("SELECT COALESCE(MAX(ingest_seq), 0) FROM evidence", default=0) or 0
+            ) + 1
+        record.ingest_seq = self._next_ingest_seq
+        self._next_ingest_seq += 1
         self.db.execute(_INSERT_SQL, record.to_row())
         for old_id in superseded:
             self._link_supersession(old_id, record.evidence_id, reason or self._supersession_reason(record, old_id))
@@ -318,18 +326,61 @@ class EvidenceKernel:
         records: Iterable[EvidenceRecord],
         *,
         continue_on_error: bool = False,
+        batch_size: int = 1,
     ) -> IngestSummary:
+        """Ingest records in batched transactions, isolating a bad record.
+
+        ``batch_size=1`` keeps the historical one-transaction-per-record behaviour.
+        A larger batch is materially faster for a bulk archive, but a single rejected
+        record must not discard the whole batch or hide the valid records around it:
+        if a batch rolls back, it is retried one record at a time so only the genuinely
+        invalid observation is rejected.
+        """
         summary = IngestSummary()
-        for record in records:
+        batch: list[EvidenceRecord] = []
+        size = max(1, int(batch_size))
+
+        def _ingest_batch(chunk: list[EvidenceRecord]) -> None:
+            outcomes: list[IngestOutcome] = []
+            with self.db.transaction():
+                for record in chunk:
+                    outcomes.append(self.ingest(record))
+            for outcome in outcomes:
+                summary.add(outcome)
+
+        def _ingest_singly(chunk: list[EvidenceRecord]) -> None:
+            for record in chunk:
+                try:
+                    with self.db.transaction():
+                        summary.add(self.ingest(record))
+                except Exception as exc:  # noqa: BLE001 - recorded, optionally re-raised
+                    summary.rejected += 1
+                    summary.rejections.append({
+                        "evidence_id": record.evidence_id,
+                        "concept": record.concept,
+                        "accession_number": record.accession_number,
+                        "error": str(exc),
+                    })
+                    if not continue_on_error:
+                        raise
+
+        def _flush() -> None:
+            chunk, batch[:] = list(batch), []
+            if not chunk:
+                return
+            if len(chunk) == 1 or size == 1:
+                _ingest_singly(chunk)
+                return
             try:
-                with self.db.transaction():
-                    outcome = self.ingest(record)
-                    summary.add(outcome)
-            except Exception as exc:  # noqa: BLE001 - recorded, optionally re-raised
-                summary.rejected += 1
-                summary.rejections.append({"evidence_id": record.evidence_id, "concept": record.concept, "error": str(exc)})
-                if not continue_on_error:
-                    raise
+                _ingest_batch(chunk)
+            except Exception:  # noqa: BLE001 - isolate the offending observation
+                _ingest_singly(chunk)
+
+        for record in records:
+            batch.append(record)
+            if len(batch) >= size:
+                _flush()
+        _flush()
         return summary
 
     def _link_supersession(self, superseded_id: str, superseding_id: str, reason: str) -> None:

@@ -1,0 +1,105 @@
+{
+  "completed_at": "2026-11-24T22:39:27.731882Z",
+  "dataset_id": "eurostat.hicp",
+  "exported_at": "2026-11-24T23:21:46.527310Z",
+  "files": [
+    {
+      "bytes": 54720261,
+      "content_type": "application/json",
+      "name": "eurostat_hicp.json",
+      "path": "eurostat_hicp.json",
+      "sha256": "a2965f61a9eba69c1c00f8a1d637abf6af4d0bf564cf40b32639dc5227491b4e"
+    }
+  ],
+  "manifest_version": 1,
+  "provider": "Eurostat",
+  "retrieval": {
+    "completed_at": "2026-11-24T22:39:27.731679Z",
+    "retrieved_by": "atlas.open_data.engine",
+    "started_at": "2026-11-24T22:39:27.731654Z"
+  },
+  "rights": {
+    "attribution_required": true,
+    "attribution_text": "Source: Eurostat",
+    "commercial_use": true,
+    "license_name": "European Commission reuse decision - Eurostat copyright notice",
+    "license_url": "https://ec.europa.eu/eurostat/en/help/copyright-notice",
+    "modification": true,
+    "redistributable": true,
+    "redistribution": true,
+    "rights_class": "redistributable_conditions",
+    "rights_verified_at": "2026-11-24",
+    "third_party_exclusions": [
+      "Material listed in Eurostat's exceptions"
+    ]
+  },
+  "semantics": {
+    "historical_availability": "not inferred from retrieval time",
+    "ingestion_time": "retrieval.completed_at is when Atlas acquired the bytes",
+    "observation_time": "obs_start/obs_end are provider observation dates",
+    "provider_revision_time": "provider_revision_at is a provider revision/filing date, when known",
+    "publication_time": "published_at is populated only when the provider publishes one"
+  },
+  "snapshot_id": "20261124T223814-aec41a32",
+  "source": {
+    "content_type": "application/json",
+    "download_endpoint": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr",
+    "etag": null,
+    "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr",
+    "last_modified": null,
+    "official_source_url": "https://ec.europa.eu/eurostat/web/hicp"
+  },
+  "stats": {
+    "dataset_id": "eurostat.hicp",
+    "decompressed_bytes": 0,
+    "entity_count": 0,
+    "file_count": 1,
+    "implausible_observation_dates": 0,
+    "issues": [],
+    "obs_end": null,
+    "obs_start": null,
+    "publications_with_dates": 0,
+    "record_count": 1,
+    "series_count": 0,
+    "transfer": {
+      "attempts": 1,
+      "bytes_downloaded": 54720261,
+      "content_length": 54720261,
+      "content_type": "application/json",
+      "elapsed_seconds": 62.858,
+      "etag": null,
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr",
+      "last_modified": null,
+      "not_modified": false,
+      "resumed_from": 0,
+      "sha256": "a2965f61a9eba69c1c00f8a1d637abf6af4d0bf564cf40b32639dc5227491b4e",
+      "status": 200,
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr"
+    },
+    "validation": {
+      "files": [
+        {
+          "bytes": 54720261,
+          "detected_format": "json",
+          "file": "eurostat_hicp.json"
+        }
+      ],
+      "status": "valid"
+    }
+  },
+  "title": "Eurostat harmonised index of consumer prices",
+  "validation": {
+    "checks": {
+      "files": [
+        {
+          "bytes": 54720261,
+          "detected_format": "json",
+          "file": "eurostat_hicp.json"
+        }
+      ],
+      "status": "valid"
+    },
+    "issues": [],
+    "status": "valid"
+  }
+}
